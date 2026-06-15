@@ -1,4 +1,4 @@
-import { Component, For, createSignal } from "solid-js"
+import { DialogSelect } from "../ui/dialog-select"
 
 export type WorkflowType = "gsd" | "speckit" | "gstack" | "vibe"
 
@@ -10,25 +10,17 @@ const workflows = [
 ]
 
 export function WorkflowSelector(props: { onSelect: (workflow: WorkflowType) => void }) {
-  const [selected, setSelected] = createSignal(0)
+  const options = workflows.map((workflow) => ({
+    title: workflow.name,
+    description: workflow.description,
+    value: workflow.id,
+  }))
 
   return (
-    <div>
-      <h2>Select development workflow:</h2>
-      <For each={workflows}>
-        {(workflow, index) => (
-          <div
-            class={selected() === index() ? "selected" : ""}
-            onClick={() => {
-              setSelected(index())
-              props.onSelect(workflow.id)
-            }}
-          >
-            <strong>{workflow.name}</strong>
-            <p>{workflow.description}</p>
-          </div>
-        )}
-      </For>
-    </div>
+    <DialogSelect
+      title="Select development workflow"
+      options={options}
+      onSelect={(option) => props.onSelect(option.value)}
+    />
   )
 }

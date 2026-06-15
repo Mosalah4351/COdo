@@ -66,6 +66,10 @@ import { createTuiApiAdapters } from "./plugin/adapters"
 import { createTuiApi } from "./plugin/api"
 import { createPluginRuntime, PluginRuntimeProvider, usePluginRuntime, type TuiPluginHost } from "./plugin/runtime"
 import { CommandPaletteDialog } from "./component/command-palette"
+import { WorkflowSelector, type WorkflowType } from "./workflow/selector"
+import { initGsd } from "./workflow/gsd"
+import { initGStack } from "./workflow/gstack"
+import { initSpecKit } from "./workflow/speckit"
 import {
   COMMAND_PALETTE_COMMAND,
   COdo_BASE_MODE,
@@ -791,6 +795,45 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
           dialog.replace(() => <DialogHelp />)
         },
         category: "System",
+      },
+      {
+        name: "workflow.select",
+        title: "Select development workflow",
+        category: "Workflow",
+        slashName: "workflow",
+        run: () => {
+          dialog.replace(() => (
+            <WorkflowSelector
+              onSelect={(workflow: WorkflowType) => {
+                const initWorkflow = async () => {
+                  try {
+                    switch (workflow) {
+                      case "gsd":
+                        await initGsd()
+                        toast.show({ message: "GSD workflow initialized", variant: "info" })
+                        break
+                      case "gstack":
+                        await initGStack()
+                        toast.show({ message: "GStack workflow initialized", variant: "info" })
+                        break
+                      case "speckit":
+                        await initSpecKit("project", "auto")
+                        toast.show({ message: "Spec Kit workflow initialized", variant: "info" })
+                        break
+                      case "vibe":
+                        toast.show({ message: "Vibe mode activated - no workflow constraints", variant: "info" })
+                        break
+                    }
+                  } catch (error) {
+                    toast.error(error instanceof Error ? error : new Error("Failed to initialize workflow"))
+                  }
+                  dialog.clear()
+                }
+                initWorkflow()
+              }}
+            />
+          ))
+        },
       },
       {
         name: "docs.open",
