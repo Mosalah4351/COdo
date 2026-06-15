@@ -6,9 +6,9 @@ import { cliIt } from "../lib/cli-process"
 describe("codo mcp add (non-interactive subprocess)", () => {
   cliIt.concurrent(
     "adds a remote server with HTTP headers",
-    ({ home, codo }) =>
+    ({ home, COdo }) =>
       Effect.gen(function* () {
-        const result = yield* codo.spawn([
+        const result = yield* COdo.spawn([
           "mcp",
           "add",
           "github",
@@ -19,10 +19,10 @@ describe("codo mcp add (non-interactive subprocess)", () => {
           "--header",
           "X-Option=one=two",
         ])
-        codo.expectExit(result, 0)
+        COdo.expectExit(result, 0)
 
         const config = yield* Effect.promise(() =>
-          Bun.file(path.join(home, ".config", "codo", "codo.json")).json(),
+          Bun.file(path.join(home, ".config", "codo", "COdo.json")).json(),
         )
         expect(config.mcp.github).toEqual({
           type: "remote",
@@ -38,9 +38,9 @@ describe("codo mcp add (non-interactive subprocess)", () => {
 
   cliIt.concurrent(
     "adds a local server while preserving argv and environment values",
-    ({ home, codo }) =>
+    ({ home, COdo }) =>
       Effect.gen(function* () {
-        const result = yield* codo.spawn([
+        const result = yield* COdo.spawn([
           "mcp",
           "add",
           "local",
@@ -55,10 +55,10 @@ describe("codo mcp add (non-interactive subprocess)", () => {
           "--label",
           "two words",
         ])
-        codo.expectExit(result, 0)
+        COdo.expectExit(result, 0)
 
         const config = yield* Effect.promise(() =>
-          Bun.file(path.join(home, ".config", "codo", "codo.json")).json(),
+          Bun.file(path.join(home, ".config", "codo", "COdo.json")).json(),
         )
         expect(config.mcp.local).toEqual({
           type: "local",

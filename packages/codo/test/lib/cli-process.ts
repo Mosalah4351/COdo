@@ -170,7 +170,7 @@ export type COdoCli = {
 export type CliFixture = {
   readonly llm: TestLLMServer["Service"]
   readonly home: string
-  readonly codo: COdoCli
+  readonly COdo: COdoCli
 }
 
 // Provisions a TestLLMServer + tmpdir + spawn helper and invokes fn. Cleans

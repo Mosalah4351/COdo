@@ -1034,7 +1034,7 @@ it.instance("ModelNotFoundError suggests catalog models for unloaded providers",
   Effect.gen(function* () {
     yield* remove("CODO_API_KEY")
     const error = yield* Provider.use
-      .getModel(ProviderV2.ID.codo, ModelV2.ID.make("claude-haiku-fake-model"))
+      .getModel(ProviderV2.ID.COdo, ModelV2.ID.make("claude-haiku-fake-model"))
       .pipe(Effect.flip)
     if (!Provider.ModelNotFoundError.isInstance(error)) throw error
     expect(error.suggestions ?? []).toContain("claude-haiku-4-5")

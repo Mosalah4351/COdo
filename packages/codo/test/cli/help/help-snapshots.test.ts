@@ -97,9 +97,9 @@ describe("codo CLI help-text snapshots", () => {
   // versus ~1 minute if we serialized.
   cliIt.live(
     "every documented command emits stable help text",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const topLevel = yield* codo.spawn(["--help"], { env: SNAPSHOT_ENV })
+        const topLevel = yield* COdo.spawn(["--help"], { env: SNAPSHOT_ENV })
         expect(topLevel.exitCode).toBe(0)
         expect(topLevel.stderr.endsWith(EOL)).toBe(true)
 
@@ -113,7 +113,7 @@ describe("codo CLI help-text snapshots", () => {
           argvs,
           (argv) =>
             Effect.gen(function* () {
-              const result = yield* codo.spawn([...argv, "--help"], { env: SNAPSHOT_ENV })
+              const result = yield* COdo.spawn([...argv, "--help"], { env: SNAPSHOT_ENV })
               if (result.exitCode !== 0) {
                 return yield* Effect.fail(`codo ${argv.join(" ")}: exit ${result.exitCode}`)
               }

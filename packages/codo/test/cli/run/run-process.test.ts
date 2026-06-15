@@ -1,7 +1,7 @@
 // Subprocess integration tests for `codo run` (non-interactive mode).
 // These exercise the real CLI binary against a TestLLMServer running in the
 // same process. See `test/lib/cli-process.ts` for the harness — each test uses
-// `codo.run(message, opts?)` to spawn `bun src/index.ts run ...` with
+// `COdo.run(message, opts?)` to spawn `bun src/index.ts run ...` with
 // `CODO_CONFIG_CONTENT` providing the test provider config inline.
 import { describe, expect } from "bun:test"
 import { Effect } from "effect"
@@ -12,11 +12,11 @@ describe("codo run (non-interactive subprocess)", () => {
   // If this fails, all the others likely will too — debug here first.
   cliIt.concurrent(
     "exits 0 and writes the response to stdout on a successful prompt",
-    ({ llm, codo }) =>
+    ({ llm, COdo }) =>
       Effect.gen(function* () {
         yield* llm.text("hello from the test llm")
-        const result = yield* codo.run("say hi")
-        codo.expectExit(result, 0)
+        const result = yield* COdo.run("say hi")
+        COdo.expectExit(result, 0)
         expect(result.stdout).toContain("hello from the test llm")
       }),
     60_000,
@@ -29,9 +29,9 @@ describe("codo run (non-interactive subprocess)", () => {
   // would expire the timeout and produce a different (signal-killed) failure.
   cliIt.concurrent(
     "exits nonzero promptly when the model is unknown (regression for #27371)",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const result = yield* codo.run("say hi", {
+        const result = yield* COdo.run("say hi", {
           model: "test/nonexistent-model",
           timeoutMs: 15_000,
         })
@@ -49,10 +49,10 @@ describe("codo run (non-interactive subprocess)", () => {
   // changing this expectation, do it deliberately and say so in the PR.
   cliIt.concurrent(
     "mid-stream LLM error still exits 0 today (contract lock-in)",
-    ({ llm, codo }) =>
+    ({ llm, COdo }) =>
       Effect.gen(function* () {
         yield* llm.fail("upstream provider exploded mid-stream")
-        const result = yield* codo.run("trigger midstream error", { timeoutMs: 30_000 })
+        const result = yield* COdo.run("trigger midstream error", { timeoutMs: 30_000 })
         expect(result.exitCode).toBe(0)
       }),
     60_000,
@@ -63,20 +63,20 @@ describe("codo run (non-interactive subprocess)", () => {
   // shape so a future event-emit change has to update this expectation.
   cliIt.concurrent(
     "--format json emits parseable line-delimited JSON to stdout",
-    ({ llm, codo }) =>
+    ({ llm, COdo }) =>
       Effect.gen(function* () {
         yield* llm.text("structured output")
-        const result = yield* codo.run("say hi", { format: "json" })
-        codo.expectExit(result, 0)
+        const result = yield* COdo.run("say hi", { format: "json" })
+        COdo.expectExit(result, 0)
 
-        const events = codo.parseJsonEvents(result.stdout)
+        const events = COdo.parseJsonEvents(result.stdout)
         expect(events.length).toBeGreaterThan(0)
         for (const evt of events) {
           expect(typeof evt.type).toBe("string")
           expect(typeof evt.sessionID).toBe("string")
         }
         // At least one `text` event should appear with the LLM's response.
-        const text = events.find((e) => e.type === "text")
+        const text = events.find((e: Record<string, unknown>) => e.type === "text")
         expect(text).toBeDefined()
       }),
     60_000,

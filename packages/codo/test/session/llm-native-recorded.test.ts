@@ -162,7 +162,7 @@ const RECORDED_SCENARIOS = [
   {
     id: "codo-proxy",
     name: "codo proxy",
-    providerID: ProviderV2.ID.codo,
+    providerID: ProviderV2.ID.COdo,
     modelID: "gpt-5.2-codex",
     cassette: "session/native-zen-tool-loop",
     protocol: "openai-responses",
@@ -170,7 +170,7 @@ const RECORDED_SCENARIOS = [
     canRecord: () => Boolean(process.env.CODO_RECORD_CONSOLE_TOKEN && process.env.CODO_RECORD_ZEN_ORG_ID),
     config: (model) =>
       providerConfig({
-        providerID: ProviderV2.ID.codo,
+        providerID: ProviderV2.ID.COdo,
         name: "codo Zen",
         env: ["CODO_CONSOLE_TOKEN"],
         npm: "@ai-sdk/openai-compatible",

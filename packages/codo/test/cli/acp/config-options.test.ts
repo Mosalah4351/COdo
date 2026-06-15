@@ -15,10 +15,10 @@ import {
 describe("codo acp config option subprocess", () => {
   cliIt.live(
     'model option is listed with category "model"',
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)
@@ -33,10 +33,10 @@ describe("codo acp config option subprocess", () => {
 
   cliIt.live(
     "model switch updates currentValue",
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)
@@ -60,10 +60,10 @@ describe("codo acp config option subprocess", () => {
 
   cliIt.live(
     'effort option is listed with category "thought_level" when selected model supports variants',
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)
@@ -78,10 +78,10 @@ describe("codo acp config option subprocess", () => {
 
   cliIt.live(
     "effort switch updates currentValue",
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)

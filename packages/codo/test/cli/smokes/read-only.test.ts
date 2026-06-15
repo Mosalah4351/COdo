@@ -24,10 +24,10 @@ describe("codo read-only commands (smoke)", () => {
   // and the command should report that cleanly.
   cliIt.live(
     "mcp list: exits 0",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const r = yield* codo.spawn(["mcp", "list"])
-        codo.expectExit(r, 0, "mcp list")
+        const r = yield* COdo.spawn(["mcp", "list"])
+        COdo.expectExit(r, 0, "mcp list")
       }),
     60_000,
   )
@@ -40,10 +40,10 @@ describe("codo read-only commands (smoke)", () => {
   // test passes on a clean CI runner without env-var leakage.
   cliIt.live(
     "providers list: exits 0 and prints the credentials section",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const r = yield* codo.spawn(["providers", "list"])
-        codo.expectExit(r, 0, "providers list")
+        const r = yield* COdo.spawn(["providers", "list"])
+        COdo.expectExit(r, 0, "providers list")
         expect(r.stdout).toContain("Credentials")
       }),
     60_000,
@@ -53,10 +53,10 @@ describe("codo read-only commands (smoke)", () => {
   // should appear because it's wired into the test provider config.
   cliIt.live(
     "models: exits 0 and lists the test model",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const r = yield* codo.spawn(["models"])
-        codo.expectExit(r, 0, "models")
+        const r = yield* COdo.spawn(["models"])
+        COdo.expectExit(r, 0, "models")
         expect(r.stdout).toContain("test/test-model")
       }),
     60_000,
@@ -67,10 +67,10 @@ describe("codo read-only commands (smoke)", () => {
   // similar. We don't pin the message — just exit cleanly.
   cliIt.live(
     "agent list: exits 0",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const r = yield* codo.spawn(["agent", "list"])
-        codo.expectExit(r, 0, "agent list")
+        const r = yield* COdo.spawn(["agent", "list"])
+        COdo.expectExit(r, 0, "agent list")
       }),
     60_000,
   )
@@ -79,10 +79,10 @@ describe("codo read-only commands (smoke)", () => {
   // empty DB. Exit 0 with no sessions.
   cliIt.live(
     "session list: exits 0",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const r = yield* codo.spawn(["session", "list"])
-        codo.expectExit(r, 0, "session list")
+        const r = yield* COdo.spawn(["session", "list"])
+        COdo.expectExit(r, 0, "session list")
       }),
     60_000,
   )
@@ -90,10 +90,10 @@ describe("codo read-only commands (smoke)", () => {
   // `stats` aggregates token usage from the session DB. Empty DB → all zeros.
   cliIt.live(
     "stats: exits 0",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const r = yield* codo.spawn(["stats"])
-        codo.expectExit(r, 0, "stats")
+        const r = yield* COdo.spawn(["stats"])
+        COdo.expectExit(r, 0, "stats")
       }),
     60_000,
   )
@@ -104,10 +104,10 @@ describe("codo read-only commands (smoke)", () => {
   // Accept either form — both prove the resolver ran without crashing.
   cliIt.live(
     "db path: exits 0 and prints a path or :memory:",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const r = yield* codo.spawn(["db", "path"])
-        codo.expectExit(r, 0, "db path")
+        const r = yield* COdo.spawn(["db", "path"])
+        COdo.expectExit(r, 0, "db path")
         expect(r.stdout.trim()).toMatch(/^(:memory:|[/\\].+\.(db|sqlite|sqlite3))$/i)
       }),
     60_000,

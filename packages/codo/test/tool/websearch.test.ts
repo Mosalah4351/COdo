@@ -38,7 +38,7 @@ describe("websearch provider", () => {
   })
 
   test("is only enabled for codo or explicit websearch provider flags", () => {
-    expect(webSearchEnabled(ProviderV2.ID.codo, { exa: false, parallel: false })).toBe(true)
+    expect(webSearchEnabled(ProviderV2.ID.COdo, { exa: false, parallel: false })).toBe(true)
     expect(webSearchEnabled(ProviderV2.ID.openai, { exa: false, parallel: false })).toBe(false)
     expect(webSearchEnabled(ProviderV2.ID.openai, { exa: true, parallel: false })).toBe(true)
     expect(webSearchEnabled(ProviderV2.ID.openai, { exa: false, parallel: true })).toBe(true)

@@ -13,9 +13,9 @@ import { createAcpClient, initialize, newSession, verifierConfig } from "./helpe
 describe("codo acp lifecycle subprocess", () => {
   cliIt.live(
     "stdin EOF exits cleanly",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const acp = yield* codo.acp()
+        const acp = yield* COdo.acp()
         acp.close()
 
         const code = yield* Effect.promise(() => acp.exited).pipe(Effect.timeout(Duration.seconds(5)))
@@ -26,10 +26,10 @@ describe("codo acp lifecycle subprocess", () => {
 
   cliIt.live(
     "close capability and close request",
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         const initialized = yield* initialize(acp)
@@ -43,10 +43,10 @@ describe("codo acp lifecycle subprocess", () => {
 
   cliIt.live(
     "loadSession capability and load request return session config options",
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         const initialized = yield* initialize(acp)
@@ -67,10 +67,10 @@ describe("codo acp lifecycle subprocess", () => {
 
   cliIt.live(
     "list request includes a live ACP-created session",
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)
@@ -84,9 +84,9 @@ describe("codo acp lifecycle subprocess", () => {
 
   cliIt.live(
     "resume capability advertisement",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const initialized = yield* initialize(yield* createAcpClient({ codo }))
+        const initialized = yield* initialize(yield* createAcpClient({ COdo }))
 
         expect(initialized.agentCapabilities?.sessionCapabilities?.resume).toEqual({})
       }),
@@ -95,10 +95,10 @@ describe("codo acp lifecycle subprocess", () => {
 
   cliIt.live(
     "resume request returns session config options",
-    ({ home, llm, codo }) =>
+    ({ home, llm, COdo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { codo },
+          { COdo },
           { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)

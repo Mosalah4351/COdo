@@ -13,7 +13,7 @@ import {
 
 export function createAcpClient(input: Pick<CliFixture, "COdo">, env?: Record<string, string>) {
   return Effect.gen(function* () {
-    return createJsonRpcAcpClient(yield* input.codo.acp(env ? { env } : undefined))
+    return createJsonRpcAcpClient(yield* input.COdo.acp(env ? { env } : undefined))
   })
 }
 

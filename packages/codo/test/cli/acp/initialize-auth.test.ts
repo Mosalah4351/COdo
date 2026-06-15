@@ -7,9 +7,9 @@ import { createAcpClient, expectErrorCode, initialize } from "./helpers"
 describe("codo acp initialize/auth subprocess", () => {
   cliIt.live(
     "initialize responds with capabilities",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const initialized = yield* initialize(yield* createAcpClient({ codo }))
+        const initialized = yield* initialize(yield* createAcpClient({ COdo }))
 
         expect(initialized.protocolVersion).toBe(1)
         expect(initialized.agentCapabilities?.promptCapabilities?.embeddedContext).toBe(true)
@@ -28,9 +28,9 @@ describe("codo acp initialize/auth subprocess", () => {
 
   cliIt.live(
     "auth negotiation is explicit and safe",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const acp = yield* createAcpClient({ codo })
+        const acp = yield* createAcpClient({ COdo })
         const initialized = yield* initialize(acp)
 
         expect(initialized.authMethods?.[0]?.id).toBe("codo-login")
@@ -48,9 +48,9 @@ describe("codo acp initialize/auth subprocess", () => {
 
   cliIt.live(
     "initialize without terminal-auth metadata keeps auth command implicit",
-    ({ codo }) =>
+    ({ COdo }) =>
       Effect.gen(function* () {
-        const acp = yield* createAcpClient({ codo })
+        const acp = yield* createAcpClient({ COdo })
         const initialized = yield* acp.request<InitializeResponse>("initialize", { protocolVersion: 1 })
 
         expect(initialized.result?.authMethods?.[0]?.id).toBe("codo-login")
