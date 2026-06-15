@@ -1353,7 +1353,7 @@ export function Prompt(props: PromptProps) {
             paddingRight={2}
             paddingTop={1}
             flexShrink={0}
-            backgroundColor={theme.backgroundElement}
+            backgroundColor={RGBA.fromInts(40, 20, 60, 255)}
             flexGrow={1}
             width="100%"
           >
