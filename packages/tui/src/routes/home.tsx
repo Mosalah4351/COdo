@@ -96,10 +96,10 @@ export function Home() {
         <pluginRuntime.Slot name="home_bottom" />
         <box flexGrow={1} minHeight={0} />
         <box alignItems="center" marginTop={1} flexShrink={0}>
-          <text fg="secondary">─── Tips ───</text>
+          <text fg={theme.secondary}>─── Tips ───</text>
         </box>
         <box alignItems="center" marginTop={1} flexShrink={0}>
-          <text fg="textMuted">Press <span fg="secondary">tab</span> to see all available agents and commands</text>
+          <text fg="textMuted">Press <span style={{ fg: theme.secondary }}>tab</span> to see all available agents and commands</text>
         </box>
         <Toast />
       </box>
