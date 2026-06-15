@@ -97,7 +97,7 @@ export function Home() {
           <text fg="secondary">─── Tips ───</text>
         </box>
         <box alignItems="center" marginTop={1} flexShrink={0}>
-          <text fg="textMuted">Press <text fg="secondary">tab</text> to see all available agents and commands</text>
+          <text fg="textMuted">Press <span fg="secondary">tab</span> to see all available agents and commands</text>
         </box>
         <Toast />
       </box>

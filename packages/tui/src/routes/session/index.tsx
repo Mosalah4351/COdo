@@ -1171,13 +1171,13 @@ export function Session() {
                 <box flexDirection="row" justifyContent="space-between">
                   <box gap={1}>
                     <text fg="text">
-                      <span fg="secondary">📁</span> <text fg="textMuted">Project</text> <text fg="secondary">{project.instance.directory()?.split(/[\\/]/).pop() ?? "Unknown"}</text>
+                      <span fg="secondary">📁</span> <span fg="textMuted">Project</span> <span fg="secondary">{project.instance.directory()?.split(/[\\/]/).pop() ?? "Unknown"}</span>
                     </text>
                     <text fg="text">
-                      <span fg="secondary">📄</span> <text fg="textMuted">Path</text> <text fg="secondary">{session()?.directory ?? paths.cwd}</text>
+                      <span fg="secondary">📄</span> <span fg="textMuted">Path</span> <span fg="secondary">{session()?.directory ?? paths.cwd}</span>
                     </text>
                     <text fg="text">
-                      <span fg="secondary">🔀</span> <text fg="textMuted">Branch</text> <text fg="secondary">{project.instance.vcs?.branch ?? "main"}</text>
+                      <span fg="secondary">🔀</span> <span fg="textMuted">Branch</span> <span fg="secondary">{project.instance.vcs?.branch ?? "main"}</span>
                     </text>
                   </box>
                   <box alignItems="flex-end" gap={1}>
@@ -1376,7 +1376,7 @@ export function Session() {
               <text fg="secondary">─── Tips ───</text>
             </box>
             <box alignItems="center" marginTop={1} flexShrink={0}>
-              <text fg="textMuted">Press <text fg="secondary">tab</text> to toggle agents  •  Press <text fg="secondary">ctrl+p</text> to open commands  •  Type <text fg="secondary">/help</text> for more options</text>
+              <text fg="textMuted">Press <span fg="secondary">tab</span> to toggle agents  •  Press <span fg="secondary">ctrl+p</span> to open commands  •  Type <span fg="secondary">/help</span> for more options</text>
             </box>
             <Toast />
           </box>
