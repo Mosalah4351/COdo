@@ -16,7 +16,7 @@ import { fileURLToPath } from "url"
 import { useLocal } from "../../context/local"
 import { Flag } from "@codo-ai/core/flag/flag"
 import { tint, useTheme } from "../../context/theme"
-import { EmptyBorder, SplitBorder } from "../../ui/border"
+import { EmptyBorder, SplitBorder, RoundedBorder } from "../../ui/border"
 import { useTuiPaths, useTuiTerminalEnvironment } from "../../context/runtime"
 import { useClipboard } from "../../context/clipboard"
 import { Spinner } from "../spinner"
@@ -1344,9 +1344,9 @@ export function Prompt(props: PromptProps) {
       <box ref={(r: BoxRenderable) => (anchor = r)} visible={props.visible !== false} width="100%">
         <box
           width="100%"
-          border={["left", "right", "top", "bottom"]}
+          border={RoundedBorder.border}
           borderColor={borderHighlight()}
-          borderStyle="round"
+          customBorderChars={RoundedBorder.customBorderChars}
         >
           <box
             paddingLeft={2}
