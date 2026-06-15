@@ -71,11 +71,16 @@ export function Home() {
     <HomeSessionDestinationProvider>
       <box flexGrow={1} alignItems="center" paddingLeft={2} paddingRight={2}>
         <box flexGrow={1} minHeight={0} />
-        <box height={4} minHeight={0} flexShrink={1} />
-        <box flexShrink={0}>
-          <pluginRuntime.Slot name="home_logo" mode="replace">
-            <Logo />
-          </pluginRuntime.Slot>
+        <box height={2} minHeight={0} flexShrink={1} />
+        <box flexShrink={0} borderStyle="round" borderColor="secondary" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
+          <box alignItems="center">
+            <pluginRuntime.Slot name="home_logo" mode="replace">
+              <Logo />
+            </pluginRuntime.Slot>
+          </box>
+          <box alignItems="center" marginTop={1}>
+            <text fg="textMuted">your codebase, in the terminal.</text>
+          </box>
         </box>
         <box height={1} minHeight={0} flexShrink={1} />
         <box width="100%" maxWidth={promptMaxWidth()} zIndex={1000} paddingTop={1} flexShrink={0}>
@@ -83,8 +88,17 @@ export function Home() {
             <Prompt ref={bind} right={<pluginRuntime.Slot name="home_prompt_right" />} placeholders={placeholder} />
           </pluginRuntime.Slot>
         </box>
+        <box alignItems="center" marginTop={1} flexShrink={0}>
+          <text fg="textMuted">↑/↓ to navigate  •  Enter to send  •  Esc to clear</text>
+        </box>
         <pluginRuntime.Slot name="home_bottom" />
         <box flexGrow={1} minHeight={0} />
+        <box alignItems="center" marginTop={1} flexShrink={0}>
+          <text fg="secondary">─── Tips ───</text>
+        </box>
+        <box alignItems="center" marginTop={1} flexShrink={0}>
+          <text fg="textMuted">Press <text fg="secondary">tab</text> to see all available agents and commands</text>
+        </box>
         <Toast />
       </box>
       <box width="100%" flexShrink={0}>

@@ -1166,6 +1166,57 @@ export function Session() {
         <box flexDirection="row" flexGrow={1} minHeight={0}>
           <box flexGrow={1} minHeight={0} paddingBottom={1} paddingLeft={2} paddingRight={2} gap={1}>
             <Show when={session()}>
+              {/* Project Info Card */}
+              <box borderStyle="round" borderColor="secondary" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1} flexShrink={0}>
+                <box flexDirection="row" justifyContent="space-between">
+                  <box gap={1}>
+                    <text fg="text">
+                      <span fg="secondary">📁</span> <text fg="textMuted">Project</text> <text fg="secondary">{project.instance.directory()?.split(/[\\/]/).pop() ?? "Unknown"}</text>
+                    </text>
+                    <text fg="text">
+                      <span fg="secondary">📄</span> <text fg="textMuted">Path</text> <text fg="secondary">{session()?.directory ?? paths.cwd}</text>
+                    </text>
+                    <text fg="text">
+                      <span fg="secondary">🔀</span> <text fg="textMuted">Branch</text> <text fg="secondary">{project.instance.vcs?.branch ?? "main"}</text>
+                    </text>
+                  </box>
+                  <box alignItems="flex-end" gap={1}>
+                    <text fg="primary">● Ready</text>
+                    <text fg="textMuted">Workspace clean</text>
+                  </box>
+                </box>
+              </box>
+              {/* Agents Section */}
+              <box borderStyle="round" borderColor="primary" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1} flexShrink={0}>
+                <text fg="primary" bold>🤖 AGENTS</text>
+                <box flexDirection="row" gap={2} marginTop={1}>
+                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
+                    <text fg="secondary" bold>⟨/⟩</text>
+                    <text fg="text">Build</text>
+                    <text fg="textMuted">Create & modify</text>
+                  </box>
+                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
+                    <text fg="secondary" bold>🐛</text>
+                    <text fg="text">Debug</text>
+                    <text fg="textMuted">Find & fix issues</text>
+                  </box>
+                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
+                    <text fg="secondary" bold>🔍</text>
+                    <text fg="text">Review</text>
+                    <text fg="textMuted">Analyze code</text>
+                  </box>
+                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
+                    <text fg="secondary" bold>📖</text>
+                    <text fg="text">Explain</text>
+                    <text fg="textMuted">Understand code</text>
+                  </box>
+                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
+                    <text fg="secondary" bold>🔀</text>
+                    <text fg="text">Commit</text>
+                    <text fg="textMuted">Stage & commit</text>
+                  </box>
+                </box>
+              </box>
               <scrollbox
                 ref={(r) => (scroll = r)}
                 viewportOptions={{
@@ -1320,6 +1371,13 @@ export function Session() {
                 </Show>
               </box>
             </Show>
+            {/* Tips Section */}
+            <box alignItems="center" marginTop={1} flexShrink={0}>
+              <text fg="secondary">─── Tips ───</text>
+            </box>
+            <box alignItems="center" marginTop={1} flexShrink={0}>
+              <text fg="textMuted">Press <text fg="secondary">tab</text> to toggle agents  •  Press <text fg="secondary">ctrl+p</text> to open commands  •  Type <text fg="secondary">/help</text> for more options</text>
+            </box>
             <Toast />
           </box>
           <Show when={sidebarVisible()}>
