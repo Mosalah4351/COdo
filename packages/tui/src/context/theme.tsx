@@ -38,7 +38,7 @@ const themeSource: ThemeSource = {
   async discover() {
     const directories = [Global.Path.config]
     for (let current = process.cwd(); ; current = path.dirname(current)) {
-      directories.push(path.join(current, ".COdo"))
+      directories.push(path.join(current, ".codo"))
       if (path.dirname(current) === current) break
     }
     return discoverThemes(directories)
@@ -93,7 +93,7 @@ const [store, setStore] = createStore<State>({
   themes: allThemes(),
   mode: "dark",
   lock: undefined,
-  active: "COdo",
+  active: "codo",
   ready: false,
 })
 
@@ -118,8 +118,8 @@ export const { use: useTheme, provider: ThemeProvider } = createSimpleContext({
         if (!lock && pick(kv.get("theme_mode")) !== undefined) kv.set("theme_mode", undefined)
         draft.mode = mode
         draft.lock = lock
-        const active = config.theme ?? kv.get("theme", "COdo")
-        draft.active = typeof active === "string" ? active : "COdo"
+        const active = config.theme ?? kv.get("theme", "codo")
+        draft.active = typeof active === "string" ? active : "codo"
         draft.ready = false
       }),
     )
@@ -140,7 +140,7 @@ export const { use: useTheme, provider: ThemeProvider } = createSimpleContext({
             }, {}),
           )
         })
-        .catch(() => setStore("active", "COdo"))
+        .catch(() => setStore("active", "codo"))
     }
 
     onMount(() => {
@@ -159,7 +159,7 @@ export const { use: useTheme, provider: ThemeProvider } = createSimpleContext({
           if (!colors.palette[0]) {
             if (hasResolvedSystemTheme) return
             setSystemTheme(undefined)
-            if (store.active === "system") setStore("active", "COdo")
+            if (store.active === "system") setStore("active", "codo")
             return
           }
           const next = store.lock ?? terminalMode(colors) ?? mode
@@ -174,7 +174,7 @@ export const { use: useTheme, provider: ThemeProvider } = createSimpleContext({
         .catch(() => {
           if (hasResolvedSystemTheme) return
           setSystemTheme(undefined)
-          if (store.active === "system") setStore("active", "COdo")
+          if (store.active === "system") setStore("active", "codo")
         })
     }
 
@@ -263,7 +263,7 @@ export const { use: useTheme, provider: ThemeProvider } = createSimpleContext({
         if (theme) return resolveTheme(theme, store.mode)
       }
 
-      return resolveTheme(store.themes.COdo, store.mode)
+      return resolveTheme(store.themes.codo, store.mode)
     })
 
     createEffect(() => renderer.setBackgroundColor(values().background))
