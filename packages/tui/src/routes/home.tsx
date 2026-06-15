@@ -11,6 +11,7 @@ import { usePluginRuntime } from "../plugin/runtime"
 import { useEditorContext } from "../context/editor"
 import { useTerminalDimensions } from "@opentui/solid"
 import { useTuiConfig } from "../config"
+import { useTheme } from "../context/theme"
 import { HomeSessionDestinationProvider } from "./home/session-destination"
 
 let once = false
@@ -30,6 +31,7 @@ export function Home() {
   const editor = useEditorContext()
   const dimensions = useTerminalDimensions()
   const tuiConfig = useTuiConfig()
+  const { theme } = useTheme()
   const promptMaxWidth = createMemo(() => {
     const configured = tuiConfig.prompt?.max_width
     if (configured === "auto") return Math.max(75, Math.floor(dimensions().width * 0.7))
@@ -79,7 +81,7 @@ export function Home() {
             </pluginRuntime.Slot>
           </box>
           <box alignItems="center" marginTop={1}>
-            <text fg="textMuted">Build from specs. <span fg="#39ff14">COdo</span> the rest.</text>
+            <text fg="textMuted">Build from specs. <span style={{ fg: theme.primary }}>COdo</span> the rest.</text>
           </box>
         </box>
         <box height={1} minHeight={0} flexShrink={1} />
