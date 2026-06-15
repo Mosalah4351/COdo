@@ -1166,57 +1166,6 @@ export function Session() {
         <box flexDirection="row" flexGrow={1} minHeight={0}>
           <box flexGrow={1} minHeight={0} paddingBottom={1} paddingLeft={2} paddingRight={2} gap={1}>
             <Show when={session()}>
-              {/* Project Info Card */}
-              <box borderStyle="round" borderColor="secondary" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1} flexShrink={0}>
-                <box flexDirection="row" justifyContent="space-between">
-                  <box gap={1}>
-                    <text fg="text">
-                      <span fg="secondary">📁</span> <span fg="textMuted">Project</span> <span fg="secondary">{project.instance.directory()?.split(/[\\/]/).pop() ?? "Unknown"}</span>
-                    </text>
-                    <text fg="text">
-                      <span fg="secondary">📄</span> <span fg="textMuted">Path</span> <span fg="secondary">{session()?.directory ?? paths.cwd}</span>
-                    </text>
-                    <text fg="text">
-                      <span fg="secondary">🔀</span> <span fg="textMuted">Branch</span> <span fg="secondary">{project.instance.vcs?.branch ?? "main"}</span>
-                    </text>
-                  </box>
-                  <box alignItems="flex-end" gap={1}>
-                    <text fg="primary">● Ready</text>
-                    <text fg="textMuted">Workspace clean</text>
-                  </box>
-                </box>
-              </box>
-              {/* Agents Section */}
-              <box borderStyle="round" borderColor="primary" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1} flexShrink={0}>
-                <text fg="primary" bold>🤖 AGENTS</text>
-                <box flexDirection="row" gap={2} marginTop={1}>
-                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
-                    <text fg="secondary" bold>⟨/⟩</text>
-                    <text fg="text">Build</text>
-                    <text fg="textMuted">Create & modify</text>
-                  </box>
-                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
-                    <text fg="secondary" bold>🐛</text>
-                    <text fg="text">Debug</text>
-                    <text fg="textMuted">Find & fix issues</text>
-                  </box>
-                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
-                    <text fg="secondary" bold>🔍</text>
-                    <text fg="text">Review</text>
-                    <text fg="textMuted">Analyze code</text>
-                  </box>
-                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
-                    <text fg="secondary" bold>📖</text>
-                    <text fg="text">Explain</text>
-                    <text fg="textMuted">Understand code</text>
-                  </box>
-                  <box borderStyle="round" borderColor="secondary" paddingLeft={1} paddingRight={1} paddingTop={1} paddingBottom={1}>
-                    <text fg="secondary" bold>🔀</text>
-                    <text fg="text">Commit</text>
-                    <text fg="textMuted">Stage & commit</text>
-                  </box>
-                </box>
-              </box>
               <scrollbox
                 ref={(r) => (scroll = r)}
                 viewportOptions={{
@@ -1716,7 +1665,7 @@ function ReasoningHeader(props: {
     <Switch>
       <Match when={!props.done}>
         <box flexDirection="row">
-          <Spinner color={fg()}>{props.title ? "Thinking: " + props.title : "Thinking"}</Spinner>
+          <Spinner color={fg()} variant="thinking">{props.title ? "Thinking: " + props.title : "Thinking"}</Spinner>
         </box>
       </Match>
       <Match when={true}>
