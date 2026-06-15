@@ -1344,8 +1344,9 @@ export function Prompt(props: PromptProps) {
       <box ref={(r: BoxRenderable) => (anchor = r)} visible={props.visible !== false} width="100%">
         <box
           width="100%"
-          borderStyle="round"
+          border={["left", "right", "top", "bottom"]}
           borderColor={borderHighlight()}
+          borderStyle="round"
         >
           <box
             paddingLeft={2}
