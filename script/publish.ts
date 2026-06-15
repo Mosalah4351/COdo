@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { Script } from "@opencode-ai/script"
+import { Script } from "@codo-ai/script"
 import { $ } from "bun"
 import { fileURLToPath } from "url"
 

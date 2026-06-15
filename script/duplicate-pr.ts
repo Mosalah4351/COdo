@@ -2,7 +2,7 @@
 
 import path from "path"
 import { pathToFileURL } from "bun"
-import { createOpencode } from "@opencode-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 import { parseArgs } from "util"
 
 async function main() {
