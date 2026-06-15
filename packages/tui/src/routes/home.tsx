@@ -79,7 +79,7 @@ export function Home() {
             </pluginRuntime.Slot>
           </box>
           <box alignItems="center" marginTop={1}>
-            <text fg="textMuted">Build from specs. <span fg="primary">COdo</span> the rest.</text>
+            <text fg="textMuted">Build from specs. <span fg="success">COdo</span> the rest.</text>
           </box>
         </box>
         <box height={1} minHeight={0} flexShrink={1} />
