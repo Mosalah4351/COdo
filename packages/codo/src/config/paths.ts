@@ -24,19 +24,19 @@ export const directories = Effect.fn("ConfigPaths.directories")(function* (direc
   const afs = yield* FSUtil.Service
   return unique([
     Global.Path.config,
-    ...(!Flag.COdo_DISABLE_PROJECT_CONFIG
+    ...(!Flag.CODO_DISABLE_PROJECT_CONFIG
       ? yield* afs.up({
-          targets: [".COdo"],
+          targets: [".codo"],
           start: directory,
           stop: worktree,
         })
       : []),
     ...(yield* afs.up({
-      targets: [".COdo"],
+      targets: [".codo"],
       start: Global.Path.home,
       stop: Global.Path.home,
     })),
-    ...(Flag.COdo_CONFIG_DIR ? [Flag.COdo_CONFIG_DIR] : []),
+    ...(Flag.CODO_CONFIG_DIR ? [Flag.CODO_CONFIG_DIR] : []),
   ])
 })
 

@@ -233,5 +233,5 @@ export const fffLayer = Layer.effect(
 )
 
 export const defaultLayer = Layer.unwrap(
-  Effect.sync(() => (Flag.COdo_DISABLE_FFF || !Fff.available() ? ripgrepLayer : fffLayer)),
+  Effect.sync(() => (Flag.CODO_DISABLE_FFF || !Fff.available() ? ripgrepLayer : fffLayer)),
 )

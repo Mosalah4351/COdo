@@ -132,7 +132,7 @@ function UiI18nBridge(props: ParentProps) {
 
 declare global {
   interface Window {
-    __COdo__?: {
+    __CODO__?: {
       deepLinks?: string[]
     }
     api?: {

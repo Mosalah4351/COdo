@@ -215,7 +215,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
     prompts.log.info(`  rm "${targets.binary}"`)
 
     const binDir = path.dirname(targets.binary)
-    if (binDir.includes(".COdo")) {
+    if (binDir.includes(".codo")) {
       prompts.log.info(`  rmdir "${binDir}" 2>/dev/null`)
     }
   }
@@ -266,7 +266,7 @@ async function getShellConfigFile(): Promise<string | null> {
     if (!exists) continue
 
     const content = await Filesystem.readText(file).catch(() => "")
-    if (content.includes("# COdo") || content.includes(".COdo/bin")) {
+    if (content.includes("# COdo") || content.includes(".codo/bin")) {
       return file
     }
   }
@@ -291,14 +291,14 @@ async function cleanShellConfig(file: string) {
 
     if (skip) {
       skip = false
-      if (trimmed.includes(".COdo/bin") || trimmed.includes("fish_add_path")) {
+      if (trimmed.includes(".codo/bin") || trimmed.includes("fish_add_path")) {
         continue
       }
     }
 
     if (
-      (trimmed.startsWith("export PATH=") && trimmed.includes(".COdo/bin")) ||
-      (trimmed.startsWith("fish_add_path") && trimmed.includes(".COdo"))
+      (trimmed.startsWith("export PATH=") && trimmed.includes(".codo/bin")) ||
+      (trimmed.startsWith("fish_add_path") && trimmed.includes(".codo"))
     ) {
       continue
     }

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, mock, spyOn, test } from "bun:test"
-import { OpencodeClient, type Provider } from "@codo-ai/sdk/v2"
+import { COdoClient, type Provider } from "@codo-ai/sdk/v2"
 import type { Resolved } from "@codo-ai/tui/config"
 import { TuiConfig } from "@/config/tui"
 import { resolveDiffStyle, resolveModelInfo, resolveRunTuiConfig } from "@/cli/cmd/run/runtime.boot"
@@ -161,7 +161,7 @@ describe("run runtime boot", () => {
   })
 
   test("prefers configured providers for model selector data", async () => {
-    const sdk = new OpencodeClient()
+    const sdk = new COdoClient()
     const data: {
       all: Provider[]
       default: Record<string, string>
@@ -203,7 +203,7 @@ describe("run runtime boot", () => {
       Promise.resolve({
         data,
         error: undefined,
-        request: new Request("https://opencode.test"),
+        request: new Request("https://codo.test"),
         response: new Response(),
       }),
     )
@@ -211,7 +211,7 @@ describe("run runtime boot", () => {
       Promise.resolve({
         data: configured,
         error: undefined,
-        request: new Request("https://opencode.test"),
+        request: new Request("https://codo.test"),
         response: new Response(),
       }),
     )
@@ -227,7 +227,7 @@ describe("run runtime boot", () => {
   })
 
   test("falls back to provider list when configured providers are unavailable", async () => {
-    const sdk = new OpencodeClient()
+    const sdk = new COdoClient()
     const data: {
       all: Provider[]
       default: Record<string, string>
@@ -266,7 +266,7 @@ describe("run runtime boot", () => {
       Promise.resolve({
         data,
         error: undefined,
-        request: new Request("https://opencode.test"),
+        request: new Request("https://codo.test"),
         response: new Response(),
       }),
     )

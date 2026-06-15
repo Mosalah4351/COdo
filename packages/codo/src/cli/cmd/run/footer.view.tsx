@@ -28,7 +28,7 @@ import { RunPermissionBody } from "./footer.permission"
 import { RunQuestionBody } from "./footer.question"
 import { footerWidthPolicy } from "./footer.width"
 import {
-  COdo_BASE_MODE,
+  CODO_BASE_MODE,
   formatKeyBindings,
   formatKeySequence,
   useBindings,
@@ -496,7 +496,7 @@ export function RunFooterView(props: RunFooterViewProps) {
   })
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && !composer.visible(),
     commands: [
       {
@@ -519,7 +519,7 @@ export function RunFooterView(props: RunFooterViewProps) {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && foregroundSubagents(),
     priority: 1,
     commands: [
@@ -534,7 +534,7 @@ export function RunFooterView(props: RunFooterViewProps) {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && tabs().length > 0,
     commands: [
       {
@@ -548,7 +548,7 @@ export function RunFooterView(props: RunFooterViewProps) {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: active().type === "prompt" && route().type === "composer" && queuedPrompts().length > 0,
     commands: [
       {

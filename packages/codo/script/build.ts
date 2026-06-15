@@ -28,7 +28,7 @@ const createEmbeddedWebUIBundle = async () => {
   console.log(`Building Web UI to embed in the binary`)
   const appDir = path.join(import.meta.dirname, "../../app")
   const dist = path.join(appDir, "dist")
-  await $`COdo_CHANNEL=${Script.channel} bun run --cwd ${appDir} build`
+  await $`CODO_CHANNEL=${Script.channel} bun run --cwd ${appDir} build`
   const files = (await Array.fromAsync(new Bun.Glob("**/*").scan({ cwd: dist })))
     .map((file) => file.replaceAll("\\", "/"))
     .filter((file) => !file.endsWith(".map"))
@@ -188,12 +188,12 @@ for (const item of targets) {
     entrypoints: ["./src/index.ts", parserWorker, workerPath, ...(embeddedFileMap ? ["COdo-web-ui.gen.ts"] : [])],
     define: {
       FFF_LIBC: JSON.stringify(item.abi === "musl" ? "musl" : "gnu"),
-      COdo_VERSION: `'${Script.version}'`,
-      COdo_MODELS_DEV: generated.modelsData,
+      CODO_VERSION: `'${Script.version}'`,
+      CODO_MODELS_DEV: generated.modelsData,
       OTUI_TREE_SITTER_WORKER_PATH: bunfsRoot + workerRelativePath,
-      COdo_WORKER_PATH: workerPath,
-      COdo_CHANNEL: `'${Script.channel}'`,
-      COdo_LIBC: item.os === "linux" ? `'${item.abi ?? "glibc"}'` : "",
+      CODO_WORKER_PATH: workerPath,
+      CODO_CHANNEL: `'${Script.channel}'`,
+      CODO_LIBC: item.os === "linux" ? `'${item.abi ?? "glibc"}'` : "",
       ...(item.os === "linux" ? { "process.env.OPENTUI_LIBC": JSON.stringify(item.abi ?? "glibc") } : {}),
     },
   })

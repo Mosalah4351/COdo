@@ -21,7 +21,7 @@ import { isRecord } from "@/util/record"
 const CLAUDE_EXTERNAL_DIR = ".claude"
 const AGENTS_EXTERNAL_DIR = ".agents"
 const EXTERNAL_SKILL_PATTERN = "skills/**/SKILL.md"
-const COdo_SKILL_PATTERN = "{skill,skills}/**/SKILL.md"
+const CODO_SKILL_PATTERN = "{skill,skills}/**/SKILL.md"
 const SKILL_PATTERN = "**/SKILL.md"
 
 // Built-in skill that ships with COdo. The model's intuition for what an
@@ -29,10 +29,10 @@ const SKILL_PATTERN = "**/SKILL.md"
 // invalid config, so users hit cryptic startup errors. Loading this skill
 // when the model is asked to touch COdo's own config files gives it the
 // actual schemas instead of guesses.
-const CUSTOMIZE_COdo_SKILL_NAME = "customize-COdo"
-const CUSTOMIZE_COdo_SKILL_DESCRIPTION =
-  "Use ONLY when the user is editing or creating COdo's own configuration: COdo.json, COdo.jsonc, files under .COdo/, or files under ~/.config/COdo/. Also use when creating or fixing COdo agents, subagents, skills, plugins, MCP servers, or permission rules. Do not use for the user's own application code, or for any project that is not configuring COdo itself."
-const CUSTOMIZE_COdo_SKILL_BODY = SkillPlugin.CustomizeCOdoContent
+const CUSTOMIZE_CODO_SKILL_NAME = "customize-COdo"
+const CUSTOMIZE_CODO_SKILL_DESCRIPTION =
+  "Use ONLY when the user is editing or creating COdo's own configuration: COdo.json, COdo.jsonc, files under .codo/, or files under ~/.config/COdo/. Also use when creating or fixing COdo agents, subagents, skills, plugins, MCP servers, or permission rules. Do not use for the user's own application code, or for any project that is not configuring COdo itself."
+const CUSTOMIZE_CODO_SKILL_BODY = SkillPlugin.CustomizeCOdoContent
 
 export const Info = Schema.Struct({
   name: Schema.String,
@@ -204,7 +204,7 @@ const discoverSkills = Effect.fnUntraced(function* (
 
   const configDirs = yield* config.directories()
   for (const dir of configDirs) {
-    yield* scan(state, dir, COdo_SKILL_PATTERN)
+    yield* scan(state, dir, CODO_SKILL_PATTERN)
   }
 
   const cfg = yield* config.get()
@@ -275,11 +275,11 @@ export const layer = Layer.effect(
         const s: State = { skills: {}, dirs: new Set() }
         // Register the built-in skill BEFORE disk discovery so a user-disk
         // skill with the same name can override it.
-        s.skills[CUSTOMIZE_COdo_SKILL_NAME] = {
-          name: CUSTOMIZE_COdo_SKILL_NAME,
-          description: CUSTOMIZE_COdo_SKILL_DESCRIPTION,
+        s.skills[CUSTOMIZE_CODO_SKILL_NAME] = {
+          name: CUSTOMIZE_CODO_SKILL_NAME,
+          description: CUSTOMIZE_CODO_SKILL_DESCRIPTION,
           location: "<built-in>",
-          content: CUSTOMIZE_COdo_SKILL_BODY,
+          content: CUSTOMIZE_CODO_SKILL_BODY,
         }
         yield* loadSkills(s, yield* InstanceState.get(discovered), events)
         return s

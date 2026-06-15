@@ -22,18 +22,18 @@ describe("RuntimeFlags", () => {
       const flags = yield* readFlags.pipe(
         Effect.provide(
           fromConfig({
-            OPENCODE_PURE: "true",
-            OPENCODE_DISABLE_DEFAULT_PLUGINS: "true",
-            OPENCODE_AUTO_SHARE: "true",
-            OPENCODE_DISABLE_EMBEDDED_WEB_UI: "true",
-            OPENCODE_DISABLE_EXTERNAL_SKILLS: "true",
-            OPENCODE_DISABLE_LSP_DOWNLOAD: "true",
-            OPENCODE_EXPERIMENTAL: "true",
-            OPENCODE_ENABLE_EXA: "true",
-            OPENCODE_ENABLE_PARALLEL: "true",
-            OPENCODE_ENABLE_EXPERIMENTAL_MODELS: "true",
-            OPENCODE_ENABLE_QUESTION_TOOL: "true",
-            OPENCODE_CLIENT: "desktop",
+            CODO_PURE: "true",
+            CODO_DISABLE_DEFAULT_PLUGINS: "true",
+            CODO_AUTO_SHARE: "true",
+            CODO_DISABLE_EMBEDDED_WEB_UI: "true",
+            CODO_DISABLE_EXTERNAL_SKILLS: "true",
+            CODO_DISABLE_LSP_DOWNLOAD: "true",
+            CODO_EXPERIMENTAL: "true",
+            CODO_ENABLE_EXA: "true",
+            CODO_ENABLE_PARALLEL: "true",
+            CODO_ENABLE_EXPERIMENTAL_MODELS: "true",
+            CODO_ENABLE_QUESTION_TOOL: "true",
+            CODO_CLIENT: "desktop",
           }),
         ),
       )
@@ -64,12 +64,12 @@ describe("RuntimeFlags", () => {
     }),
   )
 
-  it.effect("defaultLayer parses OPENCODE_EXPERIMENTAL_LSP_TY", () =>
+  it.effect("defaultLayer parses CODO_EXPERIMENTAL_LSP_TY", () =>
     Effect.gen(function* () {
       const flags = yield* readFlags.pipe(
         Effect.provide(
           fromConfig({
-            OPENCODE_EXPERIMENTAL_LSP_TY: "true",
+            CODO_EXPERIMENTAL_LSP_TY: "true",
           }),
         ),
       )
@@ -80,8 +80,8 @@ describe("RuntimeFlags", () => {
 
   it.effect("enables native LLM via dedicated flag only", () =>
     Effect.gen(function* () {
-      const explicit = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_EXPERIMENTAL_NATIVE_LLM: "true" })))
-      const umbrella = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_EXPERIMENTAL: "true" })))
+      const explicit = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_EXPERIMENTAL_NATIVE_LLM: "true" })))
+      const umbrella = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_EXPERIMENTAL: "true" })))
 
       expect(explicit.experimentalNativeLlm).toBe(true)
       expect(umbrella.experimentalNativeLlm).toBe(false)
@@ -90,8 +90,8 @@ describe("RuntimeFlags", () => {
 
   it.effect("enables WebSockets via dedicated flag only", () =>
     Effect.gen(function* () {
-      const explicit = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_EXPERIMENTAL_WEBSOCKETS: "true" })))
-      const umbrella = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_EXPERIMENTAL: "true" })))
+      const explicit = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_EXPERIMENTAL_WEBSOCKETS: "true" })))
+      const umbrella = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_EXPERIMENTAL: "true" })))
 
       expect(explicit.experimentalWebSockets).toBe(true)
       expect(umbrella.experimentalWebSockets).toBe(false)
@@ -138,9 +138,9 @@ describe("RuntimeFlags", () => {
     }),
   )
 
-  it.effect("disableExternalSkills reads OPENCODE_DISABLE_EXTERNAL_SKILLS", () =>
+  it.effect("disableExternalSkills reads CODO_DISABLE_EXTERNAL_SKILLS", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_DISABLE_EXTERNAL_SKILLS: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_DISABLE_EXTERNAL_SKILLS: "true" })))
 
       expect(flags.disableExternalSkills).toBe(true)
     }),
@@ -154,9 +154,9 @@ describe("RuntimeFlags", () => {
     }),
   )
 
-  it.effect("disableLspDownload reads OPENCODE_DISABLE_LSP_DOWNLOAD", () =>
+  it.effect("disableLspDownload reads CODO_DISABLE_LSP_DOWNLOAD", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_DISABLE_LSP_DOWNLOAD: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_DISABLE_LSP_DOWNLOAD: "true" })))
 
       expect(flags.disableLspDownload).toBe(true)
     }),
@@ -170,45 +170,45 @@ describe("RuntimeFlags", () => {
     }),
   )
 
-  it.effect("disableClaudeCodePrompt reads OPENCODE_DISABLE_CLAUDE_CODE_PROMPT", () =>
+  it.effect("disableClaudeCodePrompt reads CODO_DISABLE_CLAUDE_CODE_PROMPT", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_DISABLE_CLAUDE_CODE_PROMPT: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_DISABLE_CLAUDE_CODE_PROMPT: "true" })))
 
       expect(flags.disableClaudeCodePrompt).toBe(true)
     }),
   )
 
-  it.effect("disableClaudeCodePrompt inherits OPENCODE_DISABLE_CLAUDE_CODE", () =>
+  it.effect("disableClaudeCodePrompt inherits CODO_DISABLE_CLAUDE_CODE", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_DISABLE_CLAUDE_CODE: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_DISABLE_CLAUDE_CODE: "true" })))
 
       expect(flags.disableClaudeCodePrompt).toBe(true)
     }),
   )
 
-  it.effect("experimentalIconDiscovery reads OPENCODE_EXPERIMENTAL_ICON_DISCOVERY", () =>
+  it.effect("experimentalIconDiscovery reads CODO_EXPERIMENTAL_ICON_DISCOVERY", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_EXPERIMENTAL_ICON_DISCOVERY: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_EXPERIMENTAL_ICON_DISCOVERY: "true" })))
 
       expect(flags.experimentalIconDiscovery).toBe(true)
     }),
   )
 
-  it.effect("experimentalIconDiscovery inherits OPENCODE_EXPERIMENTAL", () =>
+  it.effect("experimentalIconDiscovery inherits CODO_EXPERIMENTAL", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_EXPERIMENTAL: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_EXPERIMENTAL: "true" })))
 
       expect(flags.experimentalIconDiscovery).toBe(true)
     }),
   )
 
-  it.effect("specific experimental flags override OPENCODE_EXPERIMENTAL", () =>
+  it.effect("specific experimental flags override CODO_EXPERIMENTAL", () =>
     Effect.gen(function* () {
       const flags = yield* readFlags.pipe(
         Effect.provide(
           fromConfig({
-            OPENCODE_EXPERIMENTAL: "true",
-            OPENCODE_EXPERIMENTAL_ICON_DISCOVERY: "false",
+            CODO_EXPERIMENTAL: "true",
+            CODO_EXPERIMENTAL_ICON_DISCOVERY: "false",
           }),
         ),
       )
@@ -225,12 +225,12 @@ describe("RuntimeFlags", () => {
     }),
   )
 
-  it.effect("experimentalOxfmt is enabled by OPENCODE_EXPERIMENTAL_OXFMT", () =>
+  it.effect("experimentalOxfmt is enabled by CODO_EXPERIMENTAL_OXFMT", () =>
     Effect.gen(function* () {
       const flags = yield* readFlags.pipe(
         Effect.provide(
           fromConfig({
-            OPENCODE_EXPERIMENTAL_OXFMT: "true",
+            CODO_EXPERIMENTAL_OXFMT: "true",
           }),
         ),
       )
@@ -239,12 +239,12 @@ describe("RuntimeFlags", () => {
     }),
   )
 
-  it.effect("experimentalOxfmt inherits OPENCODE_EXPERIMENTAL", () =>
+  it.effect("experimentalOxfmt inherits CODO_EXPERIMENTAL", () =>
     Effect.gen(function* () {
       const flags = yield* readFlags.pipe(
         Effect.provide(
           fromConfig({
-            OPENCODE_EXPERIMENTAL: "true",
+            CODO_EXPERIMENTAL: "true",
           }),
         ),
       )
@@ -257,19 +257,19 @@ describe("RuntimeFlags", () => {
     { name: "absent", config: {}, expected: undefined },
     {
       name: "valid positive integer",
-      config: { OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "1234" },
+      config: { CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "1234" },
       expected: 1234,
     },
     {
       name: "invalid string",
-      config: { OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "nope" },
+      config: { CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "nope" },
       expected: undefined,
     },
-    { name: "zero", config: { OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "0" }, expected: undefined },
-    { name: "negative", config: { OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "-1" }, expected: undefined },
+    { name: "zero", config: { CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "0" }, expected: undefined },
+    { name: "negative", config: { CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "-1" }, expected: undefined },
     {
       name: "non-integer",
-      config: { OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "1.5" },
+      config: { CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "1.5" },
       expected: undefined,
     },
   ]) {
@@ -286,19 +286,19 @@ describe("RuntimeFlags", () => {
     { name: "absent", config: {}, expected: undefined },
     {
       name: "valid positive integer",
-      config: { OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "1234" },
+      config: { CODO_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "1234" },
       expected: 1234,
     },
     {
       name: "invalid string",
-      config: { OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "nope" },
+      config: { CODO_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "nope" },
       expected: undefined,
     },
-    { name: "zero", config: { OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "0" }, expected: undefined },
-    { name: "negative", config: { OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "-1" }, expected: undefined },
+    { name: "zero", config: { CODO_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "0" }, expected: undefined },
+    { name: "negative", config: { CODO_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "-1" }, expected: undefined },
     {
       name: "non-integer",
-      config: { OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "1.5" },
+      config: { CODO_EXPERIMENTAL_OUTPUT_TOKEN_MAX: "1.5" },
       expected: undefined,
     },
   ]) {
@@ -318,14 +318,14 @@ describe("RuntimeFlags", () => {
         Effect.provide(
           ConfigProvider.layer(
             ConfigProvider.fromUnknown({
-              OPENCODE_PURE: "true",
-              OPENCODE_DISABLE_DEFAULT_PLUGINS: "true",
-              OPENCODE_DISABLE_EXTERNAL_SKILLS: "true",
-              OPENCODE_DISABLE_LSP_DOWNLOAD: "true",
-              OPENCODE_EXPERIMENTAL: "true",
-              OPENCODE_ENABLE_EXA: "true",
-              OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "1234",
-              OPENCODE_CLIENT: "desktop",
+              CODO_PURE: "true",
+              CODO_DISABLE_DEFAULT_PLUGINS: "true",
+              CODO_DISABLE_EXTERNAL_SKILLS: "true",
+              CODO_DISABLE_LSP_DOWNLOAD: "true",
+              CODO_EXPERIMENTAL: "true",
+              CODO_ENABLE_EXA: "true",
+              CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS: "1234",
+              CODO_CLIENT: "desktop",
             }),
           ),
         ),
@@ -355,17 +355,17 @@ describe("RuntimeFlags", () => {
     }),
   )
 
-  it.effect("disableClaudeCodeSkills reads OPENCODE_DISABLE_CLAUDE_CODE_SKILLS", () =>
+  it.effect("disableClaudeCodeSkills reads CODO_DISABLE_CLAUDE_CODE_SKILLS", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_DISABLE_CLAUDE_CODE_SKILLS: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_DISABLE_CLAUDE_CODE_SKILLS: "true" })))
 
       expect(flags.disableClaudeCodeSkills).toBe(true)
     }),
   )
 
-  it.effect("disableClaudeCodeSkills inherits OPENCODE_DISABLE_CLAUDE_CODE", () =>
+  it.effect("disableClaudeCodeSkills inherits CODO_DISABLE_CLAUDE_CODE", () =>
     Effect.gen(function* () {
-      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ OPENCODE_DISABLE_CLAUDE_CODE: "true" })))
+      const flags = yield* readFlags.pipe(Effect.provide(fromConfig({ CODO_DISABLE_CLAUDE_CODE: "true" })))
 
       expect(flags.disableClaudeCodeSkills).toBe(true)
     }),

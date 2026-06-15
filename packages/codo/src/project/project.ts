@@ -168,7 +168,7 @@ export const layer = Layer.effect(
         }),
       )
 
-    const fakeVcs = Schema.decodeUnknownSync(Schema.optional(ProjectVcs))(Flag.COdo_FAKE_VCS)
+    const fakeVcs = Schema.decodeUnknownSync(Schema.optional(ProjectVcs))(Flag.CODO_FAKE_VCS)
 
     const scope = yield* Scope.Scope
 

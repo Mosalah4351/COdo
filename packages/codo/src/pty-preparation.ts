@@ -19,7 +19,7 @@ export const prepareCreate = Effect.fn("PtyPreparation.prepareCreate")(function*
     ...input.env,
     ...shell.env,
     TERM: "xterm-256color",
-    COdo_TERMINAL: "1",
+    CODO_TERMINAL: "1",
   } as Record<string, string>
   if (process.platform === "win32") {
     env.LC_ALL = "C.UTF-8"

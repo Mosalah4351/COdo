@@ -79,7 +79,7 @@ import { collapseToolOutput } from "../../util/collapse-tool-output"
 import { usePluginRuntime } from "../../plugin/runtime"
 import { DialogRetryAction } from "../../component/dialog-retry-action"
 import { getRevertDiffFiles } from "../../util/revert-diff"
-import { COdo_BASE_MODE, useBindings, useCommandShortcut, useCOdoKeymap } from "../../keymap"
+import { CODO_BASE_MODE, useBindings, useCommandShortcut, useCOdoKeymap } from "../../keymap"
 import { PathFormatterProvider, usePathFormatter } from "../../context/path-format"
 
 addDefaultParsers(parsers.parsers)
@@ -1105,12 +1105,12 @@ export function Session() {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     bindings: tuiConfig.keybinds.gather("session", sessionBindingCommands),
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: foregroundTasks().length > 0,
     priority: 1,
     bindings: tuiConfig.keybinds.get("session.background"),

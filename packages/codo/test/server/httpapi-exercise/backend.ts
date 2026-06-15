@@ -60,7 +60,7 @@ function app(modules: Runtime, options: CallOptions) {
     modules.HttpApiApp.routes.pipe(
       Layer.provide(
         ConfigProvider.layer(
-          ConfigProvider.fromUnknown({ COdo_SERVER_PASSWORD: password, COdo_SERVER_USERNAME: username }),
+          ConfigProvider.fromUnknown({ CODO_SERVER_PASSWORD: password, CODO_SERVER_USERNAME: username }),
         ),
       ),
     ),

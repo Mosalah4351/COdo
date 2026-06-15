@@ -15,7 +15,7 @@ function app() {
 const PREFLIGHT_HEADERS = {
   origin: "http://localhost:3000",
   "access-control-request-method": "POST",
-  "access-control-request-headers": "content-type, x-opencode-directory",
+  "access-control-request-headers": "content-type, x-codo-directory",
 }
 
 // effect-smol's HttpMiddleware.cors overwrites `Vary: Origin` with

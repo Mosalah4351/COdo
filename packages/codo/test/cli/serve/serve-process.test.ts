@@ -1,4 +1,4 @@
-// Subprocess integration tests for `opencode serve`. Spawns the real CLI in
+// Subprocess integration tests for `codo serve`. Spawns the real CLI in
 // headless mode and exercises it over HTTP — this is the only test tier that
 // catches bugs spanning argv → server boot → routing → instance loading.
 //
@@ -10,14 +10,14 @@ import { Effect } from "effect"
 import { HttpClient } from "effect/unstable/http"
 import { cliIt } from "../../lib/cli-process"
 
-describe("opencode serve (subprocess)", () => {
+describe("codo serve (subprocess)", () => {
   // Smoke test: server starts, binds a port, and /global/health responds.
   // If this fails, all other serve tests likely will too — debug here first.
   cliIt.live(
     "starts, binds a port, and serves /global/health",
-    ({ opencode }) =>
+    ({ codo }) =>
       Effect.gen(function* () {
-        const server = yield* opencode.serve()
+        const server = yield* codo.serve()
         expect(server.port).toBeGreaterThan(0)
         expect(server.url).toMatch(/^http:\/\//)
 
@@ -38,12 +38,12 @@ describe("opencode serve (subprocess)", () => {
   // to wire the finalizer) would leak processes on every test run.
   cliIt.live(
     "kills the subprocess on scope close",
-    ({ opencode }) =>
+    ({ codo }) =>
       Effect.gen(function* () {
         // Inner scope so we can observe `.exited` resolving after it closes.
         const exitedPromise = yield* Effect.scoped(
           Effect.gen(function* () {
-            const server = yield* opencode.serve()
+            const server = yield* codo.serve()
             // Capture the Promise, not the resolved value — scope closes after
             // this gen returns, at which point the finalizer kills the child.
             return server.exited

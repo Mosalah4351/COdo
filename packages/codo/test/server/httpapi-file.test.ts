@@ -16,7 +16,7 @@ function request(route: string, directory: string, query?: Record<string, string
   return HttpApiApp.webHandler().handler(
     new Request(url, {
       headers: {
-        "x-opencode-directory": directory,
+        "x-codo-directory": directory,
       },
     }),
     context,

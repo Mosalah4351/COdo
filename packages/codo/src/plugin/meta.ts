@@ -46,7 +46,7 @@ type Core = Omit<Entry, "first_time" | "last_time" | "time_changed" | "load_coun
 type Row = Touch & { core: Core }
 
 function storePath() {
-  return Flag.COdo_PLUGIN_META_FILE ?? path.join(Global.Path.state, "plugin-meta.json")
+  return Flag.CODO_PLUGIN_META_FILE ?? path.join(Global.Path.state, "plugin-meta.json")
 }
 
 function lock(file: string) {

@@ -281,7 +281,7 @@ test("useEditorContext preserves selection for the next reconnect when requested
   mounted.dispose()
 })
 
-test("useEditorContext connects with OPENCODE_EDITOR_SSE_PORT", async () => {
+test("useEditorContext connects with CODO_EDITOR_SSE_PORT", async () => {
   await using tmp = await tmpdir()
   process.env.CLAUDE_CODE_SSE_PORT = undefined
   process.env.CODO_EDITOR_SSE_PORT = "4020"

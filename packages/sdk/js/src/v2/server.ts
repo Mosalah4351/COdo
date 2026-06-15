@@ -35,7 +35,7 @@ export async function createCOdoServer(options?: ServerOptions) {
   const proc = launch(`COdo`, args, {
     env: {
       ...process.env,
-      COdo_CONFIG_CONTENT: JSON.stringify(options.config ?? {}),
+      CODO_CONFIG_CONTENT: JSON.stringify(options.config ?? {}),
     },
   })
   let clear = () => {}
@@ -119,7 +119,7 @@ export function createCOdoTui(options?: TuiOptions) {
     stdio: "inherit",
     env: {
       ...process.env,
-      COdo_CONFIG_CONTENT: JSON.stringify(options?.config ?? {}),
+      CODO_CONFIG_CONTENT: JSON.stringify(options?.config ?? {}),
     },
   })
 

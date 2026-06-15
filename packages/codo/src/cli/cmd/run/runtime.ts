@@ -404,7 +404,7 @@ async function runInteractiveRuntime(input: RunRuntimeInput, deps: RunRuntimeDep
     .then(loadCatalog)
     .catch(() => {})
 
-  if (Flag.COdo_SHOW_TTFD) {
+  if (Flag.CODO_SHOW_TTFD) {
     footer.append({
       kind: "system",
       text: `startup ${Math.max(0, Math.round(performance.now() - start))}ms`,

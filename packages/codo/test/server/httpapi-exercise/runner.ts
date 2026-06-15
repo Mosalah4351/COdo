@@ -153,7 +153,7 @@ function withContext<A, E>(
                 time: { created: Date.now() },
                 agent: "build",
                 model: {
-                  providerID: ProviderV2.ID.COdo,
+                  providerID: ProviderV2.ID.codo,
                   modelID: ModelV2.ID.make("test"),
                 },
               }
@@ -258,8 +258,8 @@ function fakeLlmConfig(url: string): Partial<ConfigV1.Info> {
 
 const resetState = Effect.promise(async () => {
   const modules = await runtime()
-  Flag.COdo_SERVER_PASSWORD = original.COdo_SERVER_PASSWORD
-  Flag.COdo_SERVER_USERNAME = original.COdo_SERVER_USERNAME
+  Flag.CODO_SERVER_PASSWORD = original.CODO_SERVER_PASSWORD
+  Flag.CODO_SERVER_USERNAME = original.CODO_SERVER_USERNAME
   await disposeApps()
   await modules.disposeAllInstances()
   await modules.resetDatabase()

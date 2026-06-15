@@ -51,7 +51,7 @@ import { createFadeIn } from "../../util/signal"
 import { DialogSkill } from "../dialog-skill"
 import { DialogWorkspaceUnavailable } from "../dialog-workspace-unavailable"
 import { useArgs } from "../../context/args"
-import { COdo_BASE_MODE, useBindings, useCommandShortcut, useLeaderActive, useCOdoKeymap } from "../../keymap"
+import { CODO_BASE_MODE, useBindings, useCommandShortcut, useLeaderActive, useCOdoKeymap } from "../../keymap"
 import { useTuiConfig } from "../../config"
 import { usePromptWorkspace } from "./workspace"
 import { usePromptMove } from "./move"
@@ -532,7 +532,7 @@ export function Prompt(props: PromptProps) {
         desc: "Change the workspace for the session",
         name: "workspace.set",
         category: "Session",
-        enabled: Flag.COdo_EXPERIMENTAL_WORKSPACES,
+        enabled: Flag.CODO_EXPERIMENTAL_WORKSPACES,
         slashName: "warp",
         run: () => {
           workspace.open()
@@ -559,7 +559,7 @@ export function Prompt(props: PromptProps) {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     bindings: tuiConfig.keybinds.gather("prompt.palette", [
       "prompt.submit",
       "prompt.editor",

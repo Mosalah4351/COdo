@@ -8,7 +8,7 @@ const context = Context.empty() as Context.Context<unknown>
 
 function request(route: string, directory: string, init: RequestInit = {}) {
   const headers = new Headers(init.headers)
-  headers.set("x-opencode-directory", directory)
+  headers.set("x-codo-directory", directory)
   return HttpApiApp.webHandler().handler(
     new Request(`http://localhost${route}`, {
       ...init,

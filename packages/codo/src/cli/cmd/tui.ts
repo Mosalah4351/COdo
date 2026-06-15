@@ -15,7 +15,7 @@ import { validateSession } from "../tui/validate-session"
 import { win32InstallCtrlCGuard } from "@codo-ai/tui/terminal-win32"
 
 declare global {
-  const COdo_WORKER_PATH: string
+  const CODO_WORKER_PATH: string
 }
 
 type RpcClient = ReturnType<typeof Rpc.client<typeof rpc>>
@@ -49,7 +49,7 @@ function createEventSource(client: RpcClient): EventSource {
 }
 
 async function target() {
-  if (typeof COdo_WORKER_PATH !== "undefined") return COdo_WORKER_PATH
+  if (typeof CODO_WORKER_PATH !== "undefined") return CODO_WORKER_PATH
   const dist = new URL("./cli/tui/worker.js", import.meta.url)
   if (await Filesystem.exists(fileURLToPath(dist))) return dist
   return new URL("../tui/worker.ts", import.meta.url)

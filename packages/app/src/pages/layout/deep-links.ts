@@ -37,14 +37,14 @@ export const collectNewSessionDeepLinks = (urls: string[]) =>
   urls.map(parseNewSessionDeepLink).filter((link): link is { directory: string; prompt?: string } => !!link)
 
 type COdoWindow = Window & {
-  __COdo__?: {
+  __CODO__?: {
     deepLinks?: string[]
   }
 }
 
 export const drainPendingDeepLinks = (target: COdoWindow) => {
-  const pending = target.__COdo__?.deepLinks ?? []
+  const pending = target.__CODO__?.deepLinks ?? []
   if (pending.length === 0) return []
-  if (target.__COdo__) target.__COdo__.deepLinks = []
+  if (target.__CODO__) target.__CODO__.deepLinks = []
   return pending
 }

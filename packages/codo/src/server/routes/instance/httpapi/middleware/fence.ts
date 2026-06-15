@@ -12,7 +12,7 @@ export const fenceLayer = HttpRouter.middleware<{ requires: Database.Service; ha
     return (effect) =>
       Effect.gen(function* () {
         const request = yield* HttpServerRequest.HttpServerRequest
-        if (!Flag.COdo_WORKSPACE_ID || ignoredMethods.has(request.method)) return yield* effect
+        if (!Flag.CODO_WORKSPACE_ID || ignoredMethods.has(request.method)) return yield* effect
 
         const previous = yield* Fence.load(db)
         const response = yield* effect

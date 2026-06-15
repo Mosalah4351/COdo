@@ -10,12 +10,12 @@ import { cliIt } from "../../lib/cli-process"
 import { expectOk, selectConfigOption } from "./acp-test-client"
 import { createAcpClient, initialize, newSession, verifierConfig } from "./helpers"
 
-describe("opencode acp lifecycle subprocess", () => {
+describe("codo acp lifecycle subprocess", () => {
   cliIt.live(
     "stdin EOF exits cleanly",
-    ({ opencode }) =>
+    ({ codo }) =>
       Effect.gen(function* () {
-        const acp = yield* opencode.acp()
+        const acp = yield* codo.acp()
         acp.close()
 
         const code = yield* Effect.promise(() => acp.exited).pipe(Effect.timeout(Duration.seconds(5)))
@@ -26,11 +26,11 @@ describe("opencode acp lifecycle subprocess", () => {
 
   cliIt.live(
     "close capability and close request",
-    ({ home, llm, opencode }) =>
+    ({ home, llm, codo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { opencode },
-          { OPENCODE_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
+          { codo },
+          { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         const initialized = yield* initialize(acp)
         expect(initialized.agentCapabilities?.sessionCapabilities?.close).toEqual({})
@@ -43,11 +43,11 @@ describe("opencode acp lifecycle subprocess", () => {
 
   cliIt.live(
     "loadSession capability and load request return session config options",
-    ({ home, llm, opencode }) =>
+    ({ home, llm, codo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { opencode },
-          { OPENCODE_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
+          { codo },
+          { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         const initialized = yield* initialize(acp)
         expect(initialized.agentCapabilities?.loadSession).toBe(true)
@@ -67,11 +67,11 @@ describe("opencode acp lifecycle subprocess", () => {
 
   cliIt.live(
     "list request includes a live ACP-created session",
-    ({ home, llm, opencode }) =>
+    ({ home, llm, codo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { opencode },
-          { OPENCODE_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
+          { codo },
+          { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)
         const session = yield* newSession(acp, home)
@@ -84,9 +84,9 @@ describe("opencode acp lifecycle subprocess", () => {
 
   cliIt.live(
     "resume capability advertisement",
-    ({ opencode }) =>
+    ({ codo }) =>
       Effect.gen(function* () {
-        const initialized = yield* initialize(yield* createAcpClient({ opencode }))
+        const initialized = yield* initialize(yield* createAcpClient({ codo }))
 
         expect(initialized.agentCapabilities?.sessionCapabilities?.resume).toEqual({})
       }),
@@ -95,11 +95,11 @@ describe("opencode acp lifecycle subprocess", () => {
 
   cliIt.live(
     "resume request returns session config options",
-    ({ home, llm, opencode }) =>
+    ({ home, llm, codo }) =>
       Effect.gen(function* () {
         const acp = yield* createAcpClient(
-          { opencode },
-          { OPENCODE_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
+          { codo },
+          { CODO_CONFIG_CONTENT: JSON.stringify(verifierConfig(llm.url)) },
         )
         yield* initialize(acp)
         const session = yield* newSession(acp, home)

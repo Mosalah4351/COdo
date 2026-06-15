@@ -5,7 +5,7 @@ import { testRender, useRenderer } from "@opentui/solid"
 import { createSignal } from "solid-js"
 import { createDefaultOpenTuiKeymap } from "@opentui/keymap/opentui"
 import type { QuestionRequest } from "@codo-ai/sdk/v2"
-import { OpencodeKeymapProvider, registerOpencodeKeymap } from "@codo-ai/tui/keymap"
+import { COdoKeymapProvider, registerCOdoKeymap } from "@codo-ai/tui/keymap"
 import {
   RUN_COMMAND_PANEL_ROWS,
   RUN_SUBAGENT_PANEL_ROWS,
@@ -56,9 +56,9 @@ function model(input: {
 }) {
   return {
     id: input.id,
-    providerID: "opencode",
+    providerID: "codo",
     api: {
-      id: "opencode",
+      id: "codo",
       url: "https://opencode.ai",
       npm: "@ai-sdk/openai-compatible",
     },
@@ -106,8 +106,8 @@ function model(input: {
 
 function provider() {
   return {
-    id: "opencode",
-    name: "opencode",
+    id: "codo",
+    name: "codo",
     source: "api",
     env: [],
     options: {},
@@ -179,10 +179,10 @@ async function renderFooter(
   function Harness() {
     const renderer = useRenderer()
     const keymap = createDefaultOpenTuiKeymap(renderer)
-    offKeymap = registerOpencodeKeymap(keymap, renderer, config)
+    offKeymap = registerCOdoKeymap(keymap, renderer, config)
 
     return (
-      <OpencodeKeymapProvider keymap={keymap}>
+      <COdoKeymapProvider keymap={keymap}>
         <RunFooterView
           directory="/tmp"
           findFiles={async () => []}
@@ -199,7 +199,7 @@ async function renderFooter(
           theme={input.theme ?? (() => RUN_THEME_FALLBACK)}
           tuiConfig={config}
           backgroundSubagents={input.backgroundSubagents ?? true}
-          agent="opencode"
+          agent="codo"
           onSubmit={input.onSubmit ?? (() => true)}
           onPermissionReply={() => {}}
           onQuestionReply={() => {}}
@@ -216,7 +216,7 @@ async function renderFooter(
           onStatus={() => {}}
           onQueuedRemove={async () => true}
         />
-      </OpencodeKeymapProvider>
+      </COdoKeymapProvider>
     )
   }
 
@@ -926,10 +926,10 @@ test("direct footer shows editable prompts and additional queued work while runn
   function Harness() {
     const renderer = useRenderer()
     const keymap = createDefaultOpenTuiKeymap(renderer)
-    offKeymap = registerOpencodeKeymap(keymap, renderer, tuiConfig)
+    offKeymap = registerCOdoKeymap(keymap, renderer, tuiConfig)
 
     return (
-      <OpencodeKeymapProvider keymap={keymap}>
+      <COdoKeymapProvider keymap={keymap}>
         <RunFooterView
           directory="/tmp"
           findFiles={async () => []}
@@ -938,7 +938,7 @@ test("direct footer shows editable prompts and additional queued work while runn
           commands={() => []}
           providers={() => undefined}
           currentModel={() => ({
-            providerID: "opencode",
+            providerID: "codo",
             modelID: "a-model-name-long-enough-to-force-responsive-truncation",
           })}
           variants={() => []}
@@ -952,7 +952,7 @@ test("direct footer shows editable prompts and additional queued work while runn
           theme={() => RUN_THEME_FALLBACK}
           tuiConfig={tuiConfig}
           backgroundSubagents={true}
-          agent="opencode"
+          agent="codo"
           onSubmit={() => true}
           onPermissionReply={() => {}}
           onQuestionReply={() => {}}
@@ -969,7 +969,7 @@ test("direct footer shows editable prompts and additional queued work while runn
           onStatus={() => {}}
           onQueuedRemove={async () => true}
         />
-      </OpencodeKeymapProvider>
+      </COdoKeymapProvider>
     )
   }
 
@@ -1027,7 +1027,7 @@ test("direct footer shows editable prompts and additional queued work while runn
 test("direct footer separates a lone context hint from model and command hint", async () => {
   const app = await renderFooter({
     providers: [provider()],
-    currentModel: { providerID: "opencode", modelID: "gpt-5" },
+    currentModel: { providerID: "codo", modelID: "gpt-5" },
     currentVariant: "xhigh",
     subagents: {
       tabs: [subagent({ sessionID: "s-1", label: "Explore", description: "Inspect auth flow" })],
@@ -1055,7 +1055,7 @@ test("direct footer separates a lone context hint from model and command hint", 
 test("direct footer hides the subagent hint when only completed subagents remain", async () => {
   const app = await renderFooter({
     providers: [provider()],
-    currentModel: { providerID: "opencode", modelID: "gpt-5" },
+    currentModel: { providerID: "codo", modelID: "gpt-5" },
     currentVariant: "xhigh",
     subagents: {
       tabs: [subagent({ sessionID: "s-1", label: "Explore", description: "Inspect auth flow", status: "completed" })],
@@ -1196,10 +1196,10 @@ test.skip("direct custom answer submits through keymap return binding", async ()
   function Harness() {
     const renderer = useRenderer()
     const keymap = createDefaultOpenTuiKeymap(renderer)
-    off = registerOpencodeKeymap(keymap, renderer, tuiConfig)
+    off = registerCOdoKeymap(keymap, renderer, tuiConfig)
 
     return (
-      <OpencodeKeymapProvider keymap={keymap}>
+      <COdoKeymapProvider keymap={keymap}>
         <RunQuestionBody
           request={question}
           theme={RUN_THEME_FALLBACK.footer}
@@ -1208,7 +1208,7 @@ test.skip("direct custom answer submits through keymap return binding", async ()
           }}
           onReject={() => {}}
         />
-      </OpencodeKeymapProvider>
+      </COdoKeymapProvider>
     )
   }
 
@@ -1246,10 +1246,10 @@ test("direct permission rejection submits through keymap return binding", async 
   function Harness() {
     const renderer = useRenderer()
     const keymap = createDefaultOpenTuiKeymap(renderer)
-    off = registerOpencodeKeymap(keymap, renderer, tuiConfig)
+    off = registerCOdoKeymap(keymap, renderer, tuiConfig)
 
     return (
-      <OpencodeKeymapProvider keymap={keymap}>
+      <COdoKeymapProvider keymap={keymap}>
         <RejectField
           theme={RUN_THEME_FALLBACK.footer}
           text=""
@@ -1262,7 +1262,7 @@ test("direct permission rejection submits through keymap return binding", async 
           }}
           onCancel={() => {}}
         />
-      </OpencodeKeymapProvider>
+      </COdoKeymapProvider>
     )
   }
 
@@ -1293,7 +1293,7 @@ test("direct permission rejection submits through keymap return binding", async 
 
 test("direct model panel renders current model selector", async () => {
   const [providers] = createSignal<RunProvider[] | undefined>([provider()])
-  const [current] = createSignal<RunInput["model"]>({ providerID: "opencode", modelID: "gpt-5" })
+  const [current] = createSignal<RunInput["model"]>({ providerID: "codo", modelID: "gpt-5" })
 
   const app = await testRender(
     () => (
@@ -1320,7 +1320,7 @@ test("direct model panel renders current model selector", async () => {
 
     expect(frame).toContain("Select model")
     expect(frame).toContain("Search")
-    expect(frame).toContain("opencode")
+    expect(frame).toContain("codo")
     expect(frame).toContain("GPT-5")
     expect(frame).toContain("current")
     expect(frame).toContain("GPT Free")

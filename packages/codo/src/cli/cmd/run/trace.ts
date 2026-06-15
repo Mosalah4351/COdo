@@ -1,6 +1,6 @@
 // Dev-only JSONL event trace for direct interactive mode.
 //
-// Enable with COdo_DIRECT_TRACE=1. Writes one JSON line per event to
+// Enable with CODO_DIRECT_TRACE=1. Writes one JSON line per event to
 // ~/.local/share/COdo/log/direct/<timestamp>-<pid>.jsonl. Also writes
 // a latest.json pointer so you can quickly find the most recent trace.
 //

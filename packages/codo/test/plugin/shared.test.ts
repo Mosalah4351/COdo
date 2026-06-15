@@ -31,36 +31,36 @@ describe("parsePluginSpecifier", () => {
   })
 
   test("parses package with git+https url", () => {
-    expect(parsePluginSpecifier("acme@git+https://github.com/opencode/acme.git")).toEqual({
+    expect(parsePluginSpecifier("acme@git+https://github.com/codo/acme.git")).toEqual({
       pkg: "acme",
-      version: "git+https://github.com/opencode/acme.git",
+      version: "git+https://github.com/codo/acme.git",
     })
   })
 
   test("parses scoped package with git+https url", () => {
-    expect(parsePluginSpecifier("@codo/acme@git+https://github.com/opencode/acme.git")).toEqual({
+    expect(parsePluginSpecifier("@codo/acme@git+https://github.com/codo/acme.git")).toEqual({
       pkg: "@codo/acme",
-      version: "git+https://github.com/opencode/acme.git",
+      version: "git+https://github.com/codo/acme.git",
     })
   })
 
   test("parses package with git+ssh url containing another @", () => {
-    expect(parsePluginSpecifier("acme@git+ssh://git@github.com/opencode/acme.git")).toEqual({
+    expect(parsePluginSpecifier("acme@git+ssh://git@github.com/codo/acme.git")).toEqual({
       pkg: "acme",
-      version: "git+ssh://git@github.com/opencode/acme.git",
+      version: "git+ssh://git@github.com/codo/acme.git",
     })
   })
 
   test("parses scoped package with git+ssh url containing another @", () => {
-    expect(parsePluginSpecifier("@codo/acme@git+ssh://git@github.com/opencode/acme.git")).toEqual({
+    expect(parsePluginSpecifier("@codo/acme@git+ssh://git@github.com/codo/acme.git")).toEqual({
       pkg: "@codo/acme",
-      version: "git+ssh://git@github.com/opencode/acme.git",
+      version: "git+ssh://git@github.com/codo/acme.git",
     })
   })
 
   test("parses unaliased git+ssh url", () => {
-    expect(parsePluginSpecifier("git+ssh://git@github.com/opencode/acme.git")).toEqual({
-      pkg: "git+ssh://git@github.com/opencode/acme.git",
+    expect(parsePluginSpecifier("git+ssh://git@github.com/codo/acme.git")).toEqual({
+      pkg: "git+ssh://git@github.com/codo/acme.git",
       version: "",
     })
   })

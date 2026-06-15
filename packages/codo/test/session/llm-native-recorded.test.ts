@@ -120,7 +120,7 @@ const RECORDED_SCENARIOS = [
     modelID: "gpt-4.1-mini",
     cassette: "session/native-openai-tool-loop",
     protocol: "openai-responses",
-    tags: ["opencode", "native", "tool-loop"],
+    tags: ["codo", "native", "tool-loop"],
     canRecord: () => Boolean(envValue("CODO_RECORD_OPENAI_API_KEY", "OPENAI_API_KEY")),
     config: (model) =>
       providerConfig({
@@ -143,7 +143,7 @@ const RECORDED_SCENARIOS = [
     modelID: "gpt-5.5",
     cassette: "session/native-openai-oauth-tool-loop",
     protocol: "openai-responses",
-    tags: ["opencode", "native", "oauth", "tool-loop"],
+    tags: ["codo", "native", "oauth", "tool-loop"],
     canRecord: () => recordOpenAIOAuth() !== undefined,
     recordAuth: recordOpenAIOAuth,
     replayAuth: replayOpenAIOAuth,
@@ -160,18 +160,18 @@ const RECORDED_SCENARIOS = [
       }),
   },
   {
-    id: "opencode-proxy",
-    name: "OpenCode proxy",
-    providerID: ProviderV2.ID.opencode,
+    id: "codo-proxy",
+    name: "codo proxy",
+    providerID: ProviderV2.ID.codo,
     modelID: "gpt-5.2-codex",
     cassette: "session/native-zen-tool-loop",
     protocol: "openai-responses",
-    tags: ["opencode", "zen", "native", "tool-loop"],
+    tags: ["codo", "zen", "native", "tool-loop"],
     canRecord: () => Boolean(process.env.CODO_RECORD_CONSOLE_TOKEN && process.env.CODO_RECORD_ZEN_ORG_ID),
     config: (model) =>
       providerConfig({
-        providerID: ProviderV2.ID.opencode,
-        name: "OpenCode Zen",
+        providerID: ProviderV2.ID.codo,
+        name: "codo Zen",
         env: ["CODO_CONSOLE_TOKEN"],
         npm: "@ai-sdk/openai-compatible",
         api: zenURL(process.env.CODO_RECORD_ZEN_CONNECTION ?? "fixture"),
@@ -189,7 +189,7 @@ const RECORDED_SCENARIOS = [
     modelID: "claude-haiku-4-5-20251001",
     cassette: "session/native-anthropic-tool-loop",
     protocol: "anthropic-messages",
-    tags: ["opencode", "native", "tool-loop"],
+    tags: ["codo", "native", "tool-loop"],
     canRecord: () => Boolean(envValue("CODO_RECORD_ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY")),
     config: (model) =>
       providerConfig({
@@ -229,7 +229,7 @@ const canRun = (scenario: RecordedScenario) =>
 
 const recordError = (scenario: RecordedScenario) =>
   scenario.id === "openai-oauth"
-    ? "Set OPENCODE_RECORD_OPENAI_AUTH to an OAuth auth JSON object in the recording environment."
+    ? "Set CODO_RECORD_OPENAI_AUTH to an OAuth auth JSON object in the recording environment."
     : `Missing recording credentials for ${scenario.name}.`
 
 const redactRecordedBody = (body: string) =>
@@ -271,7 +271,7 @@ function recordedNativeLLMLayer(scenario: RecordedScenario) {
     Layer.provide(ModelsDev.defaultLayer),
     Layer.provide(RuntimeFlags.defaultLayer),
   )
-  // Only the HTTP client is recorded; RequestExecutor and the opencode LLM stack remain real.
+  // Only the HTTP client is recorded; RequestExecutor and the codo LLM stack remain real.
   const metadata = {
     provider: scenario.providerID,
     protocol: scenario.protocol,
@@ -310,7 +310,7 @@ function recordedNativeLLMLayer(scenario: RecordedScenario) {
 const writeConfig = (directory: string, scenario: RecordedScenario, model: ModelsDev.Provider["models"][string]) =>
   Effect.promise(() =>
     Bun.write(
-      path.join(directory, "opencode.json"),
+      path.join(directory, "codo.json"),
       JSON.stringify({ $schema: "https://opencode.ai/config.json", ...scenario.config(model) }),
     ),
   )

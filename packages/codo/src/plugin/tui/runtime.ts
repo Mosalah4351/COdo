@@ -252,9 +252,9 @@ function createThemeInstaller(
     const name = path.basename(src, path.extname(src))
     const source_dir = path.dirname(meta.source)
     const local_dir =
-      path.basename(source_dir) === ".COdo"
+      path.basename(source_dir) === ".codo"
         ? path.join(source_dir, "themes")
-        : path.join(source_dir, ".COdo", "themes")
+        : path.join(source_dir, ".codo", "themes")
     const dest_dir = meta.scope === "local" ? local_dir : path.join(Global.Path.config, "themes")
     const dest = path.join(dest_dir, `${name}.json`)
     const stat = await Filesystem.statAsync(src)
@@ -813,7 +813,7 @@ function defaultPluginOrigin(state: RuntimeState, spec: string): ConfigPlugin.Or
   return {
     spec,
     scope: "local",
-    source: state.api.state.path.config || path.join(state.directory, ".COdo", "tui.json"),
+    source: state.api.state.path.config || path.join(state.directory, ".codo", "tui.json"),
   }
 }
 
@@ -1085,8 +1085,8 @@ async function load(input: {
       }).pipe(Effect.provide(RuntimeFlags.defaultLayer)),
     )
     const pluginOrigins = config.plugin_origins ?? (await TuiConfig.pluginOrigins())
-    const records = Flag.COdo_PURE ? [] : pluginOrigins
-    if (Flag.COdo_PURE && pluginOrigins.length) {
+    const records = Flag.CODO_PURE ? [] : pluginOrigins
+    if (Flag.CODO_PURE && pluginOrigins.length) {
     }
 
     for (const item of internalTuiPlugins(flags)) {

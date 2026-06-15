@@ -36,8 +36,8 @@ import { EventV2Bridge } from "@/event-v2-bridge"
 import { Ripgrep } from "@codo-ai/core/ripgrep"
 
 const originalEnv = {
-  OPENCODE_AUTH_CONTENT: process.env.CODO_AUTH_CONTENT,
-  OPENCODE_EXPERIMENTAL_WORKSPACES: process.env.CODO_EXPERIMENTAL_WORKSPACES,
+  CODO_AUTH_CONTENT: process.env.CODO_AUTH_CONTENT,
+  CODO_EXPERIMENTAL_WORKSPACES: process.env.CODO_EXPERIMENTAL_WORKSPACES,
   OTEL_EXPORTER_OTLP_HEADERS: process.env.OTEL_EXPORTER_OTLP_HEADERS,
   OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
   OTEL_RESOURCE_ATTRIBUTES: process.env.OTEL_RESOURCE_ATTRIBUTES,
@@ -123,7 +123,7 @@ async function initGitRepo(dir: string) {
   await $`git init`.cwd(dir).quiet()
   await $`git config core.fsmonitor false`.cwd(dir).quiet()
   await $`git config commit.gpgsign false`.cwd(dir).quiet()
-  await $`git config user.email "test@opencode.test"`.cwd(dir).quiet()
+  await $`git config user.email "test@codo.test"`.cwd(dir).quiet()
   await $`git config user.name "Test"`.cwd(dir).quiet()
   await fs.writeFile(path.join(dir, "tracked.txt"), "base\n")
   await $`git add tracked.txt`.cwd(dir).quiet()
@@ -428,7 +428,7 @@ describe("workspace CRUD", () => {
         process.env.CODO_AUTH_CONTENT = JSON.stringify({ test: { type: "api", key: "secret" } })
         process.env.OTEL_EXPORTER_OTLP_HEADERS = "authorization=otel"
         process.env.OTEL_EXPORTER_OTLP_ENDPOINT = "https://otel.test"
-        process.env.OTEL_RESOURCE_ATTRIBUTES = "service.name=opencode-test"
+        process.env.OTEL_RESOURCE_ATTRIBUTES = "service.name=codo-test"
 
         const workspaceID = WorkspaceV2.ID.ascending("wrk_create_local")
         const type = unique("create-local")
@@ -484,14 +484,14 @@ describe("workspace CRUD", () => {
           extra: { configured: true },
           projectID: instance.project.id,
         })
-        expect(JSON.parse(recorded.calls.create[0].env.OPENCODE_AUTH_CONTENT ?? "{}")).toEqual({
+        expect(JSON.parse(recorded.calls.create[0].env.CODO_AUTH_CONTENT ?? "{}")).toEqual({
           test: { type: "api", key: "secret" },
         })
-        expect(recorded.calls.create[0].env.OPENCODE_WORKSPACE_ID).toBe(workspaceID)
-        expect(recorded.calls.create[0].env.OPENCODE_EXPERIMENTAL_WORKSPACES).toBe("true")
+        expect(recorded.calls.create[0].env.CODO_WORKSPACE_ID).toBe(workspaceID)
+        expect(recorded.calls.create[0].env.CODO_EXPERIMENTAL_WORKSPACES).toBe("true")
         expect(recorded.calls.create[0].env.OTEL_EXPORTER_OTLP_HEADERS).toBe("authorization=otel")
         expect(recorded.calls.create[0].env.OTEL_EXPORTER_OTLP_ENDPOINT).toBe("https://otel.test")
-        expect(recorded.calls.create[0].env.OTEL_RESOURCE_ATTRIBUTES).toBe("service.name=opencode-test")
+        expect(recorded.calls.create[0].env.OTEL_RESOURCE_ATTRIBUTES).toBe("service.name=codo-test")
         expect((yield* workspace.status()).find((item) => item.workspaceID === workspaceID)?.status).toBe("connected")
 
         yield* workspace.remove(workspaceID)

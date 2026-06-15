@@ -4,7 +4,7 @@ import { createSignal, Show } from "solid-js"
 import { createStore } from "solid-js/store"
 
 export function HelpButton() {
-  if (import.meta.env.VITE_COdo_CHANNEL !== "dev") return null
+  if (import.meta.env.VITE_CODO_CHANNEL !== "dev") return null
 
   const [state, setState] = /* persisted(Persist.global("help-button"), */ createStore({ dismissed: false }) /* ) */
   const [shown, setShown] = createSignal(false)

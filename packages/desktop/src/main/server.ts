@@ -45,9 +45,9 @@ export function preferAppEnv(userDataPath: string) {
   const shell = process.platform === "win32" ? null : getUserShell()
   Object.assign(process.env, {
     ...(shell ? loadShellEnv(shell, getLogger()) : null),
-    COdo_EXPERIMENTAL_ICON_DISCOVERY: "true",
-    COdo_EXPERIMENTAL_FILEWATCHER: "true",
-    COdo_CLIENT: "desktop",
+    CODO_EXPERIMENTAL_ICON_DISCOVERY: "true",
+    CODO_EXPERIMENTAL_FILEWATCHER: "true",
+    CODO_CLIENT: "desktop",
     XDG_STATE_HOME: process.env.XDG_STATE_HOME ?? userDataPath,
   })
 }
@@ -213,7 +213,7 @@ function createSidecarEnv(): Record<string, string> {
   )
   delete env.DEBUG
   if (process.platform === "linux") delete env.LD_PRELOAD
-  if (!app.isPackaged) env.COdo_DISABLE_CHANNEL_DB = "1"
+  if (!app.isPackaged) env.CODO_DISABLE_CHANNEL_DB = "1"
   return env
 }
 

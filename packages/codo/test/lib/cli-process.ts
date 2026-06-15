@@ -6,11 +6,11 @@
 // the original /event race or #27371's invalid-model hang).
 //
 // Configuration flows through COdo's built-in test affordances:
-//   - COdo_CONFIG_CONTENT      : provider config inline, no files to find
-//   - COdo_TEST_HOME           : pins os.homedir() → tmpdir
-//   - COdo_DISABLE_PROJECT_CONFIG : skip walking up for COdo.json
-//   - COdo_PURE                : skip external plugin discovery + install
-//   - COdo_DISABLE_AUTOUPDATE / AUTOCOMPACT / MODELS_FETCH : no background work
+//   - CODO_CONFIG_CONTENT      : provider config inline, no files to find
+//   - CODO_TEST_HOME           : pins os.homedir() → tmpdir
+//   - CODO_DISABLE_PROJECT_CONFIG : skip walking up for COdo.json
+//   - CODO_PURE                : skip external plugin discovery + install
+//   - CODO_DISABLE_AUTOUPDATE / AUTOCOMPACT / MODELS_FETCH : no background work
 // Plus HOME / XDG_* pointing at the tmpdir for belt-and-suspenders isolation.
 //
 // Today only `COdo.run` is fully wired. The shape supports adding more
@@ -59,19 +59,19 @@ function forkStderrDrain(stream: ReadableStream<Uint8Array>, into: string[]) {
 
 function isolatedEnv(home: string, configJson: string): Record<string, string> {
   return {
-    COdo_TEST_HOME: home,
+    CODO_TEST_HOME: home,
     HOME: home,
     XDG_CONFIG_HOME: path.join(home, ".config"),
     XDG_DATA_HOME: path.join(home, ".local/share"),
     XDG_STATE_HOME: path.join(home, ".local/state"),
     XDG_CACHE_HOME: path.join(home, ".cache"),
-    COdo_CONFIG_CONTENT: configJson,
-    COdo_DISABLE_PROJECT_CONFIG: "1",
-    COdo_PURE: "1",
-    COdo_DISABLE_AUTOUPDATE: "1",
-    COdo_DISABLE_AUTOCOMPACT: "1",
-    COdo_DISABLE_MODELS_FETCH: "1",
-    COdo_AUTH_CONTENT: "{}",
+    CODO_CONFIG_CONTENT: configJson,
+    CODO_DISABLE_PROJECT_CONFIG: "1",
+    CODO_PURE: "1",
+    CODO_DISABLE_AUTOUPDATE: "1",
+    CODO_DISABLE_AUTOCOMPACT: "1",
+    CODO_DISABLE_MODELS_FETCH: "1",
+    CODO_AUTH_CONTENT: "{}",
   }
 }
 
@@ -170,7 +170,7 @@ export type COdoCli = {
 export type CliFixture = {
   readonly llm: TestLLMServer["Service"]
   readonly home: string
-  readonly COdo: COdoCli
+  readonly codo: COdoCli
 }
 
 // Provisions a TestLLMServer + tmpdir + spawn helper and invokes fn. Cleans

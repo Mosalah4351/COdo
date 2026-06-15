@@ -120,7 +120,7 @@ async function COdoFiles(input: { directories: string[]; cwd: string }) {
   for (const dir of unique(input.directories)) {
     files.push(...ConfigPaths.fileInDirectory(dir, "COdo"))
   }
-  if (Flag.COdo_CONFIG) files.push(Flag.COdo_CONFIG)
+  if (Flag.CODO_CONFIG) files.push(Flag.CODO_CONFIG)
 
   const existing = await Promise.all(
     unique(files).map(async (file) => {

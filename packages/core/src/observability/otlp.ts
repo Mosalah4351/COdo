@@ -40,7 +40,7 @@ export function resource(): { serviceName: string; serviceVersion: string; attri
     attributes: {
       ...resourceAttributes(),
       "deployment.environment.name": InstallationChannel,
-      "COdo.client": Flag.COdo_CLIENT,
+      "COdo.client": Flag.CODO_CLIENT,
       "COdo.run": runID,
       "service.instance.id": runID,
     },

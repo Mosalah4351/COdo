@@ -49,7 +49,7 @@ if (import.meta.env.VITE_SENTRY_DSN) {
         (i) =>
           i.name !== "Breadcrumbs" &&
           !(
-            import.meta.env.COdo_CHANNEL === "prod" &&
+            import.meta.env.CODO_CHANNEL === "prod" &&
             (i.name === "GlobalHandlers" || i.name === "BrowserApiErrors")
           ),
       )
@@ -66,9 +66,9 @@ const deepLinkEvent = "COdo:deep-link"
 
 const emitDeepLinks = (urls: string[]) => {
   if (urls.length === 0) return
-  window.__COdo__ ??= {}
-  const pending = window.__COdo__.deepLinks ?? []
-  window.__COdo__.deepLinks = [...pending, ...urls]
+  window.__CODO__ ??= {}
+  const pending = window.__CODO__.deepLinks ?? []
+  window.__CODO__.deepLinks = [...pending, ...urls]
   window.dispatchEvent(new CustomEvent(deepLinkEvent, { detail: { urls } }))
 }
 

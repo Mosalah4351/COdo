@@ -96,7 +96,7 @@ describe("pty environment preparation", () => {
       expect(prepared.env.INPUT).toBe("plugin")
       expect(prepared.env.FROM_PLUGIN).toBe("plugin")
       expect(prepared.env.TERM).toBe("xterm-256color")
-      expect(prepared.env.OPENCODE_TERMINAL).toBe("1")
+      expect(prepared.env.CODO_TERMINAL).toBe("1")
     }),
   )
 })

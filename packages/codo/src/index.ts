@@ -73,7 +73,7 @@ const cli = yargs(args)
     Heap.start()
 
     process.env.AGENT = "1"
-    process.env.COdo = "1"
+    process.env.codo = "1"
     process.env.CODO_PID = String(process.pid)
   })
   .usage("")

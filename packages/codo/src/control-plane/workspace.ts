@@ -543,9 +543,9 @@ export const layer = Layer.effect(
         .pipe(Effect.orDie)
 
       const env = {
-        COdo_AUTH_CONTENT: JSON.stringify(yield* auth.all()),
-        COdo_WORKSPACE_ID: config.id,
-        COdo_EXPERIMENTAL_WORKSPACES: "true",
+        CODO_AUTH_CONTENT: JSON.stringify(yield* auth.all()),
+        CODO_WORKSPACE_ID: config.id,
+        CODO_EXPERIMENTAL_WORKSPACES: "true",
         OTEL_EXPORTER_OTLP_HEADERS: process.env.OTEL_EXPORTER_OTLP_HEADERS,
         OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
         OTEL_RESOURCE_ATTRIBUTES: process.env.OTEL_RESOURCE_ATTRIBUTES,

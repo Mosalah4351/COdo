@@ -37,8 +37,8 @@ export const WebCommand = effectCmd({
   instance: false,
   handler: Effect.fn("Cli.web")(function* (args) {
     const { Server } = yield* Effect.promise(() => import("../../server/server"))
-    if (!Flag.COdo_SERVER_PASSWORD) {
-      UI.println(UI.Style.TEXT_WARNING_BOLD + "!  COdo_SERVER_PASSWORD is not set; server is unsecured.")
+    if (!Flag.CODO_SERVER_PASSWORD) {
+      UI.println(UI.Style.TEXT_WARNING_BOLD + "!  CODO_SERVER_PASSWORD is not set; server is unsecured.")
     }
     const opts = yield* resolveNetworkOptions(args)
     const server = yield* Effect.promise(() => Server.listen(opts))

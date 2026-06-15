@@ -267,7 +267,7 @@ describe("HttpApi workspace routing middleware", () => {
       const project = yield* Project.use.fromDirectory(dir)
       let forwarded: ProxiedRequest | undefined
 
-      // This starts a second HTTP server that stands in for the opencode server
+      // This starts a second HTTP server that stands in for the codo server
       // backing a remote workspace. The client below still calls the local test
       // server; only the middleware should call this server.
       const remoteUrl = yield* startRemoteWorkspaceHttpServer((request) => {
@@ -301,8 +301,8 @@ describe("HttpApi workspace routing middleware", () => {
       const body = '{"title":"Remote workspace request"}'
       const response = yield* HttpClientRequest.patch(`/probe?workspace=${workspace.id}&keep=yes`).pipe(
         HttpClientRequest.setHeaders({
-          "x-opencode-directory": "/secret/path",
-          "x-opencode-workspace": "internal",
+          "x-codo-directory": "/secret/path",
+          "x-codo-workspace": "internal",
         }),
         HttpClientRequest.bodyStream(
           Stream.make(new TextEncoder().encode('{"title":"Remote '), new TextEncoder().encode('workspace request"}')),
@@ -325,8 +325,8 @@ describe("HttpApi workspace routing middleware", () => {
       expect(forwarded?.body).toBe(body)
       expect(forwarded?.headers["content-type"]).toBe("application/json")
       expect(forwarded?.headers["x-target-auth"]).toBe("secret")
-      expect(forwarded?.headers["x-opencode-directory"]).toBeUndefined()
-      expect(forwarded?.headers["x-opencode-workspace"]).toBeUndefined()
+      expect(forwarded?.headers["x-codo-directory"]).toBeUndefined()
+      expect(forwarded?.headers["x-codo-workspace"]).toBeUndefined()
     }),
   )
 
@@ -516,7 +516,7 @@ describe("HttpApi workspace routing middleware", () => {
       // directory hints before using the process cwd.
       const queryResponse = yield* HttpClient.get(`/probe?directory=${encodeURIComponent(queryDir)}`)
       const headerResponse = yield* HttpClientRequest.get("/probe").pipe(
-        HttpClientRequest.setHeader("x-opencode-directory", headerDir),
+        HttpClientRequest.setHeader("x-codo-directory", headerDir),
         HttpClient.execute,
       )
 

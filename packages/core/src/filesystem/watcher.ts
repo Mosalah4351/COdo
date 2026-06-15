@@ -15,7 +15,7 @@ import { lazy } from "../util/lazy"
 import { Ignore } from "./ignore"
 import { Protected } from "./protected"
 
-declare const COdo_LIBC: string | undefined
+declare const CODO_LIBC: string | undefined
 
 const SUBSCRIBE_TIMEOUT_MS = 10_000
 
@@ -31,7 +31,7 @@ export const Event = {
 
 const watcher = lazy((): typeof import("@parcel/watcher") | undefined => {
   try {
-    const libc = typeof COdo_LIBC === "undefined" ? undefined : COdo_LIBC
+    const libc = typeof CODO_LIBC === "undefined" ? undefined : CODO_LIBC
     const binding = require(
       `@parcel/watcher-${process.platform}-${process.arch}${process.platform === "linux" ? `-${libc || "glibc"}` : ""}`,
     )
@@ -63,7 +63,7 @@ export class Service extends Context.Service<Service, Interface>()("@codo/v2/Fil
 export const layer = Layer.effect(
   Service,
   Effect.gen(function* () {
-    if (yield* Flag.COdo_EXPERIMENTAL_DISABLE_FILEWATCHER) return Service.of({})
+    if (yield* Flag.CODO_EXPERIMENTAL_DISABLE_FILEWATCHER) return Service.of({})
 
     const backend = getBackend()
     const location = yield* Location.Service
@@ -112,7 +112,7 @@ export const layer = Layer.effect(
     const config = (yield* (yield* Config.Service).entries())
       .filter((entry): entry is Config.Document => entry.type === "document")
       .flatMap((item) => item.info.watcher?.ignore ?? [])
-    if (yield* Flag.COdo_EXPERIMENTAL_FILEWATCHER) {
+    if (yield* Flag.CODO_EXPERIMENTAL_FILEWATCHER) {
       yield* Effect.forkScoped(
         subscribe(location.directory, [...Ignore.PATTERNS, ...config, ...protecteds(location.directory)]),
       )

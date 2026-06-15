@@ -247,7 +247,7 @@ export const layer = Layer.effect(
       let result: Info = {}
       // Seed the default global config with the schema for editor completion, but avoid writing when the user
       // explicitly routes config through env-provided paths or content.
-      if (!Flag.COdo_CONFIG && !Flag.COdo_CONFIG_DIR && !Flag.COdo_CONFIG_CONTENT) {
+      if (!Flag.CODO_CONFIG && !Flag.CODO_CONFIG_DIR && !Flag.CODO_CONFIG_CONTENT) {
         const file = globalConfigFile()
         if (!existsSync(file)) {
           yield* fs
@@ -397,12 +397,12 @@ export const layer = Layer.effect(
         const global = Object.keys(authEnv).length ? yield* loadGlobal(authEnv) : yield* getGlobal()
         yield* merge(Global.Path.config, global, "global")
 
-        if (Flag.COdo_CONFIG) {
-          yield* merge(Flag.COdo_CONFIG, yield* loadFile(Flag.COdo_CONFIG, authEnv))
-          yield* Effect.logDebug("loaded custom config", { path: Flag.COdo_CONFIG })
+        if (Flag.CODO_CONFIG) {
+          yield* merge(Flag.CODO_CONFIG, yield* loadFile(Flag.CODO_CONFIG, authEnv))
+          yield* Effect.logDebug("loaded custom config", { path: Flag.CODO_CONFIG })
         }
 
-        if (!Flag.COdo_DISABLE_PROJECT_CONFIG) {
+        if (!Flag.CODO_DISABLE_PROJECT_CONFIG) {
           for (const file of yield* ConfigPaths.files("COdo", ctx.directory, ctx.worktree).pipe(Effect.orDie)) {
             yield* merge(file, yield* loadFile(file, authEnv), "local")
           }
@@ -414,14 +414,14 @@ export const layer = Layer.effect(
 
         const directories = yield* ConfigPaths.directories(ctx.directory, ctx.worktree)
 
-        if (Flag.COdo_CONFIG_DIR) {
-          yield* Effect.logDebug("loading config from COdo_CONFIG_DIR", { path: Flag.COdo_CONFIG_DIR })
+        if (Flag.CODO_CONFIG_DIR) {
+          yield* Effect.logDebug("loading config from CODO_CONFIG_DIR", { path: Flag.CODO_CONFIG_DIR })
         }
 
         const deps: Fiber.Fiber<void>[] = []
 
         for (const dir of directories) {
-          if (dir.endsWith(".COdo") || dir === Flag.COdo_CONFIG_DIR) {
+          if (dir.endsWith(".codo") || dir === Flag.CODO_CONFIG_DIR) {
             for (const file of ["COdo.json", "COdo.jsonc"]) {
               const source = path.join(dir, file)
               yield* Effect.logDebug(`loading config from ${source}`)
@@ -458,7 +458,7 @@ export const layer = Layer.effect(
           result.command = mergeDeep(result.command ?? {}, yield* Effect.promise(() => ConfigCommand.load(dir)))
           result.agent = mergeDeep(result.agent ?? {}, yield* Effect.promise(() => ConfigAgent.load(dir)))
           result.agent = mergeDeep(result.agent ?? {}, yield* Effect.promise(() => ConfigAgent.loadMode(dir)))
-          // Auto-discovered plugins under `.COdo/plugin(s)` are already local files, so ConfigPlugin.load
+          // Auto-discovered plugins under `.codo/plugin(s)` are already local files, so ConfigPlugin.load
           // returns normalized Specs and we only need to attach origin metadata here.
           const list = yield* Effect.promise(() => ConfigPlugin.load(dir))
           yield* mergePluginOrigins(dir, list)
@@ -471,7 +471,7 @@ export const layer = Layer.effect(
             source,
           })
           yield* merge(source, next, "local")
-          yield* Effect.logDebug("loaded custom config from COdo_CONFIG_CONTENT")
+          yield* Effect.logDebug("loaded custom config from CODO_CONFIG_CONTENT")
         }
 
         const activeAccount = Option.getOrUndefined(
@@ -541,9 +541,9 @@ export const layer = Layer.effect(
           })
         }
 
-        if (Flag.COdo_PERMISSION) {
+        if (Flag.CODO_PERMISSION) {
           try {
-            result.permission = mergeDeep(result.permission ?? {}, JSON.parse(Flag.COdo_PERMISSION))
+            result.permission = mergeDeep(result.permission ?? {}, JSON.parse(Flag.CODO_PERMISSION))
           } catch (err) {
             yield* Effect.logWarning("CODO_PERMISSION contains invalid JSON, skipping", { err })
           }
@@ -575,10 +575,10 @@ export const layer = Layer.effect(
           result.share = "auto"
         }
 
-        if (Flag.COdo_DISABLE_AUTOCOMPACT) {
+        if (Flag.CODO_DISABLE_AUTOCOMPACT) {
           result.compaction = { ...result.compaction, auto: false }
         }
-        if (Flag.COdo_DISABLE_PRUNE) {
+        if (Flag.CODO_DISABLE_PRUNE) {
           result.compaction = { ...result.compaction, prune: false }
         }
 

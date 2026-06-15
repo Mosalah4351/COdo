@@ -71,7 +71,7 @@ describe("util.process", () => {
   test("merges environment overrides", async () => {
     const out = await Process.run(node('process.stdout.write(process.env.CODO_TEST ?? "")'), {
       env: {
-        OPENCODE_TEST: "set",
+        CODO_TEST: "set",
       },
     })
     expect(out.stdout.toString()).toBe("set")
@@ -83,7 +83,7 @@ describe("util.process", () => {
     const out = await Process.run(["set", "CODO_TEST_SHELL"], {
       shell: true,
       env: {
-        OPENCODE_TEST_SHELL: "ok",
+        CODO_TEST_SHELL: "ok",
       },
     })
 

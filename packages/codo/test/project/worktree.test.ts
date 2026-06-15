@@ -84,7 +84,7 @@ describe("Worktree", () => {
 
           expect(info.name).toBeDefined()
           expect(typeof info.name).toBe("string")
-          expect(info.branch).toBe(`opencode/${info.name}`)
+          expect(info.branch).toBe(`codo/${info.name}`)
           expect(info.directory).toContain(info.name)
         }),
       { git: true },
@@ -98,7 +98,7 @@ describe("Worktree", () => {
           const info = yield* svc.makeWorktreeInfo({ name: "my-feature" })
 
           expect(info.name).toBe("my-feature")
-          expect(info.branch).toBe("opencode/my-feature")
+          expect(info.branch).toBe("codo/my-feature")
         }),
       { git: true },
     )
@@ -121,7 +121,7 @@ describe("Worktree", () => {
         Effect.gen(function* () {
           const test = yield* TestInstance
           const svc = yield* Worktree.Service
-          yield* git(test.directory, ["branch", "opencode/my-feature"])
+          yield* git(test.directory, ["branch", "codo/my-feature"])
 
           const info = yield* svc.makeWorktreeInfo({ name: "my-feature", detached: true })
 
@@ -180,7 +180,7 @@ describe("Worktree", () => {
         withCreatedWorktree(undefined, ({ info }) =>
           Effect.gen(function* () {
             expect(info.name).toBeDefined()
-            expect(info.branch ?? "").toStartWith("opencode/")
+            expect(info.branch ?? "").toStartWith("codo/")
             expect(info.directory).toBeDefined()
           }),
         ),
@@ -195,7 +195,7 @@ describe("Worktree", () => {
             const svc = yield* Worktree.Service
 
             expect(info.name).toBeDefined()
-            expect(info.branch ?? "").toStartWith("opencode/")
+            expect(info.branch ?? "").toStartWith("codo/")
 
             expect(ready.name).toBe(info.name)
             expect(ready.branch).toBe(info.branch)
@@ -229,7 +229,7 @@ describe("Worktree", () => {
         withCreatedWorktree({ name: "test-workspace" }, ({ info }) =>
           Effect.gen(function* () {
             expect(info.name).toBe("test-workspace")
-            expect(info.branch).toBe("opencode/test-workspace")
+            expect(info.branch).toBe("codo/test-workspace")
           }),
         ),
       { git: true },

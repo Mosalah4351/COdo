@@ -111,7 +111,7 @@ function withCreatedWorktree(
 
       expect(created.status).toBe(200)
       const info = yield* json<Worktree.Info>(created)
-      expect(info).toMatchObject({ name, branch: "opencode/api-test" })
+      expect(info).toMatchObject({ name, branch: "codo/api-test" })
       yield* Fiber.join(ready)
       return info
     }),
@@ -146,7 +146,7 @@ describe("experimental HttpApi", () => {
           [
             request(ExperimentalPaths.console, directory),
             request(ExperimentalPaths.consoleOrgs, directory),
-            request(`${ExperimentalPaths.tool}?provider=opencode&model=gpt-5`, directory),
+            request(`${ExperimentalPaths.tool}?provider=codo&model=gpt-5`, directory),
             request(ExperimentalPaths.toolIDs, directory),
             request(ExperimentalPaths.worktree, directory),
             request(ExperimentalPaths.resource, directory),

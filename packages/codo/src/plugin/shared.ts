@@ -197,7 +197,7 @@ export async function checkPluginCompatibility(target: string, COdoVersion: stri
   if (!hit) return
   const engines = hit.json.engines
   if (!isRecord(engines)) return
-  const range = engines.COdo
+  const range = engines.codo
   if (typeof range !== "string") return
   if (!semver.satisfies(COdoVersion, range)) {
     throw new Error(`Plugin requires COdo ${range} but running ${COdoVersion}`)

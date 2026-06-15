@@ -19,11 +19,11 @@ export const exerciseDatabasePath =
   process.env.CODO_HTTPAPI_EXERCISE_DB ??
   path.join(process.env.TMPDIR ?? "/tmp", `COdo-httpapi-exercise-${process.pid}.db`)
 process.env.CODO_DB = exerciseDatabasePath
-Flag.COdo_DB = exerciseDatabasePath
+Flag.CODO_DB = exerciseDatabasePath
 
 export const original = {
-  COdo_SERVER_PASSWORD: Flag.COdo_SERVER_PASSWORD,
-  COdo_SERVER_USERNAME: Flag.COdo_SERVER_USERNAME,
+  CODO_SERVER_PASSWORD: Flag.CODO_SERVER_PASSWORD,
+  CODO_SERVER_USERNAME: Flag.CODO_SERVER_USERNAME,
 }
 
 export const cleanupExercisePaths = Effect.promise(async () => {

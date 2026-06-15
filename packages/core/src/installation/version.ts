@@ -1,8 +1,8 @@
 declare global {
-  const COdo_VERSION: string
-  const COdo_CHANNEL: string
+  const CODO_VERSION: string
+  const CODO_CHANNEL: string
 }
 
-export const InstallationVersion = typeof COdo_VERSION === "string" ? COdo_VERSION : "local"
-export const InstallationChannel = typeof COdo_CHANNEL === "string" ? COdo_CHANNEL : "local"
+export const InstallationVersion = typeof CODO_VERSION === "string" ? CODO_VERSION : "local"
+export const InstallationChannel = typeof CODO_CHANNEL === "string" ? CODO_CHANNEL : "local"
 export const InstallationLocal = InstallationChannel === "local"

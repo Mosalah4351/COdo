@@ -18,21 +18,21 @@ if (!semver.satisfies(process.versions.bun, expectedBunVersionRange)) {
 }
 
 const env = {
-  COdo_CHANNEL: process.env["CODO_CHANNEL"],
-  COdo_BUMP: process.env["CODO_BUMP"],
-  COdo_VERSION: process.env["CODO_VERSION"],
-  COdo_RELEASE: process.env["CODO_RELEASE"],
+  CODO_CHANNEL: process.env["CODO_CHANNEL"],
+  CODO_BUMP: process.env["CODO_BUMP"],
+  CODO_VERSION: process.env["CODO_VERSION"],
+  CODO_RELEASE: process.env["CODO_RELEASE"],
 }
 const CHANNEL = await (async () => {
-  if (env.COdo_CHANNEL) return env.COdo_CHANNEL
-  if (env.COdo_BUMP) return "latest"
-  if (env.COdo_VERSION && !env.COdo_VERSION.startsWith("0.0.0-")) return "latest"
+  if (env.CODO_CHANNEL) return env.CODO_CHANNEL
+  if (env.CODO_BUMP) return "latest"
+  if (env.CODO_VERSION && !env.CODO_VERSION.startsWith("0.0.0-")) return "latest"
   return await $`git branch --show-current`.text().then((x) => x.trim())
 })()
 const IS_PREVIEW = CHANNEL !== "latest"
 
 const VERSION = await (async () => {
-  if (env.COdo_VERSION) return env.COdo_VERSION
+  if (env.CODO_VERSION) return env.CODO_VERSION
   if (IS_PREVIEW) return `0.0.0-${CHANNEL}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`
   const version = await fetch("https://registry.npmjs.org/COdo-ai/latest")
     .then((res) => {
@@ -41,7 +41,7 @@ const VERSION = await (async () => {
     })
     .then((data: any) => data.version)
   const [major, minor, patch] = version.split(".").map((x: string) => Number(x) || 0)
-  const t = env.COdo_BUMP?.toLowerCase()
+  const t = env.CODO_BUMP?.toLowerCase()
   if (t === "major") return `${major + 1}.0.0`
   if (t === "minor") return `${major}.${minor + 1}.0`
   return `${major}.${minor}.${patch + 1}`
@@ -68,7 +68,7 @@ export const Script = {
     return IS_PREVIEW
   },
   get release(): boolean {
-    return !!env.COdo_RELEASE
+    return !!env.CODO_RELEASE
   },
   get team() {
     return team

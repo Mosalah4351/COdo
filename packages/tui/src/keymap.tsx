@@ -18,10 +18,10 @@ import { useTuiConfig } from "./config"
 import { TuiKeybind } from "./config/keybind"
 
 export const LEADER_TOKEN = "leader"
-export const COdo_BASE_MODE = "base"
+export const CODO_BASE_MODE = "base"
 export const COMMAND_PALETTE_COMMAND = "command.palette.show"
 
-const COdo_MODE_KEY = "COdo.mode"
+const CODO_MODE_KEY = "Codo.mode"
 
 export const COdoKeymapProvider = KeymapProvider
 export const useCOdoKeymap = useKeymap
@@ -51,11 +51,11 @@ function isVisiblePaletteCommand(command: Command) {
 }
 
 export function createCOdoModeStack(keymap: OpenTuiKeymap) {
-  keymap.setData(COdo_MODE_KEY, COdo_BASE_MODE)
+  keymap.setData(CODO_MODE_KEY, CODO_BASE_MODE)
 
   const offFields = keymap.registerLayerFields({
     mode(value, ctx) {
-      ctx.require(COdo_MODE_KEY, value)
+      ctx.require(CODO_MODE_KEY, value)
     },
   })
 
@@ -63,12 +63,12 @@ export function createCOdoModeStack(keymap: OpenTuiKeymap) {
   let disposed = false
 
   const update = () => {
-    keymap.setData(COdo_MODE_KEY, stack.at(-1)?.mode ?? COdo_BASE_MODE)
+    keymap.setData(CODO_MODE_KEY, stack.at(-1)?.mode ?? CODO_BASE_MODE)
   }
 
   const stackApi = {
     current() {
-      return stack.at(-1)?.mode ?? COdo_BASE_MODE
+      return stack.at(-1)?.mode ?? CODO_BASE_MODE
     },
     push(mode: string) {
       if (disposed) return () => {}
@@ -90,7 +90,7 @@ export function createCOdoModeStack(keymap: OpenTuiKeymap) {
       disposed = true
       stack.length = 0
       offFields()
-      keymap.setData(COdo_MODE_KEY, undefined)
+      keymap.setData(CODO_MODE_KEY, undefined)
       modeStacks.delete(keymap)
     },
   }

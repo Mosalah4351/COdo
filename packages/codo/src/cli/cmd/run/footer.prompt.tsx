@@ -23,7 +23,7 @@ import {
   movePromptHistory,
   pushPromptHistory,
 } from "./prompt.shared"
-import { COdo_BASE_MODE, useBindings } from "@codo-ai/tui/keymap"
+import { CODO_BASE_MODE, useBindings } from "@codo-ai/tui/keymap"
 import { realignEditorPromptParts, resolveEditorSlashValue } from "./prompt.editor"
 import { FOOTER_MENU_ROWS, createFooterMenuState, type RunFooterMenuItem } from "./footer.menu"
 import type { RunFooterTheme } from "./theme"
@@ -976,7 +976,7 @@ export function createPromptState(input: PromptInput): PromptState {
   }
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: baseBindingsEnabled(),
     commands: [
       {
@@ -993,7 +993,7 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: input.prompt(),
     commands: [
       {
@@ -1010,7 +1010,7 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: input.prompt() && !visible(),
     commands: [
       {
@@ -1026,7 +1026,7 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: input.prompt() && !visible(),
     commands: [
       {
@@ -1053,7 +1053,7 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: input.prompt() && !visible(),
     bindings: [
       {
@@ -1071,7 +1071,7 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: input.prompt() && shell() && !visible(),
     bindings: [
       {
@@ -1094,7 +1094,7 @@ export function createPromptState(input: PromptInput): PromptState {
   }))
 
   useBindings(() => ({
-    mode: COdo_BASE_MODE,
+    mode: CODO_BASE_MODE,
     enabled: input.prompt() && visible(),
     commands: [
       {

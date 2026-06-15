@@ -266,13 +266,13 @@ describe("session.retry.retryable", () => {
       }).toObject(),
     )
 
-    expect(SessionRetry.retryable(error, "opencode")).toEqual({
+    expect(SessionRetry.retryable(error, "codo")).toEqual({
       message: SessionRetry.GO_UPSELL_MESSAGE,
       action: {
         reason: "free_tier_limit",
-        provider: "opencode",
+        provider: "codo",
         title: "Free limit reached",
-        message: "Subscribe to OpenCode Go for reliable access to the best open-source models, starting at $5/month.",
+        message: "Subscribe to codo Go for reliable access to the best open-source models, starting at $5/month.",
         label: "subscribe",
         link: SessionRetry.GO_UPSELL_URL,
       },
@@ -302,12 +302,12 @@ describe("session.retry.retryable", () => {
       }).toObject(),
     )
 
-    expect(SessionRetry.retryable(error, "opencode-go")).toEqual({
+    expect(SessionRetry.retryable(error, "codo-go")).toEqual({
       message:
         "5 hour usage limit reached. It will reset in 5 hours 23 minutes. To continue using this model now, enable usage from your available balance - https://opencode.ai/workspace/wrk_01K6XGM22R6FM8JVABE9XDQXGH/go",
       action: {
         reason: "account_rate_limit",
-        provider: "opencode-go",
+        provider: "codo-go",
         title: "Go limit reached",
         message:
           "5 hour usage limit reached. It will reset in 5 hours 23 minutes. To continue using this model now, enable usage from your available balance",
@@ -339,7 +339,7 @@ describe("session.retry.retryable", () => {
       }).toObject(),
     )
 
-    expect(SessionRetry.retryable(error, "opencode-go")?.action?.message).toBe(
+    expect(SessionRetry.retryable(error, "codo-go")?.action?.message).toBe(
       "Usage limit reached. It will reset in 15 minutes. To continue using this model now, enable usage from your available balance",
     )
   })

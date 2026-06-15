@@ -302,7 +302,7 @@ const ensureDir = Effect.fn("test.ensureDir")(function* (dir: string) {
 
 const writeConfig = Effect.fn("test.writeConfig")(function* (dir: string, config: Partial<ConfigV1.Info>) {
   yield* writeText(
-    path.join(dir, "opencode.json"),
+    path.join(dir, "codo.json"),
     JSON.stringify({ $schema: "https://opencode.ai/config.json", ...config }),
   )
 })
@@ -2108,7 +2108,7 @@ it.instance("does not loop empty assistant turns for a simple reply", () =>
     const sessions = yield* Session.Service
     const session = yield* sessions.create({ title: "Prompt regression" })
 
-    yield* llm.text("packages/opencode/src/session/processor.ts")
+    yield* llm.text("packages/codo/src/session/processor.ts")
 
     const result = yield* prompt.prompt({
       sessionID: session.id,
@@ -2179,7 +2179,7 @@ noLLMServer.instance(
       const other = yield* prompt.prompt({
         sessionID: session.id,
         agent: "build",
-        model: { providerID: ProviderV2.ID.make("opencode"), modelID: ModelV2.ID.make("kimi-k2.5-free") },
+        model: { providerID: ProviderV2.ID.make("codo"), modelID: ModelV2.ID.make("kimi-k2.5-free") },
         noReply: true,
         parts: [{ type: "text", text: "hello" }],
       })
