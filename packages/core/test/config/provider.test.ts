@@ -22,7 +22,7 @@ describe("ConfigProviderPlugin.Plugin", () => {
     Effect.gen(function* () {
       const catalog = yield* Catalog.Service
       const plugin = yield* PluginV2.Service
-      const providerID = ProviderV2.ID.opencode
+      const providerID = ProviderV2.ID.COdo
       const modelID = ModelV2.ID.make("alpha-gpt-next")
       const config = Config.Service.of({
         entries: () =>
@@ -81,7 +81,7 @@ describe("ConfigProviderPlugin.Plugin", () => {
     Effect.gen(function* () {
       const catalog = yield* Catalog.Service
       const plugin = yield* PluginV2.Service
-      const providerID = ProviderV2.ID.opencode
+      const providerID = ProviderV2.ID.COdo
       const modelID = ModelV2.ID.make("alpha-gpt-next")
       const config = Config.Service.of({
         entries: () =>

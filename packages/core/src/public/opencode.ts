@@ -1,5 +1,3 @@
-export * as COdo from "./COdo"
-
 import { Context, Effect, Layer } from "effect"
 import { Catalog } from "../catalog"
 import { Database } from "../database/database"

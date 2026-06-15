@@ -42,7 +42,7 @@ describe("GoogleVertexPlugin", () => {
       yield* plugin.add(GoogleVertexPlugin)
       const transform = yield* catalog.transform()
       yield* transform((catalog) =>
-        catalog.provider.update(ProviderV2.ID.opencode, (provider) => {
+        catalog.provider.update(ProviderV2.ID.COdo, (provider) => {
           provider.api = {
             type: "aisdk",
             package: "@ai-sdk/openai-compatible",
@@ -51,7 +51,7 @@ describe("GoogleVertexPlugin", () => {
         }),
       )
 
-      const provider = yield* catalog.provider.get(ProviderV2.ID.opencode)
+      const provider = yield* catalog.provider.get(ProviderV2.ID.COdo)
       expect(provider.request.body).toEqual({})
     }),
   )
