@@ -1477,13 +1477,6 @@ export function Prompt(props: PromptProps) {
                     </text>
                   )}
                 </Show>
-                <Show when={store.mode === "normal" && !usage()}>
-                  <text fg={theme.text}>
-                    <span style={{ fg: theme.primary }}>{agentShortcut()}</span> <span style={{ fg: theme.textMuted }}>agents</span>
-                    {"  "}
-                    <span style={{ fg: theme.primary }}>{paletteShortcut()}</span> <span style={{ fg: theme.textMuted }}>commands</span>
-                  </text>
-                </Show>
               </box>
               <Show when={hasRightContent()}>
                 <box flexDirection="row" gap={1} alignItems="center">
@@ -1493,6 +1486,13 @@ export function Prompt(props: PromptProps) {
             </box>
           </box>
         </box>
+        <Show when={store.mode === "normal" && !usage()}>
+          <text fg={theme.text} paddingLeft={2}>
+            <span style={{ fg: theme.primary }}>{agentShortcut()}</span> <span style={{ fg: theme.textMuted }}>agents</span>
+            {"  "}
+            <span style={{ fg: theme.primary }}>{paletteShortcut()}</span> <span style={{ fg: theme.textMuted }}>commands</span>
+          </text>
+        </Show>
         <box width="100%" flexDirection="row" justifyContent="space-between">
           <Switch>
             <Match when={status().type !== "idle"}>
