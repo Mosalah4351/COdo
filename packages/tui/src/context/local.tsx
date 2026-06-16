@@ -123,6 +123,9 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
             // already validated by config, just satisfying TS here
             return theme[color as keyof typeof theme] as RGBA
           }
+          // Specific agent colors
+          if (name === "build") return theme.primary
+          if (name === "plan") return theme.warning
           return colors()[index % colors().length]
         },
       }
