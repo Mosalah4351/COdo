@@ -268,10 +268,12 @@ export function Prompt(props: PromptProps) {
     if (tokens <= 0) return
 
     const model = sync.data.provider.find((item) => item.id === last.providerID)?.models[last.modelID]
-    const pct = model?.limit.context ? `${Math.round((tokens / model.limit.context) * 100)}%` : undefined
+    const pct = model?.limit.context ? Math.round((tokens / model.limit.context) * 100) : undefined
     const cost = session?.cost ?? 0
     return {
-      context: pct ? `${Locale.number(tokens)} (${pct})` : Locale.number(tokens),
+      tokens,
+      pct,
+      context: pct !== undefined ? `${Locale.number(tokens)} (${pct}%)` : Locale.number(tokens),
       cost: cost > 0 ? money.format(cost) : undefined,
     }
   })
@@ -1606,6 +1608,18 @@ export function Prompt(props: PromptProps) {
           </Switch>
           <Show when={status().type !== "retry"}>
             <box gap={2} flexDirection="row">
+              <Show when={usage()}>
+                {(item) => (
+                  <text fg={theme.textMuted} wrapMode="none">
+                    <span style={{ fg: theme.primary }}>
+                      [{item().pct !== undefined ? "█".repeat(Math.floor(item().pct! / 10)) + "░".repeat(10 - Math.floor(item().pct! / 10)) : "░".repeat(10)}]
+                    </span>{" "}
+                    <span style={{ fg: theme.primary }}>{item().pct !== undefined ? `${item().pct}%` : ""}</span>{" "}
+                    <span style={{ fg: theme.textMuted }}>context used</span>{" "}
+                    <span style={{ fg: theme.text }}>{item().tokens ? `${Locale.number(item().tokens!)}` : ""}</span>
+                  </text>
+                )}
+              </Show>
               <Show when={editorContextLabelState() !== "none" ? editorFileLabelDisplay() : undefined}>
                 {(file) => (
                   <text fg={editorContextLabelState() === "pending" ? theme.secondary : theme.textMuted}>{file()}</text>
@@ -1614,14 +1628,7 @@ export function Prompt(props: PromptProps) {
               <Switch>
                 <Match when={store.mode === "normal"}>
                   <Switch>
-                    <Match when={usage()}>
-                      {(item) => (
-                        <text fg={theme.textMuted} wrapMode="none">
-                          {[item().context, item().cost].filter(Boolean).join(" · ")}
-                        </text>
-                      )}
-                    </Match>
-                    <Match when={true}>
+                    <Match when={!usage()}>
                       <text fg={theme.text}>
                         <span style={{ fg: theme.primary }}>{agentShortcut()}</span> <span style={{ fg: theme.textMuted }}>agents</span>
                       </text>
