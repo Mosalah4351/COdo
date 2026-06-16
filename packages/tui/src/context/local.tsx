@@ -126,6 +126,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
           // Specific agent colors
           if (name === "build") return theme.primary
           if (name === "plan") return theme.warning
+          if (name === "compose") return RGBA.fromHex("#a7a3d8")
           return colors()[index % colors().length]
         },
       }
