@@ -1433,34 +1433,48 @@ export function Prompt(props: PromptProps) {
               syntaxStyle={syntax()}
             />
             <box flexDirection="row" flexShrink={0} paddingTop={1} gap={1} justifyContent="space-between">
-              <box flexDirection="row" gap={1}>
-                <Show when={local.agent.current()} fallback={<box height={1} />}>
-                  {(agent) => (
-                    <>
-                      <text fg={fadeColor(highlight(), agentMetaAlpha())}>
-                        {store.mode === "shell" ? "Shell" : Locale.titlecase(agent().name)}
-                      </text>
-                      <Show when={store.mode === "normal"}>
-                        <box flexDirection="row" gap={1}>
-                          <text fg={fadeColor(theme.textMuted, modelMetaAlpha())}>·</text>
-                          <text
-                            flexShrink={0}
-                            fg={fadeColor(leader() ? theme.textMuted : theme.text, modelMetaAlpha())}
-                          >
-                            {local.model.parsed().model}
-                          </text>
-                          <text fg={fadeColor(theme.textMuted, modelMetaAlpha())}>{currentProviderLabel()}</text>
-                          <Show when={showVariant()}>
-                            <text fg={fadeColor(theme.textMuted, variantMetaAlpha())}>·</text>
-                            <text>
-                              <span style={{ fg: fadeColor(theme.warning, variantMetaAlpha()), bold: true }}>
-                                {local.model.variant.current()}
-                              </span>
+              <box flexDirection="column" gap={1}>
+                <box flexDirection="row" gap={1}>
+                  <Show when={local.agent.current()} fallback={<box height={1} />}>
+                    {(agent) => (
+                      <>
+                        <text fg={fadeColor(highlight(), agentMetaAlpha())}>
+                          {store.mode === "shell" ? "Shell" : Locale.titlecase(agent().name)}
+                        </text>
+                        <Show when={store.mode === "normal"}>
+                          <box flexDirection="row" gap={1}>
+                            <text fg={fadeColor(theme.textMuted, modelMetaAlpha())}>·</text>
+                            <text
+                              flexShrink={0}
+                              fg={fadeColor(leader() ? theme.textMuted : theme.text, modelMetaAlpha())}
+                            >
+                              {local.model.parsed().model}
                             </text>
-                          </Show>
-                        </box>
-                      </Show>
-                    </>
+                            <text fg={fadeColor(theme.textMuted, modelMetaAlpha())}>{currentProviderLabel()}</text>
+                            <Show when={showVariant()}>
+                              <text fg={fadeColor(theme.textMuted, variantMetaAlpha())}>·</text>
+                              <text>
+                                <span style={{ fg: fadeColor(theme.warning, variantMetaAlpha()), bold: true }}>
+                                  {local.model.variant.current()}
+                                </span>
+                              </text>
+                            </Show>
+                          </box>
+                        </Show>
+                      </>
+                    )}
+                  </Show>
+                </box>
+                <Show when={usage()}>
+                  {(item) => (
+                    <text fg={theme.textMuted} wrapMode="none">
+                      <span style={{ fg: theme.primary }}>
+                        [{item().pct !== undefined ? "█".repeat(Math.floor(item().pct! / 10)) + "░".repeat(10 - Math.floor(item().pct! / 10)) : "░".repeat(10)}]
+                      </span>{" "}
+                      <span style={{ fg: theme.primary }}>{item().pct !== undefined ? `${item().pct}%` : ""}</span>{" "}
+                      <span style={{ fg: theme.textMuted }}>context used</span>{" "}
+                      <span style={{ fg: theme.text }}>{item().tokens ? `${Locale.number(item().tokens!)}` : ""}</span>
+                    </text>
                   )}
                 </Show>
               </box>
@@ -1608,18 +1622,6 @@ export function Prompt(props: PromptProps) {
           </Switch>
           <Show when={status().type !== "retry"}>
             <box gap={2} flexDirection="row">
-              <Show when={usage()}>
-                {(item) => (
-                  <text fg={theme.textMuted} wrapMode="none">
-                    <span style={{ fg: theme.primary }}>
-                      [{item().pct !== undefined ? "█".repeat(Math.floor(item().pct! / 10)) + "░".repeat(10 - Math.floor(item().pct! / 10)) : "░".repeat(10)}]
-                    </span>{" "}
-                    <span style={{ fg: theme.primary }}>{item().pct !== undefined ? `${item().pct}%` : ""}</span>{" "}
-                    <span style={{ fg: theme.textMuted }}>context used</span>{" "}
-                    <span style={{ fg: theme.text }}>{item().tokens ? `${Locale.number(item().tokens!)}` : ""}</span>
-                  </text>
-                )}
-              </Show>
               <Show when={editorContextLabelState() !== "none" ? editorFileLabelDisplay() : undefined}>
                 {(file) => (
                   <text fg={editorContextLabelState() === "pending" ? theme.secondary : theme.textMuted}>{file()}</text>
