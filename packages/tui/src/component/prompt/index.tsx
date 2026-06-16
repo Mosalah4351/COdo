@@ -1477,6 +1477,13 @@ export function Prompt(props: PromptProps) {
                     </text>
                   )}
                 </Show>
+                <Show when={store.mode === "normal" && !usage()}>
+                  <text fg={theme.text}>
+                    <span style={{ fg: theme.primary }}>{agentShortcut()}</span> <span style={{ fg: theme.textMuted }}>agents</span>
+                    {"  "}
+                    <span style={{ fg: theme.primary }}>{paletteShortcut()}</span> <span style={{ fg: theme.textMuted }}>commands</span>
+                  </text>
+                </Show>
               </box>
               <Show when={hasRightContent()}>
                 <box flexDirection="row" gap={1} alignItems="center">
@@ -1628,18 +1635,6 @@ export function Prompt(props: PromptProps) {
                 )}
               </Show>
               <Switch>
-                <Match when={store.mode === "normal"}>
-                  <Switch>
-                    <Match when={!usage()}>
-                      <text fg={theme.text}>
-                        <span style={{ fg: theme.primary }}>{agentShortcut()}</span> <span style={{ fg: theme.textMuted }}>agents</span>
-                      </text>
-                    </Match>
-                  </Switch>
-                  <text fg={theme.text}>
-                    <span style={{ fg: theme.primary }}>{paletteShortcut()}</span> <span style={{ fg: theme.textMuted }}>commands</span>
-                  </text>
-                </Match>
                 <Match when={store.mode === "shell"}>
                   <text fg={theme.text}>
                     esc <span style={{ fg: theme.textMuted }}>exit shell mode</span>
