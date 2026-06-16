@@ -99,7 +99,7 @@ export function Home() {
           <text fg={theme.secondary}>─── Tips ───</text>
         </box>
         <box alignItems="center" marginTop={1} flexShrink={0}>
-          <text fg="textMuted">Press <span style={{ fg: theme.secondary }}>tab</span> to see all available agents and commands</text>
+          <text fg="textMuted">Press <span style={{ fg: theme.primary }}>tab</span> to see all available agents and commands</text>
         </box>
         <Toast />
       </box>
