@@ -1320,13 +1320,6 @@ export function Session() {
                 </Show>
               </box>
             </Show>
-            {/* Tips Section */}
-            <box alignItems="center" marginTop={1} flexShrink={0}>
-              <text fg="secondary">─── Tips ───</text>
-            </box>
-            <box alignItems="center" marginTop={1} flexShrink={0}>
-              <text fg="textMuted">Press <span style={{ fg: theme.primary }}>tab</span> to toggle agents  •  Press <span style={{ fg: theme.primary }}>ctrl+p</span> to open commands  •  Type <span style={{ fg: theme.primary }}>/help</span> for more options</text>
-            </box>
             <Toast />
           </box>
           <Show when={sidebarVisible()}>
