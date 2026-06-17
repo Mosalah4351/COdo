@@ -285,7 +285,7 @@ export function useCommandSlashes(): Accessor<readonly CommandSlashEntry[]> {
         aliases: Array.isArray(slashAliases)
           ? slashAliases.filter((alias): alias is string => typeof alias === "string").map((alias) => `/${alias}`)
           : undefined,
-        onSelect: isPromptCommand ? undefined : () => keymap.dispatchCommand(entry.command.name),
+        onSelect: isPromptCommand ? () => {} : () => keymap.dispatchCommand(entry.command.name),
         promptCommand: isPromptCommand,
         slashName,
       }

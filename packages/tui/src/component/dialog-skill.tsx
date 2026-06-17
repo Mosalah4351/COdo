@@ -20,7 +20,7 @@ export function DialogSkill(props: DialogSkillProps) {
     return result.data ?? []
   })
 
-  const selectedWorkflow = kv.get<WorkflowType>("selected_workflow")
+  const selectedWorkflow = kv.get("selected_workflow")
 
   const filteredSkills = createMemo(() => {
     const list = skills() ?? []

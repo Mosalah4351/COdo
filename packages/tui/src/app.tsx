@@ -802,7 +802,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         category: "Workflow",
         slashName: "workflow",
         run: () => {
-          const currentWorkflow = kv.get<WorkflowType>("selected_workflow")
+          const currentWorkflow = kv.get("selected_workflow")
           dialog.replace(() => (
             <WorkflowSelector
               selected={currentWorkflow}
