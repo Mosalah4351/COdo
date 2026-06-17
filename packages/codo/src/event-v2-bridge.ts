@@ -10,6 +10,7 @@ import { AbsolutePath } from "@codo-ai/core/schema"
 import "@codo-ai/core/account"
 import "@codo-ai/core/catalog"
 import "@codo-ai/core/session/event"
+import "@/session/goal-event"
 import { Context, Effect, Layer } from "effect"
 
 export class Service extends Context.Service<Service, EventV2.Interface>()("@codo/EventV2Bridge") {}

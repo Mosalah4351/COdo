@@ -29,6 +29,7 @@ import { SessionCompaction } from "@/session/compaction"
 import { SessionRevert } from "@/session/revert"
 import { SessionSummary } from "@/session/summary"
 import { SessionPrompt } from "@/session/prompt"
+import { Goal } from "@/session/goal"
 import { Instruction } from "@/session/instruction"
 import { LLM } from "@/session/llm"
 import { LSP } from "@/lsp/lsp"
@@ -80,6 +81,7 @@ export const AppLayer = Layer.mergeAll(
   SessionRunState.defaultLayer,
   SessionProcessor.defaultLayer,
   SessionCompaction.defaultLayer,
+  Goal.defaultLayer,
   SessionRevert.defaultLayer,
   SessionSummary.defaultLayer,
   SessionPrompt.defaultLayer,

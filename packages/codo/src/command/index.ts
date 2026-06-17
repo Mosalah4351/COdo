@@ -54,6 +54,7 @@ export function hints(template: string) {
 export const Default = {
   INIT: "init",
   REVIEW: "review",
+  GOAL: "goal",
 } as const
 
 export interface Interface {
@@ -93,6 +94,16 @@ export const layer = Layer.effect(
         },
         subtask: true,
         hints: hints(PROMPT_REVIEW),
+      }
+      commands[Default.GOAL] = {
+        name: Default.GOAL,
+        description: "set a stop-condition goal; runs until a judge says it's met. /goal clear to abort",
+        source: "command",
+        subtask: false,
+        get template() {
+          return "$ARGUMENTS"
+        },
+        hints: ["$ARGUMENTS"],
       }
 
       for (const [name, command] of Object.entries(cfg.command ?? {})) {
@@ -161,12 +172,18 @@ export const layer = Layer.effect(
 
     const get = Effect.fn("Command.get")(function* (name: string) {
       const s = yield* InstanceState.get(state)
+      yield* Effect.logDebug("command.get", { name, found: !!s.commands[name], available: Object.keys(s.commands) })
       return s.commands[name]
     })
 
     const list = Effect.fn("Command.list")(function* () {
       const s = yield* InstanceState.get(state)
-      return Object.values(s.commands)
+      const cmds = Object.values(s.commands)
+      yield* Effect.logDebug("command.list returning", {
+        count: cmds.length,
+        names: cmds.map((c) => c.name),
+      })
+      return cmds
     })
 
     return Service.of({ get, list })

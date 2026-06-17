@@ -66,6 +66,7 @@ export interface DialogSelectOption<T = any> {
   bg?: RGBA
   gutter?: () => JSX.Element
   margin?: JSX.Element
+  suffix?: string
   onSelect?: (ctx: DialogContext) => void
 }
 
@@ -618,6 +619,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
                               current={current()}
                               muted={actionFocused()}
                               gutter={option.gutter}
+                              suffix={option.suffix}
                             />
                           </box>
                           <For each={option.details}>
@@ -665,6 +667,7 @@ function Option(props: {
   titleWidth?: number
   truncateTitle?: boolean | "left"
   gutter?: () => JSX.Element
+  suffix?: string
   onMouseOver?: () => void
 }) {
   const { theme } = useTheme()
@@ -706,6 +709,11 @@ function Option(props: {
           <span style={{ fg: props.active && !props.muted ? fg : theme.textMuted }}> {props.description}</span>
         </Show>
       </text>
+      <Show when={props.suffix}>
+        <text flexShrink={0} fg={text()} marginLeft={1}>
+          {props.suffix}
+        </text>
+      </Show>
       <Show when={props.footer}>
         <box flexShrink={0}>
           <text fg={props.active && !props.muted ? fg : theme.textMuted}>{props.footer}</text>

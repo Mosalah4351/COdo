@@ -8,6 +8,7 @@ import { usePluginRuntime } from "../../plugin/runtime"
 
 import { getScrollAcceleration } from "../../util/scroll"
 import { WorkspaceLabel } from "../../component/workspace-label"
+import { SplitBorder } from "../../ui/border"
 
 export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
   const pluginRuntime = usePluginRuntime()
@@ -16,6 +17,7 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
   const { theme } = useTheme()
   const tuiConfig = useTuiConfig()
   const session = createMemo(() => sync.session.get(props.sessionID))
+  const goal = createMemo(() => sync.goal.get(props.sessionID))
   const workspace = () => {
     const workspaceID = session()?.workspaceID
     if (!workspaceID) return
@@ -83,6 +85,51 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
               </box>
             </pluginRuntime.Slot>
             <pluginRuntime.Slot name="sidebar_content" session_id={props.sessionID} />
+            <Show when={goal()?.condition || (() => {
+              const g = goal()
+              return g?.lastMessageID && g.verdicts[g.lastMessageID]
+            })()}>
+              <box>
+                <box flexDirection="row" gap={1}>
+                  <text fg={theme.text}>
+                    <b>Goal</b>
+                  </text>
+                </box>
+                <Show when={goal()?.condition}>
+                  {(condition) => (
+                    <box flexDirection="row" gap={1}>
+                      <text flexShrink={0} fg={theme.primary}>
+                        •
+                      </text>
+                      <text fg={theme.textMuted} wrapMode="word">
+                        {condition()}
+                      </text>
+                    </box>
+                  )}
+                </Show>
+                <Show when={(() => {
+                  const g = goal()
+                  if (!g?.lastMessageID) return undefined
+                  const v = g.verdicts[g.lastMessageID]
+                  if (!v) return undefined
+                  if (v.error) return { dot: theme.textMuted, label: "error (stopped)" }
+                  if (v.ok) return { dot: theme.success, label: "met" }
+                  if (v.impossible) return { dot: theme.error, label: "impossible" }
+                  return { dot: theme.warning, label: `round ${v.attempt} · not met` }
+                })()}>
+                  {(status) => (
+                    <box flexDirection="row" gap={1}>
+                      <text flexShrink={0} fg={status().dot}>
+                        •
+                      </text>
+                      <text fg={theme.textMuted} wrapMode="word">
+                        Judge: {status().label}
+                      </text>
+                    </box>
+                  )}
+                </Show>
+              </box>
+            </Show>
           </box>
         </scrollbox>
 

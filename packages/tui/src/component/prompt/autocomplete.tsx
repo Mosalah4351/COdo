@@ -434,7 +434,24 @@ export function Autocomplete(props: {
   )
 
   const commands = createMemo((): AutocompleteOption[] => {
-    const results: AutocompleteOption[] = [...slashes()]
+    const results: AutocompleteOption[] = slashes().map((slash) => {
+      const isPromptCommand = (slash as any).promptCommand === true
+      if (isPromptCommand) {
+        return {
+          display: slash.display,
+          description: slash.description,
+          aliases: slash.aliases,
+          onSelect: () => {
+            const newText = slash.display + " "
+            const cursor = props.input().logicalCursor
+            props.input().deleteRange(0, 0, cursor.row, cursor.col)
+            props.input().insertText(newText)
+            props.input().cursorOffset = Bun.stringWidth(newText)
+          },
+        }
+      }
+      return slash
+    })
 
     for (const serverCommand of sync.data.command) {
       if (serverCommand.source === "skill") continue

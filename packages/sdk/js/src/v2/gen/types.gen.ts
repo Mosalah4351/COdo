@@ -79,6 +79,7 @@ export type Event =
   | EventProjectUpdated
   | EventSessionStatus
   | EventSessionIdle
+  | EventSessionGoal
   | EventQuestionAsked
   | EventQuestionReplied
   | EventQuestionRejected
@@ -1530,6 +1531,24 @@ export type GlobalEvent = {
       }
     | {
         id: string
+        type: "session.goal"
+        properties: {
+          sessionID: string
+          goal?: {
+            condition: string
+          }
+          lastVerdict?: {
+            ok: boolean
+            impossible?: boolean
+            reason: string
+            attempt: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+            messageID?: string
+            error?: boolean
+          }
+        }
+      }
+    | {
+        id: string
         type: "question.asked"
         properties: {
           id: string
@@ -1959,6 +1978,7 @@ export type Config = {
   agent?: {
     plan?: AgentConfig
     build?: AgentConfig
+    compose?: AgentConfig
     general?: AgentConfig
     explore?: AgentConfig
     title?: AgentConfig
@@ -5137,6 +5157,25 @@ export type EventSessionIdle = {
   type: "session.idle"
   properties: {
     sessionID: string
+  }
+}
+
+export type EventSessionGoal = {
+  id: string
+  type: "session.goal"
+  properties: {
+    sessionID: string
+    goal?: {
+      condition: string
+    }
+    lastVerdict?: {
+      ok: boolean
+      impossible?: boolean
+      reason: string
+      attempt: number | "NaN" | "Infinity" | "-Infinity"
+      messageID?: string
+      error?: boolean
+    }
   }
 }
 

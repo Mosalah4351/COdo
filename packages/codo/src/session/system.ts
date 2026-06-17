@@ -21,6 +21,8 @@ import { Location } from "@codo-ai/core/location"
 import { LocationServiceMap } from "@codo-ai/core/location-layer"
 import { PluginBoot } from "@codo-ai/core/plugin/boot"
 import { Reference } from "@codo-ai/core/reference"
+import { composeSkills, isComposeSkill } from "@/skill/compose-skills"
+import { Goal } from "./goal"
 
 export function provider(model: Provider.Model) {
   if (model.api.id.includes("gpt-4") || model.api.id.includes("o1") || model.api.id.includes("o3"))
@@ -50,6 +52,7 @@ export const layer = Layer.effect(
   Effect.gen(function* () {
     const skill = yield* Skill.Service
     const locations = yield* LocationServiceMap
+    const goal = yield* Goal.Service
 
     return Service.of({
       environment: Effect.fn("SystemPrompt.environment")(function* (model: Provider.Model) {
@@ -96,22 +99,47 @@ export const layer = Layer.effect(
 
         const list = yield* skill.available(agent)
 
+        // For compose agent, add compose_skills block with all compose skills
+        const isCompose = agent.name === "compose"
+        const composeSkillsBlock = isCompose
+          ? [
+              "<compose_skills>",
+              ...composeSkills
+                .toSorted((a, b) => a.name.localeCompare(b.name))
+                .flatMap((cs) => [
+                  "  <skill>",
+                  `    <name>${cs.name}</name>`,
+                  `    <description>${cs.description}</description>`,
+                  "  </skill>",
+                ]),
+              "</compose_skills>",
+            ].join("\n")
+          : undefined
+
+        // Filter out compose skills from available_skills for non-compose agents
+        const filteredList = isCompose ? list : list.filter((s) => !isComposeSkill(s.name))
+
         return [
           "Skills provide specialized instructions and workflows for specific tasks.",
           "Use the skill tool to load a skill when a task matches its description.",
-          // the agents seem to ingest the information about skills a bit better if we present a more verbose
-          // version of them here and a less verbose version in tool description, rather than vice versa.
-          Skill.fmt(list, { verbose: true }),
-        ].join("\n")
+          Skill.fmt(filteredList, { verbose: true }),
+          composeSkillsBlock,
+        ]
+          .filter((part): part is string => part !== undefined)
+          .join("\n")
       }),
     })
   }),
 )
 
-export const defaultLayer = layer.pipe(Layer.provide(Skill.defaultLayer), Layer.provide(LocationServiceMap.layer))
+export const defaultLayer = layer.pipe(
+  Layer.provide(Skill.defaultLayer),
+  Layer.provide(LocationServiceMap.layer),
+  Layer.provide(Goal.defaultLayer),
+)
 
 const locationServiceMapNode = LayerNode.make(LocationServiceMap.layer, [])
 
-export const node = LayerNode.make(layer, [Skill.node, locationServiceMapNode])
+export const node = LayerNode.make(layer, [Skill.node, locationServiceMapNode, Goal.node])
 
 export * as SystemPrompt from "./system"

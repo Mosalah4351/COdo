@@ -802,11 +802,16 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         category: "Workflow",
         slashName: "workflow",
         run: () => {
+          const currentWorkflow = kv.get<WorkflowType>("selected_workflow")
           dialog.replace(() => (
             <WorkflowSelector
+              selected={currentWorkflow}
               onSelect={(workflow: WorkflowType) => {
                 const initWorkflow = async () => {
                   try {
+                    // Store selected workflow
+                    kv.set("selected_workflow", workflow)
+                    
                     switch (workflow) {
                       case "gsd":
                         await initGsd()
@@ -834,6 +839,15 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
             />
           ))
         },
+      },
+      {
+        name: "scraper",
+        title: "Web scraper - scrape data from websites",
+        desc: "Scrape data from websites using AI",
+        category: "Tools",
+        slashName: "scraper",
+        promptCommand: true,
+        run: () => {},
       },
       {
         name: "docs.open",

@@ -11,6 +11,7 @@ import { ProviderTransform } from "@/provider/transform"
 
 import PROMPT_GENERATE from "./generate.txt"
 import PROMPT_COMPACTION from "./prompt/compaction.txt"
+import PROMPT_COMPOSE from "./prompt/compose.txt"
 import PROMPT_EXPLORE from "./prompt/explore.txt"
 import PROMPT_SUMMARY from "./prompt/summary.txt"
 import PROMPT_TITLE from "./prompt/title.txt"
@@ -177,6 +178,23 @@ export const layer = Layer.effect(
             mode: "primary",
             native: true,
           },
+          compose: {
+            name: "compose",
+            color: "#a7a3d8",
+            description: "Compose mode. Orchestrates workflows with built-in compose skills.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                question: "allow",
+                skill: "allow",
+              }),
+              user,
+            ),
+            prompt: PROMPT_COMPOSE,
+            mode: "primary",
+            native: true,
+          },
           general: {
             name: "general",
             description: `General-purpose agent for researching complex questions and executing multi-step tasks. Use this agent to execute multiple units of work in parallel.`,
@@ -318,6 +336,7 @@ export const layer = Layer.effect(
             values(),
             sortBy(
               [(x) => (cfg.default_agent ? x.name === cfg.default_agent : x.name === "build"), "desc"],
+              [(x) => x.name === "compose", "desc"],
               [(x) => x.name, "asc"],
             ),
           )

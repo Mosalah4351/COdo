@@ -954,6 +954,17 @@ export function Prompt(props: PromptProps) {
     if (workspace.creating() || move.creating()) return false
     if (auto()?.visible) return false
     if (!store.prompt.input) return false
+    
+    // Handle /scraper command
+    const scraperMatch = /^\/scraper\s+(.+)/i.exec(store.prompt.input.trim())
+    if (scraperMatch) {
+      const query = scraperMatch[1]
+      const scraperPrompt = `Use web-scraping skill for: ${query}`
+      
+      setStore("prompt", "input", scraperPrompt)
+      syncExtmarksWithPromptParts()
+    }
+    
     const agent = local.agent.current()
     if (!agent) return false
     const trimmed = store.prompt.input.trim()
@@ -983,6 +994,7 @@ export function Prompt(props: PromptProps) {
     }
 
     const variant = local.model.variant.current()
+    console.log("[TUI] Submit called with input:", store.prompt.input)
     let sessionID = props.sessionID
     let finishMoveProgress = false
     if (sessionID == null) {
@@ -1064,10 +1076,7 @@ export function Prompt(props: PromptProps) {
         command: inputText,
       })
       setStore("mode", "normal")
-    } else if (
-      inputText.startsWith("/") &&
-      sync.data.command.some((x) => x.name === inputText.split("\n")[0].split(" ")[0].slice(1))
-    ) {
+    } else if (inputText.startsWith("/") && inputText.length > 1 && !inputText.startsWith("//")) {
       move.startSubmit()
       // Parse command from first line, preserve multi-line content in arguments
       const firstLineEnd = inputText.indexOf("\n")
@@ -1076,15 +1085,24 @@ export function Prompt(props: PromptProps) {
       const restOfInput = firstLineEnd === -1 ? "" : inputText.slice(firstLineEnd + 1)
       const args = firstLineArgs.join(" ") + (restOfInput ? "\n" + restOfInput : "")
 
-      void sdk.client.session.command({
-        sessionID,
-        command: command.slice(1),
-        arguments: args,
-        agent: agent.name,
-        model: `${selectedModel.providerID}/${selectedModel.modelID}`,
-        variant,
-        parts: nonTextParts.filter((x) => x.type === "file"),
-      })
+      sdk.client.session
+        .command({
+          sessionID,
+          command: command.slice(1),
+          arguments: args,
+          agent: agent.name,
+          model: `${selectedModel.providerID}/${selectedModel.modelID}`,
+          variant,
+          parts: nonTextParts.filter((x) => x.type === "file"),
+        })
+        .catch((error) => {
+          console.error("[TUI] Command failed:", error)
+          toast.show({
+            title: "Command failed",
+            message: errorMessage(error),
+            variant: "error",
+          })
+        })
     } else {
       move.startSubmit()
       sdk.client.session

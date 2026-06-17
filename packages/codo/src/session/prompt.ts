@@ -60,6 +60,7 @@ import { SessionTable } from "@codo-ai/core/session/sql"
 import { SessionReminders } from "./reminders"
 import { SessionTools } from "./tools"
 import { LLMEvent } from "@codo-ai/llm"
+import { Goal } from "./goal"
 
 // @ts-ignore
 globalThis.AI_SDK_LOG_WARNINGS = false
@@ -124,6 +125,7 @@ export const layer = Layer.effect(
     const events = yield* EventV2Bridge.Service
     const flags = yield* RuntimeFlags.Service
     const database = yield* Database.Service
+    const goal = yield* Goal.Service
     const { db } = database
     const ops = Effect.fn("SessionPrompt.ops")(function* () {
       return {
@@ -1161,6 +1163,79 @@ export const layer = Layer.effect(
               (part) => part.type === "tool" && !part.metadata?.providerExecuted && !isOrphanedInterruptedTool(part),
             ) ?? false
 
+          // Goal gate: if a stop-condition goal is active, the loop refuses to
+          // stop until an independent judge model decides the condition is
+          // satisfied (or genuinely impossible). The judge is a separate model
+          // call that only reads the transcript — it does not do the work, so
+          // its verdict stays cold relative to the working agent's optimism.
+          const MAX_GOAL_REACT = 20
+          if (
+            lastAssistant?.finish &&
+            !["tool-calls"].includes(lastAssistant.finish) &&
+            !hasToolCalls &&
+            lastUser.id < lastAssistant.id
+          ) {
+            const activeGoal = yield* goal.get(sessionID)
+            if (activeGoal) {
+              const react = yield* goal.bumpReact(sessionID)
+              if (react > MAX_GOAL_REACT) {
+                yield* Effect.logWarning("goal react limit exceeded, clearing goal", {
+                  "session.id": sessionID,
+                  react,
+                })
+                yield* goal.clear(sessionID)
+              } else {
+                yield* Effect.logInfo("goal judge evaluating", {
+                  "session.id": sessionID,
+                  condition: activeGoal.condition,
+                  attempt: react,
+                })
+                const verdict = yield* goal.evaluate({
+                  condition: activeGoal.condition,
+                  msgs,
+                  model: lastUser.model,
+                })
+                yield* events.publish(Goal.Event.Updated, {
+                  sessionID,
+                  lastVerdict: { ...verdict, attempt: react, messageID: lastAssistant.id },
+                })
+                if (verdict.ok) {
+                  yield* Effect.logInfo("goal satisfied, clearing", {
+                    "session.id": sessionID,
+                    reason: verdict.reason,
+                  })
+                  yield* goal.clear(sessionID)
+                } else if (verdict.impossible) {
+                  yield* Effect.logInfo("goal impossible, clearing", {
+                    "session.id": sessionID,
+                    reason: verdict.reason,
+                  })
+                  yield* goal.clear(sessionID)
+                } else {
+                  // Goal not met — inject a reminder and continue the loop
+                  yield* Effect.logInfo("goal not met, continuing", {
+                    "session.id": sessionID,
+                    reason: verdict.reason,
+                    attempt: react,
+                  })
+                  yield* prompt({
+                    sessionID,
+                    agent: lastUser.agent,
+                    parts: [
+                      {
+                        type: "text",
+                        text: `[Goal check — attempt ${react}/${MAX_GOAL_REACT}] The goal condition has not been met yet.\n\nVerdict: ${verdict.reason}\n\nPlease continue working toward the goal. The session will not stop until the goal is achieved or declared impossible.`,
+                        synthetic: true,
+                      },
+                    ],
+                    noReply: true,
+                  })
+                  continue
+                }
+              }
+            }
+          }
+
           if (
             lastAssistant?.finish &&
             !["tool-calls"].includes(lastAssistant.finish) &&
@@ -1330,7 +1405,26 @@ export const layer = Layer.effect(
               instruction.system().pipe(Effect.orDie),
               MessageV2.toModelMessagesEffect(msgs, model),
             ])
-            const system = [...env, ...instructions, ...(skills ? [skills] : [])]
+
+            // Inject active goal state into system prompt
+            const activeGoal = yield* goal.get(sessionID)
+            const goalBlock = activeGoal
+              ? [
+                  "",
+                  "<goal_state>",
+                  `  <condition>${activeGoal.condition}</condition>`,
+                  `  <react_count>${activeGoal.react}</react_count>`,
+                  "  <instructions>",
+                  "    You are working toward a user-defined stop-condition goal.",
+                  "    The session will not stop until the goal is achieved or declared impossible.",
+                  "    Keep working until the condition is clearly satisfied.",
+                  "  </instructions>",
+                  "</goal_state>",
+                  "",
+                ].join("\n")
+              : undefined
+
+            const system = [...env, ...instructions, ...(skills ? [skills] : []), ...(goalBlock ? [goalBlock] : [])]
             const format = lastUser.format ?? { type: "text" as const }
             if (format.type === "json_schema") system.push(STRUCTURED_OUTPUT_SYSTEM_PROMPT)
             const result = yield* handle.process({
@@ -1429,6 +1523,25 @@ export const layer = Layer.effect(
         throw error
       }
       const agentName = cmd.agent ?? input.agent
+
+      // /goal — set or clear a session-level stop-condition goal. The condition
+      // text itself becomes the prompt for this turn (the working agent starts
+      // pursuing it immediately); the main runLoop then refuses to stop until
+      // the judge says it's satisfied. See session/goal.ts.
+      if (input.command === Command.Default.GOAL) {
+        const condition = input.arguments.trim()
+        if (condition === "" || condition === "clear" || condition === "reset") {
+          yield* goal.clear(input.sessionID)
+          return yield* prompt({
+            sessionID: input.sessionID,
+            messageID: input.messageID,
+            agent: agentName,
+            parts: [{ type: "text", text: "Goal cleared.", synthetic: true }],
+            noReply: true,
+          })
+        }
+        yield* goal.set(input.sessionID, condition)
+      }
 
       const raw = input.arguments.match(argsRegex) ?? []
       const args = raw.map((arg) => arg.replace(quoteTrimRegex, ""))
@@ -1573,6 +1686,7 @@ export const defaultLayer = Layer.suspend(() =>
     Layer.provide(SessionRevert.defaultLayer),
     Layer.provide(SessionSummary.defaultLayer),
     Layer.provide(Image.defaultLayer),
+    Layer.provide(Goal.defaultLayer),
     Layer.provide(
       Layer.mergeAll(
         Agent.defaultLayer,
@@ -1717,6 +1831,7 @@ export const node = LayerNode.make(layer, [
   EventV2Bridge.node,
   RuntimeFlags.node,
   Database.node,
+  Goal.node,
 ])
 
 export * as SessionPrompt from "./prompt"

@@ -22,15 +22,22 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
       return {
         tokens: 0,
         percent: null,
+        throughput: null,
       }
     }
 
     const tokens =
       last.tokens.input + last.tokens.output + last.tokens.reasoning + last.tokens.cache.read + last.tokens.cache.write
     const model = props.api.state.provider.find((item) => item.id === last.providerID)?.models[last.modelID]
+    
+    // Calculate throughput (tokens per second)
+    const duration = last.time.completed ? (last.time.completed - last.time.created) / 1000 : 0
+    const throughput = duration > 0 ? Math.round(last.tokens.output / duration) : null
+
     return {
       tokens,
       percent: model?.limit.context ? Math.round((tokens / model.limit.context) * 100) : null,
+      throughput,
     }
   })
 
@@ -41,6 +48,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
       </text>
       <text fg={theme().textMuted}>{state().tokens.toLocaleString()} tokens</text>
       <text fg={theme().textMuted}>{state().percent ?? 0}% used</text>
+      {state().throughput !== null && <text fg={theme().textMuted}>{state().throughput} t/s</text>}
       <text fg={theme().textMuted}>{money.format(cost())} spent</text>
     </box>
   )

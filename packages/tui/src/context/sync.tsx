@@ -85,6 +85,21 @@ export const {
       todo: {
         [sessionID: string]: Todo[]
       }
+      goal: {
+        [sessionID: string]: {
+          condition?: string
+          verdicts: {
+            [messageID: string]: {
+              ok: boolean
+              impossible?: boolean
+              reason: string
+              attempt: number
+              error?: boolean
+            }
+          }
+          lastMessageID?: string
+        }
+      }
       message: {
         [sessionID: string]: Message[]
       }
@@ -120,6 +135,7 @@ export const {
       session_status: {},
       session_diff: {},
       todo: {},
+      goal: {},
       message: {},
       part: {},
       lsp: [],
@@ -160,6 +176,7 @@ export const {
     }
 
     event.subscribe((event, { workspace }) => {
+      console.log("[SYNC] Event received:", event.type, "workspace:", workspace)
       switch (event.type) {
         case "server.instance.disposed":
           void bootstrap()
@@ -292,6 +309,35 @@ export const {
 
         case "session.status": {
           setStore("session_status", event.properties.sessionID, event.properties.status)
+          break
+        }
+
+        case "session.goal": {
+          const { sessionID, goal, lastVerdict } = event.properties
+          if (!store.goal[sessionID]) {
+            setStore("goal", sessionID, { verdicts: {} })
+          }
+          setStore(
+            "goal",
+            sessionID,
+            produce((draft) => {
+              if (goal) {
+                draft.condition = goal.condition
+              } else {
+                delete draft.condition
+              }
+              if (lastVerdict) {
+                draft.verdicts[lastVerdict.messageID ?? ""] = {
+                  ok: lastVerdict.ok,
+                  impossible: lastVerdict.impossible,
+                  reason: lastVerdict.reason,
+                  attempt: typeof lastVerdict.attempt === "number" ? lastVerdict.attempt : 0,
+                  error: lastVerdict.error,
+                }
+                draft.lastMessageID = lastVerdict.messageID
+              }
+            }),
+          )
           break
         }
 
@@ -631,6 +677,11 @@ export const {
           })
           syncingSessions.set(sessionID, task)
           return task
+        },
+      },
+      goal: {
+        get(sessionID: string) {
+          return store.goal[sessionID]
         },
       },
       bootstrap,

@@ -34,6 +34,8 @@ const CUSTOMIZE_CODO_SKILL_DESCRIPTION =
   "Use ONLY when the user is editing or creating COdo's own configuration: COdo.json, COdo.jsonc, files under .codo/, or files under ~/.config/COdo/. Also use when creating or fixing COdo agents, subagents, skills, plugins, MCP servers, or permission rules. Do not use for the user's own application code, or for any project that is not configuring COdo itself."
 const CUSTOMIZE_CODO_SKILL_BODY = SkillPlugin.CustomizeCOdoContent
 
+import { composeSkills, COMPOSE_SKILL_NAMES, isComposeSkill } from "./compose-skills"
+
 export const Info = Schema.Struct({
   name: Schema.String,
   description: Schema.optional(Schema.String),
@@ -280,6 +282,15 @@ export const layer = Layer.effect(
           description: CUSTOMIZE_CODO_SKILL_DESCRIPTION,
           location: "<built-in>",
           content: CUSTOMIZE_CODO_SKILL_BODY,
+        }
+        // Register compose skills as built-in skills
+        for (const cs of composeSkills) {
+          s.skills[cs.name] = {
+            name: cs.name,
+            description: cs.description,
+            location: `<built-in:compose:${cs.name}>`,
+            content: cs.content,
+          }
         }
         yield* loadSkills(s, yield* InstanceState.get(discovered), events)
         return s

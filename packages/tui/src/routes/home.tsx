@@ -74,7 +74,7 @@ export function Home() {
       <box flexGrow={1} alignItems="center" paddingLeft={2} paddingRight={2}>
         <box flexGrow={1} minHeight={0} />
         <box height={2} minHeight={0} flexShrink={1} />
-        <box flexShrink={0} borderStyle="round" borderColor="secondary" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
+        <box flexShrink={0} borderStyle="rounded" borderColor="secondary" paddingLeft={2} paddingRight={2} paddingTop={1} paddingBottom={1}>
           <box alignItems="center">
             <pluginRuntime.Slot name="home_logo" mode="replace">
               <Logo />

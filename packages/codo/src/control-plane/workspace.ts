@@ -23,6 +23,7 @@ import { type Target, type WorkspaceInfo, WorkspaceInfo as WorkspaceInfoSchema }
 import { WorkspaceV2 } from "@codo-ai/core/workspace"
 import { Session } from "@/session/session"
 import { SessionPrompt } from "@/session/prompt"
+import { Goal } from "@/session/goal"
 import { SessionTable } from "@codo-ai/core/session/sql"
 import { SessionID } from "@/session/schema"
 import { NotFoundError } from "@/storage/storage"
@@ -978,6 +979,7 @@ export const node = LayerNode.make(layer, [
   Auth.node,
   Session.node,
   SessionPrompt.node,
+  Goal.node,
   httpClient,
   EventV2Bridge.node,
   Vcs.node,

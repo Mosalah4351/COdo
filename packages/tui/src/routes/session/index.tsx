@@ -1566,6 +1566,40 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
           </box>
         </Match>
       </Switch>
+      <Show when={(() => {
+        const sync = useSync()
+        const g = sync.goal.get(props.message.sessionID)
+        if (!g?.verdicts) return undefined
+        return g.verdicts[props.message.id]
+      })()}>
+        {(verdict) => {
+          const [open, setOpen] = createSignal(false)
+          const mark = createMemo(() => {
+            const v = verdict()
+            if (v.error) return { icon: "!", fg: theme.textMuted, label: "Judge: error (stopped)" }
+            if (v.ok) return { icon: "✓", fg: theme.success, label: "Judge: met" }
+            if (v.impossible) return { icon: "⊘", fg: theme.error, label: "Judge: impossible" }
+            return { icon: "⟳", fg: theme.warning, label: `Judge [round ${v.attempt}]: not met` }
+          })
+          return (
+            <box paddingLeft={3} onMouseUp={() => setOpen(x => !x)}>
+              <text>
+                <span style={{ fg: theme.textMuted }}>{open() ? "▼" : "▶"} </span>
+                <span style={{ fg: mark().fg }}>
+                  {mark().icon} {mark().label}
+                </span>
+              </text>
+              <Show when={open()}>
+                <box paddingLeft={2}>
+                  <text fg={theme.textMuted} wrapMode="word">
+                    {verdict().reason}
+                  </text>
+                </box>
+              </Show>
+            </box>
+          )
+        }}
+      </Show>
     </>
   )
 }

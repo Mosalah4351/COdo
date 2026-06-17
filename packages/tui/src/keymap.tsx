@@ -272,6 +272,8 @@ export function useCommandSlashes(): Accessor<readonly CommandSlashEntry[]> {
       const slashName = entry.command.slashName
       if (typeof slashName !== "string" || !slashName) return []
       const slashAliases = entry.command.slashAliases
+      const isPromptCommand = (entry.command as any).promptCommand === true
+      
       return {
         display: `/${slashName}`,
         description:
@@ -283,7 +285,9 @@ export function useCommandSlashes(): Accessor<readonly CommandSlashEntry[]> {
         aliases: Array.isArray(slashAliases)
           ? slashAliases.filter((alias): alias is string => typeof alias === "string").map((alias) => `/${alias}`)
           : undefined,
-        onSelect: () => keymap.dispatchCommand(entry.command.name),
+        onSelect: isPromptCommand ? undefined : () => keymap.dispatchCommand(entry.command.name),
+        promptCommand: isPromptCommand,
+        slashName,
       }
     }),
   )

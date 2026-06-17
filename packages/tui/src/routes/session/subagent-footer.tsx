@@ -43,6 +43,10 @@ export function SubagentFooter() {
     const pct = model?.limit.context ? `${Math.round((tokens / model.limit.context) * 100)}%` : undefined
     const cost = session()?.cost ?? 0
 
+    // Calculate throughput (tokens per second)
+    const duration = last.time.completed ? (last.time.completed - last.time.created) / 1000 : 0
+    const throughput = duration > 0 ? Math.round(last.tokens.output / duration) : undefined
+
     const money = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -50,6 +54,7 @@ export function SubagentFooter() {
 
     return {
       context: pct ? `${Locale.number(tokens)} (${pct})` : Locale.number(tokens),
+      throughput: throughput ? `${throughput} t/s` : undefined,
       cost: cost > 0 ? money.format(cost) : undefined,
     }
   })
@@ -88,7 +93,7 @@ export function SubagentFooter() {
             <Show when={usage()}>
               {(item) => (
                 <text fg={theme.textMuted} wrapMode="none">
-                  {[item().context, item().cost].filter(Boolean).join(" · ")}
+                  {[item().context, item().throughput, item().cost].filter(Boolean).join(" · ")}
                 </text>
               )}
             </Show>

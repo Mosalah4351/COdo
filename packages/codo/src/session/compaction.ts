@@ -25,6 +25,7 @@ import { ProviderV2 } from "@codo-ai/core/provider"
 import { ModelV2 } from "@codo-ai/core/model"
 import { EventV2 } from "@codo-ai/core/event"
 import { buildPrompt } from "@codo-ai/core/session/compaction"
+import { Goal } from "./goal"
 
 export const Event = {
   Compacted: EventV2.define({
@@ -174,6 +175,7 @@ export const layer = Layer.effect(
     const provider = yield* Provider.Service
     const events = yield* EventV2Bridge.Service
     const flags = yield* RuntimeFlags.Service
+    const goal = yield* Goal.Service
 
     const isOverflow = Effect.fn("SessionCompaction.isOverflow")(function* (input: {
       tokens: SessionV1.Assistant["tokens"]
@@ -303,6 +305,17 @@ export const layer = Layer.effect(
       auto: boolean
       overflow?: boolean
     }) {
+      // Reset goal on compaction — the goal condition may no longer be relevant
+      // after context is compressed, and the judge would see stale context.
+      const activeGoal = yield* goal.get(input.sessionID)
+      if (activeGoal) {
+        yield* Effect.logInfo("clearing goal on compaction", {
+          "session.id": input.sessionID,
+          condition: activeGoal.condition,
+        })
+        yield* goal.clear(input.sessionID)
+      }
+
       const parent = input.messages.findLast((m) => m.info.id === input.parentID)
       if (!parent || parent.info.role !== "user") {
         throw new Error(`Compaction parent must be a user message: ${input.parentID}`)
@@ -603,6 +616,7 @@ export const defaultLayer = Layer.suspend(() =>
     Layer.provide(Config.defaultLayer),
     Layer.provide(RuntimeFlags.defaultLayer),
     Layer.provide(EventV2Bridge.defaultLayer),
+    Layer.provide(Goal.defaultLayer),
   ),
 )
 
@@ -615,6 +629,7 @@ export const node = LayerNode.make(layer, [
   Provider.node,
   EventV2Bridge.node,
   RuntimeFlags.node,
+  Goal.node,
 ])
 
 export * as SessionCompaction from "./compaction"
