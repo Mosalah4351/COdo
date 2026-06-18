@@ -29,13 +29,13 @@ function run(target) {
   })
 }
 
-const envPath = process.env.OPENCODE_BIN_PATH
+const envPath = process.env.CODO_BIN_PATH
 const scriptDir = path.dirname(fs.realpathSync(__filename))
-const cached = path.join(scriptDir, ".lildax")
+const cached = path.join(scriptDir, ".codo")
 const platform = { darwin: "darwin", linux: "linux", win32: "windows" }[os.platform()] || os.platform()
 const arch = { x64: "x64", arm64: "arm64", arm: "arm" }[os.arch()] || os.arch()
-const base = "@opencode-ai/cli-" + platform + "-" + arch
-const binary = platform === "windows" ? "lildax.exe" : "lildax"
+const base = "@codo-ai/codo-" + platform + "-" + arch
+const binary = platform === "windows" ? "codo.exe" : "codo"
 
 function supportsAvx2() {
   if (arch !== "x64") return false
@@ -121,7 +121,7 @@ function findBinary(startDir) {
 const resolved = envPath || (fs.existsSync(cached) ? cached : findBinary(scriptDir))
 if (!resolved) {
   console.error(
-    "It seems that your package manager failed to install the right lildax CLI package. Try manually installing " +
+    "It seems that your package manager failed to install the right codo CLI package. Try manually installing " +
       names.map((name) => `"${name}"`).join(" or ") +
       " package",
   )
