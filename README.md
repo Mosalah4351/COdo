@@ -248,7 +248,7 @@ docs: update README
 ```
 
 > [!NOTE]
-> The default branch is `dev`, not `main`.
+> The default branch is `main`, not `dev`.
 
 ---
 
