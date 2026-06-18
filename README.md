@@ -33,6 +33,7 @@ Most AI coding tools give you a place to type questions. COdo gives you a **syst
 
 - [Install](#install)
 - [Workflows](#workflows)
+  - [Powered by GSD Pi](#powered-by-gsd-pi)
 - [Commands](#commands)
 - [BYOK — Bring Your Own Key](#byok)
 - [Skills System](#skills-system)
@@ -85,6 +86,15 @@ When you switch workflows, `/skills` auto-filters to only show tools relevant to
 
 > [!TIP]
 > Start with **GSD** when building from scratch. Set the spec, define the goal, and let COdo drive phase by phase.
+
+### Powered by GSD Pi
+
+The GSD workflow runs on [GSD Pi](https://github.com/open-gsd/gsd-pi) — a meta-prompting, context engineering, and spec-driven development system built to keep agents on track across long autonomous sessions.
+
+GSD Pi handles the hard parts: breaking work into milestones, slices, and tasks; isolating implementation in Git worktrees; and tracking project state locally so the agent never loses the thread. COdo integrates this directly into the `/workflow` system so you get the full power of spec-driven development without leaving your terminal.
+
+> [!NOTE]
+> Want to use GSD Pi standalone or learn more about how it works under the hood? See the [GSD Pi repository](https://github.com/open-gsd/gsd-pi) and join the [GSD Discord community](https://discord.com/invite/nKXTsAcmbT).
 
 ---
 
@@ -248,7 +258,7 @@ docs: update README
 ```
 
 > [!NOTE]
-> The default branch is `main`, not `dev`.
+> The default branch is `dev`, not `main`.
 
 ---
 
