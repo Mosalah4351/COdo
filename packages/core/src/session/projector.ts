@@ -214,17 +214,18 @@ function publishMessageUpdated(
   events: EventV2.Interface,
   db: DatabaseService,
   sessionID: SessionSchema.ID,
-  messageID: SessionV1.MessageID
+  messageID: string
 ) {
   return Effect.gen(function* () {
+    const mid = messageID as SessionV1.MessageID
     const row = yield* db
       .select()
       .from(MessageTable)
-      .where(and(eq(MessageTable.id, messageID), eq(MessageTable.session_id, sessionID)))
+      .where(and(eq(MessageTable.id, mid), eq(MessageTable.session_id, sessionID)))
       .get()
       .pipe(Effect.orDie)
     if (!row) return
-    const info = { id: messageID, sessionID, ...row.data } as SessionV1.Info
+    const info = { id: mid, sessionID, ...row.data } as SessionV1.Info
     yield* events.publish(SessionV1.Event.MessageUpdated, { sessionID, info })
   })
 }
