@@ -207,11 +207,7 @@ Includes a custom `codo` theme and all the classics.
 
 ---
 
-## VS Code Extension
 
-Not a terminal person? COdo also ships as a VS Code extension — same assistant, same workflows, same power, just inside your editor. Available in `sdks/vscode/`.
-
----
 
 ## Running Locally
 
