@@ -10,7 +10,8 @@ import {
 } from "@opentui/core"
 import type { CommandContext } from "@opentui/keymap"
 import { createEffect, createMemo, onMount, createSignal, onCleanup, on, Show, Switch, Match } from "solid-js"
-import "opentui-spinner/solid"
+import { registerSpinner } from "opentui-spinner/solid"
+registerSpinner()
 import path from "path"
 import { fileURLToPath } from "url"
 import { useLocal } from "../../context/local"
@@ -41,7 +42,7 @@ import type { AssistantMessage, FilePart, UserMessage } from "@codo-ai/sdk/v2"
 import { Locale } from "../../util/locale"
 import { errorMessage } from "../../util/error"
 import { formatDuration } from "../../util/format"
-import { createColors, createFrames } from "../../ui/spinner"
+import { createCometColors, createCometFrames } from "../../ui/comet"
 import { useDialog } from "../../ui/dialog"
 import { DialogProvider as DialogProviderConnect } from "../dialog-provider"
 import { DialogAlert } from "../../ui/dialog-alert"
@@ -1340,19 +1341,15 @@ export function Prompt(props: PromptProps) {
         : local.agent.current()
     const color = agent ? local.agent.color(agent.name) : theme.border
     return {
-      frames: createFrames({
+      frames: createCometFrames({
         color,
-        style: "blocks",
-        inactiveFactor: 0.6,
-        // enableFading: false,
-        minAlpha: 0.3,
+        tailLength: 4,
+        gap: 6,
       }),
-      color: createColors({
+      color: createCometColors({
         color,
-        style: "blocks",
-        inactiveFactor: 0.6,
-        // enableFading: false,
-        minAlpha: 0.3,
+        tailLength: 4,
+        gap: 6,
       }),
     }
   })
@@ -1522,9 +1519,7 @@ export function Prompt(props: PromptProps) {
               >
                 <box flexShrink={0} flexDirection="row" gap={1}>
                   <box marginLeft={1}>
-                    <Show when={kv.get("animations_enabled", true)} fallback={<text fg={theme.textMuted}>[⋯]</text>}>
                       <spinner color={spinnerDef().color} frames={spinnerDef().frames} interval={40} />
-                    </Show>
                   </box>
                   <box flexDirection="row" gap={1} flexShrink={0}>
                     {(() => {

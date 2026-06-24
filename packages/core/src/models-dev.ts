@@ -159,7 +159,7 @@ export const layer = Layer.effect(
         HttpClientRequest.setHeader("User-Agent", USER_AGENT),
         http.execute,
         Effect.flatMap((res) => res.text),
-        Effect.timeout("10 seconds"),
+        Effect.timeout("30 seconds"),
       )
     })
 
@@ -208,9 +208,11 @@ export const layer = Layer.effect(
           yield* Flock.effect(lockKey)
           return yield* fetchAndWrite()
         }),
+      ).pipe(
+        Effect.catchAll(() => Effect.succeed("{}")),
       )
       return JSON.parse(text) as Record<string, Provider>
-    }).pipe(Effect.withSpan("ModelsDev.populate"), Effect.orDie)
+    }).pipe(Effect.withSpan("ModelsDev.populate"))
 
     const [cachedGet, invalidate] = yield* Effect.cachedInvalidateWithTTL(populate, Duration.infinity)
 

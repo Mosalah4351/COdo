@@ -80,7 +80,7 @@ const HOME_SEARCH_RESULT_META =
 let pendingHomeNavigation: { server: ServerConnection.Key; href: string } | undefined
 
 function buildHomeSessionRecords(input: {
-  sync: Pick<ReturnType<typeof useServerSync>, "child">
+  sync: Pick<ServerSync, "child">
   projectDirectories: () => string[]
   projects: () => LocalProject[]
   projectByID: () => Map<string, LocalProject>
@@ -149,7 +149,7 @@ function HomeDesign() {
     if (!conn) return
     return global.createServerCtx(conn)
   })
-  const focusedSync = () => focusedServerCtx()?.sync ?? sync
+  const focusedSync = () => focusedServerCtx()?.sync ?? sync()
   const projects = createMemo(() => focusedServerCtx()?.projects.list() ?? layout.projects.list())
   const selectedProject = createMemo(() => projects().find((project) => project.worktree === state.selection.directory))
   const newSessionProject = createMemo(
@@ -360,7 +360,7 @@ function HomeDesign() {
           clearNotifications={clearNotifications}
           unseenCount={unseenCount}
           openSettings={openSettings}
-          openHelp={() => platform.openLink("https://COdo.ai/desktop-feedback")}
+          openHelp={() => platform.openLink("https://codo.ai/desktop-feedback")}
           language={language}
         />
 
@@ -1106,7 +1106,7 @@ function LegacyHome() {
   const recent = createMemo(() => {
     return sync.data.project
       .slice()
-      .sort((a, b) => (b.time.updated ?? b.time.created) - (a.time.updated ?? a.time.created))
+      .sort((a: any, b: any) => (b.time.updated ?? b.time.created) - (a.time.updated ?? a.time.created))
       .slice(0, 5)
   })
 

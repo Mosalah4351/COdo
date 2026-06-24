@@ -198,10 +198,10 @@ const loadState = Effect.fn("TuiConfig.loadState")(function* (ctx: { directory: 
   // 4. `.codo` directories (and CODO_CONFIG_DIR) discovered while
   // walking up the tree. Also returned below so callers can install plugin
   // dependencies from each location.
-  const dirs = unique(directories).filter((dir) => dir.endsWith(".codo") || dir === Flag.CODO_CONFIG_DIR)
+  const dirs = unique(directories).filter((dir) => dir.endsWith(".codo") || dir.endsWith(".opencode") || dir === Flag.CODO_CONFIG_DIR)
 
   for (const dir of dirs) {
-    if (!dir.endsWith(".codo") && dir !== Flag.CODO_CONFIG_DIR) continue
+    if (!dir.endsWith(".codo") && !dir.endsWith(".opencode") && dir !== Flag.CODO_CONFIG_DIR) continue
     for (const file of ConfigPaths.fileInDirectory(dir, "tui")) {
       yield* mergeFile(acc, file)
     }

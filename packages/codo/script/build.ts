@@ -166,7 +166,7 @@ for (const item of targets) {
   const workerRelativePath = path.relative(dir, parserWorker).replaceAll("\\", "/")
 
   await Bun.build({
-    conditions: ["bun", "node"],
+    conditions: ["bun", "node", "browser"],
     tsconfig: "./tsconfig.json",
     plugins: [plugin],
     external: ["node-gyp"],
@@ -180,7 +180,7 @@ for (const item of targets) {
       autoloadTsconfig: true,
       autoloadPackageJson: true,
       target: name.replace(pkg.name, "bun") as any,
-      outfile: `dist/${name}/bin/COdo`,
+      outfile: `dist/${name}/bin/codo`,
       execArgv: [`--user-agent=COdo/${Script.version}`, "--use-system-ca", "--"],
       windows: {},
     },
@@ -200,7 +200,7 @@ for (const item of targets) {
 
   // Smoke test: only run if binary is for current platform
   if (item.os === process.platform && item.arch === process.arch && !item.abi) {
-    const binaryPath = `dist/${name}/bin/COdo`
+    const binaryPath = `dist/${name}/bin/codo`
     console.log(`Running smoke test: ${binaryPath} --version`)
     try {
       const versionOutput = await $`${binaryPath} --version`.text()
@@ -215,12 +215,13 @@ for (const item of targets) {
   await Bun.file(`dist/${name}/package.json`).write(
     JSON.stringify(
       {
-        name,
+        name: `@codo-ai/${name}`,
         version: Script.version,
         preferUnplugged: true,
         os: [item.os],
         cpu: [item.arch],
         ...(item.abi ? { libc: [item.abi] } : {}),
+        bin: { codo: "./bin/codo" },
       },
       null,
       2,

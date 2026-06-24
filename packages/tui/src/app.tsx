@@ -822,8 +822,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
                         toast.show({ message: "GStack workflow initialized", variant: "info" })
                         break
                       case "speckit":
-                        await initSpecKit("project", "auto")
-                        toast.show({ message: "Spec Kit workflow initialized", variant: "info" })
+                        const result = await initSpecKit("opencode")
+                        toast.show({ message: "Spec Kit ready — restart COdo, then use /speckit.specify", variant: "info" })
                         break
                       case "vibe":
                         toast.show({ message: "Vibe mode activated - no workflow constraints", variant: "info" })

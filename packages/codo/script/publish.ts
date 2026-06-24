@@ -73,7 +73,8 @@ await Bun.file(`./dist/${pkg.name}/package.json`).write(
 )
 
 const tasks = Object.entries(binaries).map(async ([name]) => {
-  await publish(`./dist/${name}`, name, binaries[name])
+  const dirName = name.replace("@codo-ai/", "")
+  await publish(`./dist/${dirName}`, name, binaries[name])
 })
 await Promise.all(tasks)
 await publish(`./dist/${pkg.name}`, `${pkg.name}-ai`, version)
@@ -87,10 +88,10 @@ const tagFlags = tags.flatMap((t) => ["-t", t])
 if (!Script.preview) {
   await $`docker buildx build --platform ${platforms} ${tagFlags} --push .`
   // Calculate SHA values
-  const arm64Sha = await $`sha256sum ./dist/COdo-linux-arm64.tar.gz | cut -d' ' -f1`.text().then((x) => x.trim())
-  const x64Sha = await $`sha256sum ./dist/COdo-linux-x64.tar.gz | cut -d' ' -f1`.text().then((x) => x.trim())
-  const macX64Sha = await $`sha256sum ./dist/COdo-darwin-x64.zip | cut -d' ' -f1`.text().then((x) => x.trim())
-  const macArm64Sha = await $`sha256sum ./dist/COdo-darwin-arm64.zip | cut -d' ' -f1`.text().then((x) => x.trim())
+  const arm64Sha = await $`sha256sum ./dist/codo-linux-arm64.tar.gz | cut -d' ' -f1`.text().then((x) => x.trim())
+  const x64Sha = await $`sha256sum ./dist/codo-linux-x64.tar.gz | cut -d' ' -f1`.text().then((x) => x.trim())
+  const macX64Sha = await $`sha256sum ./dist/codo-darwin-x64.zip | cut -d' ' -f1`.text().then((x) => x.trim())
+  const macArm64Sha = await $`sha256sum ./dist/codo-darwin-arm64.zip | cut -d' ' -f1`.text().then((x) => x.trim())
 
   const [pkgver, _subver = ""] = Script.version.split(/(-.*)/, 2)
 
@@ -112,14 +113,14 @@ if (!Script.preview) {
     "conflicts=('COdo')",
     "depends=('ripgrep')",
     "",
-    `source_aarch64=("\${pkgname}_\${pkgver}_aarch64.tar.gz::https://github.com/anomalyco/COdo/releases/download/v\${pkgver}\${_subver}/COdo-linux-arm64.tar.gz")`,
+    `source_aarch64=("\${pkgname}_\${pkgver}_aarch64.tar.gz::https://github.com/anomalyco/COdo/releases/download/v\${pkgver}\${_subver}/codo-linux-arm64.tar.gz")`,
     `sha256sums_aarch64=('${arm64Sha}')`,
 
-    `source_x86_64=("\${pkgname}_\${pkgver}_x86_64.tar.gz::https://github.com/anomalyco/COdo/releases/download/v\${pkgver}\${_subver}/COdo-linux-x64.tar.gz")`,
+    `source_x86_64=("\${pkgname}_\${pkgver}_x86_64.tar.gz::https://github.com/anomalyco/COdo/releases/download/v\${pkgver}\${_subver}/codo-linux-x64.tar.gz")`,
     `sha256sums_x86_64=('${x64Sha}')`,
     "",
     "package() {",
-    '  install -Dm755 ./COdo "${pkgdir}/usr/bin/COdo"',
+    '  install -Dm755 ./codo "${pkgdir}/usr/bin/codo"',
     "}",
     "",
   ].join("\n")
@@ -158,36 +159,36 @@ if (!Script.preview) {
     "",
     "  on_macos do",
     "    if Hardware::CPU.intel?",
-    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/COdo-darwin-x64.zip"`,
+    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/codo-darwin-x64.zip"`,
     `      sha256 "${macX64Sha}"`,
     "",
     "      def install",
-    '        bin.install "COdo"',
+    '        bin.install "codo"',
     "      end",
     "    end",
     "    if Hardware::CPU.arm?",
-    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/COdo-darwin-arm64.zip"`,
+    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/codo-darwin-arm64.zip"`,
     `      sha256 "${macArm64Sha}"`,
     "",
     "      def install",
-    '        bin.install "COdo"',
+    '        bin.install "codo"',
     "      end",
     "    end",
     "  end",
     "",
     "  on_linux do",
     "    if Hardware::CPU.intel? and Hardware::CPU.is_64_bit?",
-    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/COdo-linux-x64.tar.gz"`,
+    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/codo-linux-x64.tar.gz"`,
     `      sha256 "${x64Sha}"`,
     "      def install",
-    '        bin.install "COdo"',
+    '        bin.install "codo"',
     "      end",
     "    end",
     "    if Hardware::CPU.arm? and Hardware::CPU.is_64_bit?",
-    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/COdo-linux-arm64.tar.gz"`,
+    `      url "https://github.com/anomalyco/COdo/releases/download/v${Script.version}/codo-linux-arm64.tar.gz"`,
     `      sha256 "${arm64Sha}"`,
     "      def install",
-    '        bin.install "COdo"',
+    '        bin.install "codo"',
     "      end",
     "    end",
     "  end",

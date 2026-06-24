@@ -129,3 +129,8 @@ Use `Effect.cached` when multiple concurrent callers should share a single in-fl
 Use `EffectBridge` for native or external callbacks (`@parcel/watcher`, `node-pty`, native `fs.watch`, plugin callbacks, etc.) that need to re-enter Effect services with instance/workspace context.
 
 Plain async code should pass explicit context or stay inside an Effect fiber; do not add ambient instance context shims.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

@@ -13,6 +13,7 @@ import { SessionMessageUpdater } from "./message-updater"
 import { SessionInput } from "./input"
 import { WorkspaceV2 } from "../workspace"
 import { SessionContextEpoch } from "./context-epoch"
+import { SessionSchema } from "./schema"
 import { MessageTable, PartTable, SessionMessageTable, SessionTable } from "./sql"
 import type { DeepMutable } from "../schema"
 
@@ -207,6 +208,25 @@ function insertMessage(db: DatabaseService, event: SessionEvent.Event, message: 
     })
     .run()
     .pipe(Effect.orDie)
+}
+
+function publishMessageUpdated(
+  events: EventV2.Interface,
+  db: DatabaseService,
+  sessionID: SessionSchema.ID,
+  messageID: SessionV1.MessageID
+) {
+  return Effect.gen(function* () {
+    const row = yield* db
+      .select()
+      .from(MessageTable)
+      .where(and(eq(MessageTable.id, messageID), eq(MessageTable.session_id, sessionID)))
+      .get()
+      .pipe(Effect.orDie)
+    if (!row) return
+    const info = { id: messageID, sessionID, ...row.data } as SessionV1.Info
+    yield* events.publish(SessionV1.Event.MessageUpdated, { sessionID, info })
+  })
 }
 
 export const layer = Layer.effectDiscard(
@@ -422,18 +442,48 @@ export const layer = Layer.effectDiscard(
     yield* events.project(SessionEvent.Shell.Started, (event) => run(db, event))
     yield* events.project(SessionEvent.Shell.Ended, (event) => run(db, event))
     yield* events.project(SessionEvent.Step.Started, (event) => run(db, event))
-    yield* events.project(SessionEvent.Step.Ended, (event) => run(db, event))
-    yield* events.project(SessionEvent.Step.Failed, (event) => run(db, event))
+    yield* events.project(SessionEvent.Step.Ended, (event) =>
+      Effect.gen(function* () {
+        yield* run(db, event)
+        yield* publishMessageUpdated(events, db, event.data.sessionID, event.data.assistantMessageID)
+      }),
+    )
+    yield* events.project(SessionEvent.Step.Failed, (event) =>
+      Effect.gen(function* () {
+        yield* run(db, event)
+        yield* publishMessageUpdated(events, db, event.data.sessionID, event.data.assistantMessageID)
+      }),
+    )
     yield* events.project(SessionEvent.Text.Started, (event) => run(db, event))
-    yield* events.project(SessionEvent.Text.Ended, (event) => run(db, event))
+    yield* events.project(SessionEvent.Text.Ended, (event) =>
+      Effect.gen(function* () {
+        yield* run(db, event)
+        yield* publishMessageUpdated(events, db, event.data.sessionID, event.data.assistantMessageID)
+      }),
+    )
     yield* events.project(SessionEvent.Tool.Input.Started, (event) => run(db, event))
     yield* events.project(SessionEvent.Tool.Input.Ended, (event) => run(db, event))
     yield* events.project(SessionEvent.Tool.Called, (event) => run(db, event))
     yield* events.project(SessionEvent.Tool.Progress, (event) => run(db, event))
-    yield* events.project(SessionEvent.Tool.Success, (event) => run(db, event))
-    yield* events.project(SessionEvent.Tool.Failed, (event) => run(db, event))
+    yield* events.project(SessionEvent.Tool.Success, (event) =>
+      Effect.gen(function* () {
+        yield* run(db, event)
+        yield* publishMessageUpdated(events, db, event.data.sessionID, event.data.assistantMessageID)
+      }),
+    )
+    yield* events.project(SessionEvent.Tool.Failed, (event) =>
+      Effect.gen(function* () {
+        yield* run(db, event)
+        yield* publishMessageUpdated(events, db, event.data.sessionID, event.data.assistantMessageID)
+      }),
+    )
     yield* events.project(SessionEvent.Reasoning.Started, (event) => run(db, event))
-    yield* events.project(SessionEvent.Reasoning.Ended, (event) => run(db, event))
+    yield* events.project(SessionEvent.Reasoning.Ended, (event) =>
+      Effect.gen(function* () {
+        yield* run(db, event)
+        yield* publishMessageUpdated(events, db, event.data.sessionID, event.data.assistantMessageID)
+      }),
+    )
     // yield* events.project(SessionEvent.Retried, (event) => run(db, event))
     yield* events.project(SessionEvent.Compaction.Ended, (event) => {
       if (event.version === 1) return Effect.void
