@@ -7,7 +7,7 @@
 Your terminal asked for an AI assistant. We gave it a whole personality.
 
 [![npm](https://img.shields.io/npm/v/@codo-ai/cli?color=ff6b6b&label=npm)](https://www.npmjs.com/package/@codo-ai/cli)
-[![npm downloads](https://img.shields.io/npm/dw/@codo-ai/cli?color=ff6b6b&label=downloads%2Fweek)](https://www.npmjs.com/package/@codo-ai/cli)
+[![npm downloads](https://img.shields.io/npm/dw/@codo-ai/cli?color=00ff00&label=downloads%2Fweek)](https://www.npmjs.com/package/@codo-ai/cli)
 [![License](https://img.shields.io/github/license/anomalyco/opencode?color=blue)](./LICENSE)
 [![Built with Bun](https://img.shields.io/badge/built%20with-Bun-f9f1e1)](https://bun.sh)
 [![Themes](https://img.shields.io/badge/themes-35%2B-a78bfa)](https://github.com/anomalyco/opencode)
