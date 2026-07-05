@@ -76,7 +76,7 @@ async function interactiveMode(projectDir: string) {
       log.info(`${addon.label}`)
       log.info(`${addon.description}`)
       log.info(`npm package: ${addon.npmPackage}`)
-      log.info(`Skills: ${addon.skills.map((s) => s.name).join(", ")}`)
+      log.info(`Skills: installed from package skill-data/ directory`)
       continue
     }
 
@@ -96,9 +96,6 @@ async function interactiveMode(projectDir: string) {
 
       spin.stop("Done!")
       log.success(`${addon.label} enabled (${scope} scope)`)
-      if (addon.skills.length > 0) {
-        log.info(`Skills available: ${addon.skills.map((s) => s.name).join(", ")}`)
-      }
     } else if (action === "disable") {
       spin.start("Disabling addon...")
 
