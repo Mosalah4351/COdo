@@ -16,6 +16,7 @@ import { ConfigPluginV1 } from "./plugin"
 import { ConfigProviderV1 } from "./provider"
 import { ConfigServerV1 } from "./server"
 import { ConfigSkillsV1 } from "./skills"
+import { ConfigAddonV1 } from "./addon"
 
 export type Layout = ConfigLayoutV1.Layout
 
@@ -127,6 +128,9 @@ export const Info = Schema.Struct({
   tools: Schema.optional(Schema.Record(Schema.String, Schema.Boolean)),
   attachment: Schema.optional(ConfigAttachmentV1.Info).annotate({
     description: "Attachment processing configuration, including image size limits and resizing behavior",
+  }),
+  addons: Schema.optional(Schema.Record(Schema.String, ConfigAddonV1.AddonInfo)).annotate({
+    description: "Installed addons and their configuration",
   }),
   enterprise: Schema.optional(
     Schema.Struct({ url: Schema.optional(Schema.String).annotate({ description: "Enterprise URL" }) }),
