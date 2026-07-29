@@ -2,6 +2,8 @@ import { render, TimeToFirstDraw, useRenderer, useTerminalDimensions } from "@op
 import { createDefaultOpenTuiKeymap } from "@opentui/keymap/opentui"
 import { Deferred, Effect } from "effect"
 import { Global } from "@codo-ai/core/global"
+import { readFile, writeFile, mkdir } from "node:fs/promises"
+import * as path from "node:path"
 import { Flag } from "@codo-ai/core/flag/flag"
 import { InstallationVersion } from "@codo-ai/core/installation/version"
 import { ClipboardProvider, useClipboard } from "./context/clipboard"
@@ -68,6 +70,7 @@ import { createPluginRuntime, PluginRuntimeProvider, usePluginRuntime, type TuiP
 import { CommandPaletteDialog } from "./component/command-palette"
 import { WorkflowSelector, type WorkflowType } from "./workflow/selector"
 import { initGsd } from "./workflow/gsd"
+import { DialogSelect } from "./ui/dialog-select"
 import { initGStack } from "./workflow/gstack"
 import { initSpecKit } from "./workflow/speckit"
 import {
@@ -179,9 +182,20 @@ function isVersionGreater(left: string, right: string) {
   return a.prerelease.localeCompare(b.prerelease, undefined, { numeric: true }) > 0
 }
 
+const forceDisableMouseTracking = () => {
+  process.stdout.write("\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1006l")
+}
+
 export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
   const global = yield* Global.Service
   const exit = { epilogue: undefined as string | undefined, reason: undefined as unknown }
+  process.on("exit", forceDisableMouseTracking)
+  for (const signal of ["SIGINT", "SIGTERM"] as const) {
+    process.on(signal, () => {
+      forceDisableMouseTracking()
+      process.exit(signal === "SIGINT" ? 130 : 143)
+    })
+  }
   const result = yield* Effect.scoped(
     Effect.gen(function* () {
       const renderer = yield* Effect.acquireRelease(
@@ -226,6 +240,22 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
       yield* Effect.acquireRelease(
         Effect.sync(() => process.on("SIGHUP", onSighup)),
         () => Effect.sync(() => process.off("SIGHUP", onSighup)),
+      )
+      const onUnhandledRejection = (reason: unknown) => {
+        console.error("Unhandled rejection in TUI process:", reason)
+        forceDisableMouseTracking()
+      }
+      yield* Effect.acquireRelease(
+        Effect.sync(() => process.on("unhandledRejection", onUnhandledRejection)),
+        () => Effect.sync(() => process.off("unhandledRejection", onUnhandledRejection)),
+      )
+      const onUncaughtException = (error: Error) => {
+        console.error("Uncaught exception in TUI process:", error)
+        forceDisableMouseTracking()
+      }
+      yield* Effect.acquireRelease(
+        Effect.sync(() => process.on("uncaughtException", onUncaughtException)),
+        () => Effect.sync(() => process.off("uncaughtException", onUncaughtException)),
       )
       renderer.once("destroy", () => Deferred.doneUnsafe(shutdown, Effect.void))
       const pluginRuntime = createPluginRuntime()
@@ -811,12 +841,42 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
                   try {
                     // Store selected workflow
                     kv.set("selected_workflow", workflow)
-                    
+
+                    // Persist workflow to file (fire-and-forget to avoid blocking dialog.replace)
+                    ;(async () => {
+                      try {
+                        const workflowFile = path.join(Global.Path.home, ".codo", "workflow.json")
+                        await mkdir(path.dirname(workflowFile), { recursive: true })
+                        await writeFile(workflowFile, JSON.stringify({ workflow }, null, 2))
+                      } catch { /* best effort */ }
+                    })()
+
                     switch (workflow) {
-                      case "gsd":
-                        await initGsd()
-                        toast.show({ message: "GSD workflow initialized", variant: "info" })
+                      case "gsd": {
+                        const scope = await new Promise<"local" | "global" | null>((resolve) => {
+                          dialog.replace(
+                            () => (
+                              <DialogSelect
+                                title="GSD Install Location"
+                                options={[
+                                  { title: "Local (this project)", value: "local" as const, description: "Skills in .agents/skills/" },
+                                  { title: "Global (all projects)", value: "global" as const, description: "Skills in ~/.agents/skills/" },
+                                ]}
+                                onSelect={(option) => resolve(option.value)}
+                              />
+                            ),
+                            () => resolve(null),
+                          )
+                        })
+                        if (scope === null) break
+                        const result = await initGsd(scope)
+                        if (result.installed) {
+                          toast.show({ message: `GSD installed to ${result.path}`, variant: "info" })
+                        } else {
+                          toast.show({ message: `GSD skills already installed at ${result.path}`, variant: "info" })
+                        }
                         break
+                      }
                       case "gstack":
                         await initGStack()
                         toast.show({ message: "GStack workflow initialized", variant: "info" })
@@ -833,6 +893,8 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
                     toast.error(error instanceof Error ? error : new Error("Failed to initialize workflow"))
                   }
                   dialog.clear()
+                  // Re-fetch agents so server-side workflow gating takes effect
+                  sync.bootstrap({ fatal: false }).catch(() => {})
                 }
                 initWorkflow()
               }}

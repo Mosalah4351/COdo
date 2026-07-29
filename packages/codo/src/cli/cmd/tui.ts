@@ -142,6 +142,16 @@ export const TuiThreadCommand = cmd({
         worker.terminate()
       }
 
+      process.on("unhandledRejection", (reason) => {
+        console.error("Unhandled rejection:", reason)
+        stop()
+      })
+      process.on("uncaughtException", (error) => {
+        console.error("Uncaught exception:", error)
+        stop()
+        process.exit(1)
+      })
+
       const prompt = await input(args.prompt)
       const config = await TuiConfig.get()
 
