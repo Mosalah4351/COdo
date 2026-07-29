@@ -183,7 +183,9 @@ function isVersionGreater(left: string, right: string) {
 }
 
 const forceDisableMouseTracking = () => {
-  process.stdout.write("\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1006l")
+  const seq = "\x1b[?1049l\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1006l"
+  try { process.stderr.write(seq) } catch {}
+  try { process.stdout.write(seq) } catch {}
 }
 
 export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
@@ -272,6 +274,12 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
               exit={(reason) => {
                 if (renderer.isDestroyed) return
                 exit.reason = reason
+                try {
+                  renderer.useMouse = false
+                } catch {}
+                try {
+                  renderer.screenMode = "main-screen"
+                } catch {}
                 destroyRenderer(renderer)
               }}
             >

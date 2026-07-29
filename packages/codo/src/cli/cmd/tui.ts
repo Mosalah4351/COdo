@@ -228,6 +228,9 @@ export const TuiThreadCommand = cmd({
         unguard?.()
       } catch {}
     }
+    const cleanupSeq = "\x1b[?1049l\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1006l"
+    try { process.stderr.write(cleanupSeq) } catch {}
+    try { process.stdout.write(cleanupSeq) } catch {}
     process.exit(0)
   },
 })
