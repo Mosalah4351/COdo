@@ -155,7 +155,9 @@ export const TuiThreadCommand = cmd({
         stopped.value = true
         process.off("SIGUSR2", reload)
         await withTimeout(client.call("shutdown", undefined), 5000).catch(() => {})
-        await worker.terminate().catch(() => {})
+        // terminate() is typed as void in @types/bun but actually returns a Promise.
+        // Fire-and-forget: process.exit follows in every caller path.
+        worker.terminate()
       }
 
       process.on("unhandledRejection", (reason) => {

@@ -132,9 +132,34 @@ async function fetchTarball(url: string, dest: string): Promise<void> {
   await pipeline(Readable.fromWeb(res.body as never), createWriteStream(dest))
 }
 
+/**
+ * On Windows the PATH-resolvable `tar` is the MSYS/Git Bash build, which
+ * interprets `C:/...` as a remote host because of the colon. Use bsdtar at
+ * its absolute location, or, as a last resort, BSdTar via PowerShell Expand-Archive
+ * (we only need a tgz, so we keep tar).
+ */
+function resolveTarBinary(): string {
+  if (process.platform !== "win32") return "tar"
+  // bsdtar shipped with Windows supports absolute win32 paths
+  for (const candidate of [
+    "C:\\Windows\\System32\\tar.exe",
+    "C:\\Program Files\\Git\\usr\\bin\\tar.exe",
+    "C:\\Program Files (x86)\\Git\\usr\\bin\\tar.exe",
+  ]) {
+    if (existsSync(candidate)) return candidate
+  }
+  return "tar"
+}
+
+/** Forward-slashes the path so MSYS tar doesn't mistake the drive letter for a remote host. */
+function toTarFriendlyPath(p: string) {
+  return process.platform === "win32" ? p.replaceAll("\\", "/") : p
+}
+
 async function extractTarball(tgz: string, destDir: string): Promise<void> {
   mkdirSync(destDir, { recursive: true })
-  const proc = spawn(["tar", "-xzf", tgz, "-C", destDir, "--strip-components=1"])
+  const tar = resolveTarBinary()
+  const proc = spawn([tar, "-xzf", toTarFriendlyPath(tgz), "-C", toTarFriendlyPath(destDir), "--strip-components=1"])
   const code = await proc.exited
   if (code !== 0) throw new Error(`tar failed with code ${code}`)
 }
