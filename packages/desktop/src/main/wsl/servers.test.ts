@@ -23,11 +23,11 @@ test("starts every configured WSL server on initialization", () => {
 test("rejects an update that did not install the desktop version", () => {
   expect(() => expectOpencodeVersion("1.16.2", "1.16.2")).not.toThrow()
   expect(() => expectOpencodeVersion("1.14.35", "1.16.2")).toThrow(
-    "OpenCode update finished but Debian still reports 1.14.35; expected 1.16.2",
+    "COdo update finished but Debian still reports 1.14.35; expected 1.16.2",
   )
 })
 
-test("restarts an existing distro server after updating OpenCode", () => {
+test("restarts an existing distro server after updating COdo", () => {
   expect(
     wslServerIdToRestart(
       [
@@ -49,7 +49,7 @@ test("clears cached distro probes when removing a WSL server", () => {
       {
         Debian: {
           distro: "Debian",
-          resolvedPath: "/home/luke/.opencode/bin/opencode",
+          resolvedPath: "/home/luke/.COdo/bin/COdo",
           version: "1.16.2",
           expectedVersion: "1.16.2",
           matchesDesktop: true,
@@ -96,7 +96,7 @@ test("derives a required Windows restart from the post-install runtime probe", (
   expect(pendingRestartAfterWslInstall({ available: true, version: "WSL version: 2.6.1", error: null })).toBe(false)
 })
 
-test("ignores stale background OpenCode checks after removing a WSL server", async () => {
+test("ignores stale background COdo checks after removing a WSL server", async () => {
   persistedServers = []
   releaseOpencodeResolve = undefined
   const controller = createWslServersController(
@@ -107,7 +107,7 @@ test("ignores stale background OpenCode checks after removing a WSL server", asy
         onExit: () => undefined,
       },
       url: "http://127.0.0.1:4096",
-      username: "opencode",
+      username: "COdo",
       password: "secret",
     }),
     testControllerOptions(),
@@ -123,7 +123,7 @@ test("ignores stale background OpenCode checks after removing a WSL server", asy
   expect(controller.getState().opencodeChecks).toEqual({})
 })
 
-test("ignores stale startup OpenCode checks after removing a WSL server", async () => {
+test("ignores stale startup COdo checks after removing a WSL server", async () => {
   persistedServers = [{ id: "wsl:Debian", distro: "Debian" }]
   releaseOpencodeResolve = undefined
   const controller = createWslServersController(
@@ -161,7 +161,7 @@ function testControllerOptions() {
       await new Promise<void>((resolve) => {
         releaseOpencodeResolve = resolve
       })
-      return "/home/me/.opencode/bin/opencode"
+      return "/home/me/.COdo/bin/COdo"
     },
   }
 }

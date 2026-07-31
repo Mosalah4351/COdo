@@ -86,12 +86,12 @@ describe("encodeFilePath", () => {
 
   describe("macOS paths", () => {
     test("should handle macOS absolute path", () => {
-      const macPath = "/Users/kelvin/Projects/opencode/README.md"
+      const macPath = "/Users/kelvin/Projects/codo/README.md"
       const result = encodeFilePath(macPath)
       const fileUrl = `file://${result}`
 
       expect(() => new URL(fileUrl)).not.toThrow()
-      expect(result).toBe("/Users/kelvin/Projects/opencode/README.md")
+      expect(result).toBe("/Users/kelvin/Projects/codo/README.md")
     })
 
     test("should handle macOS path with spaces", () => {
@@ -106,7 +106,7 @@ describe("encodeFilePath", () => {
 
   describe("Windows paths", () => {
     test("should handle Windows absolute path with backslashes", () => {
-      const windowsPath = "D:\\dev\\projects\\opencode\\README.bs.md"
+      const windowsPath = "D:\\dev\\projects\\codo\\README.bs.md"
       const result = encodeFilePath(windowsPath)
       const fileUrl = `file://${result}`
 
@@ -116,17 +116,17 @@ describe("encodeFilePath", () => {
       const url = new URL(fileUrl)
       expect(url.protocol).toBe("file:")
       expect(url.pathname).toContain("README.bs.md")
-      expect(result).toBe("/D:/dev/projects/opencode/README.bs.md")
+      expect(result).toBe("/D:/dev/projects/codo/README.bs.md")
     })
 
     test("should handle mixed separator path (Windows + Unix)", () => {
       // This is what happens in build-request-parts.ts when concatenating paths
-      const mixedPath = "D:\\dev\\projects\\opencode/README.bs.md"
+      const mixedPath = "D:\\dev\\projects\\codo/README.bs.md"
       const result = encodeFilePath(mixedPath)
       const fileUrl = `file://${result}`
 
       expect(() => new URL(fileUrl)).not.toThrow()
-      expect(result).toBe("/D:/dev/projects/opencode/README.bs.md")
+      expect(result).toBe("/D:/dev/projects/codo/README.bs.md")
     })
 
     test("should handle Windows path with spaces", () => {
@@ -167,7 +167,7 @@ describe("encodeFilePath", () => {
 
     test("should NOT create invalid URL like the bug report", () => {
       // This is the exact scenario from bug report by @alexyaroshuk
-      const windowsPath = "D:\\dev\\projects\\opencode\\README.bs.md"
+      const windowsPath = "D:\\dev\\projects\\codo\\README.bs.md"
       const result = encodeFilePath(windowsPath)
       const fileUrl = `file://${result}`
 
