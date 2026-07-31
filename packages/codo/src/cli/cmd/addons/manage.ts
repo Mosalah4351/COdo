@@ -1,4 +1,5 @@
 import path from "path"
+import { Global } from "@codo-ai/core/global"
 import { getAddon, listAddons } from "./catalog"
 import { installAddon } from "./install"
 import { enableAddonInConfig, disableAddonInConfig, readAddonState, type Scope } from "./patch"
@@ -50,7 +51,7 @@ export async function enableAddon(
   const existing = await readAddonState(name, scope, projectDir)
 
   if (existing && existing.installed && existing.enabled) {
-    return { ok: true, skillDir: path.join(scope === "global" ? "~/.config/COdo" : projectDir + "/.codo", "addons", name, "skills") }
+    return { ok: true, skillDir: skillDirFor(name, scope, projectDir) }
   }
 
   if (!existing || !existing.installed) {
@@ -72,7 +73,7 @@ export async function enableAddon(
   }
 
   // Re-enable: just config patch
-  const skillDir = path.join(scope === "global" ? "~/.config/COdo" : projectDir + "/.codo", "addons", name, "skills")
+  const skillDir = skillDirFor(name, scope, projectDir)
   const patchResult = await enableAddonInConfig(
     name,
     { name, enabled: true, scope, npmPackage: addon.npmPackage, skills: [skillDir] },
@@ -103,11 +104,15 @@ export async function disableAddon(
   if (!state) return { ok: false, error: `Addon "${name}" is not installed` }
 
   const scope: Scope = localState ? "local" : "global"
-  const configDir = scope === "global" ? "~/.config/COdo" : path.join(projectDir, ".codo")
-  const skillDir = path.join(configDir, "addons", name, "skills")
+  const skillDir = skillDirFor(name, scope, projectDir)
 
   const result = await disableAddonInConfig(name, skillDir, scope, projectDir)
   if (!result.ok) return { ok: false, error: result.error }
 
   return { ok: true }
+}
+
+function skillDirFor(name: string, scope: Scope, projectDir: string) {
+  const configDir = scope === "global" ? Global.Path.config : path.join(projectDir, ".codo")
+  return path.join(configDir, "addons", name, "skills")
 }
