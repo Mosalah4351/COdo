@@ -95,7 +95,7 @@ function renderFrontmatter(data: Frontmatter) {
   return `---\n${lines.join("\n")}\n---\n`
 }
 
-function transformAgent(content: string): string {
+export function transformAgent(content: string): string {
   const parsed = parseFrontmatter(content)
   if (!parsed) return content
   const data = parsed.data
@@ -117,8 +117,8 @@ function transformAgent(content: string): string {
   return renderFrontmatter(data) + parsed.body
 }
 
-function transformCommand(content: string): string {
-  return content.replace(/\/gsd:([a-z0-9-]+)/gi, "/gsd-$1")
+export function transformCommand(content: string): string {
+  return content.replace(/\/gsd:([a-z0-9-]+)/gi, (_, name) => `/gsd-${name}`)
 }
 
 // ---- Download / extract using OS tar (no extra dep) ----

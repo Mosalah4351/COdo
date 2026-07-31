@@ -240,7 +240,7 @@ describe("SessionStatus.Info", () => {
         title: "Free limit reached",
         message: "Subscribe to codo Go.",
         label: "subscribe",
-        link: "https://opencode.ai/go",
+        link: "https://codo-ai.vercel.app/go",
       },
       next: 500,
     }
