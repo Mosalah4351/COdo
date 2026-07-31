@@ -40,8 +40,8 @@ describe("buildRequestParts", () => {
         (part) =>
           part.type === "text" &&
           part.synthetic &&
-          part.metadata?.opencodeComment &&
-          (part.metadata.opencodeComment as { comment?: string }).comment === "check this",
+          part.metadata?.COdoComment &&
+          (part.metadata.COdoComment as { comment?: string }).comment === "check this",
       ),
     ).toBe(true)
 
