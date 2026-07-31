@@ -7,7 +7,23 @@ export interface Interface {
   readonly workflow: "gsd" | "default"
 }
 
+const defaultInterface: Interface = {
+  get workflow() {
+    return loadWorkflowSync()
+  },
+}
+
 export class Service extends Context.Service<Service, Interface>()("@codo/Workflow") {
+  /**
+   * Live accessor that never requires the layer to be registered. Reads
+   * `~/.codo/workflow.json` lazily. Tests often construct partial graphs that
+   * omit Workflow; in that case the runtime context falls back to the live
+   * disk read.
+   */
+  static live(): Interface {
+    return defaultInterface
+  }
+
   get workflow(): "gsd" | "default" {
     return loadWorkflowSync()
   }

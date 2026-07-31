@@ -55,6 +55,7 @@ export const Default = {
   INIT: "init",
   REVIEW: "review",
   GOAL: "goal",
+  WORKFLOW: "workflow",
 } as const
 
 export interface Interface {
@@ -98,6 +99,16 @@ export const layer = Layer.effect(
       commands[Default.GOAL] = {
         name: Default.GOAL,
         description: "set a stop-condition goal; runs until a judge says it's met. /goal clear to abort",
+        source: "command",
+        subtask: false,
+        get template() {
+          return "$ARGUMENTS"
+        },
+        hints: ["$ARGUMENTS"],
+      }
+      commands[Default.WORKFLOW] = {
+        name: Default.WORKFLOW,
+        description: "toggle an SDD workflow (gsd | default). Syntax: /workflow gsd [local|global]",
         source: "command",
         subtask: false,
         get template() {

@@ -21,6 +21,8 @@ import { Global } from "@codo-ai/core/global"
 import path from "path"
 import { Plugin } from "@/plugin"
 import { Skill } from "../skill"
+import { Workflow } from "@/config/workflow"
+import { GSD } from "./gsd"
 import { Effect, Context, Layer, Schema } from "effect"
 import { InstanceState } from "@/effect/instance-state"
 import * as Option from "effect/Option"
@@ -50,6 +52,7 @@ export const Info = Schema.Struct({
     }),
   ),
   variant: Schema.optional(Schema.String),
+  workflow: Schema.optional(Schema.String),
   prompt: Schema.optional(Schema.String),
   options: Schema.Record(Schema.String, Schema.Unknown),
   steps: Schema.optional(Schema.Finite),
@@ -94,6 +97,7 @@ export const layer = Layer.effect(
     const plugin = yield* Plugin.Service
     const skill = yield* Skill.Service
     const provider = yield* Provider.Service
+    const workflow = Workflow.Service.live()
     const locations = yield* LocationServiceMap
 
     const state = yield* InstanceState.make<State>(
@@ -137,6 +141,12 @@ export const layer = Layer.effect(
         const user = Permission.fromConfig(cfg.permission ?? {})
 
         const agents: Record<string, Info> = {
+          ...(workflow.workflow === "gsd"
+            ? Object.fromEntries(GSD.GSD_AGENTS.map((a) => [a.name, {
+              ...a,
+              permission: Permission.merge(defaults, a.permission, user),
+            }]))
+            : {}),
           build: {
             name: "build",
             description: "The default agent. Executes tools based on configured permissions.",
@@ -188,6 +198,13 @@ export const layer = Layer.effect(
               Permission.fromConfig({
                 question: "allow",
                 skill: "allow",
+                workflow: "allow",
+                external_directory: {
+                  [path.join(Global.Path.home, ".codo", "*")]: "allow",
+                  [path.join(Global.Path.home, ".agents", "skills", "*")]: "allow",
+                  [path.join(Global.Path.home, ".Codex", "*")]: "allow",
+                  [path.join(Global.Path.home, ".codex", "*")]: "allow",
+                },
               }),
               user,
             ),
@@ -460,6 +477,7 @@ export const defaultLayer = layer.pipe(
   Layer.provide(Provider.defaultLayer),
   Layer.provide(Auth.defaultLayer),
   Layer.provide(Config.defaultLayer),
+  Layer.provide(Workflow.defaultLayer),
   Layer.provide(Skill.defaultLayer),
   Layer.provide(LocationServiceMap.layer),
 )

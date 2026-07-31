@@ -61,6 +61,8 @@ import { SessionReminders } from "./reminders"
 import { SessionTools } from "./tools"
 import { LLMEvent } from "@codo-ai/llm"
 import { Goal } from "./goal"
+import { Workflow } from "@/config/workflow"
+import { GSD } from "@/skill/gsd-installer"
 
 // @ts-ignore
 globalThis.AI_SDK_LOG_WARNINGS = false
@@ -126,6 +128,8 @@ export const layer = Layer.effect(
     const flags = yield* RuntimeFlags.Service
     const database = yield* Database.Service
     const goal = yield* Goal.Service
+    const gsd = yield* GSD.Service
+    const workflowSvc = Workflow.Service.live()
     const { db } = database
     const ops = Effect.fn("SessionPrompt.ops")(function* () {
       return {
@@ -1543,6 +1547,91 @@ export const layer = Layer.effect(
         yield* goal.set(input.sessionID, condition)
       }
 
+      const ctx = yield* InstanceState.context
+
+      // /workflow — pick or toggle the active SDD workflow. For `gsd` we install
+      // the full gsd-core runtime (agents, commands, skills, templates,
+      // workflows, references, hooks, plugins) under the chosen scope, then
+      // write the selected workflow into ~/.codo/workflow.json so Agent.Service
+      // re-registers the gsd-* subagents on the next turn. "default" turns gsd
+      // off and is a no-op install. speckit / gstack are recognized but not
+      // yet wired in.
+      if (input.command === Command.Default.WORKFLOW) {
+        const argsLine = input.arguments.trim()
+        const m = argsLine.match(/^(\S+)?\s*(\S+)?/)
+        const requested = (m?.[1] ?? "").toLowerCase()
+        const scopeArg = (m?.[2] ?? "").toLowerCase()
+        const current = workflowSvc.workflow
+
+        // Bare /workflow reports the active choice.
+        if (!requested) {
+          return yield* prompt({
+            sessionID: input.sessionID,
+            messageID: input.messageID,
+            agent: agentName,
+            parts: [{ type: "text", text: `Active workflow: ${current}. Usage: /workflow gsd [local|global] | /workflow default`, synthetic: true }],
+            noReply: true,
+          })
+        }
+
+        if (requested === "default" || requested === "vibe") {
+          yield* Workflow.setWorkflow("default")
+          return yield* prompt({
+            sessionID: input.sessionID,
+            messageID: input.messageID,
+            agent: agentName,
+            parts: [{ type: "text", text: "Workflow switched to default (vibe).", synthetic: true }],
+            noReply: true,
+          })
+        }
+
+        if (requested === "gsd") {
+          const scope: GSD.Scope = scopeArg === "local" ? "local" : "global"
+          const result = yield* gsd.install(scope, ctx.directory ?? process.cwd()).pipe(
+            Effect.catch((err) => Effect.succeed({ error: String(err) } as const)),
+          )
+          if ("error" in result) {
+            const err = new NamedError.Unknown({ message: `Failed to install gsd-core: ${result.error}` })
+            yield* events.publish(Session.Event.Error, {
+              sessionID: input.sessionID,
+              error: err.toObject(),
+            })
+            return yield* prompt({
+              sessionID: input.sessionID,
+              messageID: input.messageID,
+              agent: agentName,
+              parts: [{ type: "text", text: `Failed to install GSD: ${result.error}`, synthetic: true }],
+              noReply: true,
+            })
+          }
+          yield* Workflow.setWorkflow("gsd")
+          return yield* prompt({
+            sessionID: input.sessionID,
+            messageID: input.messageID,
+            agent: agentName,
+            parts: [{
+              type: "text",
+              text: `GSD v${GSD.GSD_VERSION} installed (${result.filesInstalled} files) to ${result.installRoot}. Workflow is now gsd. All 33 gsd-* subagents are available. Start with /gsd-new-project or /gsd:help.`,
+              synthetic: true,
+            }],
+            noReply: true,
+          })
+        }
+
+        const err = new NamedError.Unknown({ message: `Workflow "${requested}" is not yet supported. Use "gsd" or "default".` })
+        yield* events.publish(Session.Event.Error, {
+          sessionID: input.sessionID,
+          error: err.toObject(),
+        })
+        return yield* prompt({
+          sessionID: input.sessionID,
+          messageID: input.messageID,
+          agent: agentName,
+          parts: [{ type: "text", text: `Workflow "${requested}" is not yet supported.`, synthetic: true }],
+          noReply: true,
+        })
+      }
+
       const raw = input.arguments.match(argsRegex) ?? []
       const args = raw.map((arg) => arg.replace(quoteTrimRegex, ""))
       const templateCommand = yield* Effect.promise(async () => cmd.template)
@@ -1665,8 +1754,21 @@ export const layer = Layer.effect(
   }),
 )
 
-export const defaultLayer = Layer.suspend(() =>
-  layer.pipe(
+export const defaultLayer = Layer.suspend(() => {
+  const pipelineEnd = Layer.mergeAll(
+    Image.defaultLayer,
+    Workflow.defaultLayer,
+    GSD.defaultLayer,
+    Goal.defaultLayer,
+    Agent.defaultLayer,
+    Database.defaultLayer,
+    SystemPrompt.defaultLayer,
+    LLM.defaultLayer,
+    CrossSpawnSpawner.defaultLayer,
+    RuntimeFlags.defaultLayer,
+    EventV2Bridge.defaultLayer,
+  )
+  return layer.pipe(
     Layer.provide(SessionRunState.defaultLayer),
     Layer.provide(SessionStatus.defaultLayer),
     Layer.provide(SessionCompaction.defaultLayer),
@@ -1685,21 +1787,9 @@ export const defaultLayer = Layer.suspend(() =>
     Layer.provide(Session.defaultLayer),
     Layer.provide(SessionRevert.defaultLayer),
     Layer.provide(SessionSummary.defaultLayer),
-    Layer.provide(Image.defaultLayer),
-    Layer.provide(Goal.defaultLayer),
-    Layer.provide(
-      Layer.mergeAll(
-        Agent.defaultLayer,
-        Database.defaultLayer,
-        SystemPrompt.defaultLayer,
-        LLM.defaultLayer,
-        CrossSpawnSpawner.defaultLayer,
-        RuntimeFlags.defaultLayer,
-        EventV2Bridge.defaultLayer,
-      ),
-    ),
-  ),
-)
+    Layer.provide(pipelineEnd),
+  )
+})
 const ModelRef = Schema.Struct({
   providerID: ProviderV2.ID,
   modelID: ModelV2.ID,
