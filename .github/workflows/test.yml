@@ -71,7 +71,7 @@ jobs:
 
       - name: Run HttpApi exerciser gates
         if: runner.os == 'Linux'
-        working-directory: packages/opencode
+        working-directory: packages/codo
         run: bun run test:httpapi
 
   e2e:

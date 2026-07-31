@@ -7,7 +7,7 @@
 
 ## Development server
 
-- Running `bun dev` from `packages/opencode` starts the live interactive TUI. Do not run it as a blocking foreground command when you need to inspect the result.
+- Running `bun dev` from `packages/codo` starts the live interactive TUI. Do not run it as a blocking foreground command when you need to inspect the result.
 - Start it in `tmux` instead: `tmux new-session -d -s opencode-dev 'bun dev'`.
 - Capture the current TUI output with: `tmux capture-pane -pt opencode-dev`.
 - Stop the session explicitly when done: `tmux kill-session -t opencode-dev`.
