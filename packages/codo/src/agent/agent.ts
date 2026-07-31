@@ -141,12 +141,16 @@ export const layer = Layer.effect(
         const user = Permission.fromConfig(cfg.permission ?? {})
 
         const agents: Record<string, Info> = {
-          ...(workflow.workflow === "gsd"
-            ? Object.fromEntries(GSD.GSD_AGENTS.map((a) => [a.name, {
+          // Always register GSD subagents so '@' autocomplete + the task tool can
+          // summon them directly (e.g. `@gsd-planner`) regardless of which SDD
+          // workflow is currently selected. The `workflow` setting changes which
+          // subagent compose picks by default, not whether they exist.
+          ...Object.fromEntries(
+            GSD.GSD_AGENTS.map((a) => [a.name, {
               ...a,
               permission: Permission.merge(defaults, a.permission, user),
-            }]))
-            : {}),
+            }]),
+          ),
           build: {
             name: "build",
             description: "The default agent. Executes tools based on configured permissions.",
