@@ -40,6 +40,7 @@ import { DataProvider } from "./context/data"
 import { LocalProvider, useLocal } from "./context/local"
 import { DialogModel } from "./component/dialog-model"
 import { useConnected } from "./component/use-connected"
+import { forceTerminalCleanup } from "./terminal-cleanup"
 import { DialogMcp } from "./component/dialog-mcp"
 import { DialogStatus } from "./component/dialog-status"
 import { DialogThemeList } from "./component/dialog-theme-list"
@@ -182,11 +183,7 @@ function isVersionGreater(left: string, right: string) {
   return a.prerelease.localeCompare(b.prerelease, undefined, { numeric: true }) > 0
 }
 
-const forceDisableMouseTracking = () => {
-  const seq = "\x1b[?1049l\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1006l"
-  try { process.stderr.write(seq) } catch {}
-  try { process.stdout.write(seq) } catch {}
-}
+const forceDisableMouseTracking = forceTerminalCleanup
 
 export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
   const global = yield* Global.Service
@@ -274,9 +271,15 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
               exit={(reason) => {
                 if (renderer.isDestroyed) return
                 exit.reason = reason
+                // Order: disable mouse BEFORE leaving alt screen.
+                // On Windows, doing these in the wrong order leaks SGR mouse
+                // sequences to whichever shell is below (PowerShell shows them
+                // as `M...M[555;...` floods). forceTerminalCleanup is idempotent
+                // and runs again on process exit as a backstop.
                 try {
                   renderer.useMouse = false
                 } catch {}
+                forceDisableMouseTracking()
                 try {
                   renderer.screenMode = "main-screen"
                 } catch {}

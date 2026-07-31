@@ -13,6 +13,7 @@ import type { EventSource } from "@codo-ai/tui/context/sdk"
 import { writeHeapSnapshot } from "v8"
 import { validateSession } from "../tui/validate-session"
 import { win32InstallCtrlCGuard } from "@codo-ai/tui/terminal-win32"
+import { forceTerminalCleanup } from "@codo-ai/tui/terminal-cleanup"
 
 declare global {
   const CODO_WORKER_PATH: string
@@ -105,6 +106,21 @@ export const TuiThreadCommand = cmd({
         describe: "agent to use",
       }),
   handler: async (args) => {
+    // Register the raw-mode/mouse cleanup listeners before anything that
+    // could throw. On Windows a leaked mouse-tracking subscription floods
+    // PowerShell with raw SGR sequences on every mouse move.
+    const exitHandlers: Array<[string, (...args: unknown[]) => void]> = [
+      ["SIGINT", () => cleanupAndExit(130)],
+      ["SIGTERM", () => cleanupAndExit(143)],
+      ["uncaughtException", (error) => {
+        console.error("Uncaught exception:", error)
+        cleanupAndExit(1)
+      }],
+      ["exit", () => forceTerminalCleanup()],
+    ]
+    for (const [signal, fn] of exitHandlers) process.on(signal, fn as never)
+    const removeExitHandlers = () => exitHandlers.forEach(([signal, fn]) => process.off(signal, fn as never))
+
     const unguard = win32InstallCtrlCGuard()
     try {
       const { TuiConfig } = await import("@/config/tui")
@@ -133,24 +149,21 @@ export const TuiThreadCommand = cmd({
       }
       process.on("SIGUSR2", reload)
 
-      let stopped = false
+      const stopped = { value: false }
       const stop = async () => {
-        if (stopped) return
-        stopped = true
+        if (stopped.value) return
+        stopped.value = true
         process.off("SIGUSR2", reload)
         await withTimeout(client.call("shutdown", undefined), 5000).catch(() => {})
-        worker.terminate()
+        await worker.terminate().catch(() => {})
       }
 
       process.on("unhandledRejection", (reason) => {
         console.error("Unhandled rejection:", reason)
         stop()
       })
-      process.on("uncaughtException", (error) => {
-        console.error("Uncaught exception:", error)
-        stop()
-        process.exit(1)
-      })
+      // uncaughtException is handled by the top-level exitHandlers registered
+      // at the top of this handler, which run forceTerminalCleanup first.
 
       const prompt = await input(args.prompt)
       const config = await TuiConfig.get()
@@ -228,10 +241,14 @@ export const TuiThreadCommand = cmd({
         unguard?.()
       } catch {}
     }
-    const cleanupSeq = "\x1b[?1049l\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1006l"
-    try { process.stderr.write(cleanupSeq) } catch {}
-    try { process.stdout.write(cleanupSeq) } catch {}
+    removeExitHandlers()
+    forceTerminalCleanup()
     process.exit(0)
   },
 })
+
+function cleanupAndExit(code: number): never {
+  forceTerminalCleanup()
+  process.exit(code)
+}
 // scratch
