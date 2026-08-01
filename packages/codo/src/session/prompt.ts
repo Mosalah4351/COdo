@@ -1922,6 +1922,7 @@ export const node = LayerNode.make(layer, [
   RuntimeFlags.node,
   Database.node,
   Goal.node,
+  GSD.node,
 ])
 
 export * as SessionPrompt from "./prompt"

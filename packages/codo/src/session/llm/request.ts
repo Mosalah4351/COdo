@@ -65,6 +65,14 @@ export const prepare = Effect.fn("LLMRequestPrep.prepare")(function* (input: Pre
       .join("\n"),
   ]
 
+  if (process.env.CODO_LOG_SYS === "1") {
+    yield* Effect.sync(() =>
+      console.error(
+        `[sys] agent=${input.agent.name} model=${input.model.providerID}/${input.model.modelID} header_chars=${system[0]?.length ?? 0} header_start=${(system[0] ?? "").slice(0, 80).replace(/\n/g, " ")}`,
+      ),
+    )
+  }
+
   const header = system[0]
   yield* input.plugin.trigger(
     "experimental.chat.system.transform",

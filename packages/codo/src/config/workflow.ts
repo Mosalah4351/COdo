@@ -1,4 +1,5 @@
 import { Context, Effect, Layer } from "effect"
+import { LayerNode } from "@codo-ai/core/effect/layer-node"
 import { homedir } from "os"
 import { join } from "path"
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from "fs"
@@ -42,6 +43,7 @@ export const loadWorkflowSync = (): "gsd" | "default" => {
 }
 
 export const defaultLayer = Layer.effect(Service, Effect.sync(() => Service.of({ workflow: loadWorkflowSync() })))
+export const node = LayerNode.make(defaultLayer, [])
 
 export const setWorkflow = (wf: "gsd" | "default") => Effect.sync(() => {
   const dir = join(homedir(), ".codo")

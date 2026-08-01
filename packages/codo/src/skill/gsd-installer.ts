@@ -12,6 +12,7 @@
  */
 
 import { Context, Effect, Layer } from "effect"
+import { LayerNode } from "@codo-ai/core/effect/layer-node"
 import { Global } from "@codo-ai/core/global"
 import path from "path"
 import { mkdir, writeFile, readFile, readdir, rm } from "fs/promises"
@@ -282,5 +283,6 @@ export const layer = Layer.succeed(
 )
 
 export const defaultLayer = layer
+export const node = LayerNode.make(defaultLayer, [])
 
 export * as GSD from "./gsd-installer"
