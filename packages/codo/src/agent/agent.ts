@@ -111,6 +111,11 @@ export const layer = Layer.effect(
         const whitelistedDirs = [
           Truncate.GLOB,
           path.join(Global.Path.tmp, "*"),
+          // Installed GSD trees (project-local + global) — subagents are ordered
+          // to Read their workflow files at boot; without this, "agents/… not on
+          // the whitelist" would turn that into an interactive permission prompt.
+          path.join(ctx.directory, ".codo", "gsd", "*"),
+          path.join(Global.Path.config, "gsd", "*"),
           ...skillDirs.map((dir) => path.join(dir, "*")),
           ...referenceDirs.map((dir) => path.join(dir, "*")),
         ]
@@ -148,6 +153,12 @@ export const layer = Layer.effect(
           ...Object.fromEntries(
             GSD.GSD_AGENTS.map((a) => [a.name, {
               ...a,
+              // Bake the execution context in at registry time: resolves the
+              // installed GSD tree (project-local first, then global), rewrites
+              // the stale `.agents/gsd-core/*` references to real paths, and
+              // prepends the role-matched workflow files the subagent MUST read
+              // first — the opencode `<execution_context>` equivalent.
+              prompt: a.withPrompt(ctx.directory),
               permission: Permission.merge(defaults, a.permission, user),
             }]),
           ),

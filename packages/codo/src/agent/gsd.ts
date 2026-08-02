@@ -1,6 +1,9 @@
 import type { Agent } from "./agent"
 import { Permission } from "@/permission"
 import type { ConfigPermissionV1 } from "@codo-ai/core/v1/config/permission"
+import { Global } from "@codo-ai/core/global"
+import path from "path"
+import { existsSync } from "fs"
 
 import PROMPT_PLANNER from "./prompt/gsd-planner.txt"
 import PROMPT_EXECUTOR from "./prompt/gsd-executor.txt"
@@ -52,6 +55,14 @@ interface GsdAgentSpec {
   color: string
   prompt: string
   permission: ConfigPermissionV1.Info
+  /**
+   * Workflow files (relative to the installed GSD tree's `workflows/`) that
+   * govern this subagent's operating procedure — the same role the
+   * opencode `<execution_context>` @-references play. The subagent is ordered
+   * to read them before acting; compose also references the same files when it
+   * orchestrates, so both sides agree on the process.
+   */
+  workflows: string[]
 }
 
 const specs: GsdAgentSpec[] = [
@@ -62,6 +73,7 @@ const specs: GsdAgentSpec[] = [
     color: "#008000",
     prompt: PROMPT_PLANNER,
     permission: { ...writePerm, question: "allow", todowrite: "allow" },
+    workflows: ["plan-phase.md", "../references/planner-source-audit.md", "../references/planner-antipatterns.md"],
   },
   {
     name: "gsd-executor",
@@ -69,6 +81,7 @@ const specs: GsdAgentSpec[] = [
     color: "#FFFF00",
     prompt: PROMPT_EXECUTOR,
     permission: { ...editPerm, question: "allow", todowrite: "allow" },
+    workflows: ["execute-phase.md", "../references/executor-examples.md", "../references/checkpoints.md"],
   },
   {
     name: "gsd-verifier",
@@ -76,6 +89,7 @@ const specs: GsdAgentSpec[] = [
     color: "#008000",
     prompt: PROMPT_VERIFIER,
     permission: { ...readPerm, question: "allow", webfetch: "allow" },
+    workflows: ["verify-work.md", "../references/gates.md"],
   },
   {
     name: "gsd-phase-researcher",
@@ -83,6 +97,7 @@ const specs: GsdAgentSpec[] = [
     color: "#00FFFF",
     prompt: PROMPT_PHASE_RESEARCHER,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["research-phase.md"],
   },
   {
     name: "gsd-plan-checker",
@@ -90,6 +105,7 @@ const specs: GsdAgentSpec[] = [
     color: "#008000",
     prompt: PROMPT_PLAN_CHECKER,
     permission: { ...readPerm, question: "allow" },
+    workflows: ["plan-phase.md", "../references/gates.md"],
   },
   {
     name: "gsd-codebase-mapper",
@@ -97,6 +113,7 @@ const specs: GsdAgentSpec[] = [
     color: "#00FFFF",
     prompt: PROMPT_CODEBASE_MAPPER,
     permission: { ...writePerm },
+    workflows: ["map-codebase.md", "../references/scout-codebase.md"],
   },
   {
     name: "gsd-debugger",
@@ -104,6 +121,7 @@ const specs: GsdAgentSpec[] = [
     color: "#FFA500",
     prompt: PROMPT_DEBUGGER,
     permission: { ...editPerm, todowrite: "allow", question: "allow" },
+    workflows: ["../references/debugger-philosophy.md", "../references/common-bug-patterns.md"],
   },
 
   // === RESEARCH ===
@@ -113,6 +131,7 @@ const specs: GsdAgentSpec[] = [
     color: "#00FFFF",
     prompt: PROMPT_PROJECT_RESEARCHER,
     permission: { ...writePerm, webfetch: "allow", question: "allow" },
+    workflows: ["new-project.md", "explore.md"],
   },
   {
     name: "gsd-research-synthesizer",
@@ -120,6 +139,7 @@ const specs: GsdAgentSpec[] = [
     color: "#800080",
     prompt: PROMPT_RESEARCH_SYNTHESIZER,
     permission: { ...writePerm },
+    workflows: ["research-phase.md"],
   },
   {
     name: "gsd-domain-researcher",
@@ -127,6 +147,7 @@ const specs: GsdAgentSpec[] = [
     color: "#A78BFA",
     prompt: PROMPT_DOMAIN_RESEARCHER,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["../references/domain-probes.md", "research-phase.md"],
   },
   {
     name: "gsd-framework-selector",
@@ -134,6 +155,7 @@ const specs: GsdAgentSpec[] = [
     color: "#38BDF8",
     prompt: PROMPT_FRAMEWORK_SELECTOR,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["../references/ai-frameworks.md"],
   },
   {
     name: "gsd-ai-researcher",
@@ -141,6 +163,7 @@ const specs: GsdAgentSpec[] = [
     color: "#34D399",
     prompt: PROMPT_AI_RESEARCHER,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["../references/ai-evals.md", "../references/ai-frameworks.md"],
   },
   {
     name: "gsd-advisor-researcher",
@@ -148,6 +171,7 @@ const specs: GsdAgentSpec[] = [
     color: "#00FFFF",
     prompt: PROMPT_ADVISOR_RESEARCHER,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["discuss-phase.md"],
   },
 
   // === QUALITY / SECURITY ===
@@ -157,6 +181,7 @@ const specs: GsdAgentSpec[] = [
     color: "#F59E0B",
     prompt: PROMPT_CODE_REVIEWER,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["code-review.md"],
   },
   {
     name: "gsd-security-auditor",
@@ -164,6 +189,7 @@ const specs: GsdAgentSpec[] = [
     color: "#EF4444",
     prompt: PROMPT_SECURITY_AUDITOR,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["secure-phase.md"],
   },
   {
     name: "gsd-integration-checker",
@@ -171,6 +197,7 @@ const specs: GsdAgentSpec[] = [
     color: "#0000FF",
     prompt: PROMPT_INTEGRATION_CHECKER,
     permission: { ...readPerm },
+    workflows: ["validate-phase.md"],
   },
   {
     name: "gsd-eval-auditor",
@@ -178,6 +205,7 @@ const specs: GsdAgentSpec[] = [
     color: "#EF4444",
     prompt: PROMPT_EVAL_AUDITOR,
     permission: { ...writePerm, webfetch: "allow" },
+    workflows: ["eval-review.md"],
   },
   {
     name: "gsd-nyquist-auditor",
@@ -185,6 +213,7 @@ const specs: GsdAgentSpec[] = [
     color: "#8B5CF6",
     prompt: PROMPT_NYQUIST_AUDITOR,
     permission: { ...editPerm },
+    workflows: ["validate-phase.md", "../references/tdd.md"],
   },
 
   // === UI ===
@@ -194,6 +223,7 @@ const specs: GsdAgentSpec[] = [
     color: "#F472B6",
     prompt: PROMPT_UI_AUDITOR,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["ui-review.md"],
   },
   {
     name: "gsd-ui-checker",
@@ -201,6 +231,7 @@ const specs: GsdAgentSpec[] = [
     color: "#22D3EE",
     prompt: PROMPT_UI_CHECKER,
     permission: { ...readPerm },
+    workflows: ["ui-phase.md"],
   },
   {
     name: "gsd-ui-researcher",
@@ -208,6 +239,7 @@ const specs: GsdAgentSpec[] = [
     color: "#E879F9",
     prompt: PROMPT_UI_RESEARCHER,
     permission: { ...readPerm, webfetch: "allow" },
+    workflows: ["ui-phase.md"],
   },
 
   // === PLANNING / ANALYSIS ===
@@ -217,6 +249,7 @@ const specs: GsdAgentSpec[] = [
     color: "#800080",
     prompt: PROMPT_ROADMAPPER,
     permission: { ...writePerm, question: "allow" },
+    workflows: ["new-project.md", "add-phase.md"],
   },
   {
     name: "gsd-assumptions-analyzer",
@@ -224,6 +257,7 @@ const specs: GsdAgentSpec[] = [
     color: "#00FFFF",
     prompt: PROMPT_ASSUMPTIONS_ANALYZER,
     permission: { ...readPerm },
+    workflows: ["list-phase-assumptions.md", "discuss-phase-assumptions.md"],
   },
   {
     name: "gsd-pattern-mapper",
@@ -231,6 +265,7 @@ const specs: GsdAgentSpec[] = [
     color: "#FF00FF",
     prompt: PROMPT_PATTERN_MAPPER,
     permission: { ...writePerm },
+    workflows: ["map-codebase.md"],
   },
   {
     name: "gsd-eval-planner",
@@ -238,6 +273,7 @@ const specs: GsdAgentSpec[] = [
     color: "#F59E0B",
     prompt: PROMPT_EVAL_PLANNER,
     permission: { ...writePerm },
+    workflows: ["../references/ai-evals.md"],
   },
 
   // === DOCS ===
@@ -247,6 +283,7 @@ const specs: GsdAgentSpec[] = [
     color: "#800080",
     prompt: PROMPT_DOC_WRITER,
     permission: { ...writePerm, webfetch: "allow" },
+    workflows: ["docs-update.md"],
   },
   {
     name: "gsd-doc-verifier",
@@ -254,6 +291,7 @@ const specs: GsdAgentSpec[] = [
     color: "#FFA500",
     prompt: PROMPT_DOC_VERIFIER,
     permission: { ...readPerm },
+    workflows: ["docs-update.md", "../references/doc-conflict-engine.md"],
   },
   {
     name: "gsd-doc-classifier",
@@ -261,6 +299,7 @@ const specs: GsdAgentSpec[] = [
     color: "#FFFF00",
     prompt: PROMPT_DOC_CLASSIFIER,
     permission: { ...writePerm },
+    workflows: ["docs-update.md"],
   },
   {
     name: "gsd-doc-synthesizer",
@@ -268,8 +307,136 @@ const specs: GsdAgentSpec[] = [
     color: "#FFA500",
     prompt: PROMPT_DOC_SYNTHESIZER,
     permission: { ...writePerm },
+    workflows: ["docs-update.md"],
   },
 ]
+
+/**
+ * Lines the project directory walks upward from — used to find the
+ * project-local GSD install (`<project>/.codo/gsd`) even when the session
+ * was started from a subdirectory of the project.
+ */
+function* ancestors(dir: string): Generator<string> {
+  let current = path.resolve(dir)
+  while (true) {
+    yield current
+    const parent = path.dirname(current)
+    if (parent === current) return
+    current = parent
+  }
+}
+
+/** Installed GSD tree under the project, if present (walks up to the repo root). */
+function findLocalInstall(projectDir: string): string | undefined {
+  for (const dir of ancestors(projectDir)) {
+    const candidate = path.join(dir, ".codo", "gsd")
+    if (existsSync(candidate)) return candidate
+  }
+  return undefined
+}
+
+/** Installed GSD tree under the user config dir, if present. */
+function findGlobalInstall(): string | undefined {
+  const candidate = path.join(Global.Path.config, "gsd")
+  return existsSync(candidate) ? candidate : undefined
+}
+
+// The agent layer rebuilds on config/plugin hot-reload, which would re-stat the
+// tree every time. Install targets change only via /workflow gsd (a process-level
+// action), so caching per directory is safe within a session.
+const installRootCache = new Map<string, { local: string | undefined; global: string | undefined }>()
+
+function resolveInstalls(projectDir: string | undefined) {
+  const key = projectDir ?? ""
+  const cached = installRootCache.get(key)
+  if (cached) return cached
+  const resolved = {
+    local: projectDir ? findLocalInstall(projectDir) : undefined,
+    global: findGlobalInstall(),
+  }
+  installRootCache.set(key, resolved)
+  return resolved
+}
+
+/** Visible for tests: drop memoized install lookups. */
+export function resetInstallCache() {
+  installRootCache.clear()
+}
+
+/**
+ * Where every relative path in the agent prompts (`references/…`,
+ * `workflows/…`, `templates/…`, `bin/gsd-tools.cjs`) actually lives on this
+ * machine. Project-local install wins over global; when neither exists the
+ * project-local target is printed so the subagent sees a concrete path and
+ * knows installation is missing instead of guessing.
+ */
+export function installRootHint(projectDir: string | undefined): {
+  local: string | undefined
+  global: string | undefined
+  active: string
+  installed: boolean
+} {
+  const { local, global } = resolveInstalls(projectDir)
+  return {
+    local,
+    global,
+    active: local ?? global ?? path.join(projectDir ?? ".", ".codo", "gsd"),
+    installed: Boolean(local ?? global),
+  }
+}
+
+/**
+ * Rewrites the stale `.agents/gsd-core/<sub>/<path>` references baked into
+ * the upstream prompts into our installed layout: `<active-root>/<sub>/<path>`.
+ * The agents markdown files under `.agents/` were written for the Claude Code
+ * layout; after `/workflow gsd` installs, the real files live in `.codo/gsd`
+ * (project) or `<config>/gsd` (global).
+ */
+export function rewriteStalePaths(prompt: string, activeRoot: string): string {
+  const root = activeRoot.replaceAll("\\", "/").replace(/\/+$/, "")
+  return prompt.replaceAll(/\.agents\/gsd-core\/(references|templates|bin|workflows)\//g, `${root}/$1/`)
+}
+
+/**
+ * The opencode `<execution_context>` equivalent: tells the subagent which
+ * workflow files govern its role, where they live on disk, and demands they
+ * are read before acting. This is what makes the subagent *follow the skill*
+ * instead of free-styling on the task text alone.
+ */
+export function executionContext(spec: GsdAgentSpec, hint: ReturnType<typeof installRootHint>): string {
+  const root = hint.active.replaceAll("\\", "/").replace(/\/+$/, "")
+  const files = spec.workflows.map((wf) => {
+    const resolved = wf.startsWith("../") ? `${root}/${wf.slice(3)}` : `${root}/workflows/${wf}`
+    return `- ${resolved}`
+  })
+  const installStatus = hint.installed
+    ? `This tree is installed${hint.local ? " (project-local)" : " (globally)"} — the files above exist. Read them.`
+    : [
+        `WARNING: the GSD tree is NOT installed (checked project-local and global scopes).`,
+        `Tell the orchestrator that GSD content is missing and suggest running \`/workflow gsd\` to install it, then do your best from the role description below without the workflow files.`,
+      ].join("\n")
+  return [
+    `<execution_context>`,
+    `GSD is installed at: ${root}`,
+    ...(hint.local && hint.global ? [`(project-local install shadows the global one at ${hint.global.replaceAll("\\", "/")})`] : []),
+    `${installStatus}`,
+    ``,
+    `Before doing ANY work, your FIRST tool call must be the Read tool on every`,
+    `workflow file listed below — they specify your exact inputs, gates, outputs,`,
+    `and step-by-step process. Follow them literally. Do not start the task from`,
+    `scratch; the workflow file IS your job description for this dispatch:`,
+    ...files,
+    ``,
+    `All other relative paths mentioned in your instructions (references/,`,
+    `templates/, bin/gsd-tools.cjs) resolve against the same root: ${root}`,
+    `</execution_context>`,
+  ].join("\n")
+}
+
+export function equippedPrompt(spec: GsdAgentSpec, projectDir: string | undefined): string {
+  const hint = installRootHint(projectDir)
+  return `${executionContext(spec, hint)}\n\n${rewriteStalePaths(spec.prompt, hint.active)}`
+}
 
 export const GSD_AGENTS = specs.map((s) => ({
   name: s.name,
@@ -281,6 +448,9 @@ export const GSD_AGENTS = specs.map((s) => ({
   native: true as const,
   workflow: "gsd" as const,
   prompt: s.prompt,
-})) satisfies Agent.Info[]
+  /** Assembles the runtime prompt (execution context + path rewrites) for a project dir. */
+  withPrompt: (projectDir: string | undefined) => equippedPrompt(s, projectDir),
+})) satisfies (Agent.Info & { withPrompt: (projectDir: string | undefined) => string })[]
 
 export * as GSD from "./gsd"
+export * as GSDInstall from "@/skill/gsd-installer"
