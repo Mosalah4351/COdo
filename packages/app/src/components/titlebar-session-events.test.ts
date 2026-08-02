@@ -6,10 +6,11 @@ describe("titlebar session events", () => {
     expect(
       readSessionTabsRemovedDetail(
         new CustomEvent(SESSION_TABS_REMOVED_EVENT, {
-          detail: { directory: "/tmp/project", sessionIDs: ["ses_1", "ses_2", 1] },
+          detail: { server: "remote", directory: "/tmp/project", sessionIDs: ["ses_1", "ses_2", 1] },
         }),
       ),
     ).toEqual({
+      server: "remote",
       directory: "/tmp/project",
       sessionIDs: ["ses_1", "ses_2"],
     })
@@ -20,7 +21,14 @@ describe("titlebar session events", () => {
     expect(
       readSessionTabsRemovedDetail(
         new CustomEvent(SESSION_TABS_REMOVED_EVENT, {
-          detail: { directory: "/tmp/project", sessionIDs: [] },
+          detail: { server: "remote", directory: "/tmp/project", sessionIDs: [] },
+        }),
+      ),
+    ).toBeUndefined()
+    expect(
+      readSessionTabsRemovedDetail(
+        new CustomEvent(SESSION_TABS_REMOVED_EVENT, {
+          detail: { directory: "/tmp/project", sessionIDs: ["ses_1"] },
         }),
       ),
     ).toBeUndefined()
