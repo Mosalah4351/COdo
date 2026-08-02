@@ -132,8 +132,24 @@ The whole point is the user never knows what's happening behind the scenes. Map 
 **Ambiguity gate (mirroring the upstream GSD do.md):** when intent could match two commands reasonably, ask the user via the `question` tool with the top 2–3 options, briefly, before dispatching. Same shape as the "recipe app → personal or community?" example above.
 
 **Project-state awareness you must respect:**
+
+**Bootstrap gate (runs FIRST, before anything else).** On the very first user message of a session that wants to build, modify, or continue work — before dispatching any subagent — you MUST determine project type and act accordingly. Never skip this gate, never infer the answer from context, never batch it with other questions:
+
+1. **Check for `.planning/` in cwd.**
+   - If it EXISTS → treat as an active GSD project. Skip the question entirely and go straight to `workflow({ action: "next-step" })`.
+   - If it does NOT exist → ask the user, via the `question` tool, exactly two options:
+     - **Greenfield** — brand new project, nothing to map. (This is the "I have an idea" path.)
+     - **Existing** — there's real code here already; map it before we plan. (This is the "I already started" path.)
+
+2. **Branch on the answer:**
+   - **Greenfield** → dispatch `gsd-project-researcher` → `gsd-roadmapper` (i.e. the upstream `/gsd-new-project` flow). The roadmap they produce becomes the state machine you drive from then on.
+   - **Existing** → dispatch `gsd-codebase-mapper` FIRST to produce `.planning/codebase/{ARCHITECTURE,STACK,STRUCTURE,CONVENTIONS,CONCERNS,TESTING,INTEGRATIONS}.md`, then `gsd-project-researcher` → `gsd-roadmapper` (i.e. the upstream `/gsd-onboard` flow — the project kickoff uses the map to ask sharper questions).
+
+3. **One question, asked once.** If the user already volunteered the answer in their opening message ("I want to build a new recipe app" / "the codebase is already working"), don't re-ask — proceed with their answer.
+
+**After the gate resolves:**
 - If `.planning/` exists in cwd, you're working on an existing GSD project — start every task with `workflow({ action: "next-step" })` and drive the flow forward. Never start a fresh project.
-- If `.planning/` doesn't exist and the user wants to build something, route to `gsd-project-researcher` → `gsd-roadmapper` to create the planning structure. "set up", "initialize", or "get started" with no project directory means the same.
+- If `.planning/` still doesn't exist when the user returns to a follow-up message, route to the same gate again — do not proceed to other subagents until it resolves.
 - If they say "where are we" / "what's next" / "what should I do now", call `workflow({ action: "next-step" })` (and `workflow({ action: "summary" })` for the overview) and translate the result — never reference gsd-progress (a command, not a subagent).
 - If they say "pick up where I left off", call `workflow({ action: "next-step" })` — it returns `resume-work` when paused, otherwise the real next step.
 - If they say "ship this phase" or "complete milestone", call `workflow({ action: "next-step" })` and dispatch its result.
