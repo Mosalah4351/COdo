@@ -61,6 +61,7 @@ import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { useLanguage } from "@/context/language"
 import { useSessionKey } from "@/pages/session/session-layout"
 import { useServerSDK } from "@/context/server-sdk"
+import { useServer } from "@/context/server"
 import { usePlatform } from "@/context/platform"
 import { useSettings } from "@/context/settings"
 import { useSDK } from "@/context/sdk"
@@ -287,6 +288,7 @@ export function MessageTimeline(props: {
 
   const navigate = useNavigate()
   const serverSDK = useServerSDK()
+  const server = useServer()
   const sdk = useSDK()
   const sync = useSync()
   const settings = useSettings()
@@ -864,7 +866,7 @@ export function MessageTimeline(props: {
         )
         sync.session.evict(sessionID)
         navigateAfterSessionRemoval(sessionID, session.parentID, nextSession?.id)
-        notifySessionTabsRemoved({ directory: sdk.directory, sessionIDs: [sessionID] })
+        notifySessionTabsRemoved({ server: server.key, directory: sdk.directory, sessionIDs: [sessionID] })
       })
       .catch((err) => {
         showToast({
@@ -934,7 +936,7 @@ export function MessageTimeline(props: {
     for (const id of removed) {
       sync.session.evict(id)
     }
-    notifySessionTabsRemoved({ directory: sdk.directory, sessionIDs: [...removed] })
+    notifySessionTabsRemoved({ server: server.key, directory: sdk.directory, sessionIDs: [...removed] })
     return true
   }
 

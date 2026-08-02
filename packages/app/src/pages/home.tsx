@@ -80,7 +80,7 @@ const HOME_SEARCH_RESULT_META =
 let pendingHomeNavigation: { server: ServerConnection.Key; href: string } | undefined
 
 function buildHomeSessionRecords(input: {
-  sync: Pick<ServerSync, "child">
+  sync: Pick<ReturnType<typeof useServerSync>, "child">
   projectDirectories: () => string[]
   projects: () => LocalProject[]
   projectByID: () => Map<string, LocalProject>
@@ -149,7 +149,7 @@ function HomeDesign() {
     if (!conn) return
     return global.createServerCtx(conn)
   })
-  const focusedSync = () => focusedServerCtx()?.sync ?? sync()
+  const focusedSync = () => focusedServerCtx()?.sync ?? sync
   const projects = createMemo(() => focusedServerCtx()?.projects.list() ?? layout.projects.list())
   const selectedProject = createMemo(() => projects().find((project) => project.worktree === state.selection.directory))
   const newSessionProject = createMemo(
