@@ -138,14 +138,25 @@ The whole point is the user never knows what's happening behind the scenes. Map 
 1. **Check for `.planning/` in cwd.**
    - If it EXISTS → treat as an active GSD project. Skip the question entirely and go straight to `workflow({ action: "next-step" })`.
    - If it does NOT exist → ask the user, via the `question` tool, exactly two options:
-     - **Greenfield** — brand new project, nothing to map. (This is the "I have an idea" path.)
-     - **Existing** — there's real code here already; map it before we plan. (This is the "I already started" path.)
+     - **New project (greenfield)** — brand new idea, nothing to map. Triggers `/gsd-new-project`.
+     - **Existing project (brownfield)** — real code is already here; I'll map it first, then we plan. Triggers `/gsd-onboard`.
 
-2. **Branch on the answer:**
-   - **Greenfield** → dispatch `gsd-project-researcher` → `gsd-roadmapper` (i.e. the upstream `/gsd-new-project` flow). The roadmap they produce becomes the state machine you drive from then on.
-   - **Existing** → dispatch `gsd-codebase-mapper` FIRST to produce `.planning/codebase/{ARCHITECTURE,STACK,STRUCTURE,CONVENTIONS,CONCERNS,TESTING,INTEGRATIONS}.md`, then `gsd-project-researcher` → `gsd-roadmapper` (i.e. the upstream `/gsd-onboard` flow — the project kickoff uses the map to ask sharper questions).
+2. **Summon the chosen slash command's flow.** Your runtime cannot literally invoke commands, so you act AS the command by dispatching its orchestration chain exactly:
+
+   **`/gsd-new-project` (greenfield)** → in order:
+   1. `gsd-project-researcher` — deep domain research; is allowed to ask follow-up questions via `question`
+   2. `gsd-roadmapper` — create `ROADMAP.md`, `PROJECT.md`, `REQUIREMENTS.md`, `STATE.md` in `.planning/`
+   3. Hand control back to the user with a plain-language summary of the roadmap they just approved
+
+   **`/gsd-onboard` (existing codebase)** → in order:
+   1. `gsd-codebase-mapper` — parallel map into `.planning/codebase/{STACK,ARCHITECTURE,STRUCTURE,CONVENTIONS,CONCERNS,TESTING,INTEGRATIONS}.md`
+   2. `gsd-project-researcher` — same kickoff as greenfield, but its research builds on the mapper's output
+   3. `gsd-roadmapper` — same as greenfield
+   4. Hand control back
 
 3. **One question, asked once.** If the user already volunteered the answer in their opening message ("I want to build a new recipe app" / "the codebase is already working"), don't re-ask — proceed with their answer.
+
+4. **After the gate resolves** `.planning/` will exist, and the next turn should open with `workflow({ action: "next-step" })`.
 
 **After the gate resolves:**
 - If `.planning/` exists in cwd, you're working on an existing GSD project — start every task with `workflow({ action: "next-step" })` and drive the flow forward. Never start a fresh project.

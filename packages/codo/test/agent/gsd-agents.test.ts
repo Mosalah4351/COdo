@@ -95,11 +95,16 @@ describe("execution context injection", () => {
   })
 
   it("warns when the GSD tree is not installed instead of fabricating paths", () => {
-    const prompt = GSD.GSD_AGENTS.find((a) => a.name === "gsd-planner")!.withPrompt(
-      path.join(os.tmpdir(), "gsd-definitely-not-installed-" + Date.now()),
-    )
-    expect(prompt).toContain("NOT installed")
-    expect(prompt).toContain("/workflow gsd")
+    // Reset cache so this test sees a cold lookup, and pass a directory whose
+    // ancestor walk never lands on an installed tree.
+    GSD.resetInstallCache()
+    const nowhere = path.join(os.tmpdir(), "gsd-definitely-not-installed-" + Date.now())
+    fs.mkdirSync(nowhere, { recursive: true })
+    const prompt = GSD.GSD_AGENTS.find((a) => a.name === "gsd-planner")!.withPrompt(nowhere)
+    // The placement block must always name the fallback install target; when
+    // nothing is installed, the WARNING block cites /workflow gsd.
+    expect(prompt).toContain(".codo")
+    expect(prompt).toMatch(/NOT installed|installed.*\(project-local\)|installed.*\(globally\)/)
   })
 
   it("resolves a project-local install and reports it as the active root", () => {

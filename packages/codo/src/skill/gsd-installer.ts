@@ -37,6 +37,9 @@ export interface ScopePaths {
   installRoot: string
 }
 
+/** Where Claude/Codex-style user skills live (cross-runtime convention). */
+export const AGENTS_SKILLS_ROOT = path.join(Global.Path.home, ".agents", "skills")
+
 export function scopePaths(scope: Scope, projectDir: string): ScopePaths {
   const base = scope === "global" ? Global.Path.config : path.join(projectDir, ".codo")
   return {
@@ -232,6 +235,39 @@ async function installFromExtracted(extractedRoot: string, installRoot: string):
   return count
 }
 
+/**
+ * Mirror the installed command files into the user-skills shape that Claude
+ * Code, Codex, Cursor and other runtimes all scan: one directory per slash
+ * command under `<root>/gsd-<name>/SKILL.md` holding the command's body.
+ * COdo reads its own copies from `.codo/gsd/`; the `~/.agents/skills/` mirror
+ * makes the same commands discoverable to external tools on the same machine.
+ * `~/.codo/skills/` is COdo's own user-level skill root (parallel to
+ * `~/.agents/skills/` for the cross-runtime layout).
+ */
+export async function mirrorToAgentsSkills(installRoot: string): Promise<number> {
+  const commandsDir = path.join(installRoot, "commands")
+  if (!existsSync(commandsDir)) return 0
+  const entries = await readdir(commandsDir, { withFileTypes: true })
+  let written = 0
+  const targets = [AGENTS_SKILLS_ROOT, path.join(Global.Path.home, ".codo", "skills")]
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith(".md")) continue
+    const commandName = entry.name.replace(/\.md$/, "")
+    if (!commandName.startsWith("gsd-")) continue
+    const body = await readFile(path.join(commandsDir, entry.name), "utf-8")
+    for (const root of targets) {
+      const dest = path.join(root, commandName)
+      await mkdir(dest, { recursive: true })
+      const existing = path.join(dest, "SKILL.md")
+      const prior = existsSync(existing) ? await readFile(existing, "utf-8") : undefined
+      if (prior === body) continue
+      await writeFile(existing, body, "utf-8")
+      written++
+    }
+  }
+  return written
+}
+
 // ---- Public API ----
 
 export interface InstallResult {
@@ -267,6 +303,11 @@ export const layer = Layer.succeed(
           }
 
           const copied = await installFromExtracted(paths.extractedRoot, paths.installRoot)
+          // Only global installs fan out to the user-skills roots — local
+          // installs are project-scoped and shouldn't pollute cross-runtime config.
+          if (scope === "global") {
+            await mirrorToAgentsSkills(paths.installRoot)
+          }
           return {
             scope,
             installRoot: paths.installRoot,

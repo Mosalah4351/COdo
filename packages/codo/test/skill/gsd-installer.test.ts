@@ -104,3 +104,48 @@ describe("gsd-installer scopePaths", () => {
     expect(local.extractedRoot).toContain(GSD_VERSION)
   })
 })
+
+describe("gsd-installer mirrorToAgentsSkills", () => {
+  test("writes one SKILL.md per gsd-* command to both user-skill roots", async () => {
+    const fs = await import("fs/promises")
+    const os = await import("os")
+    const path = await import("path")
+    const { mirrorToAgentsSkills, AGENTS_SKILLS_ROOT } = await import("../../src/skill/gsd-installer")
+    const { Global } = await import("@codo-ai/core/global")
+
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "gsd-mirror-"))
+    const commandsDir = path.join(tmp, "commands")
+    await fs.mkdir(commandsDir, { recursive: true })
+    await fs.writeFile(path.join(commandsDir, "gsd-new-project.md"), "---\ndescription: spawn new project\n---\nbody A", "utf-8")
+    await fs.writeFile(path.join(commandsDir, "gsd-onboard.md"), "---\ndescription: onboard existing\n---\nbody B", "utf-8")
+    await fs.writeFile(path.join(commandsDir, "not-gsd.md"), "skip me", "utf-8")
+
+    const written = await mirrorToAgentsSkills(tmp)
+
+    const codo = path.join(Global.Path.home, ".codo", "skills")
+    const agents = AGENTS_SKILLS_ROOT
+    const expectedNew = await fs.readFile(path.join(agents, "gsd-new-project", "SKILL.md"), "utf-8")
+    const expectedOld = await fs.readFile(path.join(agents, "gsd-onboard", "SKILL.md"), "utf-8")
+    const expectedCodo = await fs.readFile(path.join(codo, "gsd-new-project", "SKILL.md"), "utf-8")
+    expect(expectedNew).toContain("spawn new project")
+    expect(expectedOld).toContain("onboard existing")
+    expect(expectedCodo).toContain("spawn new project")
+    // not-gsd.md is NOT mirrored (only gsd-prefixed commands)
+    await expect(fs.readFile(path.join(agents, "not-gsd", "SKILL.md"), "utf-8")).rejects.toThrow()
+    // 2 commands × 2 roots = 4 fresh writes
+    expect(written).toBe(4)
+
+    // Second run is idempotent (same content → no rewrite)
+    const second = await mirrorToAgentsSkills(tmp)
+    expect(second).toBe(0)
+  })
+
+  test("skips when commands dir missing", async () => {
+    const fs = await import("fs/promises")
+    const os = await import("os")
+    const path = await import("path")
+    const { mirrorToAgentsSkills } = await import("../../src/skill/gsd-installer")
+    const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "gsd-mirror-empty-"))
+    expect(await mirrorToAgentsSkills(tmp)).toBe(0)
+  })
+})
