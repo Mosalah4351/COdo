@@ -33,6 +33,10 @@ import PROMPT_EVAL_PLANNER from "./prompt/gsd-eval-planner.txt"
 import PROMPT_DOC_WRITER from "./prompt/gsd-doc-writer.txt"
 import PROMPT_DOC_VERIFIER from "./prompt/gsd-doc-verifier.txt"
 import PROMPT_DOC_CLASSIFIER from "./prompt/gsd-doc-classifier.txt"
+import PROMPT_CODE_FIXER from "./prompt/gsd-code-fixer.txt"
+import PROMPT_DEBUG_SESSION_MANAGER from "./prompt/gsd-debug-session-manager.txt"
+import PROMPT_INTEL_UPDATER from "./prompt/gsd-intel-updater.txt"
+import PROMPT_USER_PROFILER from "./prompt/gsd-user-profiler.txt"
 import PROMPT_DOC_SYNTHESIZER from "./prompt/gsd-doc-synthesizer.txt"
 
 const taskDeny: ConfigPermissionV1.Info = { task: { "*": "deny" } }
@@ -106,6 +110,38 @@ const specs: GsdAgentSpec[] = [
     prompt: PROMPT_PLAN_CHECKER,
     permission: { ...readPerm, question: "allow" },
     workflows: ["plan-phase.md", "../references/gates.md"],
+  },
+  {
+    name: "gsd-code-fixer",
+    description: "Apply fixes for code review findings from REVIEW.md — atomic commits per finding, 3-tier verification, REVIEW-FIX.md report.",
+    color: "#10B981",
+    prompt: PROMPT_CODE_FIXER,
+    permission: { ...editPerm, question: "allow" },
+    workflows: ["code-review-fix.md"],
+  },
+  {
+    name: "gsd-debug-session-manager",
+    description: "Orchestrate the multi-cycle /gsd-debug loop in isolated context — spawns gsd-debugger, handles checkpoints and TDD gates.",
+    color: "#FFA500",
+    prompt: PROMPT_DEBUG_SESSION_MANAGER,
+    permission: { ...editPerm, question: "allow", task: { "*": "allow" } },
+    workflows: ["../references/debugger-philosophy.md", "../references/common-bug-patterns.md"],
+  },
+  {
+    name: "gsd-intel-updater",
+    description: "Write structured codebase intelligence (stack, architecture, api-surface, decisions, manifest) to .planning/intel/.",
+    color: "#00FFFF",
+    prompt: PROMPT_INTEL_UPDATER,
+    permission: { ...writePerm },
+    workflows: ["map-codebase.md"],
+  },
+  {
+    name: "gsd-user-profiler",
+    description: "Score developer profiles across 8 behavioral dimensions from session message samples — read-only analysis.",
+    color: "#FF00FF",
+    prompt: PROMPT_USER_PROFILER,
+    permission: { ...taskDeny, "*": "deny", read: "allow" },
+    workflows: ["../references/user-profiling.md"],
   },
   {
     name: "gsd-codebase-mapper",
@@ -398,12 +434,46 @@ export function rewriteStalePaths(prompt: string, activeRoot: string): string {
 }
 
 /**
+ * Where each gsd-* subagent writes its primary artifact. Mirrored from the
+ * gsd-core workflow files so compose and the subagent agree on the target
+ * location without re-reading the workflow file to discover it.
+ */
+const DELIVERABLE_PATHS: Record<string, string> = {
+  "gsd-project-researcher": ".planning/research/",
+  "gsd-roadmapper": ".planning/ROADMAP.md",
+  "gsd-planner": ".planning/phases/{NN}-{slug}/{NN}-{NN}-PLAN.md",
+  "gsd-plan-checker": ".planning/phases/{NN}-{slug}/",
+  "gsd-executor": ".planning/phases/{NN}-{slug}/{NN}-{NN}-SUMMARY.md",
+  "gsd-verifier": ".planning/phases/{NN}-{slug}/{NN}-VERIFICATION.md",
+  "gsd-code-reviewer": ".planning/phases/{NN}-{slug}/{NN}-REVIEW.md",
+  "gsd-code-fixer": ".planning/phases/{NN}-{slug}/{NN}-REVIEW-FIX.md",
+  "gsd-debugger": ".planning/debug/{slug}.md",
+  "gsd-debug-session-manager": ".planning/debug/{slug}.md",
+  "gsd-codebase-mapper": ".planning/codebase/",
+  "gsd-intel-updater": ".planning/intel/",
+  "gsd-doc-writer": "project docs",
+  "gsd-doc-verifier": "project docs",
+  "gsd-doc-classifier": "project docs",
+  "gsd-doc-synthesizer": "project docs",
+  "gsd-user-profiler": "~/.config/codo/get-shit-done/USER-PROFILE.md",
+}
+
+/**
  * The opencode `<execution_context>` equivalent: tells the subagent which
  * workflow files govern its role, where they live on disk, and demands they
  * are read before acting. This is what makes the subagent *follow the skill*
  * instead of free-styling on the task text alone.
+ *
+ * Injects project placement (`cwd`, `.planning/` path, install root) so the
+ * subagent knows where to land its artifact without asking, and names the
+ * role + identity so it can sign its structured return. Closes the gap
+ * between a bare task text and the rich context opencode dispatches.
  */
-export function executionContext(spec: GsdAgentSpec, hint: ReturnType<typeof installRootHint>): string {
+export function executionContext(
+  spec: GsdAgentSpec,
+  hint: ReturnType<typeof installRootHint>,
+  projectDir: string | undefined,
+): string {
   const root = hint.active.replaceAll("\\", "/").replace(/\/+$/, "")
   const files = spec.workflows.map((wf) => {
     const resolved = wf.startsWith("../") ? `${root}/${wf.slice(3)}` : `${root}/workflows/${wf}`
@@ -415,13 +485,26 @@ export function executionContext(spec: GsdAgentSpec, hint: ReturnType<typeof ins
         `WARNING: the GSD tree is NOT installed (checked project-local and global scopes).`,
         `Tell the orchestrator that GSD content is missing and suggest running \`/workflow gsd\` to install it, then do your best from the role description below without the workflow files.`,
       ].join("\n")
+
+  const planningDir = projectDir ? `${projectDir.replaceAll("\\", "/")}/.planning` : ".planning"
+  const deliverablePath = DELIVERABLE_PATHS[spec.name]
+  const phaseDirHint = `${planningDir}/phases/{NN}-{slug}/`
+
   return [
     `<execution_context>`,
+    `You are ${spec.name}, dispatched by the compose agent for the COdo project.`,
+    ...(projectDir ? [`Working directory: ${projectDir.replaceAll("\\", "/")}`] : []),
     `GSD is installed at: ${root}`,
     ...(hint.local && hint.global ? [`(project-local install shadows the global one at ${hint.global.replaceAll("\\", "/")})`] : []),
-    `${installStatus}`,
+    installStatus,
     ``,
-    `Before doing ANY work, your FIRST tool call must be the Read tool on every`,
+    `**Where your output goes:**`,
+    `- GSD artifacts root: ${planningDir}/`,
+    `- Phase working directory: ${phaseDirHint} (create it if the phase you're working on doesn't exist yet)`,
+    ...(deliverablePath ? [`- Your primary deliverable: ${deliverablePath}`] : []),
+    `- Use the Write tool for new files. Use Edit for updates. Never write to .git/, node_modules/, or dist/.`,
+    ``,
+    `**Before doing ANY work**, your FIRST tool call must be the Read tool on every`,
     `workflow file listed below — they specify your exact inputs, gates, outputs,`,
     `and step-by-step process. Follow them literally. Do not start the task from`,
     `scratch; the workflow file IS your job description for this dispatch:`,
@@ -435,7 +518,7 @@ export function executionContext(spec: GsdAgentSpec, hint: ReturnType<typeof ins
 
 export function equippedPrompt(spec: GsdAgentSpec, projectDir: string | undefined): string {
   const hint = installRootHint(projectDir)
-  return `${executionContext(spec, hint)}\n\n${rewriteStalePaths(spec.prompt, hint.active)}`
+  return `${executionContext(spec, hint, projectDir)}\n\n${rewriteStalePaths(spec.prompt, hint.active)}`
 }
 
 export const GSD_AGENTS = specs.map((s) => ({

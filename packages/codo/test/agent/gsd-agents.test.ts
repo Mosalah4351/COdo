@@ -34,8 +34,8 @@ afterEach(() => {
 })
 
 describe("GSD_AGENTS registry", () => {
-  it("registers 29 subagents, all native subagent mode", () => {
-    expect(GSD.GSD_AGENTS.length).toBe(29)
+  it("registers 33 subagents, all native subagent mode", () => {
+    expect(GSD.GSD_AGENTS.length).toBe(33)
     for (const agent of GSD.GSD_AGENTS) {
       expect(agent.mode).toBe("subagent")
       expect(agent.native).toBe(true)
@@ -198,6 +198,39 @@ itLayer.instance("gsd executor and verifier get distinct governing workflows via
     expect(executor!.prompt).toContain("workflows/execute-phase.md")
     expect(executor!.prompt).not.toContain("workflows/verify-work.md is")
     expect(verifier!.prompt).toContain("workflows/verify-work.md")
+  }),
+)
+
+itLayer.instance("every gsd agent gets project context, cwd, and a deliverable path", () =>
+  Effect.gen(function* () {
+    const agents = yield* Agent.Service.use((svc) => svc.list())
+    const gsdAgents = agents.filter((a) => a.name.startsWith("gsd-"))
+    expect(gsdAgents.length).toBe(33)
+    for (const agent of gsdAgents) {
+      const prompt = agent.prompt ?? ""
+      expect(prompt.startsWith("<execution_context>")).toBe(true)
+      expect(prompt).toContain(`You are ${agent.name}`)
+      expect(prompt).toContain("Working directory:")
+      // Every subagent must know where .planning/ lives so it doesn't write to cwd
+      expect(prompt).toContain(".planning")
+      // Every subagent with a known primary deliverable has it called out
+      const hasPrimary = [
+        "gsd-project-researcher", "gsd-roadmapper", "gsd-planner", "gsd-executor",
+        "gsd-verifier", "gsd-code-reviewer", "gsd-code-fixer", "gsd-debugger",
+        "gsd-debug-session-manager", "gsd-codebase-mapper", "gsd-intel-updater",
+      ]
+      if (hasPrimary.includes(agent.name)) {
+        expect(prompt).toContain("Your primary deliverable:")
+      }
+    }
+  }),
+)
+
+itLayer.instance("gsd-project-researcher is told to write to .planning/research/", () =>
+  Effect.gen(function* () {
+    const agents = yield* Agent.Service.use((svc) => svc.list())
+    const researcher = agents.find((a) => a.name === "gsd-project-researcher")
+    expect(researcher!.prompt).toContain(".planning/research/")
   }),
 )
 
