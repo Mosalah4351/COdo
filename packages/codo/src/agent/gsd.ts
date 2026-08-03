@@ -365,8 +365,14 @@ function* ancestors(dir: string): Generator<string> {
 /** Installed GSD tree under the project, if present (walks up to the repo root). */
 function findLocalInstall(projectDir: string): string | undefined {
   for (const dir of ancestors(projectDir)) {
-    const candidate = path.join(dir, ".codo", "gsd")
-    if (existsSync(candidate)) return candidate
+    // Primary: our own convention — installed via /workflow gsd local
+    const codo = path.join(dir, ".codo", "gsd")
+    if (existsSync(codo)) return codo
+    // Companion convention from the source package layout: `.agents/gsd-core/`
+    // (the shape users get when they import directly from the gsd-opencode repo
+    // into Claude Code or Codex, which both put plugin content under .agents/).
+    const agents = path.join(dir, ".agents", "gsd-core")
+    if (existsSync(agents)) return agents
   }
   return undefined
 }

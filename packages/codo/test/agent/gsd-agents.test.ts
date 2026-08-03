@@ -123,6 +123,20 @@ describe("execution context injection", () => {
     const prompt = GSD.GSD_AGENTS.find((a) => a.name === "gsd-planner")!.withPrompt(nested)
     expect(prompt).toContain(`GSD is installed at: ${root.replaceAll("\\", "/")}`)
   })
+
+  it("falls back to .agents/gsd-core when no .codo/gsd exists in the project", () => {
+    // Regression guard: a user with the rokicool/gsd-opencode layout
+    // (project/.agents/gsd-core/) must still resolve, not silently fall
+    // through to global.
+    const project = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-agents-shape-"))
+    created.push(project)
+    const agentsRoot = path.join(project, ".agents", "gsd-core")
+    fs.mkdirSync(agentsRoot, { recursive: true })
+    GSD.resetInstallCache()
+    const prompt = GSD.GSD_AGENTS.find((a) => a.name === "gsd-planner")!.withPrompt(project)
+    expect(prompt).toContain(`GSD is installed at: ${agentsRoot.replaceAll("\\", "/")}`)
+    expect(prompt).not.toContain("NOT installed")
+  })
 })
 
 describe("stale path rewriting", () => {
