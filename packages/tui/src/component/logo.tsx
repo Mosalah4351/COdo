@@ -551,9 +551,16 @@ function buildIdleState(t: number, ctx: LogoContext): IdleState {
   return { cfg, reach, rings, active }
 }
 
+// Brand colors from the user's brief.
+const BRAND_GREEN = RGBA.fromInts(0, 255, 102) // #00FF66
+const BRAND_VIOLET = RGBA.fromInts(148, 0, 228) // #9400e4
+
 export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean } = {}) {
   const ctx = props.shape ? build(props.shape) : DEFAULT
   const { theme } = useTheme()
+  // When the caller doesn't pin `ink`, the left half (the C block) reads violet
+  // and the right half (O-D-O) reads the brand green — the two-color split from
+  // the brief the shape.
   const renderer = useRenderer()
   const [rings, setRings] = createSignal<Ring[]>([])
   const [hold, setHold] = createSignal<Hold>()
@@ -857,13 +864,14 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean } = 
         {(line, index) => (
           <box flexDirection="row" gap={1}>
             <box flexDirection="row">
-              {renderLine(line, index(), props.ink ?? theme.textMuted, !!props.ink, 0, frame(), dusk(), idleState())}
+              {renderLine(line, index(), props.ink ?? BRAND_VIOLET, !!props.ink, 0, frame(), dusk(), idleState())}
             </box>
             <box flexDirection="row">
               {renderLine(
                 ctx.shape.right[index()],
                 index(),
-                props.ink ?? theme.text,
+                // Right half (O-D-O) takes the brand's brighter ink for emphasis.
+                props.ink ?? BRAND_GREEN,
                 true,
                 ctx.LEFT + GAP,
                 frame(),
