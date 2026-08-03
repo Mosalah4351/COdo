@@ -9,8 +9,9 @@ export const Mark = (props: { class?: string }) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path data-slot="logo-logo-mark-shadow" d="M12 16H4V8H12V16Z" fill="var(--icon-weak-base)" />
-      <path data-slot="logo-logo-mark-o" d="M12 4H4V16H12V4ZM16 20H0V0H16V20Z" fill="var(--icon-strong-base)" />
+      <rect x="1" y="1" width="14" height="18" rx="2" fill="var(--icon-base)" opacity="0.2" />
+      <rect x="1" y="1" width="14" height="18" rx="2" stroke="var(--icon-strong-base)" stroke-width="1.5" />
+      <text x="8" y="13" text-anchor="middle" font-family="monospace" font-weight="800" font-size="8" fill="var(--icon-strong-base)">&gt;_</text>
     </svg>
   )
 }
@@ -25,8 +26,9 @@ export const Splash = (props: Pick<ComponentProps<"svg">, "ref" | "class">) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M60 80H20V40H60V80Z" fill="var(--icon-base)" />
-      <path d="M60 20H20V80H60V20ZM80 100H0V0H80V100Z" fill="var(--icon-strong-base)" />
+      <rect x="10" y="15" width="60" height="70" rx="6" fill="var(--icon-base)" opacity="0.15" />
+      <rect x="10" y="15" width="60" height="70" rx="6" stroke="var(--icon-strong-base)" stroke-width="4" />
+      <text x="40" y="62" text-anchor="middle" font-family="monospace" font-weight="800" font-size="28" fill="var(--icon-strong-base)">&gt;_</text>
     </svg>
   )
 }

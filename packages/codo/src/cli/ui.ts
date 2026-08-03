@@ -1,14 +1,14 @@
 import { EOL } from "os"
 import { Schema } from "effect"
 
-// Big COdo banner. Rendered at `codo --help` and other CLI shell surfaces.
-// Left column is the "C" block; right is "Odo".
+// Big COdo banner. CO is rounded box glyphs, lowercase 'do' follows after a gap.
 const wordmark = [
-  `███████   ██████╗  ██████╗   ██████╗ `,
-  `██        ██╔══██╗ ██╔═══██╗ ██╔═══██╗`,
-  `██        ██║  ██║ ██║   ██║ ██║   ██║`,
-  `███████   ██████╔╝ ╚██████╔╝ ╚██████╔╝`,
-  `          ╚═════╝   ╚═════╝   ╚═════╝ `,
+  ` ██████╗  ██████╗      ▄▄▄                `,
+  `██╔════╝ ██╔═══██╗    ██▀▀█   ██████╗    `,
+  `██║      ██║   ██║    ██  █   ██╔══███╗  `,
+  `██║      ██║   ██║    ██▄▄█   ██║   ██║  `,
+  `╚██████╗ ╚██████╔╝    ▀▀▀▀    ╚██████╔╝  `,
+  ` ╚═════╝  ╚═════╝              ╚═════╝   `,
 ]
 
 export class CancelledError extends Schema.TaggedErrorClass<CancelledError>()("UICancelledError", {}) {}
