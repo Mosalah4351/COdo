@@ -17,9 +17,11 @@ import { RuntimeFlags } from "@/effect/runtime-flags"
 import { Glob } from "@codo-ai/core/util/glob"
 import { Discovery } from "./discovery"
 import { isRecord } from "@/util/record"
+import { ensureGsdLocal } from "./gsd-local"
 
 const CLAUDE_EXTERNAL_DIR = ".claude"
 const AGENTS_EXTERNAL_DIR = ".agents"
+const CODO_EXTERNAL_DIR = ".codo"
 const EXTERNAL_SKILL_PATTERN = "skills/**/SKILL.md"
 const CODO_SKILL_PATTERN = "{skill,skills}/**/SKILL.md"
 const SKILL_PATTERN = "**/SKILL.md"
@@ -141,6 +143,50 @@ const add = Effect.fnUntraced(function* (state: State, match: string, events: Ev
   }
 })
 
+/**
+ * Scan skill directory for router-pattern subdirectories.
+ *
+ * Looks for workflows/, references/, and templates/ subdirectories
+ * and returns their contents for skill activation.
+ */
+async function scanSkillSubDirs(
+  skillDir: string,
+): Promise<{
+  workflows: Array<{ name: string; path: string }>
+  references: Array<{ name: string; path: string }>
+  templates: Array<{ name: string; path: string }>
+}> {
+  const { readdir } = await import("fs/promises")
+  const { join } = await import("path")
+
+  const result = {
+    workflows: [] as Array<{ name: string; path: string }>,
+    references: [] as Array<{ name: string; path: string }>,
+    templates: [] as Array<{ name: string; path: string }>,
+  }
+
+  const subDirs = ["workflows", "references", "templates"] as const
+
+  for (const subDir of subDirs) {
+    const subDirPath = join(skillDir, subDir)
+    try {
+      const entries = await readdir(subDirPath, { withFileTypes: true })
+      for (const entry of entries) {
+        if (entry.isFile() && entry.name.endsWith(".md")) {
+          result[subDir].push({
+            name: entry.name.replace(/\.md$/, ""),
+            path: join(subDirPath, entry.name),
+          })
+        }
+      }
+    } catch {
+      // Subdirectory doesn't exist or can't be read — skip
+    }
+  }
+
+  return result
+}
+
 const scan = Effect.fnUntraced(function* (
   state: ScanState,
   root: string,
@@ -182,18 +228,16 @@ const discoverSkills = Effect.fnUntraced(function* (
   directory: string,
   worktree: string,
 ) {
+  yield* Effect.sync(() => ensureGsdLocal(directory))
+  const localGsdExists = yield* fsys.isDir(path.join(directory, ".agents", "gsd-core", "bin"))
+
   const state: ScanState = { matches: new Set(), dirs: new Set() }
 
   const externalDirs: string[] = []
   if (!disableExternalSkills) {
-    if (!disableClaudeCodeSkills) externalDirs.push(CLAUDE_EXTERNAL_DIR)
+    if (!disableClaudeCodeSkills && !localGsdExists) externalDirs.push(CLAUDE_EXTERNAL_DIR)
     externalDirs.push(AGENTS_EXTERNAL_DIR)
-
-    for (const dir of externalDirs) {
-      const root = path.join(global.home, dir)
-      if (!(yield* fsys.isDir(root))) continue
-      yield* scan(state, root, EXTERNAL_SKILL_PATTERN, { dot: true, scope: "global" })
-    }
+    externalDirs.push(CODO_EXTERNAL_DIR)
 
     const upDirs = yield* fsys
       .up({ targets: externalDirs, start: directory, stop: worktree })
@@ -201,6 +245,27 @@ const discoverSkills = Effect.fnUntraced(function* (
 
     for (const root of upDirs) {
       yield* scan(state, root, EXTERNAL_SKILL_PATTERN, { dot: true, scope: "project" })
+      // Project-local GSD trees keep their skills nested under operations dirs:
+      // .codo/gsd/skills/<name>/SKILL.md, .agents/gsd-core/skills/<name>/SKILL.md.
+      // The flat scan won't reach them — drill in directly when present.
+      for (const sub of ["gsd/skills", "gsd-core/skills"]) {
+        const nested = path.join(root, sub)
+        if (yield* fsys.isDir(nested)) {
+          yield* scan(state, nested, SKILL_PATTERN, { dot: true, scope: "project" })
+        }
+      }
+    }
+
+    for (const dir of externalDirs) {
+      const root = path.join(global.home, dir)
+      if (!(yield* fsys.isDir(root))) continue
+      yield* scan(state, root, EXTERNAL_SKILL_PATTERN, { dot: true, scope: "global" })
+      for (const sub of ["gsd/skills", "gsd-core/skills"]) {
+        const nested = path.join(root, sub)
+        if (yield* fsys.isDir(nested)) {
+          yield* scan(state, nested, SKILL_PATTERN, { dot: true, scope: "global" })
+        }
+      }
     }
   }
 

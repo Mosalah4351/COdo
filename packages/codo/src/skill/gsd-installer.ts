@@ -254,26 +254,51 @@ async function installFromExtracted(extractedRoot: string, installRoot: string):
  * makes the same commands discoverable to external tools on the same machine.
  * `~/.codo/skills/` is COdo's own user-level skill root (parallel to
  * `~/.agents/skills/` for the cross-runtime layout).
+ *
+ * Beyond just the per-command SKILL.md files, the mirror also replicates the
+ * whole auxiliary content tree (references/, templates/, workflows/, bin/,
+ * hooks/, scripts/) into `<root>/.agents/skills/gsd-core/` so the local
+ * project layout is complete — this is what `npx @opengsd/gsd-core` produces
+ * when run with `--claude`.
  */
 export async function mirrorToAgentsSkills(installRoot: string): Promise<number> {
   const commandsDir = path.join(installRoot, "commands")
-  if (!existsSync(commandsDir)) return 0
-  const entries = await readdir(commandsDir, { withFileTypes: true })
   let written = 0
-  const targets = [AGENTS_SKILLS_ROOT, path.join(Global.Path.home, ".codo", "skills")]
-  for (const entry of entries) {
-    if (!entry.isFile() || !entry.name.endsWith(".md")) continue
-    const commandName = entry.name.replace(/\.md$/, "")
-    if (!commandName.startsWith("gsd-")) continue
-    const body = await readFile(path.join(commandsDir, entry.name), "utf-8")
-    for (const root of targets) {
-      const dest = path.join(root, commandName)
-      await mkdir(dest, { recursive: true })
-      const existing = path.join(dest, "SKILL.md")
-      const prior = existsSync(existing) ? await readFile(existing, "utf-8") : undefined
-      if (prior === body) continue
-      await writeFile(existing, body, "utf-8")
-      written++
+
+  // Per-command SKILL.md mirrors (existing behavior).
+  if (existsSync(commandsDir)) {
+    const entries = await readdir(commandsDir, { withFileTypes: true })
+    const targets = [AGENTS_SKILLS_ROOT, path.join(Global.Path.home, ".codo", "skills")]
+    for (const entry of entries) {
+      if (!entry.isFile() || !entry.name.endsWith(".md")) continue
+      const commandName = entry.name.replace(/\.md$/, "")
+      if (!commandName.startsWith("gsd-")) continue
+      const body = await readFile(path.join(commandsDir, entry.name), "utf-8")
+      for (const root of targets) {
+        const dest = path.join(root, commandName)
+        await mkdir(dest, { recursive: true })
+        const existing = path.join(dest, "SKILL.md")
+        const prior = existsSync(existing) ? await readFile(existing, "utf-8") : undefined
+        if (prior === body) continue
+        await writeFile(existing, body, "utf-8")
+        written++
+      }
+    }
+  }
+
+  // Full auxiliary tree into the dedicated gsd-core mirror slot. This is what
+  // makes the local layout complete: scripts/, hooks/, bin/, references/,
+  // templates/, workflows/ are all reachable under one root.
+  const auxSrcs = ["references", "templates", "workflows", "bin", "hooks", "scripts"] as const
+  const targets = [
+    path.join(AGENTS_SKILLS_ROOT, "gsd-core"),
+    path.join(Global.Path.home, ".codo", "skills", "gsd-core"),
+  ]
+  for (const aux of auxSrcs) {
+    const src = path.join(installRoot, aux)
+    if (!existsSync(src)) continue
+    for (const targetRoot of targets) {
+      written += await copyTransformedTree(installRoot, targetRoot, aux, aux)
     }
   }
   return written

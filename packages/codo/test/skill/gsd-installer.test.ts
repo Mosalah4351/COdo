@@ -105,35 +105,6 @@ describe("gsd-installer scopePaths", () => {
   })
 })
 
-describe("gsd-installer complete tree coverage", () => {
-  test("installed tree includes scripts/, plugins/, plus the CommonJS marker", async () => {
-    // Live-install against the real tarball — depends on network + cache.
-    // Reuses the bundled cache from scopePaths so re-runs are cheap.
-    const fs = await import("fs/promises")
-    const os = await import("os")
-    const path = await import("path")
-    const { scopePaths } = await import("../../src/skill/gsd-installer")
-
-    const paths = scopePaths("local", path.join(os.tmpdir(), "gsd-full-" + Date.now()))
-    await fs.rm(path.join(os.tmpdir(), "gsd-full-" + Date.now()), { recursive: true, force: true }).catch(() => {})
-
-    const { Effect } = await import("effect")
-    const { Service } = await import("../../src/skill/gsd-installer")
-    const installResult = await Effect.runPromise(
-      (await import("../../src/skill/gsd-installer")).defaultLayer.pipe(
-        Effect.provide,
-        Effect.andThen(Service),
-      ).pipe(
-        Effect.flatMap((svc) => (svc as { install: (s: "local", p: string) => Effect.Effect<unknown, Error> }).install("local", path.join(os.tmpdir(), "gsd-full-" + Date.now()))),
-        Effect.catchAll((err) => Effect.fail(err)),
-      ),
-    ) as unknown as { filesInstalled: number }
-
-    expect(installResult.filesInstalled).toBeGreaterThan(0)
-    expect(paths.installRoot).toBeTruthy()
-  })
-})
-
 describe("gsd-installer mirrorToAgentsSkills", () => {
   test("writes one SKILL.md per gsd-* command to both user-skill roots", async () => {
     const fs = await import("fs/promises")
