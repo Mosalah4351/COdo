@@ -218,12 +218,23 @@ async function installFromExtracted(extractedRoot: string, installRoot: string):
   count += await copyTransformedTree(extractedRoot, installRoot, "gsd-core/workflows", "workflows")
   count += await copyTransformedTree(extractedRoot, installRoot, "gsd-core/bin", "bin")
   count += await copyTransformedTree(extractedRoot, installRoot, "hooks", "hooks")
+  count += await copyTransformedTree(extractedRoot, installRoot, "scripts", "scripts")
 
   const pluginSrc = path.join(extractedRoot, ".opencode", "plugins", "gsd-core.js")
   if (existsSync(pluginSrc)) {
     const dstDir = path.join(installRoot, "plugins")
     await mkdir(dstDir, { recursive: true })
     await writeFile(path.join(dstDir, "gsd-core.js"), await readFile(pluginSrc, "utf-8"), "utf-8")
+
+    // The plugin dir gets a marker declaring CommonJS so Node doesn't walk up
+    // and resolve `type: "module"` from a higher package.json — without this,
+    // the .js entry crashes at require-time when the user's config dir has ESM
+    // type. Mirrors what upstream does in plugins/package.json (#2544).
+    const markerPath = path.join(dstDir, "package.json")
+    if (!existsSync(markerPath)) {
+      await writeFile(markerPath, JSON.stringify({ type: "commonjs" }, null, 2) + "\n", "utf-8")
+      count++
+    }
     count++
   }
 

@@ -115,6 +115,7 @@ export const layer = Layer.effect(
           // to Read their workflow files at boot; without this, "agents/… not on
           // the whitelist" would turn that into an interactive permission prompt.
           path.join(ctx.directory, ".codo", "gsd", "*"),
+          path.join(ctx.directory, ".agents", "gsd-core", "*"),
           path.join(Global.Path.config, "gsd", "*"),
           ...skillDirs.map((dir) => path.join(dir, "*")),
           ...referenceDirs.map((dir) => path.join(dir, "*")),
