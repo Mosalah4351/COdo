@@ -1,12 +1,15 @@
 import agentSurfaceAuditContent from "./sec-test/agent-surface-audit/SKILL.md" with { type: "text" }
 import briefContent from "./sec-test/brief/SKILL.md" with { type: "text" }
 import codeAuditContent from "./sec-test/code-audit/SKILL.md" with { type: "text" }
+import containerScanContent from "./sec-test/container-scan/SKILL.md" with { type: "text" }
 import dependencyAuditContent from "./sec-test/dependency-audit/SKILL.md" with { type: "text" }
 import pentestContent from "./sec-test/pentest/SKILL.md" with { type: "text" }
 import pipelineHardenContent from "./sec-test/pipeline-harden/SKILL.md" with { type: "text" }
 import reportContent from "./sec-test/report/SKILL.md" with { type: "text" }
+import sbomContent from "./sec-test/sbom/SKILL.md" with { type: "text" }
 import scopeContent from "./sec-test/scope/SKILL.md" with { type: "text" }
 import secretsScanContent from "./sec-test/secrets-scan/SKILL.md" with { type: "text" }
+import supplyChainAttestContent from "./sec-test/supply-chain-attest/SKILL.md" with { type: "text" }
 import threatModelContent from "./sec-test/threat-model/SKILL.md" with { type: "text" }
 
 export interface SecTestSkill {
@@ -32,6 +35,11 @@ export const secTestSkills: SecTestSkill[] = [
     content: codeAuditContent,
   },
   {
+    name: "sec-test:container-scan",
+    description: "Scan container images for OS and language-package vulnerabilities",
+    content: containerScanContent,
+  },
+  {
     name: "sec-test:dependency-audit",
     description: "Audit third-party dependencies for known vulnerabilities and supply-chain red flags",
     content: dependencyAuditContent,
@@ -52,6 +60,11 @@ export const secTestSkills: SecTestSkill[] = [
     content: reportContent,
   },
   {
+    name: "sec-test:sbom",
+    description: "Generate and validate a Software Bill of Materials for built artifacts",
+    content: sbomContent,
+  },
+  {
     name: "sec-test:scope",
     description: "Author or refresh the .codo/security-scope.json authorization file",
     content: scopeContent,
@@ -60,6 +73,11 @@ export const secTestSkills: SecTestSkill[] = [
     name: "sec-test:secrets-scan",
     description: "Scan tracked code and git history for committed secrets",
     content: secretsScanContent,
+  },
+  {
+    name: "sec-test:supply-chain-attest",
+    description: "Verify build provenance and artifact signing (SLSA, Sigstore, in-toto)",
+    content: supplyChainAttestContent,
   },
   {
     name: "sec-test:threat-model",
