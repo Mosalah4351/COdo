@@ -1,8 +1,11 @@
 import agentSurfaceAuditContent from "./sec-test/agent-surface-audit/SKILL.md" with { type: "text" }
+import apiSecurityTestContent from "./sec-test/api-security-test/SKILL.md" with { type: "text" }
+import authTestContent from "./sec-test/auth-test/SKILL.md" with { type: "text" }
 import briefContent from "./sec-test/brief/SKILL.md" with { type: "text" }
 import codeAuditContent from "./sec-test/code-audit/SKILL.md" with { type: "text" }
 import containerScanContent from "./sec-test/container-scan/SKILL.md" with { type: "text" }
 import dependencyAuditContent from "./sec-test/dependency-audit/SKILL.md" with { type: "text" }
+import exploitVerifyContent from "./sec-test/exploit-verify/SKILL.md" with { type: "text" }
 import pentestContent from "./sec-test/pentest/SKILL.md" with { type: "text" }
 import pipelineHardenContent from "./sec-test/pipeline-harden/SKILL.md" with { type: "text" }
 import reportContent from "./sec-test/report/SKILL.md" with { type: "text" }
@@ -35,6 +38,16 @@ export const secTestSkills: SecTestSkill[] = [
     content: codeAuditContent,
   },
   {
+    name: "sec-test:api-security-test",
+    description: "OWASP API Security Top 10 checks against a scope-listed endpoint",
+    content: apiSecurityTestContent,
+  },
+  {
+    name: "sec-test:auth-test",
+    description: "Session/authentication validation on a scope-listed target",
+    content: authTestContent,
+  },
+  {
     name: "sec-test:container-scan",
     description: "Scan container images for OS and language-package vulnerabilities",
     content: containerScanContent,
@@ -43,6 +56,11 @@ export const secTestSkills: SecTestSkill[] = [
     name: "sec-test:dependency-audit",
     description: "Audit third-party dependencies for known vulnerabilities and supply-chain red flags",
     content: dependencyAuditContent,
+  },
+  {
+    name: "sec-test:exploit-verify",
+    description: "Confirm exploitability of an existing finding without escalating",
+    content: exploitVerifyContent,
   },
   {
     name: "sec-test:pentest",

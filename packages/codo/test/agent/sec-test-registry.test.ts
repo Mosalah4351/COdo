@@ -72,8 +72,8 @@ describe("sec-test agent registry", () => {
 })
 
 describe("sec-test skills", () => {
-  it("registers thirteen bundled skills", () => {
-    expect(secTestSkills).toHaveLength(13)
+  it("registers sixteen bundled skills", () => {
+    expect(secTestSkills).toHaveLength(16)
   })
 
   it("uses sec-test: prefix for all names", () => {
@@ -81,7 +81,7 @@ describe("sec-test skills", () => {
   })
 
   it("indexes every exported skill by SEC_TEST_SKILL_NAMES", () => {
-    expect(SEC_TEST_SKILL_NAMES.size).toBe(13)
+    expect(SEC_TEST_SKILL_NAMES.size).toBe(16)
     for (const s of secTestSkills) expect(SEC_TEST_SKILL_NAMES.has(s.name)).toBe(true)
   })
 
