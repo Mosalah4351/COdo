@@ -12,6 +12,12 @@ import { ProviderTransform } from "@/provider/transform"
 import PROMPT_GENERATE from "./generate.txt"
 import PROMPT_COMPACTION from "./prompt/compaction.txt"
 import PROMPT_COMPOSE from "./prompt/compose.txt"
+import PROMPT_SEC_TEST from "./prompt/sec-test.txt"
+import PROMPT_SEC_ARCHITECT from "./prompt/sec-architect.txt"
+import PROMPT_SEC_APPSEC from "./prompt/sec-appsec.txt"
+import PROMPT_SEC_DEVSECOPS from "./prompt/sec-devsecops.txt"
+import PROMPT_SEC_PENTEST from "./prompt/sec-pentest.txt"
+import PROMPT_SEC_SECOPS from "./prompt/sec-secops.txt"
 import PROMPT_EXPLORE from "./prompt/explore.txt"
 import PROMPT_SUMMARY from "./prompt/summary.txt"
 import PROMPT_TITLE from "./prompt/title.txt"
@@ -226,6 +232,182 @@ export const layer = Layer.effect(
             ),
             prompt: PROMPT_COMPOSE,
             mode: "primary",
+            native: true,
+          },
+          "sec-test": {
+            name: "sec-test",
+            color: "#e0715a",
+            description:
+              "Security & testing orchestrator. Dispatches read-only personas (architect/appsec/devsecops/secops) for audits and the scope-gated pentest persona for authorized validation.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                question: "allow",
+                skill: "allow",
+                task: "allow",
+              }),
+              user,
+            ),
+            prompt: PROMPT_SEC_TEST,
+            mode: "primary",
+            native: true,
+          },
+          "sec-architect": {
+            name: "sec-architect",
+            description: "Threat modeling and architecture persona (STRIDE/PASTA, ASVS). Read-only review — identifies threats at the design layer.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                "*": "deny",
+                grep: "allow",
+                glob: "allow",
+                list: "allow",
+                read: "allow",
+                webfetch: "allow",
+                websearch: "allow",
+                bash: {
+                  "*": "deny",
+                  "git log*": "allow",
+                  "git diff*": "allow",
+                },
+                edit: {
+                  "*": "deny",
+                  [path.join(".planning", "security", "**", "*")]: "allow",
+                },
+                external_directory: readonlyExternalDirectory,
+              }),
+              user,
+            ),
+            prompt: PROMPT_SEC_ARCHITECT,
+            mode: "subagent",
+            native: true,
+          },
+          "sec-appsec": {
+            name: "sec-appsec",
+            description: "Application security code auditor (OWASP Top 10:2025, CWE Top 25). Read-only detection of vulnerabilities in implementation.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                "*": "deny",
+                grep: "allow",
+                glob: "allow",
+                list: "allow",
+                read: "allow",
+                bash: {
+                  "*": "deny",
+                  "semgrep*": "allow",
+                  "opengrep*": "allow",
+                  "gitleaks*": "allow",
+                  "trufflehog*": "allow",
+                },
+                edit: {
+                  "*": "deny",
+                  [path.join(".planning", "security", "**", "*")]: "allow",
+                },
+                external_directory: readonlyExternalDirectory,
+              }),
+              user,
+            ),
+            prompt: PROMPT_SEC_APPSEC,
+            mode: "subagent",
+            native: true,
+          },
+          "sec-devsecops": {
+            name: "sec-devsecops",
+            description: "Build pipeline auditor (NIST SSDF, SLSA provenance, Sigstore). Reviews CI/CD config and supply-chain hygiene.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                "*": "deny",
+                grep: "allow",
+                glob: "allow",
+                list: "allow",
+                read: "allow",
+                bash: {
+                  "*": "deny",
+                  "syft*": "allow",
+                  "grype*": "allow",
+                  "trivy*": "allow",
+                  "osv-scanner*": "allow",
+                  "cosign*": "allow",
+                },
+                edit: {
+                  "*": "deny",
+                  [path.join(".planning", "security", "**", "*")]: "allow",
+                },
+                external_directory: readonlyExternalDirectory,
+              }),
+              user,
+            ),
+            prompt: PROMPT_SEC_DEVSECOPS,
+            mode: "subagent",
+            native: true,
+          },
+          "sec-pentest": {
+            name: "sec-pentest",
+            description: "Scope-gated validation persona (PTES/WSTG). HARD-GATED by .codo/security-scope.json — refuses all work without a valid, unexpired scope file.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                "*": "deny",
+                grep: "allow",
+                glob: "allow",
+                list: "allow",
+                read: "allow",
+                bash: {
+                  "*": "deny",
+                  "curl*": "allow",
+                  "nmap*": "ask",
+                  "nikto*": "ask",
+                  "zap*": "deny",
+                  "*zap*full*": "deny",
+                  "sqlmap*": "deny",
+                  "nuclei*": "ask",
+                },
+                edit: {
+                  "*": "deny",
+                  [path.join(".planning", "security", "**", "*")]: "allow",
+                },
+                external_directory: {
+                  "*": "deny",
+                },
+              }),
+              user,
+            ),
+            prompt: PROMPT_SEC_PENTEST,
+            mode: "subagent",
+            native: true,
+          },
+          "sec-secops": {
+            name: "sec-secops",
+            description: "Operations + meta persona. Audits the agent-surface itself (skills, plugins, MCP) against OWASP LLM/Agentic Top 10 and tracks posture over time.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                "*": "deny",
+                grep: "allow",
+                glob: "allow",
+                list: "allow",
+                read: "allow",
+                edit: {
+                  "*": "deny",
+                  [path.join(".planning", "security", "**", "*")]: "allow",
+                },
+                external_directory: {
+                  "*": "deny",
+                  [path.join(Global.Path.data, "**", "*")]: "allow",
+                },
+              }),
+              user,
+            ),
+            prompt: PROMPT_SEC_SECOPS,
+            mode: "subagent",
             native: true,
           },
           general: {

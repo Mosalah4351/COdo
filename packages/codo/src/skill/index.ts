@@ -37,6 +37,7 @@ const CUSTOMIZE_CODO_SKILL_DESCRIPTION =
 const CUSTOMIZE_CODO_SKILL_BODY = SkillPlugin.CustomizeCOdoContent
 
 import { composeSkills, COMPOSE_SKILL_NAMES, isComposeSkill } from "./compose-skills"
+import { secTestSkills, SEC_TEST_SKILL_NAMES, isSecTestSkill } from "./sec-test-skills"
 
 export const Info = Schema.Struct({
   name: Schema.String,
@@ -355,6 +356,15 @@ export const layer = Layer.effect(
             description: cs.description,
             location: `<built-in:compose:${cs.name}>`,
             content: cs.content,
+          }
+        }
+        // Register sec-test skills as built-in skills
+        for (const st of secTestSkills) {
+          s.skills[st.name] = {
+            name: st.name,
+            description: st.description,
+            location: `<built-in:sec-test:${st.name}>`,
+            content: st.content,
           }
         }
         yield* loadSkills(s, yield* InstanceState.get(discovered), events)
