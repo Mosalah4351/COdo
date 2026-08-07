@@ -6,8 +6,12 @@ import codeAuditContent from "./sec-test/code-audit/SKILL.md" with { type: "text
 import containerScanContent from "./sec-test/container-scan/SKILL.md" with { type: "text" }
 import dependencyAuditContent from "./sec-test/dependency-audit/SKILL.md" with { type: "text" }
 import exploitVerifyContent from "./sec-test/exploit-verify/SKILL.md" with { type: "text" }
+import fuzzContent from "./sec-test/fuzz/SKILL.md" with { type: "text" }
+import incidentRunbookContent from "./sec-test/incident-runbook/SKILL.md" with { type: "text" }
+import loggingAuditContent from "./sec-test/logging-audit/SKILL.md" with { type: "text" }
 import pentestContent from "./sec-test/pentest/SKILL.md" with { type: "text" }
 import pipelineHardenContent from "./sec-test/pipeline-harden/SKILL.md" with { type: "text" }
+import postureReportContent from "./sec-test/posture-report/SKILL.md" with { type: "text" }
 import reportContent from "./sec-test/report/SKILL.md" with { type: "text" }
 import sbomContent from "./sec-test/sbom/SKILL.md" with { type: "text" }
 import scopeContent from "./sec-test/scope/SKILL.md" with { type: "text" }
@@ -63,6 +67,21 @@ export const secTestSkills: SecTestSkill[] = [
     content: exploitVerifyContent,
   },
   {
+    name: "sec-test:fuzz",
+    description: "Coverage-guided fuzzing of parsers (local) or scope-listed endpoints (live)",
+    content: fuzzContent,
+  },
+  {
+    name: "sec-test:incident-runbook",
+    description: "Draft incident-response runbooks for the project's top security scenarios",
+    content: incidentRunbookContent,
+  },
+  {
+    name: "sec-test:logging-audit",
+    description: "Audit logging + monitoring coverage for security-relevant events",
+    content: loggingAuditContent,
+  },
+  {
     name: "sec-test:pentest",
     description: "Scope-gated dynamic testing — requires .codo/security-scope.json, refuses without it",
     content: pentestContent,
@@ -71,6 +90,11 @@ export const secTestSkills: SecTestSkill[] = [
     name: "sec-test:pipeline-harden",
     description: "Audit CI/CD pipelines per NIST SSDF, SLSA build track, and Sigstore signing",
     content: pipelineHardenContent,
+  },
+  {
+    name: "sec-test:posture-report",
+    description: "Weekly/monthly digest combining posture trend, finding deltas, and pending risk",
+    content: postureReportContent,
   },
   {
     name: "sec-test:report",
