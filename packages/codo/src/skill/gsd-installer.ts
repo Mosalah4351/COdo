@@ -40,6 +40,23 @@ export interface ScopePaths {
 /** Where Claude/Codex-style user skills live (cross-runtime convention). */
 export const AGENTS_SKILLS_ROOT = path.join(Global.Path.home, ".agents", "skills")
 
+/**
+ * Additional runtime-visible destinations for a complete GSD tree. The
+ * installer lands everything it produces in ALL of these so:
+ * - `.codo/gsd` is COdo's own primary root (canonical, indexed by compose)
+ * - `.agents/gsd-core` matches the manual-import layout the rokicool/gsd-opencode
+ *   repo guides users to — needed when users migrated in via that path
+ * - (only for global) `~/.config/codo/gsd` keeps the user-global install from
+ *   colliding with the project-local one
+ */
+export function secondaryInstallRoots(scope: Scope, projectDir: string): string[] {
+  if (scope === "global") return [path.join(Global.Path.home, ".agents", "gsd-core")]
+  return [
+    path.join(projectDir, ".agents", "gsd-core"),
+    path.join(Global.Path.home, ".agents", "gsd-core"),
+  ]
+}
+
 export function scopePaths(scope: Scope, projectDir: string): ScopePaths {
   const base = scope === "global" ? Global.Path.config : path.join(projectDir, ".codo")
   return {
@@ -338,7 +355,14 @@ export const layer = Layer.succeed(
             await extractTarball(tgz, paths.extractedRoot)
           }
 
-          const copied = await installFromExtracted(paths.extractedRoot, paths.installRoot)
+          let copied = await installFromExtracted(paths.extractedRoot, paths.installRoot)
+          // Mirror the complete tree (scripts/, hooks/, plugins/, etc.) into the
+          // companion runtime roots so subagents find them regardless of which
+          // convention the workflow file points at.
+          for (const secondary of secondaryInstallRoots(scope, projectDir)) {
+            if (secondary === paths.installRoot) continue
+            copied += await installFromExtracted(paths.extractedRoot, secondary)
+          }
           // Only global installs fan out to the user-skills roots — local
           // installs are project-scoped and shouldn't pollute cross-runtime config.
           if (scope === "global") {

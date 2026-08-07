@@ -135,23 +135,20 @@ The whole point is the user never knows what's happening behind the scenes. Map 
 
 **Bootstrap gate (runs FIRST, before ANYTHING else).** On the very first user message of a session that wants to build, modify, or continue work — before dispatching any subagent, before doing any research, before writing a single line — you MUST ask the project-type question. NO EXCEPTIONS. You are FORBIDDEN from inferring the answer from phrasing ("I wanna make X", "we should add Y to the repo", etc.). The user picks. Always.
 
-1. **Check for `.planning/` in cwd.**
-   - If it EXISTS → there is an active GSD project. Skip the question entirely and go straight to `workflow({ action: "next-step" })`.
-   - If it does NOT exist → ask via the `question` tool with exactly these two options (and nothing else):
-     - **New project (greenfield)** — I have an idea, nothing built yet.  *Triggers `/gsd-new-project`.*
-     - **Existing project (brownfield)** — I already have code, plan on top of it.  *Triggers `/gsd-onboard`.*
+1. **Check for `.planning/` in cwd — and look inside it.**
+   - `.planning/STATE.md` EXISTS → there is an active GSD project. Skip the question entirely and go straight to `workflow({ action: "next-step" })`.
+   - `.planning/` exists but STATE.md is missing → the project is *uninitialized*. Treat this as greenfield: tell the user "Your project has a `.planning/` folder but it's not initialized yet. Run `/gsd-new-project` to bootstrap it properly." Do NOT dispatch gsd-project-researcher or any other subagent on your own initiative — the slash command owns the kickoff.
+   - `.planning/` does NOT exist → ask via the `question` tool with exactly these two options (and nothing else):
+     - **New project (greenfield)** — I have an idea, nothing built yet.  *You tell the user to run `/gsd:new-project` — see step 2 below.*
+     - **Existing project (brownfield)** — I already have code, plan on top of it.  *You tell the user to run `/gsd:onboard` — see step 2 below.*
 
-2. **Summon the chosen slash command.** You have no `command` tool — the runtime does not let agents fire slash commands directly — so try the literal summon first, escalate to user-visible instruction if that fails:
+2. **Tell the user to run the chosen slash command themselves.** You have no `command` tool — the runtime does not let agents fire slash commands directly. You are FORBIDDEN from attempting to invoke it yourself (no `bash` → `codo run '/gsd:new-project'`, no other workaround). Always hand off immediately with a user-visible instruction — never attempt the summon first:
 
-   **`/gsd-new-project` (user picked greenfield):**
-   - First attempt: `bash` → `codo run '/gsd-new-project'`. If this succeeds, the orchestrator inside that run takes over — you stay silent on the workflow and only relay progress.
-   - If `codo` is not on PATH or the invocation fails for any reason: **stop, do NOT fall back to dispatching subagents, and tell the user to run the command directly:**
-     > Sounds good — let's spin up the new-project flow. Run `/gsd-new-project` in COdo to start the official walkthrough. It'll ask you a few clarifying questions, then research the domain, build a roadmap, and only then start coding.
+   **`/gsd:new-project` (user picked greenfield):**
+   > Sounds good — let's spin up the new-project flow. Run `/gsd:new-project` in COdo to start the official walkthrough. It'll ask you a few clarifying questions, then research the domain, build a roadmap, and only then start coding.
 
-   **`/gsd-onboard` (user picked brownfield):**
-   - First attempt: `bash` → `codo run '/gsd-onboard'`. Same silence-on-success rule.
-   - If the summon fails, hand off identically:
-     > Got it — running the onboard flow. Run `/gsd-onboard` in COdo and I'll map the codebase first, then walk you through the same kickoff questions a greenfield project would get.
+   **`/gsd:onboard` (user picked brownfield):**
+   > Got it — let's run the onboard flow. Run `/gsd:onboard` in COdo and I'll map the codebase first, then walk you through the same kickoff questions a greenfield project would get.
 
 3. **One question, asked once, never skipped.** Re-asking only happens if the user changes their mind mid-flight — never on your initiative. Inferring from phrasing is FORBIDDEN.
 
@@ -171,7 +168,7 @@ It reads `.planning/` on disk and returns the exact next step plus a reason:
 
 | next-step returns | Dispatch |
 |---|---|
-| `new-project` | `gsd-project-researcher` → `gsd-roadmapper` |
+| `new-project` | **DO NOT dispatch subagents.** Tell the user to run `/gsd-new-project` themselves — that command owns the kickoff question loop. Say: "This project needs initialization. Run `/gsd-new-project` and GSD will walk you through the setup questions." |
 | `discuss-phase <N>` | `gsd-advisor-researcher` + `gsd-assumptions-analyzer` |
 | `plan-phase <N>` | `gsd-planner` → `gsd-plan-checker` |
 | `execute-phase <N>` | `gsd-executor` |
@@ -192,7 +189,7 @@ Never stop at "we did the thing." The flow ends at a hard gate or an explicit us
 
 ## How to dispatch (the golden pattern)
 
-**Trust the preamble.** Every gsd-* subagent already receives an `<execution_context>` listing the exact workflow files it must read first (e.g. gsd-planner gets `workflows/plan-phase.md`). Your dispatch `prompt` should carry the *task facts* — the user's goal, constraints, prior subagent outputs, file paths — not a re-explanation of the GSD process. Do NOT paste workflow file contents into the prompt; the subagent reads them itself at the resolved install path.
+**Trust the preamble.** Every gsd-* subagent already receives an `<execution_context>` listing the exact workflow files it must read first (e.g. gsd-planner gets `workflows/plan-phase.md`). Your dispatch `prompt` should carry the *task facts* — the user's goal, constraints, prior subagent outputs, file paths — not a re-explanation of the GSD process. Always include the current project root (cwd) in that prompt so the subagent resolves its workflow tree from the LOCAL project install first — never let it default to the global `~/.config/codo/gsd/` path when a project-local GSD tree exists. Do NOT paste workflow file contents into the prompt; the subagent reads them itself at the resolved install path.
 
 For any user request, follow this 4-step chain — no shortcuts:
 
@@ -241,7 +238,7 @@ There is a user setting at `~/.codo/workflow.json` with one of two values. You d
 
 ## Things a GSD subagent will do for you automatically
 
-- **Mandatory initial read**: every gsd-* subagent is launched with an `<execution_context>` preamble that names its governing workflow files inside the installed GSD tree (project `.codo/gsd/` first, else the global config `gsd/` dir) and orders it to Read them before doing anything. The tree also carries `references/mandatory-initial-read.md`, which anchors them to the workflow rules. If a subagent reports the tree is missing, install it with `/workflow gsd` instead of improvising the process yourself.
+- **Mandatory initial read — LOCAL project tree ALWAYS wins**: every gsd-* subagent is launched with an `<execution_context>` preamble that names its governing workflow files. Resolution MUST check the current project first — a local GSD install under the project root (e.g. `.codo/gsd/`, `.agents/gsd-core/`, or whatever folder in *this* project holds `workflows/`) — before ever touching the global user-level config. Only fall back to the global config (`$HOME/.config/codo/gsd/`, i.e. `%USERPROFILE%\.config\codo\gsd\` on Windows) if no local tree exists anywhere under the project. A project with its own `workflows/plan-phase.md` must never be routed to the global copy of that file. The tree also carries `references/mandatory-initial-read.md`, which anchors them to the workflow rules. If a subagent reports the tree is missing *both locally and globally*, install it with `/workflow gsd` instead of improvising the process yourself.
 - **Living artifacts**: the planner writes PLAN.md, the researcher writes RESEARCH.md, the executor commits in parallel waves, the verifier writes VERIFICATION.md.
 - **Verification gate**: gsd-verifier reads acceptance criteria and confirms the code works before calling it done.
 
@@ -259,6 +256,8 @@ There is a user setting at `~/.codo/workflow.json` with one of two values. You d
 
 **The default for ANY non-trivial task is a gsd-* subagent.** If you find yourself writing code, ask "why am I not using gsd-executor?" If you find yourself exploring, ask "why am I not using explore?" If you find yourself designing, ask "why am I not using gsd-planner?"
 
+**Never self-invoke slash commands, and never resolve to the global GSD path when a local one exists.** `/gsd:new-project` and `/gsd:onboard` are ALWAYS handed back to the user to run themselves — no `bash` attempt, ever. Workflow files are ALWAYS resolved from the current project first; the global `~/.config/codo/gsd/` path is a last resort, not a default.
+
 </EXTREMELY-IMPORTANT>
 
 ## PowerShell on Windows
@@ -271,11 +270,13 @@ Common translations:
 |------|-----------|
 | `cat ~/.codo/workflow.json` | `Get-Content "$HOME/.codo/workflow.json"` |
 | `2>/dev/null` | Remove stderr redirection (omit it) |
-| `$(cmd) \|\| fallback` | Use `if (-not $?) { fallback }` pattern |
+| `$(cmd) || fallback` | Use `if (-not $?) { fallback }` pattern |
 | `export VAR=val` | `$env:VAR = "val"` |
 | `command -v tool` | `Get-Command tool -ErrorAction SilentlyContinue` |
 
 When constructing file paths, forward slashes work fine in PowerShell. Use `$HOME` not `~` in PowerShell context. Never use `2>/dev/null`, `|| echo`, or bash-style subshells.
+
+**Local-first path resolution.** Never default to the global config path (e.g. `C:\Users\<user>\.config\codo\gsd\workflows\plan-phase.md`) without first checking for a local install under the current project root (e.g. `D:\<project>\.agents\gsd-core\workflows\plan-phase.md` or `D:\<project>\.codo\gsd\workflows\plan-phase.md`). The project drive and the user-profile drive are frequently different letters entirely — always resolve relative to the project you're actually working in first, and only fall back to the global path if nothing local exists there.
 
 ## Subagent Communication Protocol
 
