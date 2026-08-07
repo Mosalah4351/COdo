@@ -4,15 +4,18 @@ import authTestContent from "./sec-test/auth-test/SKILL.md" with { type: "text" 
 import briefContent from "./sec-test/brief/SKILL.md" with { type: "text" }
 import codeAuditContent from "./sec-test/code-audit/SKILL.md" with { type: "text" }
 import containerScanContent from "./sec-test/container-scan/SKILL.md" with { type: "text" }
+import contextContent from "./sec-test/context/SKILL.md" with { type: "text" }
 import dependencyAuditContent from "./sec-test/dependency-audit/SKILL.md" with { type: "text" }
 import exploitVerifyContent from "./sec-test/exploit-verify/SKILL.md" with { type: "text" }
 import fuzzContent from "./sec-test/fuzz/SKILL.md" with { type: "text" }
 import incidentRunbookContent from "./sec-test/incident-runbook/SKILL.md" with { type: "text" }
+import learnContent from "./sec-test/learn/SKILL.md" with { type: "text" }
 import loggingAuditContent from "./sec-test/logging-audit/SKILL.md" with { type: "text" }
 import pentestContent from "./sec-test/pentest/SKILL.md" with { type: "text" }
 import pipelineHardenContent from "./sec-test/pipeline-harden/SKILL.md" with { type: "text" }
 import postureReportContent from "./sec-test/posture-report/SKILL.md" with { type: "text" }
 import reportContent from "./sec-test/report/SKILL.md" with { type: "text" }
+import responseContent from "./sec-test/response/SKILL.md" with { type: "text" }
 import sbomContent from "./sec-test/sbom/SKILL.md" with { type: "text" }
 import scopeContent from "./sec-test/scope/SKILL.md" with { type: "text" }
 import secretsScanContent from "./sec-test/secrets-scan/SKILL.md" with { type: "text" }
@@ -57,6 +60,11 @@ export const secTestSkills: SecTestSkill[] = [
     content: containerScanContent,
   },
   {
+    name: "sec-test:context",
+    description: "Hydrate project + prior posture into a single context block for downstream personas",
+    content: contextContent,
+  },
+  {
     name: "sec-test:dependency-audit",
     description: "Audit third-party dependencies for known vulnerabilities and supply-chain red flags",
     content: dependencyAuditContent,
@@ -75,6 +83,11 @@ export const secTestSkills: SecTestSkill[] = [
     name: "sec-test:incident-runbook",
     description: "Draft incident-response runbooks for the project's top security scenarios",
     content: incidentRunbookContent,
+  },
+  {
+    name: "sec-test:learn",
+    description: "Distill a completed finding or incident into lessons appended to posture.md",
+    content: learnContent,
   },
   {
     name: "sec-test:logging-audit",
@@ -100,6 +113,11 @@ export const secTestSkills: SecTestSkill[] = [
     name: "sec-test:report",
     description: "Roll up findings from .planning/security/findings/ into a posture report",
     content: reportContent,
+  },
+  {
+    name: "sec-test:response",
+    description: "Real-time guided response during a live incident — keep the caller on the runbook",
+    content: responseContent,
   },
   {
     name: "sec-test:sbom",
