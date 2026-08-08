@@ -14,7 +14,6 @@ export const SapAICorePlugin = PluginV2.define({
         const serviceKey =
           process.env.AICORE_SERVICE_KEY ??
           (typeof evt.options.serviceKey === "string" ? evt.options.serviceKey : undefined)
-        if (serviceKey && !process.env.AICORE_SERVICE_KEY) process.env.AICORE_SERVICE_KEY = serviceKey
 
         const installedPath = evt.package.startsWith("file://")
           ? evt.package
@@ -29,11 +28,26 @@ export const SapAICorePlugin = PluginV2.define({
         const match = Object.keys(mod).find((name) => name.startsWith("create"))
         if (!match) throw new Error(`Package ${evt.package} has no provider factory export`)
 
-        evt.sdk = mod[match](
-          serviceKey
-            ? { deploymentId: process.env.AICORE_DEPLOYMENT_ID, resourceGroup: process.env.AICORE_RESOURCE_GROUP }
-            : {},
-        )
+        // The SAP AI Core SDK reads AICORE_SERVICE_KEY from process.env at factory-call
+        // time only — scope the mutation so it can't leak to later code that happens
+        // to share the runtime. If the user (or another provider load) already set
+        // AICORE_SERVICE_KEY, preserve it verbatim and restore afterwards.
+        const hadExisting = Object.prototype.hasOwnProperty.call(process.env, "AICORE_SERVICE_KEY")
+        const previous = process.env.AICORE_SERVICE_KEY
+        if (serviceKey && !hadExisting) process.env.AICORE_SERVICE_KEY = serviceKey
+        try {
+          evt.sdk = mod[match](
+            serviceKey
+              ? { deploymentId: process.env.AICORE_DEPLOYMENT_ID, resourceGroup: process.env.AICORE_RESOURCE_GROUP }
+              : {},
+          )
+        } finally {
+          if (hadExisting) {
+            process.env.AICORE_SERVICE_KEY = previous
+          } else {
+            delete process.env.AICORE_SERVICE_KEY
+          }
+        }
       }),
       "aisdk.language": Effect.fn(function* (evt) {
         if (evt.model.providerID !== ProviderV2.ID.make("sap-ai-core")) return
