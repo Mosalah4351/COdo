@@ -302,6 +302,12 @@ export const layer = Layer.effect(
                   "opengrep*": "allow",
                   "gitleaks*": "allow",
                   "trufflehog*": "allow",
+                  // Local coverage-guided fuzzing (non-network, deterministic):
+                  "go test -fuzz*": "allow",
+                  "cargo fuzz*": "allow",
+                  "jsfuzz*": "allow",
+                  "atheris*": "allow",
+                  "bun test --fuzz*": "allow",
                 },
                 edit: {
                   "*": "deny",
@@ -364,8 +370,10 @@ export const layer = Layer.effect(
                   "curl*": "allow",
                   "nmap*": "ask",
                   "nikto*": "ask",
-                  "zap*": "deny",
-                  "*zap*full*": "deny",
+                  // Baseline scan is bounded and confirmatory — same posture as nmap/nikto/nuclei.
+                  // Full/active scan still denied regardless of scope (must be manually authorized out-of-band).
+                  "zap-baseline*": "ask",
+                  "zap*full*": "deny",
                   "sqlmap*": "deny",
                   "nuclei*": "ask",
                 },

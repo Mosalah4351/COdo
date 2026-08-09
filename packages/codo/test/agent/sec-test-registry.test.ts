@@ -53,11 +53,13 @@ describe("sec-test agent registry", () => {
     expect(block).toContain("external_directory")
   })
 
-  it("sec-pentest hard-denies full active scanners by default", async () => {
+  it("sec-pentest permits bounded baseline scan via ask; full active scan still denied", async () => {
     const block = await registryBlock("sec-pentest", ["sec-secops"])
-    expect(block).toContain('"zap*"')
+    expect(block).toContain('"zap-baseline*"')
+    expect(block).toContain('"zap*full*"')
     expect(block).toContain('"sqlmap*"')
     expect(block).toContain("deny")
+    expect(block).toContain("ask")
   })
 
   it("read-only personas allow writes only under .planning/security", async () => {

@@ -92,4 +92,36 @@ describe("scope-gate", () => {
       const result = await runGate({ projectDir: dir, target: "https://staging.example.com/api/users" })
       expect(result.ok).toBe(true)
     }))
+
+  test("rejects attacker-controlled subdomain that begins with the in-scope origin's host", () =>
+    withScopeFile(scopeJson(), async (dir) => {
+      // Classic prefix-match bypass — `staging.example.com.attacker.net` would
+      // satisfy naive `target.startsWith(scoped)` but must not match.
+      const result = await runGate({
+        projectDir: dir,
+        target: "https://staging.example.com.attacker.net/api/users",
+      })
+      expect(result.ok).toBe(false)
+      if (!result.ok) expect(result.reason).toBe("target-not-in-scope")
+    }))
+
+  test("rejects a same-host different-protocol target", () =>
+    withScopeFile(scopeJson(), async (dir) => {
+      // http:// instead of https:// — different origin, must not match
+      const result = await runGate({
+        projectDir: dir,
+        target: "http://staging.example.com/api/users",
+      })
+      expect(result.ok).toBe(false)
+    }))
+
+  test("target with port must match port exactly", () =>
+    withScopeFile(scopeJson(), async (dir) => {
+      const result = await runGate({
+        projectDir: dir,
+        target: "https://staging.example.com:8443/api/users",
+      })
+      // Origin is host+port — different port should not match
+      expect(result.ok).toBe(false)
+    }))
 })

@@ -110,7 +110,7 @@ The whole point is the user never knows what's happening behind the scenes. Map 
 | "make this faster/slower/cleaner" / "refactor X" | `gsd-executor` (driven by refactor goal) → `gsd-code-reviewer` | Substantive refactors get their own treatment. |
 | "add tests" / "write tests for X" / "increase coverage" | `gsd-nyquist-auditor` | Gap analysis + writing tests is its specialty. |
 | "review my code" / "review this changeset" / "sanity check" | `gsd-code-reviewer` | Read-only review. |
-| "is this secure" / "audit for vulnerabilities" | `gsd-security-auditor` | Threat-checking. |
+| "is this secure" / "audit for vulnerabilities" / "scan this for security issues" / "pen test" / "threat model" | **`sec-test`** | The dedicated security agent — dispatches the right persona (architect/appsec/devsecops/pentest/secops) for the SDLC phase. Use `gsd-security-auditor` only for plan-side threat-mitigation verification (ASVS L1/L2/L3 within a GSD phase context), not ad-hoc security questions. |
 | "check that this works" / "verify X" / "test this feature manually" | `gsd-verifier` | UAT discipline. |
 | "what does this project do" / "map the codebase" / "understand X" | `gsd-codebase-mapper` (existing code) or `explore` (quick find) | Different needs, different agents. |
 | "AI / ML / model" / "which model for X" / "modernize this LLM setup" | `gsd-ai-researcher` | AI-specific research. |

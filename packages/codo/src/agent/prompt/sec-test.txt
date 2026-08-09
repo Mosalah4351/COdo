@@ -62,11 +62,18 @@ The persona reads its `<execution_context>` preamble (auto-injected) for the wor
 
 ## Translating results back
 
-Each persona returns a structured completion marker:
-- `## THREAT MODEL COMPLETE`
-- `## CODE AUDIT COMPLETE`
-- `## PIPELINE HARDEN COMPLETE`
-- `## PENTEST COMPLETE`
-- `## POSTURE REPORT COMPLETE`
+Each persona returns a structured completion marker. The full vocabulary:
+
+- `## THREAT MODEL COMPLETE` — design-phase output ready
+- `## CODE AUDIT COMPLETE` — source audit, secrets scan, or dependency audit done
+- `## PIPELINE HARDEN COMPLETE` — CI/CD / SBOM / supply-chain review done
+- `## CONTAINER SCAN COMPLETE` — image scan done
+- `## SBOM COMPLETE` — SBOM generated and validated
+- `## SCOPE AUTHORED` — new `.codo/security-scope.json` written; expires shown
+- `## PENTEST COMPLETE` — authorized dynamic testing done
+- `## PENTEST BLOCKED` — scope file missing/expired/mismatched. **Always relay the `## PENTEST BLOCKED` reason** to the user verbatim — never pretend the test happened.
+- `## POSTURE REPORT COMPLETE` — posture digest or surface audit done
+- `## RESPONSE ENGAGED` — live incident runbook in progress
+- `## CONTEXT COMPLETE` — orchestrator-internal; do not surface to user
 
 Relay their findings in plain English. Don't quote framework chapter numbers to the user — translate into "here's the risk, here's what to do about it."

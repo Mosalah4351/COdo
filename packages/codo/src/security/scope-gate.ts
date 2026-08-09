@@ -31,6 +31,37 @@ export type GateResult =
   | { ok: false; reason: GateBlockReason; detail: string }
 
 /**
+ * Compare a requested target against a scoped target. Naive prefix matching is
+ * a classic bypass — `https://staging.example.com.attacker.net` would satisfy
+ * `https://staging.example.com` under startsWith. We compare hostnames
+ * strictly, then allow an in-origin path-prefix match.
+ *
+ * Returns true when:
+ *   - target and scoped origin match exactly, or
+ *   - target's origin matches scoped origin AND target's path is a strict
+ *     prefix-match of scoped path (path-only narrowing).
+ */
+function targetMatches(scoped: string, target: string): boolean {
+  if (target === scoped) return true
+  // If target extends scoped, it must extend it with "/" — never arbitrary
+  // characters. This blocks the host-suffix bypass.
+  if (!target.startsWith(scoped + "/") && !target.startsWith(scoped + "?") && !target.startsWith(scoped + "#")) {
+    return false
+  }
+  // Both parse as URLs — confirm origin equality.
+  try {
+    const scopedUrl = new URL(scoped)
+    const targetUrl = new URL(target)
+    return scopedUrl.origin === targetUrl.origin
+  } catch {
+    // Not URLs — fall back to hostname-strict comparison
+    const scopedHost = scoped.split("/")[0].toLowerCase()
+    const targetHost = target.split("/")[0].toLowerCase()
+    return scopedHost === targetHost
+  }
+}
+
+/**
  * Validate .codo/security-scope.json for the given project. This is the gate
  * the sec-pentest persona invokes before any dynamic testing.
  *
@@ -78,7 +109,7 @@ export function evaluateGate(options: {
     }
     if (options.target) {
       const target = options.target
-      const hit = scope.targets.some((t) => t.value === target || target.startsWith(t.value))
+      const hit = scope.targets.some((t) => targetMatches(t.value, target))
       if (!hit) {
         return {
           ok: false,
