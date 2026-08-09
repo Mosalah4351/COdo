@@ -4,6 +4,12 @@ hidden: true
 description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans - ensures an isolated workspace exists via native tools or git worktree fallback
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:new-workspace`** via the skill tool instead of following the instructions below. GSD creates isolated workspace directories with git worktrees or clones and an independent `.planning/` directory.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Using Git Worktrees
 
 ## Overview

@@ -185,7 +185,7 @@ export const layer = Layer.effect(
     const directories = [
       globalDirectory,
       ...discovered
-        .filter((item) => path.basename(item) === ".COdo" || path.basename(item) === ".opencode")
+        .filter((item) => path.basename(item) === ".COdo" || path.basename(item) === ".codo" || path.basename(item) === ".opencode")
         .toReversed()
         .map((directory) => AbsolutePath.make(directory)),
     ]

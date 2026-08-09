@@ -4,6 +4,20 @@ hidden: true
 description: Use when executing implementation plans with independent tasks in the current session
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:autonomous`** (for full phase orchestration) or **`gsd:execute-phase`** (for plan execution only) via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG.
+
+When GSD is active, subagent orchestration follows a different pattern:
+- `gsd:autonomous` drives an entire milestone: for each incomplete phase, runs discuss → plan → execute → verify → review, delegating each step to specialized subagents
+- `gsd:execute-phase` executes plans within a single phase using wave-based parallelism (each plan is a subagent task)
+- GSD handles subagent dispatch, context isolation, and result gathering internally
+- The compose agent's role is to initiate the right GSD workflow and translate results to the user
+
+(Other workflows TBD.)
+
 # Subagent-Driven Development
 
 Execute plan by dispatching fresh subagent per task, with two-stage review after each: spec compliance review first, then code quality review.

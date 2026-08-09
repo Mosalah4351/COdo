@@ -35,6 +35,9 @@ const AgentSchema = Schema.StructWithRest(
       description: "Maximum number of agentic iterations before forcing text-only response",
     }),
     maxSteps: Schema.optional(PositiveInt).annotate({ description: "@deprecated Use 'steps' field instead." }),
+    workflow: Schema.optional(Schema.Literals(["gsd"])).annotate({
+      description: "Workflow this agent belongs to (e.g. 'gsd'). Only visible when that workflow is active.",
+    }),
     permission: Schema.optional(ConfigPermissionV1.Info),
   }),
   [Schema.Record(Schema.String, Schema.Any)],
@@ -53,6 +56,7 @@ const KNOWN_KEYS = new Set([
   "color",
   "steps",
   "maxSteps",
+  "workflow",
   "options",
   "permission",
   "disable",

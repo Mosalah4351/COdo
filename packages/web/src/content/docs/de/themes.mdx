@@ -3,9 +3,9 @@ title: Themes
 description: Waehle ein eingebautes Theme oder erstelle eins.
 ---
 
-Mit OpenCode kannst du ein eingebautes Theme waehlen, ein an dein Terminal angepasstes Theme nutzen oder ein eigenes Theme definieren.
+Mit COdo kannst du ein eingebautes Theme waehlen, ein an dein Terminal angepasstes Theme nutzen oder ein eigenes Theme definieren.
 
-Standardmaessig verwendet OpenCode das `opencode`-Theme.
+Standardmaessig verwendet COdo das `COdo`-Theme.
 
 ---
 
@@ -24,7 +24,7 @@ Ohne truecolor werden Farben weniger exakt dargestellt oder auf eine 256-Farben-
 
 ## Eingebaute Themes
 
-OpenCode liefert mehrere eingebaute Themes mit.
+COdo liefert mehrere eingebaute Themes mit.
 
 | Name                   | Description                                                                  |
 | ---------------------- | ---------------------------------------------------------------------------- |
@@ -55,7 +55,7 @@ Im Gegensatz zu Themes mit festen Farben gilt beim _system_-Theme:
 
 Das System-Theme ist ideal fuer Nutzer, die:
 
-- OpenCode optisch ans Terminal anpassen wollen
+- COdo optisch ans Terminal anpassen wollen
 - eigene Terminal-Farbschemata nutzen
 - ein konsistentes Erscheinungsbild in Terminal-Apps bevorzugen
 
@@ -65,9 +65,9 @@ Das System-Theme ist ideal fuer Nutzer, die:
 
 Du kannst ein Theme ueber `/theme` auswaehlen oder direkt in der [Konfiguration](/docs/config) setzen.
 
-```json title="opencode.json" {3}
+```json title="COdo.json" {3}
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "theme": "tokyonight"
 }
 ```
@@ -76,7 +76,7 @@ Du kannst ein Theme ueber `/theme` auswaehlen oder direkt in der [Konfiguration]
 
 ## Eigene Themes
 
-OpenCode unterstuetzt ein flexibles JSON-basiertes Theme-System.
+COdo unterstuetzt ein flexibles JSON-basiertes Theme-System.
 Damit lassen sich Themes einfach erstellen und anpassen.
 
 ---
@@ -147,7 +147,7 @@ Hier ist ein Beispiel fuer ein eigenes Theme:
 
 ```json title="my-theme.json"
 {
-  "$schema": "https://opencode.ai/theme.json",
+  "$schema": "https://codo-ai.vercel.app/theme.json",
   "defs": {
     "nord0": "#2E3440",
     "nord1": "#3B4252",

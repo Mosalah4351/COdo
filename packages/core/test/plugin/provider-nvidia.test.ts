@@ -36,9 +36,9 @@ describe("NvidiaPlugin", () => {
       })
       expect((yield* catalog.provider.get(ProviderV2.ID.make("nvidia"))).request.headers).toEqual({
         Existing: "value",
-        "HTTP-Referer": "https://opencode.ai/",
+        "HTTP-Referer": "https://codo-ai.vercel.app/",
         "X-Title": "opencode",
-        "X-BILLING-INVOKE-ORIGIN": "OpenCode",
+        "X-BILLING-INVOKE-ORIGIN": "COdo",
       })
       expect((yield* catalog.provider.get(ProviderV2.ID.openrouter)).request.headers).toEqual({})
     }),
@@ -62,9 +62,9 @@ describe("NvidiaPlugin", () => {
       })
 
       expect((yield* catalog.provider.get(ProviderV2.ID.make("nvidia"))).request.headers).toEqual({
-        "HTTP-Referer": "https://opencode.ai/",
+        "HTTP-Referer": "https://codo-ai.vercel.app/",
         "X-Title": "opencode",
-        "X-BILLING-INVOKE-ORIGIN": "OpenCode",
+        "X-BILLING-INVOKE-ORIGIN": "COdo",
       })
     }),
   )
@@ -90,7 +90,7 @@ describe("NvidiaPlugin", () => {
       })
 
       expect((yield* catalog.provider.get(ProviderV2.ID.make("nvidia"))).request.headers).toEqual({
-        "HTTP-Referer": "https://opencode.ai/",
+        "HTTP-Referer": "https://codo-ai.vercel.app/",
         "X-Title": "opencode",
         "X-BILLING-INVOKE-ORIGIN": "CustomOrigin",
       })

@@ -1,21 +1,21 @@
 ---
 title: Правила
-description: Установите пользовательские инструкции для opencode.
+description: Установите пользовательские инструкции для COdo.
 ---
 
-Вы можете предоставить собственные инструкции для opencode, создав файл `AGENTS.md`. Это похоже на правила Cursor. Он содержит инструкции, которые будут включены в контекст LLM для настройки его поведения для вашего конкретного проекта.
+Вы можете предоставить собственные инструкции для COdo, создав файл `AGENTS.md`. Это похоже на правила Cursor. Он содержит инструкции, которые будут включены в контекст LLM для настройки его поведения для вашего конкретного проекта.
 
 ---
 
 ## Инициализировать
 
-Чтобы создать новый файл `AGENTS.md`, вы можете запустить команду `/init` в opencode.
+Чтобы создать новый файл `AGENTS.md`, вы можете запустить команду `/init` в COdo.
 
 :::tip
 Вам следует закоммитить файл `AGENTS.md` вашего проекта в Git.
 :::
 
-Это позволит отсканировать ваш проект и все его содержимое, чтобы понять, о чем этот проект, и сгенерировать с его помощью файл `AGENTS.md`. Это помогает opencode лучше ориентироваться в проекте.
+Это позволит отсканировать ваш проект и все его содержимое, чтобы понять, о чем этот проект, и сгенерировать с его помощью файл `AGENTS.md`. Это помогает COdo лучше ориентироваться в проекте.
 
 Если у вас есть существующий файл `AGENTS.md`, мы попытаемся добавить его.
 
@@ -54,7 +54,7 @@ This is an SST v3 monorepo with TypeScript. The project uses bun workspaces for 
 
 ## Типы
 
-opencode также поддерживает чтение файла `AGENTS.md` из нескольких мест. И это служит разным целям.
+COdo также поддерживает чтение файла `AGENTS.md` из нескольких мест. И это служит разным целям.
 
 ### Проект
 
@@ -68,7 +68,7 @@ opencode также поддерживает чтение файла `AGENTS.md`
 
 ### Совместимость кода Клода
 
-Для пользователей, переходящих с Claude Code, opencode поддерживает файловые соглашения Claude Code в качестве резерва:
+Для пользователей, переходящих с Claude Code, COdo поддерживает файловые соглашения Claude Code в качестве резерва:
 
 - **Правила проекта**: `CLAUDE.md` в каталоге вашего проекта (используется, если `AGENTS.md` не существует).
 - **Глобальные правила**: `~/.claude/CLAUDE.md` (используется, если `~/.config/opencode/AGENTS.md` не существует).
@@ -86,7 +86,7 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 
 ## Приоритет
 
-Когда opencode запускается, он ищет файлы правил в следующем порядке:
+Когда COdo запускается, он ищет файлы правил в следующем порядке:
 
 1. **Локальные файлы** путем перехода вверх из текущего каталога (`AGENTS.md`, `CLAUDE.md`)
 2. **Глобальный файл** в `~/.config/opencode/AGENTS.md`.
@@ -102,18 +102,18 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 
 Пример:
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["CONTRIBUTING.md", "docs/guidelines.md", ".cursor/rules/*.md"]
 }
 ```
 
 Вы также можете использовать удаленные URL-адреса для загрузки инструкций из Интернета.
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["https://raw.githubusercontent.com/my-org/shared-rules/main/style.md"]
 }
 ```
@@ -126,22 +126,22 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 
 ## Ссылки на внешние файлы
 
-Хотя opencode не анализирует автоматически ссылки на файлы в `AGENTS.md`, аналогичной функциональности можно добиться двумя способами:
+Хотя COdo не анализирует автоматически ссылки на файлы в `AGENTS.md`, аналогичной функциональности можно добиться двумя способами:
 
-### Использование opencode.json
+### Использование COdo.json
 
-Рекомендуемый подход — использовать поле `instructions` в `opencode.json`:
+Рекомендуемый подход — использовать поле `instructions` в `COdo.json`:
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["docs/development-standards.md", "test/testing-guidelines.md", "packages/*/AGENTS.md"]
 }
 ```
 
 ### Ручные инструкции в AGENTS.md
 
-Вы можете научить opencode читать внешние файлы, предоставив явные инструкции в файле `AGENTS.md`. Вот практический пример:
+Вы можете научить COdo читать внешние файлы, предоставив явные инструкции в файле `AGENTS.md`. Вот практический пример:
 
 ```markdown title="AGENTS.md"
 # TypeScript Project Rules
@@ -173,8 +173,8 @@ Read the following file immediately as it's relevant to all workflows: @rules/ge
 - Создавайте модульные файлы правил многократного использования.
 - Делитесь правилами между проектами с помощью символических ссылок или подмодулей git.
 - Сохраняйте AGENTS.md кратким, ссылаясь на подробные инструкции.
-- Убедитесь, что opencode загружает файлы только тогда, когда это необходимо для конкретной задачи.
+- Убедитесь, что COdo загружает файлы только тогда, когда это необходимо для конкретной задачи.
 
 :::tip
-Для монорепозиториев или проектов с общими стандартами использование `opencode.json` с шаблонами glob (например, `packages/*/AGENTS.md`) более удобно в обслуживании, чем инструкции вручную.
+Для монорепозиториев или проектов с общими стандартами использование `COdo.json` с шаблонами glob (например, `packages/*/AGENTS.md`) более удобно в обслуживании, чем инструкции вручную.
 :::

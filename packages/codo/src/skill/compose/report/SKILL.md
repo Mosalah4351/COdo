@@ -4,6 +4,12 @@ hidden: true
 description: "Use after implementation is verified and before merge — consolidates multiple spec iterations into a single final-state report, marks related specs, and records key lessons"
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:milestone-summary`** (per-milestone), **`gsd:session-report`** (per-session), or **`gsd:extract-learnings`** (per-phase learnings) via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Writing Final Reports
 
 ## Overview

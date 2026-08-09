@@ -52,6 +52,7 @@ import { memoMap } from "@codo-ai/core/effect/memo-map"
 import { BackgroundJob } from "@/background/job"
 import { RuntimeFlags } from "@/effect/runtime-flags"
 import { EventV2Bridge } from "@/event-v2-bridge"
+import { Workflow } from "@/config/workflow"
 
 export const AppLayer = Layer.mergeAll(
   Npm.defaultLayer,
@@ -67,6 +68,7 @@ export const AppLayer = Layer.mergeAll(
   ModelsDev.defaultLayer,
   Provider.defaultLayer,
   ProviderAuth.defaultLayer,
+  Workflow.defaultLayer,
   Agent.defaultLayer,
   Skill.defaultLayer,
   Discovery.defaultLayer,

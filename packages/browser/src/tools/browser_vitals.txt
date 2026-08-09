@@ -1,0 +1,1 @@
+Get Web Vitals metrics (LCP, CLS, TTFB, FCP, INP) for the current page or a specific URL.

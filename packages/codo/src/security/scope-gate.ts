@@ -43,20 +43,26 @@ export type GateResult =
  */
 function targetMatches(scoped: string, target: string): boolean {
   if (target === scoped) return true
-  // If target extends scoped, it must extend it with "/" — never arbitrary
-  // characters. This blocks the host-suffix bypass.
-  if (!target.startsWith(scoped + "/") && !target.startsWith(scoped + "?") && !target.startsWith(scoped + "#")) {
+  // Hostnames are case-insensitive per RFC 4343; without lowercasing,
+  // STAGING.EXAMPLE.COM silently fails prefix matching against the
+  // scoped staging.example.com entry. Lowercasing both sides also
+  // blocks homoglyph-style "STAGING-EXAMPLE.COM" tricks at this level.
+  const scopedLower = scoped.toLowerCase()
+  const targetLower = target.toLowerCase()
+  // If target extends scoped, it must extend it with "/" or query/fragment —
+  // never arbitrary characters. This blocks the host-suffix bypass.
+  if (!targetLower.startsWith(scopedLower + "/") && !targetLower.startsWith(scopedLower + "?") && !targetLower.startsWith(scopedLower + "#")) {
     return false
   }
   // Both parse as URLs — confirm origin equality.
   try {
-    const scopedUrl = new URL(scoped)
-    const targetUrl = new URL(target)
+    const scopedUrl = new URL(scopedLower)
+    const targetUrl = new URL(targetLower)
     return scopedUrl.origin === targetUrl.origin
   } catch {
     // Not URLs — fall back to hostname-strict comparison
-    const scopedHost = scoped.split("/")[0].toLowerCase()
-    const targetHost = target.split("/")[0].toLowerCase()
+    const scopedHost = scopedLower.split("/")[0]
+    const targetHost = targetLower.split("/")[0]
     return scopedHost === targetHost
   }
 }

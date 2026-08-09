@@ -1,30 +1,30 @@
 ---
 title: CLI
-description: Opcje i polecenia wiersza poleceń OpenCode.
+description: Opcje i polecenia wiersza poleceń COdo.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components"
 
-CLI OpenCode domyślnie uruchamia [TUI](/docs/tui), gdy wywołasz je bez argumentów.
+CLI COdo domyślnie uruchamia [TUI](/docs/tui), gdy wywołasz je bez argumentów.
 
 ```bash
-opencode
+COdo
 ```
 
-CLI obsługuje też polecenia opisane na tej stronie, więc możesz używać OpenCode programowo.
+CLI obsługuje też polecenia opisane na tej stronie, więc możesz używać COdo programowo.
 
 ```bash
-opencode run "Explain how closures work in JavaScript"
+COdo run "Explain how closures work in JavaScript"
 ```
 
 ---
 
 ### tui
 
-Uruchamia interfejs terminalowy (TUI) OpenCode.
+Uruchamia interfejs terminalowy (TUI) COdo.
 
 ```bash
-opencode [project]
+COdo [project]
 ```
 
 #### Flagi
@@ -44,36 +44,36 @@ opencode [project]
 
 ## Polecenia
 
-Interfejs CLI OpenCode zawiera także dodatkowe polecenia.
+Interfejs CLI COdo zawiera także dodatkowe polecenia.
 
 ---
 
 ### agent
 
-Zarządzaj agentami OpenCode.
+Zarządzaj agentami COdo.
 
 ```bash
-opencode agent [command]
+COdo agent [command]
 ```
 
 ---
 
 ### attach
 
-Dołącz terminal do już działającego serwera backendu OpenCode uruchomionego za pomocą `serve` lub `web`.
+Dołącz terminal do już działającego serwera backendu COdo uruchomionego za pomocą `serve` lub `web`.
 
 ```bash
-opencode attach [url]
+COdo attach [url]
 ```
 
-Pozwala to połączyć TUI ze zdalnym backendem OpenCode. Na przykład:
+Pozwala to połączyć TUI ze zdalnym backendem COdo. Na przykład:
 
 ```bash
 # Start the backend server for web/mobile access
-opencode web --port 4096 --hostname 0.0.0.0
+COdo web --port 4096 --hostname 0.0.0.0
 
 # In another terminal, attach the TUI to the running backend
-opencode attach http://10.20.30.40:4096
+COdo attach http://10.20.30.40:4096
 ```
 
 #### Flagi
@@ -85,7 +85,7 @@ opencode attach http://10.20.30.40:4096
 | <nobr><code>{"--session"}</code></nobr>  | `-s`  | Identyfikator sesji do kontynuowania                                                                  |
 | <nobr><code>{"--fork"}</code></nobr>     |       | Rozgałęź sesję podczas kontynuowania (użyj z `--continue` lub `--session`)                            |
 | <nobr><code>{"--password"}</code></nobr> | `-p`  | Hasło uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_PASSWORD`)                            |
-| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_USERNAME` lub `opencode`) |
+| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_USERNAME` lub `COdo`) |
 
 ---
 
@@ -94,7 +94,7 @@ opencode attach http://10.20.30.40:4096
 Utwórz nowego agenta z niestandardową konfiguracją.
 
 ```bash
-opencode agent create
+COdo agent create
 ```
 
 To polecenie poprowadzi Cię przez proces tworzenia nowego agenta z niestandardowym promptem systemowym i konfiguracją narzędzi.
@@ -106,7 +106,7 @@ To polecenie poprowadzi Cię przez proces tworzenia nowego agenta z niestandardo
 Wyświetl listę wszystkich agentów.
 
 ```bash
-opencode agent list
+COdo agent list
 ```
 
 ---
@@ -116,20 +116,20 @@ opencode agent list
 Zarządzaj danymi uwierzytelniającymi i logowaniem dla dostawców.
 
 ```bash
-opencode auth [command]
+COdo auth [command]
 ```
 
 ---
 
 #### login
 
-OpenCode integruje się z wieloma dostawcami. Możesz użyć `opencode auth login`, aby skonfigurować klucz API dla dowolnego obsługiwanego dostawcy. Klucze są bezpiecznie przechowywane w `~/.local/share/opencode/auth.json`.
+COdo integruje się z wieloma dostawcami. Możesz użyć `opencode auth login`, aby skonfigurować klucz API dla dowolnego obsługiwanego dostawcy. Klucze są bezpiecznie przechowywane w `~/.local/share/opencode/auth.json`.
 
 ```bash
-opencode auth login
+COdo auth login
 ```
 
-Podczas uruchamiania OpenCode ładuje dostawców z pliku poświadczeń, a także ze zmiennych środowiskowych lub pliku `.env` w Twoim projekcie.
+Podczas uruchamiania COdo ładuje dostawców z pliku poświadczeń, a także ze zmiennych środowiskowych lub pliku `.env` w Twoim projekcie.
 
 ---
 
@@ -138,13 +138,13 @@ Podczas uruchamiania OpenCode ładuje dostawców z pliku poświadczeń, a także
 Wyświetl listę wszystkich uwierzytelnionych dostawców przechowywanych w pliku poświadczeń.
 
 ```bash
-opencode auth list
+COdo auth list
 ```
 
 Lub skrócona wersja:
 
 ```bash
-opencode auth ls
+COdo auth ls
 ```
 
 ---
@@ -154,7 +154,7 @@ opencode auth ls
 Wyloguj się z dostawcy, usuwając go z pliku poświadczeń.
 
 ```bash
-opencode auth logout
+COdo auth logout
 ```
 
 ---
@@ -164,7 +164,7 @@ opencode auth logout
 Zarządzaj agentem GitHub w celu automatyzacji repozytorium.
 
 ```bash
-opencode github [command]
+COdo github [command]
 ```
 
 ---
@@ -174,7 +174,7 @@ opencode github [command]
 Zainstaluj agenta GitHub w swoim repozytorium.
 
 ```bash
-opencode github install
+COdo github install
 ```
 
 Spowoduje to utworzenie pliku workflow GitHub Actions i poprowadzi Cię przez proces konfiguracji. [Dowiedz się więcej](/docs/github).
@@ -186,7 +186,7 @@ Spowoduje to utworzenie pliku workflow GitHub Actions i poprowadzi Cię przez pr
 Uruchom agenta na GitHubie. Zwykle używane w GitHub Actions.
 
 ```bash
-opencode github run
+COdo github run
 ```
 
 ##### Flagi
@@ -203,7 +203,7 @@ opencode github run
 Zarządzaj serwerami Model Context Protocol (MCP).
 
 ```bash
-opencode mcp [command]
+COdo mcp [command]
 ```
 
 ---
@@ -213,7 +213,7 @@ opencode mcp [command]
 Dodaj serwer MCP do swojej konfiguracji.
 
 ```bash
-opencode mcp add
+COdo mcp add
 ```
 
 To polecenie poprowadzi Cię przez proces dodawania lokalnego lub zdalnego serwera MCP.
@@ -225,13 +225,13 @@ To polecenie poprowadzi Cię przez proces dodawania lokalnego lub zdalnego serwe
 Wyświetl listę wszystkich skonfigurowanych serwerów MCP i ich status.
 
 ```bash
-opencode mcp list
+COdo mcp list
 ```
 
 Lub skrócona wersja:
 
 ```bash
-opencode mcp ls
+COdo mcp ls
 ```
 
 ---
@@ -241,7 +241,7 @@ opencode mcp ls
 Uwierzytelnij się w serwerze MCP z włączoną funkcją OAuth.
 
 ```bash
-opencode mcp auth [name]
+COdo mcp auth [name]
 ```
 
 Jeśli nie podasz nazwy serwera, zostaniesz poproszony o wybranie jednego z serwerów wymagających uwierzytelnienia.
@@ -249,13 +249,13 @@ Jeśli nie podasz nazwy serwera, zostaniesz poproszony o wybranie jednego z serw
 Możesz także wyświetlić listę serwerów obsługujących OAuth i ich status uwierzytelnienia.
 
 ```bash
-opencode mcp auth list
+COdo mcp auth list
 ```
 
 Lub skrócona wersja:
 
 ```bash
-opencode mcp auth ls
+COdo mcp auth ls
 ```
 
 ---
@@ -265,7 +265,7 @@ opencode mcp auth ls
 Usuń tokeny OAuth dla serwera MCP.
 
 ```bash
-opencode mcp logout [name]
+COdo mcp logout [name]
 ```
 
 ---
@@ -275,7 +275,7 @@ opencode mcp logout [name]
 Debuguj problemy z połączeniem OAuth dla serwera MCP.
 
 ```bash
-opencode mcp debug <name>
+COdo mcp debug <name>
 ```
 
 ---
@@ -285,7 +285,7 @@ opencode mcp debug <name>
 Wyświetl listę modeli ze wszystkich skonfigurowanych dostawców.
 
 ```bash
-opencode models [provider]
+COdo models [provider]
 ```
 
 Pokazuje modele dostępne do użycia w `provider/model`.
@@ -295,7 +295,7 @@ Jest to identyfikator modelu, którego używasz w [konfiguracji](/docs/config).
 Opcjonalnie możesz podać identyfikator dostawcy, aby filtrować modele według tego dostawcy.
 
 ```bash
-opencode models anthropic
+COdo models anthropic
 ```
 
 #### Flagi
@@ -305,36 +305,36 @@ opencode models anthropic
 | <nobr><code>{"--refresh"}</code></nobr> | Odśwież pamięć podręczną modeli                                                 |
 | <nobr><code>{"--verbose"}</code></nobr> | Bardziej szczegółowe dane wyjściowe modelu (zawiera metadane, takie jak koszty) |
 
-Użyj flagi `--refresh`, aby zaktualizować listę modeli w pamięci podręcznej. Jest to przydatne, gdy dostawca dodał nowe modele, które chcesz zobaczyć w OpenCode.
+Użyj flagi `--refresh`, aby zaktualizować listę modeli w pamięci podręcznej. Jest to przydatne, gdy dostawca dodał nowe modele, które chcesz zobaczyć w COdo.
 
 ```bash
-opencode models --refresh
+COdo models --refresh
 ```
 
 ---
 
 ### run
 
-Uruchom OpenCode w trybie nieinteraktywnym, przekazując bezpośrednio prompt.
+Uruchom COdo w trybie nieinteraktywnym, przekazując bezpośrednio prompt.
 
 ```bash
-opencode run [message..]
+COdo run [message..]
 ```
 
 Jest to przydatne do tworzenia skryptów, automatyzacji lub gdy chcesz wysłać szybkie zapytanie bez uruchamiania TUI. Na przykład:
 
-```bash "opencode run"
-opencode run Explain the use of context in Go
+```bash "COdo run"
+COdo run Explain the use of context in Go
 ```
 
-Można również użyć tego z działającym `opencode serve`, aby uniknąć zimnego startu serwera MCP przy każdym uruchomieniu:
+Można również użyć tego z działającym `COdo serve`, aby uniknąć zimnego startu serwera MCP przy każdym uruchomieniu:
 
 ```bash
 # Start a headless server in one terminal
-opencode serve
+COdo serve
 
 # In another terminal, run commands that attach to it
-opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
+COdo run --attach http://localhost:4096 "Explain async/await in JavaScript"
 ```
 
 #### Flagi
@@ -351,9 +351,9 @@ opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 | <nobr><code>{"--file"}</code></nobr>     | `-f`  | Pliki do załączenia do wiadomości                                                                     |
 | <nobr><code>{"--format"}</code></nobr>   |       | Format wyjściowy: `default` (sformatowany) lub `json` (surowy JSON)                                   |
 | <nobr><code>{"--title"}</code></nobr>    |       | Tytuł sesji (jeśli nie podano, zostanie wygenerowany z promptu)                                       |
-| <nobr><code>{"--attach"}</code></nobr>   |       | Dołącz do działającego serwera OpenCode (np. http://localhost:4096)                                   |
+| <nobr><code>{"--attach"}</code></nobr>   |       | Dołącz do działającego serwera COdo (np. http://localhost:4096)                                   |
 | <nobr><code>{"--password"}</code></nobr> | `-p`  | Hasło uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_PASSWORD`)                            |
-| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_USERNAME` lub `opencode`) |
+| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_USERNAME` lub `COdo`) |
 | <nobr><code>{"--dir"}</code></nobr>      |       | Katalog do uruchomienia lub ścieżka na zdalnym serwerze podczas dołączania                            |
 | <nobr><code>{"--variant"}</code></nobr>  |       | Wariant modelu (poziom wnioskowania specyficzny dla dostawcy)                                         |
 | <nobr><code>{"--thinking"}</code></nobr> |       | Pokaż bloki myślenia                                                                                  |
@@ -363,13 +363,13 @@ opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 
 ### serve
 
-Uruchom serwer OpenCode (bez interfejsu) w celu uzyskania dostępu do API. Pełny opis API HTTP znajduje się w [dokumentacji serwera](/docs/server).
+Uruchom serwer COdo (bez interfejsu) w celu uzyskania dostępu do API. Pełny opis API HTTP znajduje się w [dokumentacji serwera](/docs/server).
 
 ```bash
-opencode serve
+COdo serve
 ```
 
-Uruchamia to serwer HTTP, który zapewnia dostęp do API OpenCode bez interfejsu TUI. Ustaw `OPENCODE_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `opencode`).
+Uruchamia to serwer HTTP, który zapewnia dostęp do API COdo bez interfejsu TUI. Ustaw `OPENCODE_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `COdo`).
 
 #### Flagi
 
@@ -384,20 +384,20 @@ Uruchamia to serwer HTTP, który zapewnia dostęp do API OpenCode bez interfejsu
 
 ### session
 
-Zarządzaj sesjami OpenCode.
+Zarządzaj sesjami COdo.
 
 ```bash
-opencode session [command]
+COdo session [command]
 ```
 
 ---
 
 #### list
 
-Lista wszystkich sesji OpenCode.
+Lista wszystkich sesji COdo.
 
 ```bash
-opencode session list
+COdo session list
 ```
 
 ##### Flagi
@@ -411,10 +411,10 @@ opencode session list
 
 ### stats
 
-Pokaż statystyki wykorzystania tokenów i sesji OpenCode.
+Pokaż statystyki wykorzystania tokenów i sesji COdo.
 
 ```bash
-opencode stats
+COdo stats
 ```
 
 #### Flagi
@@ -433,7 +433,7 @@ opencode stats
 Eksportuj dane sesji jako JSON.
 
 ```bash
-opencode export [sessionID]
+COdo export [sessionID]
 ```
 
 Jeśli nie podasz identyfikatora sesji, zostaniesz poproszony o wybranie jednej z ostatnich sesji.
@@ -442,30 +442,30 @@ Jeśli nie podasz identyfikatora sesji, zostaniesz poproszony o wybranie jednej 
 
 ### import
 
-Importuj dane sesji z pliku JSON lub adresu URL udostępniania OpenCode.
+Importuj dane sesji z pliku JSON lub adresu URL udostępniania COdo.
 
 ```bash
-opencode import <file>
+COdo import <file>
 ```
 
 Możesz importować z pliku lokalnego lub adresu URL.
 
 ```bash
-opencode import session.json
-opencode import https://opncd.ai/s/abc123
+COdo import session.json
+COdo import https://opncd.ai/s/abc123
 ```
 
 ---
 
 ### web
 
-Uruchom serwer OpenCode z interfejsem internetowym.
+Uruchom serwer COdo z interfejsem internetowym.
 
 ```bash
-opencode web
+COdo web
 ```
 
-Uruchamia to serwer HTTP i udostępnia OpenCode przez interfejs przeglądarkowy. Ustaw `OPENCODE_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `opencode`).
+Uruchamia to serwer HTTP i udostępnia COdo przez interfejs przeglądarkowy. Ustaw `OPENCODE_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `COdo`).
 
 #### Flagi
 
@@ -483,7 +483,7 @@ Uruchamia to serwer HTTP i udostępnia OpenCode przez interfejs przeglądarkowy.
 Uruchom serwer ACP (Agent Client Protocol).
 
 ```bash
-opencode acp
+COdo acp
 ```
 
 Uruchamia serwer ACP, który komunikuje się przez stdin/stdout przy użyciu JSON-RPC.
@@ -500,10 +500,10 @@ Uruchamia serwer ACP, który komunikuje się przez stdin/stdout przy użyciu JSO
 
 ### uninstall
 
-Odinstaluj OpenCode i usuń wszystkie powiązane pliki.
+Odinstaluj COdo i usuń wszystkie powiązane pliki.
 
 ```bash
-opencode uninstall
+COdo uninstall
 ```
 
 #### Flagi
@@ -519,22 +519,22 @@ opencode uninstall
 
 ### upgrade
 
-Aktualizuj OpenCode do najnowszej lub określonej wersji.
+Aktualizuj COdo do najnowszej lub określonej wersji.
 
 ```bash
-opencode upgrade [target]
+COdo upgrade [target]
 ```
 
 Aby zaktualizować do najnowszej wersji:
 
 ```bash
-opencode upgrade
+COdo upgrade
 ```
 
 Aby zaktualizować do konkretnej wersji:
 
 ```bash
-opencode upgrade v0.1.48
+COdo upgrade v0.1.48
 ```
 
 #### Flagi
@@ -547,7 +547,7 @@ opencode upgrade v0.1.48
 
 ## Flagi globalne
 
-Interfejs CLI OpenCode przyjmuje następujące flagi globalne dla każdego polecenia.
+Interfejs CLI COdo przyjmuje następujące flagi globalne dla każdego polecenia.
 
 | Flaga                                      | Skrót | Opis                                        |
 | ------------------------------------------ | ----- | ------------------------------------------- |
@@ -560,7 +560,7 @@ Interfejs CLI OpenCode przyjmuje następujące flagi globalne dla każdego polec
 
 ## Zmienne środowiskowe
 
-OpenCode można skonfigurować za pomocą zmiennych środowiskowych.
+COdo można skonfigurować za pomocą zmiennych środowiskowych.
 
 | Zmienna                               | Typ     | Opis                                                       |
 | ------------------------------------- | ------- | ---------------------------------------------------------- |
@@ -586,7 +586,7 @@ OpenCode można skonfigurować za pomocą zmiennych środowiskowych.
 | `OPENCODE_CLIENT`                     | string  | Identyfikator klienta (domyślnie `cli`)                    |
 | `OPENCODE_ENABLE_EXA`                 | boolean | Włącz narzędzie wyszukiwania internetowego Exa             |
 | `OPENCODE_SERVER_PASSWORD`            | string  | Włącz uwierzytelnianie podstawowe dla `serve`/`web`        |
-| `OPENCODE_SERVER_USERNAME`            | string  | Nazwa użytkownika do autoryzacji (domyślnie `opencode`)    |
+| `OPENCODE_SERVER_USERNAME`            | string  | Nazwa użytkownika do autoryzacji (domyślnie `COdo`)    |
 | `OPENCODE_MODELS_URL`                 | string  | Niestandardowy adres URL do pobierania konfiguracji modeli |
 
 ---

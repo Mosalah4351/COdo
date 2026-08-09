@@ -4,6 +4,12 @@ hidden: true
 description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:explore`** (for ideation) or **`gsd:spec-phase`** (for clarifying requirements) via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Brainstorming Ideas Into Designs
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue.

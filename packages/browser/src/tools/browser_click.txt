@@ -1,0 +1,3 @@
+Click an element on the page identified by its element reference (@e1, etc.) or CSS selector.
+Use element references from the snapshot tool for reliable interaction.
+Supports opening links in a new tab with the new_tab option.

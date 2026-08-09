@@ -1,21 +1,21 @@
 ---
 title: القواعد
-description: اضبط تعليمات مخصصة لـ opencode.
+description: اضبط تعليمات مخصصة لـ COdo.
 ---
 
-يمكنك تزويد opencode بتعليمات مخصصة عبر إنشاء ملف `AGENTS.md`. هذا مشابه لقواعد Cursor. يحتوي هذا الملف على تعليمات تُضاف إلى سياق نموذج اللغة (LLM) لتخصيص سلوكه لمشروعك المحدد.
+يمكنك تزويد COdo بتعليمات مخصصة عبر إنشاء ملف `AGENTS.md`. هذا مشابه لقواعد Cursor. يحتوي هذا الملف على تعليمات تُضاف إلى سياق نموذج اللغة (LLM) لتخصيص سلوكه لمشروعك المحدد.
 
 ---
 
 ## التهيئة
 
-لإنشاء ملف `AGENTS.md` جديد، يمكنك تشغيل الأمر `/init` في opencode.
+لإنشاء ملف `AGENTS.md` جديد، يمكنك تشغيل الأمر `/init` في COdo.
 
 :::tip
 يُستحسن عمل commit لملف `AGENTS.md` الخاص بمشروعك إلى Git.
 :::
 
-سيقوم ذلك بفحص مشروعك وكل محتوياته لفهم طبيعة المشروع وتوليد ملف `AGENTS.md` بناءً على ذلك. يساعد هذا opencode على التنقّل داخل المشروع بشكل أفضل.
+سيقوم ذلك بفحص مشروعك وكل محتوياته لفهم طبيعة المشروع وتوليد ملف `AGENTS.md` بناءً على ذلك. يساعد هذا COdo على التنقّل داخل المشروع بشكل أفضل.
 
 إذا كان لديك ملف `AGENTS.md` موجود بالفعل، فسيحاول هذا إضافة محتوى إليه.
 
@@ -54,7 +54,7 @@ This is an SST v3 monorepo with TypeScript. The project uses bun workspaces for 
 
 ## الأنواع
 
-يدعم opencode أيضًا قراءة ملف `AGENTS.md` من مواقع متعددة، ولكل موقع غرض مختلف.
+يدعم COdo أيضًا قراءة ملف `AGENTS.md` من مواقع متعددة، ولكل موقع غرض مختلف.
 
 ### المشروع
 
@@ -68,7 +68,7 @@ This is an SST v3 monorepo with TypeScript. The project uses bun workspaces for 
 
 ### التوافق مع Claude Code
 
-للمستخدمين الذين ينتقلون من Claude Code، يدعم OpenCode اصطلاحات ملفات Claude Code كبدائل احتياطية:
+للمستخدمين الذين ينتقلون من Claude Code، يدعم COdo اصطلاحات ملفات Claude Code كبدائل احتياطية:
 
 - **قواعد المشروع**: `CLAUDE.md` في دليل مشروعك (يُستخدم إذا لم يوجد `AGENTS.md`)
 - **قواعد عامة**: `~/.claude/CLAUDE.md` (يُستخدم إذا لم يوجد `~/.config/opencode/AGENTS.md`)
@@ -86,7 +86,7 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 
 ## الأولوية
 
-عند بدء opencode، يبحث عن ملفات القواعد بهذا الترتيب:
+عند بدء COdo، يبحث عن ملفات القواعد بهذا الترتيب:
 
 1. **ملفات محلية** عبر التنقّل صعودًا من الدليل الحالي (`AGENTS.md`, `CLAUDE.md`)
 2. **ملف عام** في `~/.config/opencode/AGENTS.md`
@@ -102,18 +102,18 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 
 مثال:
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["CONTRIBUTING.md", "docs/guidelines.md", ".cursor/rules/*.md"]
 }
 ```
 
 يمكنك أيضًا استخدام عناوين URL بعيدة لتحميل التعليمات من الويب.
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["https://raw.githubusercontent.com/my-org/shared-rules/main/style.md"]
 }
 ```
@@ -126,22 +126,22 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 
 ## الإشارة إلى ملفات خارجية
 
-على الرغم من أن opencode لا يقوم تلقائيًا بتحليل مراجع الملفات داخل `AGENTS.md`، يمكنك تحقيق وظيفة مشابهة بطريقتين:
+على الرغم من أن COdo لا يقوم تلقائيًا بتحليل مراجع الملفات داخل `AGENTS.md`، يمكنك تحقيق وظيفة مشابهة بطريقتين:
 
-### استخدام opencode.json
+### استخدام COdo.json
 
-النهج الموصى به هو استخدام الحقل `instructions` في `opencode.json`:
+النهج الموصى به هو استخدام الحقل `instructions` في `COdo.json`:
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["docs/development-standards.md", "test/testing-guidelines.md", "packages/*/AGENTS.md"]
 }
 ```
 
 ### تعليمات يدوية في AGENTS.md
 
-يمكنك تعليم opencode قراءة ملفات خارجية عبر تقديم تعليمات صريحة داخل `AGENTS.md`. إليك مثالًا عمليًا:
+يمكنك تعليم COdo قراءة ملفات خارجية عبر تقديم تعليمات صريحة داخل `AGENTS.md`. إليك مثالًا عمليًا:
 
 ```markdown title="AGENTS.md"
 # TypeScript Project Rules
@@ -173,8 +173,8 @@ Read the following file immediately as it's relevant to all workflows: @rules/ge
 - إنشاء ملفات قواعد معيارية قابلة لإعادة الاستخدام
 - مشاركة القواعد عبر المشاريع باستخدام symlinks أو git submodules
 - إبقاء AGENTS.md موجزًا مع الإشارة إلى إرشادات تفصيلية
-- ضمان أن opencode يحمّل الملفات فقط عند الحاجة للمهمة المحددة
+- ضمان أن COdo يحمّل الملفات فقط عند الحاجة للمهمة المحددة
 
 :::tip
-بالنسبة للمستودعات متعددة الحزم (monorepos) أو المشاريع ذات المعايير المشتركة، فإن استخدام `opencode.json` مع أنماط glob (مثل `packages/*/AGENTS.md`) أسهل للصيانة من التعليمات اليدوية.
+بالنسبة للمستودعات متعددة الحزم (monorepos) أو المشاريع ذات المعايير المشتركة، فإن استخدام `COdo.json` مع أنماط glob (مثل `packages/*/AGENTS.md`) أسهل للصيانة من التعليمات اليدوية.
 :::

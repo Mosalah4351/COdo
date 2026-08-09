@@ -1,6 +1,6 @@
 ---
 title: 규칙
-description: OpenCode에 대한 사용자 정의 지침 설정.
+description: COdo에 대한 사용자 정의 지침 설정.
 ---
 
 `AGENTS.md` 파일을 만들 수 있도록 opencode에 사용자 정의 지침을 제공 할 수 있습니다. Cursor의 규칙과 유사합니다. LLM의 컨텍스트에 포함된 지침을 통해 특정 프로젝트에 대한 행동을 사용자 정의합니다.
@@ -101,18 +101,18 @@ opencode가 시작될 때, 이 순서에 있는 규칙 파일을 찾습니다:
 
 예:
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["CONTRIBUTING.md", "docs/guidelines.md", ".cursor/rules/*.md"]
 }
 ```
 
 웹에서 지침을로드하는 원격 URL도 사용할 수 있습니다.
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["https://raw.githubusercontent.com/my-org/shared-rules/main/style.md"]
 }
 ```
@@ -127,13 +127,13 @@ opencode가 시작될 때, 이 순서에 있는 규칙 파일을 찾습니다:
 
 opencode가 `AGENTS.md`에 있는 자동적으로 파스 파일 참조를 하지 않는 동안, 당신은 두 가지 방법으로 유사한 기능을 달성할 수 있습니다:
 
-## opencode.json 사용
+## COdo.json 사용
 
-`instructions`의 `opencode.json` 필드를 사용하는 것이 좋습니다.
+`instructions`의 `COdo.json` 필드를 사용하는 것이 좋습니다.
 
-```json title="opencode.json"
+```json title="COdo.json"
 {
-  "$schema": "https://opencode.ai/config.json",
+  "$schema": "https://codo-ai.vercel.app/config.json",
   "instructions": ["docs/development-standards.md", "test/testing-guidelines.md", "packages/*/AGENTS.md"]
 }
 ```
@@ -172,8 +172,8 @@ Read the following file immediately as it's relevant to all workflows: @rules/ge
 - 모듈, 재사용 가능한 규칙 파일 생성
 - symlinks 또는 git submodules를 통해 프로젝트 전반에 걸쳐 규칙 공유
 - 상세한 가이드를 참조하면서 AGENTS.md concise 유지
-- 특정 작업에 필요한 경우에만 opencode 로드 파일 유지
+- 특정 작업에 필요한 경우에만 COdo 로드 파일 유지
 
 :::tip
-공유 표준을 가진 monorepos 또는 프로젝트를 위해, glob 본을 가진 `opencode.json`를 사용하여 (`packages/*/AGENTS.md` 같이)는 수동 지시 보다는 더 유지가능합니다.
+공유 표준을 가진 monorepos 또는 프로젝트를 위해, glob 본을 가진 `COdo.json`를 사용하여 (`packages/*/AGENTS.md` 같이)는 수동 지시 보다는 더 유지가능합니다.
 :::

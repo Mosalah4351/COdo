@@ -1,0 +1,3 @@
+Read the page content and return it as agent-friendly text.
+Optionally navigate to a new URL before reading. Extracts visible text content from the page.
+Use this to consume article content, documentation, or any text-heavy page.

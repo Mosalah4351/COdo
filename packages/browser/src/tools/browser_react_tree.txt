@@ -1,0 +1,1 @@
+Get the React component tree of the current page. Requires browser launched with enable_react_devtools.

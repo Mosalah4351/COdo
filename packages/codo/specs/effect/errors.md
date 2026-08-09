@@ -154,7 +154,7 @@ group identical rendered messages and list the affected request names once.
 For example:
 
 ```text
-Configuration is invalid at /path/to/opencode.json
+Configuration is invalid at /path/to/codo.json
 ↳ Expected object, got "not-object" provider.bad.options
 Affected startup requests: config.providers, provider.list, app.agents, config.get
 ```
@@ -172,7 +172,7 @@ Unknown `500` responses should log full details server-side with
 `Cause.pretty(cause)` and return a safe public body.
 
 The config startup regression in #27056 is the failure mode this rule is meant
-to avoid: a user-authored invalid `opencode.json` crossed the HttpApi boundary
+to avoid: a user-authored invalid `codo.json` crossed the HttpApi boundary
 as a defect, so middleware replaced a useful `ConfigInvalidError` with a safe
 generic `UnknownError`. The compatibility fix is to preserve config parse and
 validation errors as client-visible `400`s. The target architecture is better:

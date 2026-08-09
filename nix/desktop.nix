@@ -103,7 +103,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   meta = {
-    description = "OpenCode Desktop App";
+    description = "COdo Desktop App";
     mainProgram = "opencode-desktop";
     inherit (opencode.meta) homepage license platforms;
   };

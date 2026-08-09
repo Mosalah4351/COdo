@@ -1,6 +1,6 @@
-# OpenCode Desktop
+# COdo Desktop
 
-The OpenCode Desktop app, built with Electron.
+The COdo Desktop app, built with Electron.
 
 ## Development
 

@@ -4,6 +4,10 @@ hidden: true
 description: "Use whenever you need a decision, clarification, or approval from the user — covers how to ask with the question tool, and how to resolve the decision yourself when no user is available (question tool absent, or a [Never-Ask] response)"
 ---
 
+## Workflow Routing
+
+The active workflow does not change this skill's behavior. `compose:ask` remains the standard mechanism for routing decisions and clarifications to the user regardless of workflow.
+
 # Asking the User
 
 ## The Rule

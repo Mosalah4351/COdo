@@ -27,7 +27,9 @@ target
 .direnv/
 
 # Local dev files
-opencode-dev
+codo-dev
+.mimocode
+.agents
 UPCOMING_CHANGELOG.md
 logs/
 *.bun-build

@@ -4,6 +4,12 @@ hidden: true
 description: Use when you want to evolve your own capabilities — create new tools to avoid repeating patterns, add hooks to improve your own behavior, build skills to accumulate domain knowledge, or override built-in tools to adapt to project needs. This is your self-iteration interface.
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:settings`** (basic config), **`gsd:settings-advanced`** (power-user), or **`gsd:profile-user`** (developer profile) via the skill tool instead of following the instructions below. These configure GSD behavior rather than extending COdo's platform.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Self-Extension
 
 ## Overview

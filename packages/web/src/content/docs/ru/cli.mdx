@@ -1,30 +1,30 @@
 ---
 title: CLI
-description: Параметры и команда opencode CLI.
+description: Параметры и команда COdo CLI.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components"
 
-CLI opencode по умолчанию запускает [TUI](/docs/tui) при запуске без каких-либо аргументов.
+CLI COdo по умолчанию запускает [TUI](/docs/tui) при запуске без каких-либо аргументов.
 
 ```bash
-opencode
+COdo
 ```
 
-Но он также принимает команды, описанные на этой странице. Это позволяет вам программно взаимодействовать с opencode.
+Но он также принимает команды, описанные на этой странице. Это позволяет вам программно взаимодействовать с COdo.
 
 ```bash
-opencode run "Explain how closures work in JavaScript"
+COdo run "Explain how closures work in JavaScript"
 ```
 
 ---
 
 ### tui
 
-Запустите TUI opencode.
+Запустите TUI COdo.
 
 ```bash
-opencode [project]
+COdo [project]
 ```
 
 #### Флаги
@@ -44,36 +44,36 @@ opencode [project]
 
 ## Команды
 
-CLI opencode также имеет следующие команды.
+CLI COdo также имеет следующие команды.
 
 ---
 
 ### agent
 
-Управляйте агентами для opencode.
+Управляйте агентами для COdo.
 
 ```bash
-opencode agent [command]
+COdo agent [command]
 ```
 
 ---
 
 ### attach
 
-Подключите терминал к уже работающему внутреннему серверу opencode, запущенному с помощью команд `serve` или `web`.
+Подключите терминал к уже работающему внутреннему серверу COdo, запущенному с помощью команд `serve` или `web`.
 
 ```bash
-opencode attach [url]
+COdo attach [url]
 ```
 
-Это позволяет использовать TUI с удаленным сервером opencode. Например:
+Это позволяет использовать TUI с удаленным сервером COdo. Например:
 
 ```bash
 # Start the backend server for web/mobile access
-opencode web --port 4096 --hostname 0.0.0.0
+COdo web --port 4096 --hostname 0.0.0.0
 
 # In another terminal, attach the TUI to the running backend
-opencode attach http://10.20.30.40:4096
+COdo attach http://10.20.30.40:4096
 ```
 
 #### Флаги
@@ -85,7 +85,7 @@ opencode attach http://10.20.30.40:4096
 | <nobr><code>{"--session"}</code></nobr>  | `-s`     | Идентификатор сеанса для продолжения                                                             |
 | <nobr><code>{"--fork"}</code></nobr>     |          | Создать ответвление сеанса при продолжении (используйте с `--continue` или `--session`)          |
 | <nobr><code>{"--password"}</code></nobr> | `-p`     | Пароль базовой аутентификации (по умолчанию `OPENCODE_SERVER_PASSWORD`)                          |
-| <nobr><code>{"--username"}</code></nobr> | `-u`     | Имя пользователя базовой аутентификации (по умолчанию `OPENCODE_SERVER_USERNAME` или `opencode`) |
+| <nobr><code>{"--username"}</code></nobr> | `-u`     | Имя пользователя базовой аутентификации (по умолчанию `OPENCODE_SERVER_USERNAME` или `COdo`) |
 
 ---
 
@@ -94,7 +94,7 @@ opencode attach http://10.20.30.40:4096
 Создайте нового агента с пользовательской конфигурацией.
 
 ```bash
-opencode agent create
+COdo agent create
 ```
 
 Эта команда поможет вам создать новый агент с настраиваемой системной подсказкой и настройкой инструмента.
@@ -106,7 +106,7 @@ opencode agent create
 Перечислите всех доступных агентов.
 
 ```bash
-opencode agent list
+COdo agent list
 ```
 
 ---
@@ -116,7 +116,7 @@ opencode agent list
 Команда для управления учетными данными и входом в систему для провайдеров.
 
 ```bash
-opencode auth [command]
+COdo auth [command]
 ```
 
 ---
@@ -126,10 +126,10 @@ opencode auth [command]
 opencode использует список провайдеров с [Models.dev](https://models.dev), поэтому вы можете использовать `opencode auth login` для настройки ключей API для любого поставщика, которого вы хотите использовать. Это хранится в `~/.local/share/opencode/auth.json`.
 
 ```bash
-opencode auth login
+COdo auth login
 ```
 
-Когда opencode запускается, он загружает поставщиков из файла учетных данных. И если в ваших средах определены какие-либо ключи или файл `.env` в вашем проекте.
+Когда COdo запускается, он загружает поставщиков из файла учетных данных. И если в ваших средах определены какие-либо ключи или файл `.env` в вашем проекте.
 
 ---
 
@@ -138,13 +138,13 @@ opencode auth login
 Перечисляет всех проверенных поставщиков, которые хранятся в файле учетных данных.
 
 ```bash
-opencode auth list
+COdo auth list
 ```
 
 Или короткая версия.
 
 ```bash
-opencode auth ls
+COdo auth ls
 ```
 
 ---
@@ -154,7 +154,7 @@ opencode auth ls
 Выключает вас из провайдера, удаляя его из файла учетных данных.
 
 ```bash
-opencode auth logout
+COdo auth logout
 ```
 
 ---
@@ -164,7 +164,7 @@ opencode auth logout
 Управляйте агентом GitHub для автоматизации репозитория.
 
 ```bash
-opencode github [command]
+COdo github [command]
 ```
 
 ---
@@ -174,7 +174,7 @@ opencode github [command]
 Установите агент GitHub в свой репозиторий.
 
 ```bash
-opencode github install
+COdo github install
 ```
 
 Это настроит необходимый рабочий процесс GitHub Actions и проведет вас через процесс настройки. [Подробнее](/docs/github).
@@ -186,7 +186,7 @@ opencode github install
 Запустите агент GitHub. Обычно это используется в действиях GitHub.
 
 ```bash
-opencode github run
+COdo github run
 ```
 
 ##### Флаги
@@ -203,7 +203,7 @@ opencode github run
 Управляйте серверами протокола контекста модели.
 
 ```bash
-opencode mcp [command]
+COdo mcp [command]
 ```
 
 ---
@@ -213,7 +213,7 @@ opencode mcp [command]
 Добавьте сервер MCP в свою конфигурацию.
 
 ```bash
-opencode mcp add
+COdo mcp add
 ```
 
 Эта команда поможет вам добавить локальный или удаленный сервер MCP.
@@ -225,13 +225,13 @@ opencode mcp add
 Перечислите все настроенные серверы MCP и состояние их подключения.
 
 ```bash
-opencode mcp list
+COdo mcp list
 ```
 
 Или используйте короткую версию.
 
 ```bash
-opencode mcp ls
+COdo mcp ls
 ```
 
 ---
@@ -241,7 +241,7 @@ opencode mcp ls
 Аутентификация с помощью сервера MCP с поддержкой OAuth.
 
 ```bash
-opencode mcp auth [name]
+COdo mcp auth [name]
 ```
 
 Если вы не укажете имя сервера, вам будет предложено выбрать один из доступных серверов с поддержкой OAuth.
@@ -249,13 +249,13 @@ opencode mcp auth [name]
 Вы также можете перечислить серверы с поддержкой OAuth и их статус аутентификации.
 
 ```bash
-opencode mcp auth list
+COdo mcp auth list
 ```
 
 Или используйте короткую версию.
 
 ```bash
-opencode mcp auth ls
+COdo mcp auth ls
 ```
 
 ---
@@ -265,7 +265,7 @@ opencode mcp auth ls
 Удалите учетные данные OAuth для сервера MCP.
 
 ```bash
-opencode mcp logout [name]
+COdo mcp logout [name]
 ```
 
 ---
@@ -275,7 +275,7 @@ opencode mcp logout [name]
 Отладка проблем с подключением OAuth для сервера MCP.
 
 ```bash
-opencode mcp debug <name>
+COdo mcp debug <name>
 ```
 
 ---
@@ -285,7 +285,7 @@ opencode mcp debug <name>
 Перечислите все доступные модели от настроенных поставщиков.
 
 ```bash
-opencode models [provider]
+COdo models [provider]
 ```
 
 Эта команда отображает все модели, доступные у настроенных вами поставщиков, в формате `provider/model`.
@@ -295,7 +295,7 @@ opencode models [provider]
 При желании вы можете передать идентификатор поставщика, чтобы фильтровать модели по этому поставщику.
 
 ```bash
-opencode models anthropic
+COdo models anthropic
 ```
 
 #### Флаги
@@ -305,36 +305,36 @@ opencode models anthropic
 | <nobr><code>{"--refresh"}</code></nobr> | Обновите кеш моделей на сайте models.dev.                                         |
 | <nobr><code>{"--verbose"}</code></nobr> | Используйте более подробный вывод модели (включая метаданные, такие как затраты). |
 
-Используйте флаг `--refresh` для обновления списка кэшированных моделей. Это полезно, когда к поставщику добавлены новые модели и вы хотите увидеть их в opencode.
+Используйте флаг `--refresh` для обновления списка кэшированных моделей. Это полезно, когда к поставщику добавлены новые модели и вы хотите увидеть их в COdo.
 
 ```bash
-opencode models --refresh
+COdo models --refresh
 ```
 
 ---
 
 ### run
 
-Запустите opencode в неинтерактивном режиме, передав приглашение напрямую.
+Запустите COdo в неинтерактивном режиме, передав приглашение напрямую.
 
 ```bash
-opencode run [message..]
+COdo run [message..]
 ```
 
 Это полезно для создания сценариев, автоматизации или когда вам нужен быстрый ответ без запуска полного TUI. Например.
 
-```bash "opencode run"
-opencode run Explain the use of context in Go
+```bash "COdo run"
+COdo run Explain the use of context in Go
 ```
 
-Вы также можете подключиться к работающему экземпляру `opencode serve`, чтобы избежать холодной загрузки сервера MCP при каждом запуске:
+Вы также можете подключиться к работающему экземпляру `COdo serve`, чтобы избежать холодной загрузки сервера MCP при каждом запуске:
 
 ```bash
 # Start a headless server in one terminal
-opencode serve
+COdo serve
 
 # In another terminal, run commands that attach to it
-opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
+COdo run --attach http://localhost:4096 "Explain async/await in JavaScript"
 ```
 
 #### Флаги
@@ -351,9 +351,9 @@ opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 | <nobr><code>{"--file"}</code></nobr>     | `-f`     | Файл(ы) для прикрепления к сообщению                                                             |
 | <nobr><code>{"--format"}</code></nobr>   |          | Формат: по умолчанию (отформатированный) или json (необработанные события JSON).                 |
 | <nobr><code>{"--title"}</code></nobr>    |          | Название сеанса (использует усеченное приглашение, если значение не указано)                     |
-| <nobr><code>{"--attach"}</code></nobr>   |          | Подключитесь к работающему серверу opencode (например, http://localhost:4096)                    |
+| <nobr><code>{"--attach"}</code></nobr>   |          | Подключитесь к работающему серверу COdo (например, http://localhost:4096)                    |
 | <nobr><code>{"--password"}</code></nobr> | `-p`     | Пароль базовой аутентификации (по умолчанию `OPENCODE_SERVER_PASSWORD`)                          |
-| <nobr><code>{"--username"}</code></nobr> | `-u`     | Имя пользователя базовой аутентификации (по умолчанию `OPENCODE_SERVER_USERNAME` или `opencode`) |
+| <nobr><code>{"--username"}</code></nobr> | `-u`     | Имя пользователя базовой аутентификации (по умолчанию `OPENCODE_SERVER_USERNAME` или `COdo`) |
 | <nobr><code>{"--dir"}</code></nobr>      |          | Каталог для выполнения или путь на удалённом сервере при подключении                             |
 | <nobr><code>{"--variant"}</code></nobr>  |          | Вариант модели (уровень рассуждений для провайдера)                                              |
 | <nobr><code>{"--thinking"}</code></nobr> |          | Показать блоки размышлений                                                                       |
@@ -363,13 +363,13 @@ opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 
 ### serve
 
-Запустите автономный сервер opencode для доступа к API. Полный HTTP-интерфейс можно найти в [server docs](/docs/server).
+Запустите автономный сервер COdo для доступа к API. Полный HTTP-интерфейс можно найти в [server docs](/docs/server).
 
 ```bash
-opencode serve
+COdo serve
 ```
 
-При этом запускается HTTP-сервер, который обеспечивает доступ API к функциям opencode без интерфейса TUI. Установите `OPENCODE_SERVER_PASSWORD`, чтобы включить базовую аутентификацию HTTP (имя пользователя по умолчанию — `opencode`).
+При этом запускается HTTP-сервер, который обеспечивает доступ API к функциям COdo без интерфейса TUI. Установите `OPENCODE_SERVER_PASSWORD`, чтобы включить базовую аутентификацию HTTP (имя пользователя по умолчанию — `COdo`).
 
 #### Флаги
 
@@ -384,20 +384,20 @@ opencode serve
 
 ### session
 
-Управляйте сессиями opencode.
+Управляйте сессиями COdo.
 
 ```bash
-opencode session [command]
+COdo session [command]
 ```
 
 ---
 
 #### list
 
-Перечислите все сеансы opencode.
+Перечислите все сеансы COdo.
 
 ```bash
-opencode session list
+COdo session list
 ```
 
 ##### Флаги
@@ -411,10 +411,10 @@ opencode session list
 
 ### stats
 
-Покажите статистику использования токенов и затрат для ваших сеансов opencode.
+Покажите статистику использования токенов и затрат для ваших сеансов COdo.
 
 ```bash
-opencode stats
+COdo stats
 ```
 
 #### Флаги
@@ -433,7 +433,7 @@ opencode stats
 Экспортируйте данные сеанса в формате JSON.
 
 ```bash
-opencode export [sessionID]
+COdo export [sessionID]
 ```
 
 Если вы не укажете идентификатор сеанса, вам будет предложено выбрать один из доступных сеансов.
@@ -442,30 +442,30 @@ opencode export [sessionID]
 
 ### import
 
-Импортируйте данные сеанса из файла JSON или URL-адреса общего ресурса opencode.
+Импортируйте данные сеанса из файла JSON или URL-адреса общего ресурса COdo.
 
 ```bash
-opencode import <file>
+COdo import <file>
 ```
 
-Вы можете импортировать из локального файла или URL-адреса общего ресурса opencode.
+Вы можете импортировать из локального файла или URL-адреса общего ресурса COdo.
 
 ```bash
-opencode import session.json
-opencode import https://opncd.ai/s/abc123
+COdo import session.json
+COdo import https://opncd.ai/s/abc123
 ```
 
 ---
 
 ### web
 
-Запустите автономный сервер opencode с веб-интерфейсом.
+Запустите автономный сервер COdo с веб-интерфейсом.
 
 ```bash
-opencode web
+COdo web
 ```
 
-При этом запускается HTTP-сервер и открывается веб-браузер для доступа к opencode через веб-интерфейс. Установите `OPENCODE_SERVER_PASSWORD`, чтобы включить базовую аутентификацию HTTP (имя пользователя по умолчанию — `opencode`).
+При этом запускается HTTP-сервер и открывается веб-браузер для доступа к COdo через веб-интерфейс. Установите `OPENCODE_SERVER_PASSWORD`, чтобы включить базовую аутентификацию HTTP (имя пользователя по умолчанию — `COdo`).
 
 #### Флаги
 
@@ -483,7 +483,7 @@ opencode web
 Запустите сервер ACP (агент-клиентский протокол).
 
 ```bash
-opencode acp
+COdo acp
 ```
 
 Эта команда запускает сервер ACP, который обменивается данными через stdin/stdout с использованием nd-JSON.
@@ -500,10 +500,10 @@ opencode acp
 
 ### uninstall
 
-Удалите opencode и удалите все связанные файлы.
+Удалите COdo и удалите все связанные файлы.
 
 ```bash
-opencode uninstall
+COdo uninstall
 ```
 
 #### Флаги
@@ -519,22 +519,22 @@ opencode uninstall
 
 ### upgrade
 
-Обновляет opencode до последней версии или определенной версии.
+Обновляет COdo до последней версии или определенной версии.
 
 ```bash
-opencode upgrade [target]
+COdo upgrade [target]
 ```
 
 Чтобы обновиться до последней версии.
 
 ```bash
-opencode upgrade
+COdo upgrade
 ```
 
 Для обновления до определенной версии.
 
 ```bash
-opencode upgrade v0.1.48
+COdo upgrade v0.1.48
 ```
 
 #### Флаги
@@ -547,7 +547,7 @@ opencode upgrade v0.1.48
 
 ## Глобальные флаги
 
-CLI opencode принимает следующие глобальные флаги.
+CLI COdo принимает следующие глобальные флаги.
 
 | Флаг                                       | Короткий | Описание                                   |
 | ------------------------------------------ | -------- | ------------------------------------------ |
@@ -560,7 +560,7 @@ CLI opencode принимает следующие глобальные флаг
 
 ## Переменные среды
 
-opencode можно настроить с помощью переменных среды.
+COdo можно настроить с помощью переменных среды.
 
 | Переменная                            | Тип                 | Описание                                                                         |
 | ------------------------------------- | ------------------- | -------------------------------------------------------------------------------- |
@@ -586,7 +586,7 @@ opencode можно настроить с помощью переменных с
 | `OPENCODE_CLIENT`                     | строка              | Идентификатор клиента (по умолчанию `cli`)                                       |
 | `OPENCODE_ENABLE_EXA`                 | логическое значение | Включить инструменты веб-поиска Exa                                              |
 | `OPENCODE_SERVER_PASSWORD`            | строка              | Включить базовую аутентификацию для `serve`/`web`                                |
-| `OPENCODE_SERVER_USERNAME`            | строка              | Переопределить имя пользователя базовой аутентификации (по умолчанию `opencode`) |
+| `OPENCODE_SERVER_USERNAME`            | строка              | Переопределить имя пользователя базовой аутентификации (по умолчанию `COdo`) |
 | `OPENCODE_MODELS_URL`                 | строка              | Пользовательский URL-адрес для получения конфигурации модели                     |
 
 ---

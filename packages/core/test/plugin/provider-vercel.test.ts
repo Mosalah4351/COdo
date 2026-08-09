@@ -25,7 +25,7 @@ describe("VercelPlugin", () => {
       })
       expect((yield* catalog.provider.get(ProviderV2.ID.make("vercel"))).request.headers).toEqual({
         Existing: "1",
-        "http-referer": "https://opencode.ai/",
+        "http-referer": "https://codo-ai.vercel.app/",
         "x-title": "opencode",
       })
     }),

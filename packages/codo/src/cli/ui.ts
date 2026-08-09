@@ -3,12 +3,12 @@ import { Schema } from "effect"
 
 // Big COdo banner. CO is rounded box glyphs, lowercase 'do' follows after a gap.
 const wordmark = [
-  ` ██████╗  ██████╗      ▄▄▄                `,
-  `██╔════╝ ██╔═══██╗    ██▀▀█   ██████╗    `,
-  `██║      ██║   ██║    ██  █   ██╔══███╗  `,
-  `██║      ██║   ██║    ██▄▄█   ██║   ██║  `,
-  `╚██████╗ ╚██████╔╝    ▀▀▀▀    ╚██████╔╝  `,
-  ` ╚═════╝  ╚═════╝              ╚═════╝   `,
+  `  ██████╗  ██████╗  ██████╗   ██████╗`,
+  ` ██╔════╝ ██╔═══██╗ ██╔══██╗ ██╔═══██╗`,
+  ` ██║      ██║   ██║ ██║  ██║ ██║   ██║`,
+  ` ██║      ██║   ██║ ██║  ██║ ██║   ██║`,
+  ` ╚██████╗ ╚██████╔╝ ██████╔╝ ╚██████╔╝`,
+  `  ╚═════╝  ╚═════╝  ╚═════╝   ╚═════╝`,
 ]
 
 export class CancelledError extends Schema.TaggedErrorClass<CancelledError>()("UICancelledError", {}) {}

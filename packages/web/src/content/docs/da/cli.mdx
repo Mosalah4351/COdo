@@ -1,30 +1,30 @@
 ---
 title: CLI
-description: OpenCode CLI muligheder og kommandoer.
+description: COdo CLI muligheder og kommandoer.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components"
 
-OpenCode CLI starter som standard [TUI](/docs/tui), når den kører uden nogen argumenter.
+COdo CLI starter som standard [TUI](/docs/tui), når den kører uden nogen argumenter.
 
 ```bash
-opencode
+COdo
 ```
 
-Men den accepterer også kommandoer som dokumenteret på denne side. Dette giver dig mulighed for at interagere med OpenCode programmatisk.
+Men den accepterer også kommandoer som dokumenteret på denne side. Dette giver dig mulighed for at interagere med COdo programmatisk.
 
 ```bash
-opencode run "Explain how closures work in JavaScript"
+COdo run "Explain how closures work in JavaScript"
 ```
 
 ---
 
 ### tui
 
-Start OpenCode terminalbrugergrænsefladen.
+Start COdo terminalbrugergrænsefladen.
 
 ```bash
-opencode [project]
+COdo [project]
 ```
 
 #### Flag
@@ -44,36 +44,36 @@ opencode [project]
 
 ## Kommandoer
 
-OpenCode CLI har også følgende kommandoer.
+COdo CLI har også følgende kommandoer.
 
 ---
 
 ### agent
 
-Administrer agenter i OpenCode.
+Administrer agenter i COdo.
 
 ```bash
-opencode agent [command]
+COdo agent [command]
 ```
 
 ---
 
 ### attach
 
-Tilslut en terminal til en allerede kørende OpenCode backend-server startet via `serve` eller `web` kommandoer.
+Tilslut en terminal til en allerede kørende COdo backend-server startet via `serve` eller `web` kommandoer.
 
 ```bash
-opencode attach [url]
+COdo attach [url]
 ```
 
-Dette gør det muligt at bruge TUI med en ekstern OpenCode backend. For eksempel:
+Dette gør det muligt at bruge TUI med en ekstern COdo backend. For eksempel:
 
 ```bash
 # Start the backend server for web/mobile access
-opencode web --port 4096 --hostname 0.0.0.0
+COdo web --port 4096 --hostname 0.0.0.0
 
 # In another terminal, attach the TUI to the running backend
-opencode attach http://10.20.30.40:4096
+COdo attach http://10.20.30.40:4096
 ```
 
 #### Flag
@@ -85,7 +85,7 @@ opencode attach http://10.20.30.40:4096
 | <nobr><code>{"--session"}</code></nobr>  | `-s` | Sessions-id for at fortsætte                                                      |
 | <nobr><code>{"--fork"}</code></nobr>     |      | Forgren sessionen ved fortsættelse (brug med `--continue` eller `--session`)      |
 | <nobr><code>{"--password"}</code></nobr> | `-p` | Adgangskode til basic auth (standard: `OPENCODE_SERVER_PASSWORD`)                 |
-| <nobr><code>{"--username"}</code></nobr> | `-u` | Brugernavn til basic auth (standard: `OPENCODE_SERVER_USERNAME` eller `opencode`) |
+| <nobr><code>{"--username"}</code></nobr> | `-u` | Brugernavn til basic auth (standard: `OPENCODE_SERVER_USERNAME` eller `COdo`) |
 
 ---
 
@@ -94,7 +94,7 @@ opencode attach http://10.20.30.40:4096
 Opret en ny agent med brugerdefineret konfiguration.
 
 ```bash
-opencode agent create
+COdo agent create
 ```
 
 Denne kommando vil guide dig gennem oprettelse af en ny agent med en brugerdefineret systemprompt og værktøjskonfiguration.
@@ -106,7 +106,7 @@ Denne kommando vil guide dig gennem oprettelse af en ny agent med en brugerdefin
 Liste over alle tilgængelige agenter.
 
 ```bash
-opencode agent list
+COdo agent list
 ```
 
 ---
@@ -116,20 +116,20 @@ opencode agent list
 Kommando til at administrere legitimationsoplysninger og login for udbydere.
 
 ```bash
-opencode auth [command]
+COdo auth [command]
 ```
 
 ---
 
 #### login
 
-OpenCode drives af udbyderlisten på [Models.dev](https://models.dev), så du kan bruge `opencode auth login` til at konfigurere API-nøgler for enhver udbyder, du vil bruge. Dette er gemt i `~/.local/share/opencode/auth.json`.
+COdo drives af udbyderlisten på [Models.dev](https://models.dev), så du kan bruge `opencode auth login` til at konfigurere API-nøgler for enhver udbyder, du vil bruge. Dette er gemt i `~/.local/share/opencode/auth.json`.
 
 ```bash
-opencode auth login
+COdo auth login
 ```
 
-Når OpenCode starter op, indlæser den udbyderne fra legitimationsfilen. Og hvis der er nogen nøgler defineret i dine miljøer eller en `.env` fil i dit projekt.
+Når COdo starter op, indlæser den udbyderne fra legitimationsfilen. Og hvis der er nogen nøgler defineret i dine miljøer eller en `.env` fil i dit projekt.
 
 ---
 
@@ -138,13 +138,13 @@ Når OpenCode starter op, indlæser den udbyderne fra legitimationsfilen. Og hvi
 Viser alle de godkendte udbydere som gemt i legitimationsfilen.
 
 ```bash
-opencode auth list
+COdo auth list
 ```
 
 Eller den korte version.
 
 ```bash
-opencode auth ls
+COdo auth ls
 ```
 
 ---
@@ -154,7 +154,7 @@ opencode auth ls
 Logger dig ud af en udbyder ved at rydde den fra legitimationsfilen.
 
 ```bash
-opencode auth logout
+COdo auth logout
 ```
 
 ---
@@ -164,7 +164,7 @@ opencode auth logout
 Administrator GitHub-agenten til lagerautomatisering.
 
 ```bash
-opencode github [command]
+COdo github [command]
 ```
 
 ---
@@ -174,7 +174,7 @@ opencode github [command]
 Installatør GitHub-agenten i dit lager.
 
 ```bash
-opencode github install
+COdo github install
 ```
 
 Dette opsætter det nødvendige GitHub Actions workflow og guider dig gennem konfigurationsprocessen. [Learn more](/docs/github).
@@ -186,7 +186,7 @@ Dette opsætter det nødvendige GitHub Actions workflow og guider dig gennem kon
 Kør GitHub-agenten. Dette bruges typisk i GitHub Actions.
 
 ```bash
-opencode github run
+COdo github run
 ```
 
 ##### Flag
@@ -203,7 +203,7 @@ opencode github run
 Administrator Model Context Protocol-servere.
 
 ```bash
-opencode mcp [command]
+COdo mcp [command]
 ```
 
 ---
@@ -213,7 +213,7 @@ opencode mcp [command]
 Tilføj en MCP-server til din konfiguration.
 
 ```bash
-opencode mcp add
+COdo mcp add
 ```
 
 Denne kommando vil guide dig gennem tilføjelse af enten en lokal eller ekstern MCP-server.
@@ -225,13 +225,13 @@ Denne kommando vil guide dig gennem tilføjelse af enten en lokal eller ekstern 
 Liste over alle konfigurerede MCP-servere og deres forbindelsesstatus.
 
 ```bash
-opencode mcp list
+COdo mcp list
 ```
 
 Eller brug den korte version.
 
 ```bash
-opencode mcp ls
+COdo mcp ls
 ```
 
 ---
@@ -241,7 +241,7 @@ opencode mcp ls
 Godkendt med en OAuth-aktiveret MCP-server.
 
 ```bash
-opencode mcp auth [name]
+COdo mcp auth [name]
 ```
 
 Hvis du ikke angiver et servernavn, bliver du bedt om at vælge blandt tilgængelige OAuth-kompatible servere.
@@ -249,13 +249,13 @@ Hvis du ikke angiver et servernavn, bliver du bedt om at vælge blandt tilgænge
 Du kan også angive OAuth-kompatible servere og deres godkendelsesstatus.
 
 ```bash
-opencode mcp auth list
+COdo mcp auth list
 ```
 
 Eller brug den korte version.
 
 ```bash
-opencode mcp auth ls
+COdo mcp auth ls
 ```
 
 ---
@@ -265,7 +265,7 @@ opencode mcp auth ls
 Fjern OAuth-legitimationsoplysninger for en MCP-server.
 
 ```bash
-opencode mcp logout [name]
+COdo mcp logout [name]
 ```
 
 ---
@@ -275,7 +275,7 @@ opencode mcp logout [name]
 Fejlfinding af OAuth-forbindelsesproblemer for en MCP-server.
 
 ```bash
-opencode mcp debug <name>
+COdo mcp debug <name>
 ```
 
 ---
@@ -285,7 +285,7 @@ opencode mcp debug <name>
 Liste over alle tilgængelige modeller fra konfigurerede udbydere.
 
 ```bash
-opencode models [provider]
+COdo models [provider]
 ```
 
 Denne kommando viser alle tilgængelige modeller på tværs af dine konfigurerede udbydere i formatet `provider/model`.
@@ -295,7 +295,7 @@ Dette er nyttigt til at finde ud af det nøjagtige modelnavn, der skal bruges i 
 Du kan eventuelt videregive et udbyder-id for at filtrere modeller efter den udbyder.
 
 ```bash
-opencode models anthropic
+COdo models anthropic
 ```
 
 #### Flag
@@ -305,36 +305,36 @@ opencode models anthropic
 | <nobr><code>{"--refresh"}</code></nobr> | Opdater modelcachen fra models.dev                                      |
 | <nobr><code>{"--verbose"}</code></nobr> | Brug mere detaljeret modeloutput (inkluderer metadata som omkostninger) |
 
-Brug flaget `--refresh` til at opdatere den cachelagrede modelliste. Dette er nyttigt, når nye modeller er blevet tilføjet til en udbyder, og du vil se dem i OpenCode.
+Brug flaget `--refresh` til at opdatere den cachelagrede modelliste. Dette er nyttigt, når nye modeller er blevet tilføjet til en udbyder, og du vil se dem i COdo.
 
 ```bash
-opencode models --refresh
+COdo models --refresh
 ```
 
 ---
 
 ### run
 
-Kør opencode i ikke-interaktiv tilstand ved at sende en prompt direkte.
+Kør COdo i ikke-interaktiv tilstand ved at sende en prompt direkte.
 
 ```bash
-opencode run [message..]
+COdo run [message..]
 ```
 
 Dette er nyttigt til scripting, automatisering, eller når du vil have et hurtigt svar uden at starte hele TUI. F.eks.
 
-```bash "opencode run"
-opencode run Explain the use of context in Go
+```bash "COdo run"
+COdo run Explain the use of context in Go
 ```
 
-Du kan også vedhæfte til en kørende `opencode serve`-instans for at undgå MCP serverens kolde opstartstider ved hver kørsel:
+Du kan også vedhæfte til en kørende `COdo serve`-instans for at undgå MCP serverens kolde opstartstider ved hver kørsel:
 
 ```bash
 # Start a headless server in one terminal
-opencode serve
+COdo serve
 
 # In another terminal, run commands that attach to it
-opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
+COdo run --attach http://localhost:4096 "Explain async/await in JavaScript"
 ```
 
 #### Flag
@@ -351,9 +351,9 @@ opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 | <nobr><code>{"--file"}</code></nobr>     | `-f` | Fil(er), der skal vedhæftes til meddelelsen                                         |
 | <nobr><code>{"--format"}</code></nobr>   |      | Format: standard (formateret) eller json (rå JSON hændelser)                        |
 | <nobr><code>{"--title"}</code></nobr>    |      | Titel for sessionen (bruger trunkeret prompt, hvis der ikke er angivet nogen værdi) |
-| <nobr><code>{"--attach"}</code></nobr>   |      | Tilslut til en kørende opencode-server (f.eks. http://localhost:4096)               |
+| <nobr><code>{"--attach"}</code></nobr>   |      | Tilslut til en kørende COdo-server (f.eks. http://localhost:4096)               |
 | <nobr><code>{"--password"}</code></nobr> | `-p` | Adgangskode til basic auth (standard: `OPENCODE_SERVER_PASSWORD`)                   |
-| <nobr><code>{"--username"}</code></nobr> | `-u` | Brugernavn til basic auth (standard: `OPENCODE_SERVER_USERNAME` eller `opencode`)   |
+| <nobr><code>{"--username"}</code></nobr> | `-u` | Brugernavn til basic auth (standard: `OPENCODE_SERVER_USERNAME` eller `COdo`)   |
 | <nobr><code>{"--dir"}</code></nobr>      |      | Mappe at køre i, eller sti på fjernserveren ved tilkobling                          |
 | <nobr><code>{"--variant"}</code></nobr>  |      | Modelvariant (udbyder-specifik ræsonneringsindsats)                                 |
 | <nobr><code>{"--thinking"}</code></nobr> |      | Vis tænkeblokke                                                                     |
@@ -363,13 +363,13 @@ opencode run --attach http://localhost:4096 "Explain async/await in JavaScript"
 
 ### serve
 
-Start en hovedløs OpenCode-server til API-adgang. Tjek [server docs](/docs/server) for den fulde HTTP-grænseflade.
+Start en hovedløs COdo-server til API-adgang. Tjek [server docs](/docs/server) for den fulde HTTP-grænseflade.
 
 ```bash
-opencode serve
+COdo serve
 ```
 
-Dette starter en HTTP-server, der giver API-adgang til opencode-funktionalitet uden TUI-grænsefladen. Indstil `OPENCODE_SERVER_PASSWORD` for at aktivere HTTP grundlæggende godkendelse (brugernavn er standard til `opencode`).
+Dette starter en HTTP-server, der giver API-adgang til COdo-funktionalitet uden TUI-grænsefladen. Indstil `OPENCODE_SERVER_PASSWORD` for at aktivere HTTP grundlæggende godkendelse (brugernavn er standard til `COdo`).
 
 #### Flag
 
@@ -384,20 +384,20 @@ Dette starter en HTTP-server, der giver API-adgang til opencode-funktionalitet u
 
 ### session
 
-Administrator OpenCode sessionsholder.
+Administrator COdo sessionsholder.
 
 ```bash
-opencode session [command]
+COdo session [command]
 ```
 
 ---
 
 #### list
 
-Liste over alle OpenCode sessioner.
+Liste over alle COdo sessioner.
 
 ```bash
-opencode session list
+COdo session list
 ```
 
 ##### Flag
@@ -411,10 +411,10 @@ opencode session list
 
 ### stats
 
-Vis tokenbrug og omkostningsstatistikker for dine OpenCode-sessioner.
+Vis tokenbrug og omkostningsstatistikker for dine COdo-sessioner.
 
 ```bash
-opencode stats
+COdo stats
 ```
 
 #### Flag
@@ -433,7 +433,7 @@ opencode stats
 Eksporter sessionsdata som JSON.
 
 ```bash
-opencode export [sessionID]
+COdo export [sessionID]
 ```
 
 Hvis du ikke angiver et sessions-id, bliver du bedt om at vælge mellem tilgængelige sessioner.
@@ -442,30 +442,30 @@ Hvis du ikke angiver et sessions-id, bliver du bedt om at vælge mellem tilgæng
 
 ### import
 
-Importer sessionsdata fra en JSON fil eller OpenCode del URL.
+Importer sessionsdata fra en JSON fil eller COdo del URL.
 
 ```bash
-opencode import <file>
+COdo import <file>
 ```
 
-Du kan importere fra en lokal fil eller en OpenCode share URL.
+Du kan importere fra en lokal fil eller en COdo share URL.
 
 ```bash
-opencode import session.json
-opencode import https://opncd.ai/s/abc123
+COdo import session.json
+COdo import https://opncd.ai/s/abc123
 ```
 
 ---
 
 ### web
 
-Start en hovedløs OpenCode-server med en webgrænseflade.
+Start en hovedløs COdo-server med en webgrænseflade.
 
 ```bash
-opencode web
+COdo web
 ```
 
-Dette starter en HTTP-server og åbner en webbrowser for at få adgang til OpenCode via en webgrænseflade. Indstil `OPENCODE_SERVER_PASSWORD` for at aktivere HTTP grundlæggende godkendelse (brugernavn er standard til `opencode`).
+Dette starter en HTTP-server og åbner en webbrowser for at få adgang til COdo via en webgrænseflade. Indstil `OPENCODE_SERVER_PASSWORD` for at aktivere HTTP grundlæggende godkendelse (brugernavn er standard til `COdo`).
 
 #### Flag
 
@@ -483,7 +483,7 @@ Dette starter en HTTP-server og åbner en webbrowser for at få adgang til OpenC
 Start en ACP-server (Agent Client Protocol).
 
 ```bash
-opencode acp
+COdo acp
 ```
 
 Denne kommando starter en ACP-server, der kommunikerer via stdin/stdout ved hjælp af nd-JSON.
@@ -500,10 +500,10 @@ Denne kommando starter en ACP-server, der kommunikerer via stdin/stdout ved hjæ
 
 ### uninstall
 
-Afinstaller OpenCode og fjern alle relaterede filer.
+Afinstaller COdo og fjern alle relaterede filer.
 
 ```bash
-opencode uninstall
+COdo uninstall
 ```
 
 #### Flag
@@ -519,22 +519,22 @@ opencode uninstall
 
 ### upgrade
 
-Opdaterer OpenCode til den nyeste version eller en specifik version.
+Opdaterer COdo til den nyeste version eller en specifik version.
 
 ```bash
-opencode upgrade [target]
+COdo upgrade [target]
 ```
 
 For at opgradere til den nyeste version.
 
 ```bash
-opencode upgrade
+COdo upgrade
 ```
 
 For at opgradere til en bestemt version.
 
 ```bash
-opencode upgrade v0.1.48
+COdo upgrade v0.1.48
 ```
 
 #### upgrade
@@ -547,7 +547,7 @@ opencode upgrade v0.1.48
 
 ## Globale flag
 
-opencode CLI tager følgende globale flag.
+COdo CLI tager følgende globale flag.
 
 | Flag                                       | Kort | Beskrivelse                          |
 | ------------------------------------------ | ---- | ------------------------------------ |
@@ -560,7 +560,7 @@ opencode CLI tager følgende globale flag.
 
 ## Miljøvariabler
 
-OpenCode kan konfigureres ved hjælp af miljøvariabler.
+COdo kan konfigureres ved hjælp af miljøvariabler.
 
 | Variabel                              | Skriv   | Beskrivelse                                                           |
 | ------------------------------------- | ------- | --------------------------------------------------------------------- |
@@ -586,7 +586,7 @@ OpenCode kan konfigureres ved hjælp af miljøvariabler.
 | `OPENCODE_CLIENT`                     | string  | Klient-id (standard til `cli`)                                        |
 | `OPENCODE_ENABLE_EXA`                 | boolean | Aktiver Exa-websøgeværktøjer                                          |
 | `OPENCODE_SERVER_PASSWORD`            | string  | Aktiver grundlæggende godkendelse for `serve`/`web`                   |
-| `OPENCODE_SERVER_USERNAME`            | string  | Tilsidesæt grundlæggende godkendelsesbrugernavn (standard `opencode`) |
+| `OPENCODE_SERVER_USERNAME`            | string  | Tilsidesæt grundlæggende godkendelsesbrugernavn (standard `COdo`) |
 | `OPENCODE_MODELS_URL`                 | string  | Brugerdefineret URL til hentning af modelkonfiguration                |
 
 ---

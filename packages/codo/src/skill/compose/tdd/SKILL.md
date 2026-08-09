@@ -4,6 +4,20 @@ hidden: true
 description: Use when implementing any feature or bugfix, before writing implementation code
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:add-tests`** (for generating tests after a phase) followed by **`gsd:validate-phase`** (for Nyquist coverage audit) via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG.
+
+Key differences from compose:tdd:
+- GSD's `gsd:add-tests` is post-phase test generation, not test-first. It analyzes changed files, classifies them into TDD (unit), E2E (browser), or Skip categories, generates tests following RED-GREEN conventions, and runs them.
+- `gsd:validate-phase` then audits that every requirement has automated verification coverage, marking requirements as COVERED/PARTIAL/MISSING.
+- Together they achieve the same goal (verified, tested code) but post-hoc rather than test-first.
+- If strict test-first is desired, implement tests manually using TDD principles and use `gsd:validate-phase` for coverage audit.
+
+(Other workflows TBD.)
+
 # Test-Driven Development (TDD)
 
 ## Overview

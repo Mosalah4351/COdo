@@ -1,68 +1,68 @@
 ---
 title: GitLab
-description: Use o opencode em problemas e solicitações de mesclagem do GitLab.
+description: Use o COdo em problemas e solicitações de mesclagem do GitLab.
 ---
 
-O opencode se integra ao seu fluxo de trabalho do GitLab através do seu pipeline CI/CD do GitLab ou com o GitLab Duo.
+O COdo se integra ao seu fluxo de trabalho do GitLab através do seu pipeline CI/CD do GitLab ou com o GitLab Duo.
 
-Em ambos os casos, o opencode será executado em seus runners do GitLab.
+Em ambos os casos, o COdo será executado em seus runners do GitLab.
 
 ---
 
 ## GitLab CI
 
-O opencode funciona em um pipeline regular do GitLab. Você pode integrá-lo a um pipeline como um [componente CI](https://docs.gitlab.com/ee/ci/components/)
+O COdo funciona em um pipeline regular do GitLab. Você pode integrá-lo a um pipeline como um [componente CI](https://docs.gitlab.com/ee/ci/components/)
 
-Aqui estamos usando um componente CI/CD criado pela comunidade para opencode — [nagyv/gitlab-opencode](https://gitlab.com/nagyv/gitlab-opencode).
+Aqui estamos usando um componente CI/CD criado pela comunidade para COdo — [nagyv/gitlab-COdo](https://gitlab.com/nagyv/gitlab-COdo).
 
 ---
 
 ### Recursos
 
-- **Use configuração personalizada por trabalho**: Configure o opencode com um diretório de configuração personalizado, por exemplo `./config/#custom-directory` para habilitar ou desabilitar funcionalidades por invocação do opencode.
-- **Configuração mínima**: O componente CI configura o opencode em segundo plano, você só precisa criar a configuração do opencode e o prompt inicial.
+- **Use configuração personalizada por trabalho**: Configure o COdo com um diretório de configuração personalizado, por exemplo `./config/#custom-directory` para habilitar ou desabilitar funcionalidades por invocação do COdo.
+- **Configuração mínima**: O componente CI configura o COdo em segundo plano, você só precisa criar a configuração do COdo e o prompt inicial.
 - **Flexível**: O componente CI suporta várias entradas para personalizar seu comportamento.
 
 ---
 
 ### Configuração
 
-1. Armazene seu JSON de autenticação do opencode como variáveis de ambiente do tipo File em **Configurações** > **CI/CD** > **Variáveis**. Certifique-se de marcá-las como "Mascaradas e ocultas".
+1. Armazene seu JSON de autenticação do COdo como variáveis de ambiente do tipo File em **Configurações** > **CI/CD** > **Variáveis**. Certifique-se de marcá-las como "Mascaradas e ocultas".
 2. Adicione o seguinte ao seu arquivo `.gitlab-ci.yml`.
 
    ```yaml title=".gitlab-ci.yml"
    include:
      - component: $CI_SERVER_FQDN/nagyv/gitlab-opencode/opencode@2
        inputs:
-         config_dir: ${CI_PROJECT_DIR}/opencode-config
-         auth_json: $OPENCODE_AUTH_JSON # O nome da variável para seu JSON de autenticação do OpenCode
+         config_dir: ${CI_PROJECT_DIR}/COdo-config
+         auth_json: $OPENCODE_AUTH_JSON # O nome da variável para seu JSON de autenticação do COdo
          command: optional-custom-command
          message: "Seu prompt aqui"
    ```
 
-Para mais entradas e casos de uso [consulte a documentação](https://gitlab.com/explore/catalog/nagyv/gitlab-opencode) deste componente.
+Para mais entradas e casos de uso [consulte a documentação](https://gitlab.com/explore/catalog/nagyv/gitlab-COdo) deste componente.
 
 ---
 
 ## GitLab Duo
 
-O opencode se integra ao seu fluxo de trabalho do GitLab.
-Mencione `@opencode` em um comentário, e o opencode executará tarefas dentro do seu pipeline CI do GitLab.
+O COdo se integra ao seu fluxo de trabalho do GitLab.
+Mencione `@COdo` em um comentário, e o COdo executará tarefas dentro do seu pipeline CI do GitLab.
 
 ---
 
 ### Recursos
 
-- **Triagem de problemas**: Peça ao opencode para analisar um problema e explicá-lo para você.
-- **Corrigir e implementar**: Peça ao opencode para corrigir um problema ou implementar uma funcionalidade.
+- **Triagem de problemas**: Peça ao COdo para analisar um problema e explicá-lo para você.
+- **Corrigir e implementar**: Peça ao COdo para corrigir um problema ou implementar uma funcionalidade.
   Ele criará um novo branch e abrirá uma solicitação de mesclagem com as alterações.
-- **Seguro**: O opencode é executado em seus runners do GitLab.
+- **Seguro**: O COdo é executado em seus runners do GitLab.
 
 ---
 
 ### Configuração
 
-O opencode é executado em seu pipeline CI/CD do GitLab, aqui está o que você precisará para configurá-lo:
+O COdo é executado em seu pipeline CI/CD do GitLab, aqui está o que você precisará para configurá-lo:
 
 :::tip
 Consulte a [**documentação do GitLab**](https://docs.gitlab.com/user/duo_agent_platform/agent_assistant/) para instruções atualizadas.
@@ -82,8 +82,8 @@ Consulte a [**documentação do GitLab**](https://docs.gitlab.com/user/duo_agent
     ```yaml
     image: node:22-slim
     commands:
-      - echo "Instalando opencode"
-      - npm install --global opencode-ai
+      - echo "Instalando COdo"
+      - npm install --global COdo-ai
       - echo "Instalando glab"
       - export GITLAB_TOKEN=$GITLAB_TOKEN_OPENCODE
       - apt-get update --quiet && apt-get install --yes curl wget gpg git && rm --recursive --force /var/lib/apt/lists/*
@@ -91,8 +91,8 @@ Consulte a [**documentação do GitLab**](https://docs.gitlab.com/user/duo_agent
       - apt-get install --yes glab
       - echo "Configurando glab"
       - echo $GITLAB_HOST
-      - echo "Criando configuração de auth do OpenCode"
-      - mkdir --parents ~/.local/share/opencode
+      - echo "Criando configuração de auth do COdo"
+      - mkdir --parents ~/.local/share/COdo
       - |
         cat > ~/.local/share/opencode/auth.json << EOF
         {
@@ -103,13 +103,13 @@ Consulte a [**documentação do GitLab**](https://docs.gitlab.com/user/duo_agent
         }
         EOF
       - echo "Configurando git"
-      - git config --global user.email "opencode@gitlab.com"
-      - git config --global user.name "OpenCode"
+      - git config --global user.email "COdo@gitlab.com"
+      - git config --global user.name "COdo"
       - echo "Testando glab"
       - glab issue list
-      - echo "Executando OpenCode"
+      - echo "Executando COdo"
       - |
-        opencode run "
+        COdo run "
         Você é um assistente de IA ajudando com operações do GitLab.
 
         Contexto: $AI_FLOW_CONTEXT
@@ -158,10 +158,10 @@ Você pode consultar a [documentação dos agentes da CLI do GitLab](https://doc
 
 ### Exemplos
 
-Aqui estão alguns exemplos de como você pode usar o opencode no GitLab.
+Aqui estão alguns exemplos de como você pode usar o COdo no GitLab.
 
 :::tip
-Você pode configurar para usar uma frase de gatilho diferente de `@opencode`.
+Você pode configurar para usar uma frase de gatilho diferente de `@COdo`.
 :::
 
 - **Explicar um problema**
@@ -169,27 +169,27 @@ Você pode configurar para usar uma frase de gatilho diferente de `@opencode`.
   Adicione este comentário em um problema do GitLab.
 
   ```
-  @opencode explain this issue
+  @COdo explain this issue
   ```
 
-  O opencode lerá o problema e responderá com uma explicação clara.
+  O COdo lerá o problema e responderá com uma explicação clara.
 
 - **Corrigir um problema**
 
   Em um problema do GitLab, diga:
 
   ```
-  @opencode fix this
+  @COdo fix this
   ```
 
-  O opencode criará um novo branch, implementará as alterações e abrirá uma solicitação de mesclagem com as alterações.
+  O COdo criará um novo branch, implementará as alterações e abrirá uma solicitação de mesclagem com as alterações.
 
 - **Revisar solicitações de mesclagem**
 
   Deixe o seguinte comentário em uma solicitação de mesclagem do GitLab.
 
   ```
-  @opencode review this merge request
+  @COdo review this merge request
   ```
 
-  O opencode revisará a solicitação de mesclagem e fornecerá feedback.
+  O COdo revisará a solicitação de mesclagem e fornecerá feedback.

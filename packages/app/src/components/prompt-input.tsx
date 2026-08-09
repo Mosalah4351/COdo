@@ -82,7 +82,7 @@ import { pathKey } from "@/utils/path-key"
 import { base64Encode } from "@codo-ai/core/util/encode"
 import { displayName } from "@/pages/layout/helpers"
 
-interface PromptInputProps {
+export interface PromptInputProps {
   class?: string
   variant?: "dock" | "new-session"
   ref?: (el: HTMLDivElement) => void

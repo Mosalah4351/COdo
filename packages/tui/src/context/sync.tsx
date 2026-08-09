@@ -176,7 +176,6 @@ export const {
     }
 
     event.subscribe((event, { workspace }) => {
-      console.log("[SYNC] Event received:", event.type, "workspace:", workspace)
       switch (event.type) {
         case "server.instance.disposed":
           void bootstrap()

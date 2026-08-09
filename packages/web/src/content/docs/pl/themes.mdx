@@ -3,9 +3,9 @@ title: Themes
 description: Wybierz wbudowany motyw lub zdefiniuj własny.
 ---
 
-Dzięki opencode możesz wybrać jeden z kilku wbudowanych motywów, użyć motywu, który dostosowuje się do motywu terminala lub zdefiniować własny, niestandardowy motyw.
+Dzięki COdo możesz wybrać jeden z kilku wbudowanych motywów, użyć motywu, który dostosowuje się do motywu terminala lub zdefiniować własny, niestandardowy motyw.
 
-Domyślnie opencode używa naszego własnego motywu `opencode`.
+Domyślnie COdo używa naszego własnego motywu `COdo`.
 
 ---
 
@@ -23,7 +23,7 @@ Bez obsługi Truecolor motywy mogą pojawiać się ze zmniejszoną dokładności
 
 ## Wbudowane motywy
 
-opencode ma kilka wbudowanych motywów.
+COdo ma kilka wbudowanych motywów.
 
 | Name                   | Description                                                                       |
 | ---------------------- | --------------------------------------------------------------------------------- |
@@ -53,7 +53,7 @@ Motyw `system` został zaprojektowany tak, aby automatycznie dostosowywał się 
 
 Motyw systemu przeznaczony jest dla użytkowników, którzy:
 
-- Chcą, aby OpenCode pasował do wyglądu ich terminala
+- Chcą, aby COdo pasował do wyglądu ich terminala
 - Używają niestandardowych schematów kolorów terminala
 - Preferują spójny wygląd we wszystkich aplikacjach terminalowych
 
@@ -65,7 +65,7 @@ Możesz wybrać motyw, wywołując opcję wyboru motywu za pomocą polecenia `/t
 
 ```json title="tui.json" {3}
 {
-  "$schema": "https://opencode.ai/tui.json",
+  "$schema": "https://codo-ai.vercel.app/tui.json",
   "theme": "tokyonight"
 }
 ```
@@ -74,7 +74,7 @@ Możesz wybrać motyw, wywołując opcję wyboru motywu za pomocą polecenia `/t
 
 ## Motywy niestandardowe
 
-opencode obsługuje elastyczny system motywów oparty na JSON, który pozwala użytkownikom łatwo tworzyć i dostosowywać motywy.
+COdo obsługuje elastyczny system motywów oparty na JSON, który pozwala użytkownikom łatwo tworzyć i dostosowywać motywy.
 
 ---
 
@@ -144,7 +144,7 @@ Oto przykład niestandardowego motywu:
 
 ```json title="my-theme.json"
 {
-  "$schema": "https://opencode.ai/theme.json",
+  "$schema": "https://codo-ai.vercel.app/theme.json",
   "defs": {
     "nord0": "#2E3440",
     "nord1": "#3B4252",

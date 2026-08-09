@@ -2,7 +2,7 @@
 
 ## What is COdo?
 
-COdo is a **fork of OpenCode** — an AI-powered coding assistant that runs directly in your terminal. It's designed to help developers write code, debug issues, and manage projects through natural language conversations with AI.
+COdo is a **fork of the OpenCode project** — an AI-powered coding assistant that runs directly in your terminal. It's designed to help developers write code, debug issues, and manage projects through natural language conversations with AI.
 
 ## Key Features
 

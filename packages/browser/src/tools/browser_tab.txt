@@ -1,0 +1,1 @@
+Manage browser tabs: list open tabs, open a new tab, switch to a different tab, or close a tab.

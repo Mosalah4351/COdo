@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=OpenCode
+Name=COdo
 Exec=/opt/OpenCode/ai.opencode.desktop %U
 Terminal=false
 Type=Application

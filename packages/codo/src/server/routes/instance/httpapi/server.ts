@@ -10,6 +10,7 @@ import { Auth } from "@/auth"
 import { BackgroundJob } from "@/background/job"
 import { Command } from "@/command"
 import { Config } from "@/config/config"
+import { Workflow } from "@/config/workflow"
 import { Workspace } from "@/control-plane/workspace"
 import { Env } from "@/env"
 import { EventV2Bridge } from "@/event-v2-bridge"
@@ -42,6 +43,7 @@ import { Todo } from "@/session/todo"
 import { SessionShare } from "@/share/session"
 import { ShareNext } from "@/share/share-next"
 import { Skill } from "@/skill"
+import { GSD } from "@/skill/gsd-installer"
 import { Discovery } from "@/skill/discovery"
 import { Snapshot } from "@/snapshot"
 import { Storage } from "@/storage/storage"
@@ -221,6 +223,7 @@ const app = LayerNode.group([
   Question.node,
   Permission.node,
   Todo.node,
+  Workflow.node,
   Session.node,
   SessionProjector.node,
   SessionStatus.node,
@@ -243,6 +246,7 @@ const app = LayerNode.group([
   Truncate.node,
   ToolRegistry.node,
   Format.node,
+  GSD.node,
   Project.node,
   Vcs.node,
   Workspace.node,

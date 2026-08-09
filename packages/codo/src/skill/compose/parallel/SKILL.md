@@ -4,6 +4,20 @@ hidden: true
 description: Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, this skill's behavior is covered by the **`gsd:execute-phase`** wave system. Instead of dispatching parallel subagents yourself, use `gsd:execute-phase` where the orchestrator delegates each plan's tasks to separate subagents executing in parallel waves.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG.
+
+Key differences from compose:parallel:
+- GSD uses plan-level parallelism (each PLAN.md becomes a subagent task), not task-level
+- Waves are synchronized — all tasks in wave 1 complete before wave 2 starts
+- Results are gathered into SUMMARY.md per plan with gate checks between waves
+- The compose agent should translate wave execution progress to the user
+
+Use `gsd:execute-phase` via the skill tool when GSD is active. (Other workflows TBD.)
+
 # Dispatching Parallel Agents
 
 ## Overview

@@ -995,7 +995,6 @@ export function Prompt(props: PromptProps) {
     }
 
     const variant = local.model.variant.current()
-    console.log("[TUI] Submit called with input:", store.prompt.input)
     let sessionID = props.sessionID
     let finishMoveProgress = false
     if (sessionID == null) {
