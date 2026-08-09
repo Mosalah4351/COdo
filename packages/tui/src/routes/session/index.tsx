@@ -422,6 +422,19 @@ export function Session() {
 
   const local = useLocal()
 
+  // Persona accent for the scrollbox + footer. Only meaningful when the
+  // current session is a subagent (has parentID and persona-tagged title) —
+  // otherwise we fall back to the default border color.
+  const sessionAccent = createMemo(() => {
+    const s = session()
+    if (!s) return undefined
+    // Subagents always carry a parentID; primary sessions don't
+    if (!s.parentID) return undefined
+    const match = s.title.match(/@(\w+) subagent/)
+    if (!match) return undefined
+    return local.agent.color(match[1].toLowerCase())
+  })
+
   function enterChild(sessionID: string) {
     navigate({
       type: "session",
@@ -1176,7 +1189,7 @@ export function Session() {
                   visible: showScrollbar(),
                   trackOptions: {
                     backgroundColor: theme.backgroundElement,
-                    foregroundColor: theme.border,
+                    foregroundColor: sessionAccent() ?? theme.border,
                   },
                 }}
                 stickyScroll={true}
