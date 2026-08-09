@@ -17,6 +17,7 @@ Detect vulnerabilities inside container images — both the base image (Debian/A
    - `trivy image <ref>` — fastest, rich reporting, supports SPDX/CycloneDX/JSON output. Good default.
    - `grype <ref>` — pairs with `syft`/`sbom:` input; surface matches the SBOM we just produced.
    - If only the SBOM exists (no docker access): `grype sbom:.planning/security/sbom/<file>.cdx.json` — doesn't need the image at all.
+   - **If neither trivy nor grype is installed** — say so explicitly in a `<coverage>` block at the top of the report, note which images were not scanned, and fall back to inspecting the Dockerfile/lockfile manually (base image pin presence, `RUN curl|wget` to questionable URLs, `npm install` of exact versions). Do NOT silently degrade.
 3. **Triage findings:**
    - **Fixable CVEs first.** `trivy image --ignore-unfixed` strips results that have no upstream fix — those are noise for triage purposes, note them separately.
    - **App-layer vs base-layer.** A critical CVE in a base-image package you can bump today is cheap; one that's part of a vendor-provided layer may require an upstream rebuild.

@@ -8,12 +8,7 @@ description: "OWASP API Security Top 10 checks against a running endpoint — RE
 
 ## HARD GATE
 
-This skill is downstream of `sec-test:pentest`'s scope check. Before any request:
-
-1. Read `.codo/security-scope.json`. If missing, return `## PENTEST BLOCKED — no scope file`.
-2. Parse + validate expiry + targets exactly like the pentest skill does.
-3. Confirm the URL you're about to test is in `targets`. If not, `# PENTEST BLOCKED — target not in scope`.
-4. If `allow_active_scan: false`, run *only* the read-only checks below (auth surface, header posture, error leakage) — do NOT send malformed requests.
+Invoke `sec-test:scope-gate` — the canonical procedure — before any request. Do not restate the gate logic here. If the gate fails, return `## PENTEST BLOCKED` with the failure reason verbatim.
 
 ## Workflow
 

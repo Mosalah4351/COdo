@@ -29,10 +29,14 @@ export const SecurityFindingTable = sqliteTable(
      * resolved against `project_id`'s root when presented.
      */
     location: text().notNull(),
-    /** Reporter confidence in the finding (high|medium|low). */
-    confidence: text().notNull().$type<"high" | "medium" | "low">(),
-    /** Severity tier (critical|high|medium|low|info). */
-    severity: text().notNull().$type<"critical" | "high" | "medium" | "low" | "info">(),
+    /** Reporter confidence in the finding (high|medium|low). CHECK-constrained. */
+    confidence: text({
+      enum: ["high", "medium", "low"],
+    }).notNull(),
+    /** Severity tier (critical|high|medium|low|info). CHECK-constrained. */
+    severity: text({
+      enum: ["critical", "high", "medium", "low", "info"],
+    }).notNull(),
     /** One-sentence description of the issue. */
     finding: text().notNull(),
     /** Quoted snippet, request/response, or reproduction evidence. */
@@ -41,9 +45,13 @@ export const SecurityFindingTable = sqliteTable(
     remediation: text().notNull(),
     /**
      * Lifecycle status. "fixed" ONLY when the scanner reran clean —
-     * a code change by itself does NOT close a finding.
+     * a code change by itself does NOT close a finding. CHECK-constrained.
      */
-    status: text().notNull().default("open").$type<"open" | "fixed" | "accepted-risk" | "false-positive">(),
+    status: text({
+      enum: ["open", "fixed", "accepted-risk", "false-positive"],
+    })
+      .notNull()
+      .default("open"),
     /** Optional CVSS v3.1 base score (0.0–10.0). */
     cvss_score: real(),
     /** Optional CVSS v3.1 vector string. */
@@ -91,4 +99,24 @@ export namespace SecurityFinding {
   export type Severity = Row["severity"]
   export type Confidence = Row["confidence"]
   export type Status = Row["status"]
+
+  /**
+   * Hard enforcement for the enum columns. drift in any future persona prompt
+   * can no longer silently corrupt the store: an "info"/"warning" write
+   * thrown by a stale prompt fails the Schema step before reaching SQLite,
+   * and the same values are CHECK-constrained in the migration so raw SQL
+   * writers can't skip around them either.
+   */
+  export const Severity = ["critical", "high", "medium", "low", "info"] as const
+  export const Confidence = ["high", "medium", "low"] as const
+  export const Status = ["open", "fixed", "accepted-risk", "false-positive"] as const
+  export function isSeverity(x: unknown): x is Severity {
+    return typeof x === "string" && Severity.includes(x as Severity)
+  }
+  export function isConfidence(x: unknown): x is Confidence {
+    return typeof x === "string" && Confidence.includes(x as Confidence)
+  }
+  export function isStatus(x: unknown): x is Status {
+    return typeof x === "string" && Status.includes(x as Status)
+  }
 }

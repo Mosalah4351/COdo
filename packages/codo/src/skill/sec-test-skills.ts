@@ -18,6 +18,7 @@ import reportContent from "./sec-test/report/SKILL.md" with { type: "text" }
 import responseContent from "./sec-test/response/SKILL.md" with { type: "text" }
 import sbomContent from "./sec-test/sbom/SKILL.md" with { type: "text" }
 import scopeContent from "./sec-test/scope/SKILL.md" with { type: "text" }
+import scopeGateContent from "./sec-test/scope-gate/SKILL.md" with { type: "text" }
 import secretsScanContent from "./sec-test/secrets-scan/SKILL.md" with { type: "text" }
 import supplyChainAttestContent from "./sec-test/supply-chain-attest/SKILL.md" with { type: "text" }
 import threatModelContent from "./sec-test/threat-model/SKILL.md" with { type: "text" }
@@ -128,6 +129,11 @@ export const secTestSkills: SecTestSkill[] = [
     name: "sec-test:scope",
     description: "Author or refresh the .codo/security-scope.json authorization file",
     content: scopeContent,
+  },
+  {
+    name: "sec-test:scope-gate",
+    description: "Canonical 5-check scope-gate validation — referenced by all pentest-tier skills",
+    content: scopeGateContent,
   },
   {
     name: "sec-test:secrets-scan",
