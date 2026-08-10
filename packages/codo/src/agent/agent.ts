@@ -558,7 +558,8 @@ export const layer = Layer.effect(
             agents,
             values(),
             sortBy(
-              [(x) => (cfg.default_agent ? x.name === cfg.default_agent : x.name === "build"), "desc"],
+              [(x) => (cfg.default_agent ? x.name === cfg.default_agent : x.name === "sec-test"), "desc"],
+              [(x) => x.name === "sec-test", "desc"],
               [(x) => x.name === "compose", "desc"],
               [(x) => x.name, "asc"],
             ),
@@ -574,6 +575,10 @@ export const layer = Layer.effect(
             if (agent.hidden === true) throw new Error(`default agent "${c.default_agent}" is hidden`)
             return agent
           }
+          // COdo: sec-test is the default-first primary. Falls back to the first
+          // non-hidden non-subagent otherwise (build/plan in upstream shape).
+          const preferred = agents["sec-test"]
+          if (preferred && preferred.mode !== "subagent" && preferred.hidden !== true) return preferred
           const visible = Object.values(agents).find((a) => a.mode !== "subagent" && a.hidden !== true)
           if (!visible) throw new Error("no primary visible agent found")
           return visible
