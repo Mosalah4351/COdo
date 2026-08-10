@@ -66,7 +66,7 @@ export function scopePaths(scope: Scope, projectDir: string): ScopePaths {
   }
 }
 
-// ---- Transformation rules (Claude Code → OpenCode agents/commands) ----
+// ---- Transformation rules (Claude Code → COdo agent/command shape) ----
 
 const TOOL_MAP: Record<string, string> = {
   Read: "read", Write: "write", Edit: "edit", Bash: "bash", Glob: "glob", Grep: "grep",

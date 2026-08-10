@@ -164,7 +164,7 @@ export const layer = Layer.effect(
               // installed GSD tree (project-local first, then global), rewrites
               // the stale `.agents/gsd-core/*` references to real paths, and
               // prepends the role-matched workflow files the subagent MUST read
-              // first — the opencode `<execution_context>` equivalent.
+              // first — COdo's execution_context preamble.
               prompt: a.withPrompt(ctx.directory),
               permission: Permission.merge(defaults, a.permission, user),
             }]),

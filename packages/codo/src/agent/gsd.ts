@@ -61,10 +61,11 @@ interface GsdAgentSpec {
   permission: ConfigPermissionV1.Info
   /**
    * Workflow files (relative to the installed GSD tree's `workflows/`) that
-   * govern this subagent's operating procedure — the same role the
-   * opencode `<execution_context>` @-references play. The subagent is ordered
-   * to read them before acting; compose also references the same files when it
-   * orchestrates, so both sides agree on the process.
+   * govern this subagent's operating procedure — roughly the role
+   * `@-referenced` execution_context files play in other agent runtimes.
+   * The subagent is ordered to read them before acting; compose also
+   * references the same files when it orchestrates, so both sides agree on
+   * the process.
    */
   workflows: string[]
 }
@@ -369,8 +370,9 @@ function findLocalInstall(projectDir: string): string | undefined {
     const codo = path.join(dir, ".codo", "gsd")
     if (existsSync(codo)) return codo
     // Companion convention from the source package layout: `.agents/gsd-core/`
-    // (the shape users get when they import directly from the gsd-opencode repo
-    // into Claude Code or Codex, which both put plugin content under .agents/).
+    // (the shape users get when they import GSD as a companion agent system
+    // from an external package, e.g. Claude Code or Codex, which both put
+    // plugin content under .agents/).
     const agents = path.join(dir, ".agents", "gsd-core")
     if (existsSync(agents)) return agents
   }
@@ -465,15 +467,14 @@ const DELIVERABLE_PATHS: Record<string, string> = {
 }
 
 /**
- * The opencode `<execution_context>` equivalent: tells the subagent which
- * workflow files govern its role, where they live on disk, and demands they
- * are read before acting. This is what makes the subagent *follow the skill*
- * instead of free-styling on the task text alone.
+ * COdo's `execution_context`: tells the subagent which workflow files govern
+ * its role, where they live on disk, and demands they are read before
+ * acting. This is what makes the subagent *follow the skill* instead of
+ * free-styling on the task text alone.
  *
  * Injects project placement (`cwd`, `.planning/` path, install root) so the
  * subagent knows where to land its artifact without asking, and names the
- * role + identity so it can sign its structured return. Closes the gap
- * between a bare task text and the rich context opencode dispatches.
+ * role + identity so it can sign its structured return.
  */
 export function executionContext(
   spec: GsdAgentSpec,

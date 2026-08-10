@@ -16,14 +16,14 @@ Usage: install.sh [options]
 
 Options:
     -h, --help              Display this help message
-    -v, --version <version> Install a specific version (e.g., 1.0.180)
+    -v, --version <version> Install a specific version (e.g., 1.0.0)
     -b, --binary <path>     Install from a local binary instead of downloading
         --no-modify-path    Don't modify shell config files (.zshrc, .bashrc, etc.)
 
 Examples:
-    curl -fsSL https://opencode.ai/install | bash
-    curl -fsSL https://opencode.ai/install | bash -s -- --version 1.0.180
-    ./install --binary /path/to/opencode
+    curl -fsSL https://codo.run/install | bash
+    curl -fsSL https://codo.run/install | bash -s -- --version 1.0.0
+    ./install --binary /path/to/codo
 EOF
 }
 
