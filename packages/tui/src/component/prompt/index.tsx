@@ -1358,12 +1358,27 @@ export function Prompt(props: PromptProps) {
   return (
     <>
       <box ref={(r: BoxRenderable) => (anchor = r)} visible={props.visible !== false} width="100%">
-        <box
-          width="100%"
-          border={RoundedBorder.border}
-          borderColor={borderHighlight()}
-          customBorderChars={RoundedBorder.customBorderChars}
-        >
+        <box width="100%" flexDirection="row">
+          {/* Persona accent strip on the left edge of the composer. Renders
+            a 2-column-wide colored block that carries the active agent's
+            `color` so the user can read the active persona at a glance even
+            when the prompt is empty. Renders nothing when there's no agent
+            color configured. Falls back to the default theme border color. */}
+          <Show when={local.agent.current()}>
+            <box
+              width={2}
+              flexShrink={0}
+              backgroundColor={highlight()}
+              borderColor={highlight()}
+            />
+          </Show>
+          <box
+            width="100%"
+            border={RoundedBorder.border}
+            borderColor={borderHighlight()}
+            customBorderChars={RoundedBorder.customBorderChars}
+            flexGrow={1}
+          >
           <box
             paddingLeft={2}
             paddingRight={2}
@@ -1655,6 +1670,7 @@ export function Prompt(props: PromptProps) {
               </Switch>
             </box>
           </Show>
+        </box>
         </box>
       </box>
       <Autocomplete
