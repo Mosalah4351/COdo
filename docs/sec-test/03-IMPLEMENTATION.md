@@ -89,8 +89,9 @@ File: `packages/codo/src/agent/agent.ts` lines 237–413.
 | sec-devsecops | syft/grype/trivy/osv-scanner/cosign allow | only `.planning/security/**` | readonlyExternalDirectory |
 | sec-pentest | curl allow; nmap/nikto/nuclei ask; sqlmap/zap-full deny; rest deny | only `.planning/security/**` | `*`: deny |
 | sec-secops | (no bash grants beyond defaults) | only `.planning/security/**` | `*`: deny, but `Global.Path.data` allow |
+| sec-qa | test runners (jest/vitest/bun test) allow; src writes deny | only `.planning/security/**` + test paths | `*`: deny, `edit` allow for test paths |
 
-### 3.3 Skill catalog (23 skills)
+### 3.3 Skill catalog (29 skills)
 
 Index file: `packages/codo/src/skill/sec-test-skills.ts`
 
@@ -121,6 +122,12 @@ Registration loop: `packages/codo/src/skill/index.ts` (search for "Register sec-
 | `sec-test:context` | `packages/codo/src/skill/sec-test/context/SKILL.md` | orchestrator |
 | `sec-test:response` | `packages/codo/src/skill/sec-test/response/SKILL.md` | sec-secops |
 | `sec-test:learn` | `packages/codo/src/skill/sec-test/learn/SKILL.md` | orchestrator |
+| `sec-test:scope-gate` | `packages/codo/src/skill/sec-test/scope-gate/SKILL.md` | sec-pentest |
+| `sec-test:test-plan` | `packages/codo/src/skill/sec-test/test-plan/SKILL.md` | sec-qa |
+| `sec-test:test-generate` | `packages/codo/src/skill/sec-test/test-generate/SKILL.md` | sec-qa |
+| `sec-test:coverage-audit` | `packages/codo/src/skill/sec-test/coverage-audit/SKILL.md` | sec-qa |
+| `sec-test:mutation-test` | `packages/codo/src/skill/sec-test/mutation-test/SKILL.md` | sec-qa |
+| `sec-test:regression-guard` | `packages/codo/src/skill/sec-test/regression-guard/SKILL.md` | sec-qa |
 
 ### 3.4 Database layer
 
@@ -165,7 +172,36 @@ Schema.Struct({
 })
 ```
 
-### 3.6 Bootstrap / installer hardening (carrying-over unrelated fixes bundled onto same branch)
+### 3.6 Runtime tools
+
+**`sec_probe` tool** — `packages/codo/src/tool/sec_probe.ts`
+
+Scope-gated HTTP probe. Calls `evaluateGate()` internally before any outbound request. Supports GET/POST/PUT/PATCH/DELETE. Redacts sensitive headers (Authorization, Cookie, Set-Cookie) from output. Supports `active_scan: true` mode for explicit testing. Budget-limited (max 5 requests per invocation).
+
+**`sec_finding` tool** — `packages/codo/src/tool/sec_finding.ts`
+
+Upserts findings into `security_finding` table. Deduplicates by `(project_id, fingerprint)`. `fixed` findings are only reopened when `rescan: true` is set. Consumes `.codo/security-baseline.json` for suppression → `accepted-risk` status.
+
+**`tool-presence` helper** — `packages/codo/src/security/tool-presence.ts`
+
+Preflight check reporting which of `semgrep`/`gitleaks`/`osv-scanner`/`syft`/`grype`/`trivy`/`cosign` are on PATH. Used by sec personas to ground `<coverage>` disclosures.
+
+### 3.7 CLI
+
+**`codo sec report`** — `packages/codo/src/cli/cmd/sec/report.ts`
+
+Reads `security_finding` for the current project.
+
+| Flag | Values | Default | Description |
+|---|---|---|---|
+| `--format` | `markdown`, `json`, `sarif` | `markdown` | Output format |
+| `--fail-on` | `critical`, `high`, `medium`, `low`, `info` | — | Exit 1 if any finding at or above this severity exists |
+| `--since` | ISO 8601 date | — | Only findings created after this date |
+| `--status` | `open`, `fixed`, `accepted-risk`, `false-positive` | — | Filter by status |
+
+SARIF output validates against SARIF 2.1.0 (`ruleId` from `category`, `level` mapped from `severity`, `partialFingerprints.codoFingerprint` from stored fingerprint, physical locations from `file:line`).
+
+### 3.8 Bootstrap / installer hardening (carrying-over unrelated fixes bundled onto same branch)
 
 | File | Change |
 |---|---|
@@ -177,13 +213,19 @@ Schema.Struct({
 
 | Test file | Assertions | What it covers |
 |---|---|---|
-| `packages/codo/test/agent/sec-test-registry.test.ts` | 11 | Agent registry contains all 6 sec-* agents; permissions match shape; skills count is 23 |
+| `packages/codo/test/agent/sec-test-registry.test.ts` | 11 | Agent registry contains all 7 sec-* agents; permissions match shape; skills count is 29 |
 | `packages/codo/test/agent/sec-test-finding-table.test.ts` | 7 | SecurityFindingTable export shape, migration SQL contains expected columns, schema.gen.ts mirrors it, codo re-export is wired |
 | `packages/codo/test/security/scope-gate.test.ts` | 7 | Each `GateBlockReason` reachable; valid + invalid files behave as expected |
 | `packages/codo/test/agent/compose-bootstrap.test.ts` | 5 | Compose gate forbids summon attempts, maps choices to slash commands, hands off immediately |
-| `packages/core/test/database-migration.test.ts` | 14 (extended to include security_finding check) | All migrations apply; new table is present after fresh apply |
+| `packages/codo/test/tool/sec-probe.test.ts` | 11 | Scope gate blocks (bad URL, DELETE, missing scope, out-of-scope, active-scan, body-without-scan); successful probe with redaction; note/intent detection |
+| `packages/codo/test/tool/sec-finding.test.ts` | 7 | No-op, insert, dedup, fixed-not-reopened, rescan-reopen, baseline suppression, severity counts |
+| `packages/codo/test/cli/sec-report.test.ts` | 5 | DB queries for project, status filter, since filter, empty project, severity grouping |
+| `packages/codo/test/security/baseline.test.ts` | 7 | Missing file, suppression, expiry, malformed JSON, expired entries |
+| `packages/codo/test/security/finding.test.ts` | 6 | Fingerprint stability, validation rejection, evidence normalization |
+| `packages/codo/test/security/result.test.ts` | 4 | SEC-RESULT marker parsing from all skills |
+| `packages/core/test/database-migration.test.ts` | 14 | All migrations apply; new table is present after fresh apply |
 
-Total: 30 sec-test scoped tests + 14 migration tests = 44 directly tied to sec-test.
+Total: 84 sec-test scoped tests + 14 migration tests = 98 directly tied to sec-test.
 
 ---
 
@@ -279,6 +321,7 @@ sec-appsec (subagent)
 sec-architect (subagent)
 sec-devsecops (subagent)
 sec-pentest (subagent)
+sec-qa (subagent)
 sec-secops (subagent)
 sec-test (primary)
 ```

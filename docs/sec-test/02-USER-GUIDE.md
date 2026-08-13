@@ -11,7 +11,7 @@
 After this course, you'll be able to:
 
 1. Invoke the sec-test agent and explain which persona should handle a given task.
-2. Describe the 23 skills under `sec-test:*` and when each fires.
+2. Describe the 29 skills under `sec-test:*` and when each fires.
 3. Author a scope file (`.codo/security-scope.json`) so the pentest persona will work.
 4. Read a finding report and know exactly what "A03 injection, severity critical, evidence: ..." means.
 5. Query the `security_finding` table to build dashboards over time.

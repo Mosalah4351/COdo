@@ -106,7 +106,7 @@ Sec-test was implemented in phases so each layer is independently testable:
 - **Phase 4** (commit fc5d4a7) — SecOps: logging audit, incident runbook, posture report, fuzz.
 - **Phase 5** (commit a81ebbc) — mission-cycle skills: context hydration, real-time response, lessons-learned.
 
-**Current state: 23 skills, 6 agents, 1 SQL table, 30/30 targeted tests green.**
+**Current state: 29 skills, 7 agents, 1 SQL table, 98+ targeted tests green.**
 
 ---
 
