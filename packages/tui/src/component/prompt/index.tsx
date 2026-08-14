@@ -1358,26 +1358,26 @@ export function Prompt(props: PromptProps) {
   return (
     <>
       <box ref={(r: BoxRenderable) => (anchor = r)} visible={props.visible !== false} width="100%">
-        <box width="100%" flexDirection="row">
-          {/* Persona accent strip on the left edge of the composer. Renders
-            a 2-column-wide colored block that carries the active agent's
-            `color` so the user can read the active persona at a glance even
-            when the prompt is empty. Renders nothing when there's no agent
-            color configured. Falls back to the default theme border color. */}
+        <box width="100%" flexDirection="row" alignItems="stretch">
           <Show when={local.agent.current()}>
             <box
               width={2}
               flexShrink={0}
+              flexGrow={0}
               backgroundColor={highlight()}
               borderColor={highlight()}
             />
           </Show>
           <box
-            width="100%"
-            border={RoundedBorder.border}
-            borderColor={borderHighlight()}
-            customBorderChars={RoundedBorder.customBorderChars}
+            flexBasis={0}
             flexGrow={1}
+            minWidth={0}
+            border={["left"]}
+            borderColor={borderHighlight()}
+            customBorderChars={{
+              ...SplitBorder.customBorderChars,
+              bottomLeft: "╹",
+            }}
           >
           <box
             paddingLeft={2}
@@ -1492,20 +1492,8 @@ export function Prompt(props: PromptProps) {
                         </Show>
                       </>
                     )}
-                  </Show>
+                   </Show>
                 </box>
-                <Show when={usage()}>
-                  {(item) => (
-                    <text fg={theme.textMuted} wrapMode="none">
-                      <span style={{ fg: theme.primary }}>
-                        [{item().pct !== undefined ? "█".repeat(Math.floor(item().pct! / 10)) + "░".repeat(10 - Math.floor(item().pct! / 10)) : "░".repeat(10)}]
-                      </span>{" "}
-                      <span style={{ fg: theme.primary }}>{item().pct !== undefined ? `${item().pct}%` : ""}</span>{" "}
-                      <span style={{ fg: theme.textMuted }}>context used</span>{" "}
-                      <span style={{ fg: theme.text }}>{item().tokens ? `${Locale.number(item().tokens!)}` : ""}</span>
-                    </text>
-                  )}
-                </Show>
               </box>
               <Show when={hasRightContent()}>
                 <box flexDirection="row" gap={1} alignItems="center">
@@ -1515,13 +1503,6 @@ export function Prompt(props: PromptProps) {
             </box>
           </box>
         </box>
-        <Show when={store.mode === "normal" && !usage()}>
-          <text fg={theme.text} paddingLeft={2}>
-            <span style={{ fg: theme.primary }}>{agentShortcut()}</span> <span style={{ fg: theme.textMuted }}>agents</span>
-            {"  "}
-            <span style={{ fg: theme.primary }}>{paletteShortcut()}</span> <span style={{ fg: theme.textMuted }}>commands</span>
-          </text>
-        </Show>
         <box width="100%" flexDirection="row" justifyContent="space-between">
           <Switch>
             <Match when={status().type !== "idle"}>
@@ -1662,6 +1643,25 @@ export function Prompt(props: PromptProps) {
                 )}
               </Show>
               <Switch>
+                <Match when={store.mode === "normal"}>
+                  <Switch>
+                    <Match when={usage()}>
+                      {(item) => (
+                        <text fg={theme.textMuted} wrapMode="none">
+                          {[item().context, item().cost].filter(Boolean).join(" · ")}
+                        </text>
+                      )}
+                    </Match>
+                    <Match when={true}>
+                      <text fg={theme.text}>
+                        {agentShortcut()} <span style={{ fg: theme.textMuted }}>agents</span>
+                      </text>
+                    </Match>
+                  </Switch>
+                  <text fg={theme.text}>
+                    {paletteShortcut()} <span style={{ fg: theme.textMuted }}>commands</span>
+                  </text>
+                </Match>
                 <Match when={store.mode === "shell"}>
                   <text fg={theme.text}>
                     esc <span style={{ fg: theme.textMuted }}>exit shell mode</span>
