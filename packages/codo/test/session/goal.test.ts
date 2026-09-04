@@ -850,6 +850,43 @@ describe("Goal Judge Transcript Integrity", () => {
     }),
   )
 
+  judgeTest.instance("absence-claim verdict against a healthy transcript retries once then fails open", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "the assistant identifies itself", "main")
+      const { seen, first } = yield* watchVerdicts()
+
+      // Round-1 regression: the transcript HAS an assistant self-identification
+      // turn, but the judge claims no assistant answer exists. Rule A needs zero
+      // assistant turns and the only quote is genuinely present, so only the
+      // absence-claim rule catches this — it must fail open, never pending.
+      const user = userTurn(sessionID, "who are you")
+      const assistant = assistantTurn(sessionID, user.info.id, "I am COdo, an AI coding assistant.")
+      const reason =
+        'Transcript only contains user asking "who are you" with no assistant answer identifying itself; insufficient evidence in transcript'
+      generateObjectScript = [
+        { ok: false, reason },
+        { ok: false, reason },
+      ]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs: [user, assistant],
+        model: judgeModelRef(),
+        messageID: "msg-absence-claim",
+      })
+
+      expect(decision).toMatchObject({ status: "released", attempt: 1 })
+      expect(generateObjectCalls).toBe(2)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal error verdict")
+      expect(verdict).toMatchObject({ ok: true, error: true, attempt: 1, messageID: "msg-absence-claim" })
+      expect(yield* goal.get(sessionID)).toBeUndefined()
+      expect(seen.length).toBe(1)
+    }),
+  )
+
   judgeTest.instance("verdict quoting evidence absent from the transcript retries once then fails open", () =>
     Effect.gen(function* () {
       const goal = yield* Goal.Service
@@ -947,6 +984,115 @@ describe("Goal Judge Transcript Integrity", () => {
       const active = yield* goal.get(sessionID)
       expect(active?.condition).toBe("fix all bugs")
       expect(active?.react).toBe(1)
+    }),
+  )
+
+  judgeTest.instance("genuine empty transcript with an absence claim still fails open via Rule A", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "fix all bugs", "main")
+      const { seen, first } = yield* watchVerdicts()
+
+      // Control: zero assistant turns behind an absence claim plus
+      // "insufficient evidence" is the genuine blind-judge case Rule A owns.
+      // Rule C cannot fire here (it needs an assistant turn); the guard must
+      // still fail open via the existing retry path.
+      const msgs = [userTurn(sessionID, "please fix all bugs")]
+      const reason = "no assistant response yet; insufficient evidence in transcript"
+      generateObjectScript = [
+        { ok: false, reason },
+        { ok: false, reason },
+      ]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs,
+        model: judgeModelRef(),
+        messageID: "msg-genuine-empty",
+      })
+
+      expect(decision).toMatchObject({ status: "released", attempt: 1 })
+      expect(generateObjectCalls).toBe(2)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal error verdict")
+      expect(verdict).toMatchObject({ ok: true, error: true, attempt: 1, messageID: "msg-genuine-empty" })
+      expect(yield* goal.get(sessionID)).toBeUndefined()
+      expect(seen.length).toBe(1)
+    }),
+  )
+
+  judgeTest.instance("paraphrased not-met verdict without an absence claim stays pending", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "the assistant states the version number", "main")
+      const { first } = yield* watchVerdicts()
+
+      // Control pinning the accepted residual risk: a not-ok verdict that
+      // paraphrases the transcript (no absence claim, no quotes, no
+      // "insufficient evidence") is unverifiable only by semantic comparison,
+      // which is explicitly out of scope — so it stays pending with no retry.
+      const user = userTurn(sessionID, "who are you and what version are you")
+      const assistant = assistantTurn(sessionID, user.info.id, "I am COdo, an AI coding assistant.")
+      generateObjectScript = [
+        {
+          ok: false,
+          reason:
+            "The assistant introduced itself as COdo but did not state the requested version number, so the condition is not fully met.",
+        },
+      ]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs: [user, assistant],
+        model: judgeModelRef(),
+        messageID: "msg-paraphrase",
+      })
+
+      expect(decision).toMatchObject({ status: "pending", attempt: 1 })
+      expect(generateObjectCalls).toBe(1)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal verdict")
+      expect(verdict).toMatchObject({ ok: false, attempt: 1, messageID: "msg-paraphrase" })
+      const active = yield* goal.get(sessionID)
+      expect(active?.condition).toBe("the assistant states the version number")
+      expect(active?.react).toBe(1)
+    }),
+  )
+
+  judgeTest.instance("verdict quoting single-quoted evidence absent from the transcript fails open", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "fix all bugs", "main")
+      const { seen, first } = yield* watchVerdicts()
+
+      // Single-quoted multi-word spans ground like double-quoted ones; a span
+      // absent from the transcript is unverifiable either way.
+      const user = userTurn(sessionID, "please fix all the bugs in the repo")
+      const assistant = assistantTurn(sessionID, user.info.id, "I fixed two bugs so far, still working on the rest.")
+      const reason =
+        "The assistant stated 'all thirteen bugs are fixed and deployed' but the goal needs every bug fixed, so work continues."
+      generateObjectScript = [
+        { ok: false, reason },
+        { ok: false, reason },
+      ]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs: [user, assistant],
+        model: judgeModelRef(),
+        messageID: "msg-single-quote",
+      })
+
+      expect(decision).toMatchObject({ status: "released", attempt: 1 })
+      expect(generateObjectCalls).toBe(2)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal error verdict")
+      expect(verdict).toMatchObject({ ok: true, error: true, attempt: 1, messageID: "msg-single-quote" })
+      expect(yield* goal.get(sessionID)).toBeUndefined()
+      expect(seen.length).toBe(1)
     }),
   )
 })

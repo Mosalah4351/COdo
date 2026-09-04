@@ -72,6 +72,8 @@ Your response must be a JSON object with one of these shapes:
 
 Always include a "reason" field, quoting specific text from the transcript whenever possible. If the transcript does not contain clear evidence that the condition is satisfied, return {"ok": false, "reason": "insufficient evidence in transcript"}.
 
+Only assistant and tool turns can satisfy the condition — user turns state the request and are never satisfaction evidence, so quote the assistant or tool text that satisfies it. Judge the condition itself, not the request restated in a user turn.
+
 Only use {"ok": false, "impossible": true} when the condition is genuinely unachievable in this session — for example: the condition is self-contradictory, it depends on a resource or capability that is unavailable, or the assistant has explicitly tried, exhausted reasonable approaches, and stated it cannot be done. Apply your own judgment when deciding this — the assistant claiming the goal is impossible is evidence, not proof; independently confirm the condition is genuinely unachievable rather than deferring to the assistant's self-assessment. Do not use it just because the goal has not been reached yet or because progress is slow. When in doubt, return {"ok": false} without "impossible".`
 
 // The closing question appended after the full conversation.
@@ -121,23 +123,51 @@ type JudgeResult = {
 // Transcript-integrity guard against the blind-judge failure mode: a
 // confident {ok:false} produced from a transcript the judge could not
 // actually see (assistant turns silently dropped upstream, so an
-// "insufficient evidence" claim has nothing behind it) or quoting evidence
-// that never appears in what the judge read. Such verdicts are
+// "insufficient evidence" claim has nothing behind it), claiming no
+// assistant turn exists while the transcript it read has one, or quoting
+// evidence that never appears in what the judge read. Such verdicts are
 // unverifiable — accepting one as pending publishes a false verdict and
 // re-injects it as a synthetic re-entry the next round anchors on.
 const INSUFFICIENT_EVIDENCE_PATTERN = /insufficient evidence/i
 const MIN_QUOTE_LENGTH = 4
+const MIN_SINGLE_QUOTE_LENGTH = 8
+
+// Rule C: the judge claims no assistant turn exists while the transcript it
+// read has one. Such absence claims contradict the judge's own input, so the
+// verdict is unverifiable regardless of what else the reason quotes.
+const ABSENCE_CLAIM_PATTERNS = [
+  /transcript only contains/i,
+  /only (contains|has) (a |the )?user/i,
+  /no assistant (answer|response|message|turn)/i,
+  /without (any |an )?assistant (answer|response|message)/i,
+  /assistant has not (yet )?(responded|replied|answered)/i,
+  /assistant (never|did not|didn't) (respond|reply|answer)/i,
+  /no response from (the )?assistant/i,
+]
 
 function hasAssistantTurn(conversation: ModelMessage[]): boolean {
   return conversation.some((msg) => msg.role === "assistant")
 }
 
+function claimsNoAssistantTurn(reason: string): boolean {
+  return ABSENCE_CLAIM_PATTERNS.some((pattern) => pattern.test(reason))
+}
+
 function quotedSpans(reason: string): string[] {
-  return Array.from(reason.matchAll(/"([^"]+)"/g)).flatMap((match) => {
+  const doubleQuoted = Array.from(reason.matchAll(/"([^"]+)"/g)).flatMap((match) => {
     const span = match[1]?.trim() ?? ""
     if (span.length < MIN_QUOTE_LENGTH) return []
     return [span.toLowerCase()]
   })
+  // Single-quoted spans need a higher bar (multi-word, ≥8 chars) so
+  // contractions like don't/it's can never false-positive.
+  const singleQuoted = Array.from(reason.matchAll(/'([^']+)'/g)).flatMap((match) => {
+    const span = match[1]?.trim() ?? ""
+    if (span.length < MIN_SINGLE_QUOTE_LENGTH) return []
+    if (!span.includes(" ")) return []
+    return [span.toLowerCase()]
+  })
+  return [...doubleQuoted, ...singleQuoted]
 }
 
 function isUnverifiableVerdict(input: {
@@ -149,10 +179,31 @@ function isUnverifiableVerdict(input: {
   if (input.verdict.impossible) return false
   if (INSUFFICIENT_EVIDENCE_PATTERN.test(input.verdict.reason) && !hasAssistantTurn(input.conversation))
     return true
+  if (claimsNoAssistantTurn(input.verdict.reason) && hasAssistantTurn(input.conversation)) return true
   const spans = quotedSpans(input.verdict.reason)
   if (spans.length === 0) return false
   const haystack = `${JSON.stringify(input.conversation)}\n${input.condition}`.toLowerCase()
   return spans.some((span) => !haystack.includes(span))
+}
+
+// Met-side observability (no enforcement): an ok verdict whose quoted spans
+// ground only outside assistant/tool turns cites the request — or the
+// condition text — as satisfaction evidence. Logged so future enforcement has
+// data; never retried or failed open (a false pending burns re-entries, a
+// false release drops the goal silently).
+function okVerdictGroundsOnlyOutsideAssistantTurn(input: {
+  verdict: Verdict
+  conversation: ModelMessage[]
+  condition: string
+}): boolean {
+  const spans = quotedSpans(input.verdict.reason)
+  if (spans.length === 0) return false
+  const assistantHaystack = JSON.stringify(
+    input.conversation.filter((msg) => msg.role === "assistant" || msg.role === "tool"),
+  ).toLowerCase()
+  if (spans.some((span) => assistantHaystack.includes(span))) return false
+  const haystack = `${JSON.stringify(input.conversation)}\n${input.condition}`.toLowerCase()
+  return spans.some((span) => haystack.includes(span))
 }
 
 export interface Interface {
@@ -209,9 +260,10 @@ export interface Interface {
     * confirms the work rather than trusting the assistant's self-report.
     *
     * Fails with JudgeError on transport/provider-call failures, when the judge
-    * twice returns a successful-but-unverifiable verdict (transcript-integrity
-    * guard: an "insufficient evidence" claim with no assistant turn behind it,
-    * or quoted evidence absent from the transcript — retried once first), and
+     * twice returns a successful-but-unverifiable verdict (transcript-integrity
+     * guard: an "insufficient evidence" claim with no assistant turn behind it,
+     * an absence claim contradicted by an assistant turn in the transcript,
+     * or quoted evidence absent from the transcript — retried once first), and
     * with ModelNotFoundError when the judge model cannot be resolved. See `gate`
     * for how each failure class is handled at the stop gate.
     *
@@ -456,6 +508,26 @@ export const layer = Layer.effect(
         return yield* judgeFromText()
       })
 
+      // Met-side observability for ok verdicts: log when the cited evidence
+      // grounds only outside assistant/tool turns. Advisory only — ok verdicts
+      // are never retried or failed open here.
+      const observeOkGrounding = Effect.fn("SessionGoal.observeOkGrounding")(function* (result: JudgeResult) {
+        if (!result.verdict.ok) return
+        if (!result.produced) return
+        if (
+          !okVerdictGroundsOnlyOutsideAssistantTurn({
+            verdict: result.verdict,
+            conversation,
+            condition: input.condition,
+          })
+        )
+          return
+        yield* Effect.logWarning("goal judge ok verdict cites only non-assistant evidence", {
+          condition: input.condition,
+          reason: result.verdict.reason,
+        })
+      })
+
       // Transcript-integrity guard: a judge-produced plain {ok:false} that
       // fails the check retries once; a second failure surfaces as JudgeError
       // so the gate fails open via the existing path instead of pending on a
@@ -471,6 +543,7 @@ export const layer = Layer.effect(
       }
 
       const first = yield* runJudge()
+      yield* observeOkGrounding(first)
       const accepted = acceptIfVerifiable(first)
       if (accepted) return accepted
       yield* Effect.logWarning("goal judge verdict failed transcript-integrity check; retrying once", {
@@ -478,6 +551,7 @@ export const layer = Layer.effect(
         reason: first.verdict.reason,
       })
       const second = yield* runJudge()
+      yield* observeOkGrounding(second)
       const acceptedRetry = acceptIfVerifiable(second)
       if (acceptedRetry) return acceptedRetry
       yield* Effect.logWarning("goal judge verdict failed transcript-integrity check twice", {
