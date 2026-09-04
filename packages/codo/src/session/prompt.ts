@@ -1559,7 +1559,10 @@ export const layer = Layer.effect(
             noReply: true,
           })
         }
-        yield* goal.set(input.sessionID, condition)
+        // The goal is armed with the agent that will pursue it this turn;
+        // the stop gate only judges turns from that same agent.
+        const goalAgent = agentName ?? (yield* agents.defaultAgent())
+        yield* goal.set(input.sessionID, condition, goalAgent)
       }
 
       const ctx = yield* InstanceState.context
