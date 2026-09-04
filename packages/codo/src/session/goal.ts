@@ -45,6 +45,18 @@ export const Verdict = z.object({
 
 export type Verdict = z.infer<typeof Verdict>
 
+/** Bound on judge-driven re-entries before the gate releases the loop. */
+export const MAX_GOAL_REACT = 20
+
+export type GateDecision =
+  | { readonly status: "inactive" }
+  | { readonly status: "foreign"; readonly agent: string }
+  | { readonly status: "released"; readonly attempt: number }
+  | { readonly status: "exhausted"; readonly attempt: number }
+  | { readonly status: "satisfied"; readonly verdict: Verdict; readonly attempt: number }
+  | { readonly status: "impossible"; readonly verdict: Verdict; readonly attempt: number }
+  | { readonly status: "pending"; readonly verdict: Verdict; readonly attempt: number }
+
 export class JudgeError extends Schema.TaggedErrorClass<JudgeError>()("SessionGoalJudgeError", {
   cause: Schema.Defect,
 }) {}
@@ -99,10 +111,43 @@ export interface Interface {
     messageID: string
   }) => Effect.Effect<void>
   /**
+   * Run one stop-gate pass for a turn that is about to stop.
+   *
+   * Failure taxonomy (fail-open vs fail-closed):
+   * - JudgeError (transport/provider-call failure inside the judge: the
+   *   generateObject/streamObject/generateText calls reject) → fail OPEN:
+   *   an error verdict is published, the goal is cleared, and `released`
+   *   lets the loop exit. The judge is advisory; infra hiccups must not
+   *   wedge the session.
+   * - ModelNotFoundError (resolution: unknown or deleted judge model) →
+   *   fail CLOSED: propagates with suggestions so the misconfiguration
+   *   surfaces loudly instead of silently dropping the goal.
+   * - Auth failures → defect (fail closed): missing credentials are setup
+   *   problems, never silent.
+   * - Output-shape issues (unparseable verdicts) → never throw: the text
+   *   fallback and the not-ok default keep the loop working the goal.
+   *
+   * Only `pending` re-enters the loop; every other decision falls through
+   * to the loop exit. Only the agent the goal was armed with is judged —
+   * other agents' turns return `foreign` with the goal left armed.
+   */
+  readonly gate: (input: {
+    sessionID: SessionID
+    /** Agent of the turn that just stopped; only this agent's goals are judged. */
+    agent: string
+    msgs: SessionV1.WithParts[]
+    model: { providerID: ProviderV2.ID; modelID: ModelV2.ID }
+    messageID: string
+  }) => Effect.Effect<GateDecision, ModelNotFoundError>
+  /**
    * Run the judge over the conversation against the active goal's condition.
    * `msgs` is the main thread's message list; it is converted to native model
    * messages (tool calls/results/images preserved) so the judge independently
    * confirms the work rather than trusting the assistant's self-report.
+   *
+   * Fails with JudgeError on transport/provider-call failures and with
+   * ModelNotFoundError when the judge model cannot be resolved. See `gate`
+   * for how each failure class is handled at the stop gate.
    */
   readonly evaluate: (input: {
     condition: string
@@ -323,7 +368,90 @@ export const layer = Layer.effect(
       return yield* judgeFromText()
     })
 
-    return Service.of({ set, get, clear, bumpReact, failOpen, evaluate })
+    const gate = Effect.fn("SessionGoal.gate")(function* (input: {
+      sessionID: SessionID
+      agent: string
+      msgs: SessionV1.WithParts[]
+      model: { providerID: ProviderV2.ID; modelID: ModelV2.ID }
+      messageID: string
+    }) {
+      const stored = yield* get(input.sessionID)
+      if (!stored) return { status: "inactive" } as const
+      if (stored.agent !== input.agent) {
+        yield* Effect.logInfo("goal armed for another agent, skipping judge", {
+          "session.id": input.sessionID,
+          goalAgent: stored.agent,
+          turnAgent: input.agent,
+        })
+        return { status: "foreign", agent: stored.agent } as const
+      }
+      const attempt = yield* bumpReact(input.sessionID)
+      if (attempt > MAX_GOAL_REACT) {
+        yield* Effect.logWarning("goal react limit exceeded, clearing goal", {
+          "session.id": input.sessionID,
+          attempt,
+        })
+        yield* clear(input.sessionID)
+        return { status: "exhausted", attempt } as const
+      }
+      yield* Effect.logInfo("goal judge evaluating", {
+        "session.id": input.sessionID,
+        condition: stored.condition,
+        attempt,
+      })
+      // Fail-open, narrowed to JudgeError only: a transport/provider-call
+      // failure releases the stop gate (error verdict published, goal
+      // cleared, loop falls through to the exit). ModelNotFoundError
+      // propagates so a missing/deleted judge model surfaces with
+      // suggestions instead of silently dropping the goal.
+      const outcome = yield* evaluate({
+        condition: stored.condition,
+        msgs: input.msgs,
+        model: input.model,
+      }).pipe(
+        Effect.map(Option.some),
+        Effect.catchTag("SessionGoalJudgeError", () =>
+          Effect.gen(function* () {
+            yield* Effect.logWarning("goal judge failed; allowing stop", {
+              "session.id": input.sessionID,
+              attempt,
+            })
+            yield* failOpen({ sessionID: input.sessionID, attempt, messageID: input.messageID })
+            return Option.none<Verdict>()
+          }),
+        ),
+      )
+      if (Option.isNone(outcome)) return { status: "released", attempt } as const
+      const verdict = outcome.value
+      yield* events.publish(Event.Updated, {
+        sessionID: input.sessionID,
+        lastVerdict: { ...verdict, attempt, messageID: input.messageID },
+      })
+      if (verdict.ok) {
+        yield* Effect.logInfo("goal satisfied, clearing", {
+          "session.id": input.sessionID,
+          reason: verdict.reason,
+        })
+        yield* clear(input.sessionID)
+        return { status: "satisfied", verdict, attempt } as const
+      }
+      if (verdict.impossible) {
+        yield* Effect.logInfo("goal impossible, clearing", {
+          "session.id": input.sessionID,
+          reason: verdict.reason,
+        })
+        yield* clear(input.sessionID)
+        return { status: "impossible", verdict, attempt } as const
+      }
+      yield* Effect.logInfo("goal not met, continuing", {
+        "session.id": input.sessionID,
+        reason: verdict.reason,
+        attempt,
+      })
+      return { status: "pending", verdict, attempt } as const
+    })
+
+    return Service.of({ set, get, clear, bumpReact, failOpen, evaluate, gate })
   }),
 )
 

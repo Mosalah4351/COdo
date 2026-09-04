@@ -1167,91 +1167,42 @@ export const layer = Layer.effect(
               (part) => part.type === "tool" && !part.metadata?.providerExecuted && !isOrphanedInterruptedTool(part),
             ) ?? false
 
-          // Goal gate: if a stop-condition goal is active, the loop refuses to
-          // stop until an independent judge model decides the condition is
-          // satisfied (or genuinely impossible). The judge is a separate model
-          // call that only reads the transcript — it does not do the work, so
-          // its verdict stays cold relative to the working agent's optimism.
-          const MAX_GOAL_REACT = 20
+          // Goal gate: if a stop-condition goal is active for this turn's
+          // agent, the loop refuses to stop until an independent judge model
+          // decides the condition is satisfied (or genuinely impossible). The
+          // judge is a separate model call that only reads the transcript —
+          // it does not do the work, so its verdict stays cold relative to
+          // the working agent's optimism. Only "pending" re-enters the loop;
+          // every other decision falls through to the loop exit below.
+          // Judge transport failures fail open (released); unresolvable
+          // judge models fail closed by propagating. See SessionGoal.gate.
           if (
             lastAssistant?.finish &&
             !["tool-calls"].includes(lastAssistant.finish) &&
             !hasToolCalls &&
             lastUser.id < lastAssistant.id
           ) {
-            const activeGoal = yield* goal.get(sessionID)
-            if (activeGoal) {
-              const react = yield* goal.bumpReact(sessionID)
-              if (react > MAX_GOAL_REACT) {
-                yield* Effect.logWarning("goal react limit exceeded, clearing goal", {
-                  "session.id": sessionID,
-                  react,
-                })
-                yield* goal.clear(sessionID)
-              } else {
-                yield* Effect.logInfo("goal judge evaluating", {
-                  "session.id": sessionID,
-                  condition: activeGoal.condition,
-                  attempt: react,
-                })
-                // Fail-open: any model-dependent judge failure releases the
-                // stop gate instead of aborting the loop. Publish an error
-                // verdict, clear the goal, and fall through to the loop exit
-                // below — never continue, never rethrow.
-                const outcome = yield* goal
-                  .evaluate({
-                    condition: activeGoal.condition,
-                    msgs,
-                    model: lastUser.model,
-                  })
-                  .pipe(Effect.option)
-                if (Option.isNone(outcome)) {
-                  yield* Effect.logWarning("goal judge failed; allowing stop", {
-                    "session.id": sessionID,
-                    attempt: react,
-                  })
-                  yield* goal.failOpen({ sessionID, attempt: react, messageID: lastAssistant.id })
-                } else {
-                  const verdict = outcome.value
-                  yield* events.publish(Goal.Event.Updated, {
-                    sessionID,
-                    lastVerdict: { ...verdict, attempt: react, messageID: lastAssistant.id },
-                  })
-                  if (verdict.ok) {
-                    yield* Effect.logInfo("goal satisfied, clearing", {
-                      "session.id": sessionID,
-                      reason: verdict.reason,
-                    })
-                    yield* goal.clear(sessionID)
-                  } else if (verdict.impossible) {
-                    yield* Effect.logInfo("goal impossible, clearing", {
-                      "session.id": sessionID,
-                      reason: verdict.reason,
-                    })
-                    yield* goal.clear(sessionID)
-                  } else {
-                    // Goal not met — inject a reminder and continue the loop
-                    yield* Effect.logInfo("goal not met, continuing", {
-                      "session.id": sessionID,
-                      reason: verdict.reason,
-                      attempt: react,
-                    })
-                    yield* prompt({
-                      sessionID,
-                      agent: lastUser.agent,
-                      parts: [
-                        {
-                          type: "text",
-                          text: `[Goal check — attempt ${react}/${MAX_GOAL_REACT}] The goal condition has not been met yet.\n\nVerdict: ${verdict.reason}\n\nPlease continue working toward the goal. The session will not stop until the goal is achieved or declared impossible.`,
-                          synthetic: true,
-                        },
-                      ],
-                      noReply: true,
-                    })
-                    continue
-                  }
-                }
-              }
+            const decision = yield* goal.gate({
+              sessionID,
+              agent: lastUser.agent,
+              msgs,
+              model: lastUser.model,
+              messageID: lastAssistant.id,
+            })
+            if (decision.status === "pending") {
+              yield* prompt({
+                sessionID,
+                agent: lastUser.agent,
+                parts: [
+                  {
+                    type: "text",
+                    text: `[Goal check — attempt ${decision.attempt}/${Goal.MAX_GOAL_REACT}] The goal condition has not been met yet.\n\nVerdict: ${decision.verdict.reason}\n\nPlease continue working toward the goal. The session will not stop until the goal is achieved or declared impossible.`,
+                    synthetic: true,
+                  },
+                ],
+                noReply: true,
+              })
+              continue
             }
           }
 
@@ -1425,14 +1376,18 @@ export const layer = Layer.effect(
               MessageV2.toModelMessagesEffect(msgs, model),
             ])
 
-            // Inject active goal state into system prompt
+            // Inject active goal state into system prompt. Goals are
+            // agent-scoped: only the agent the goal was armed with sees the
+            // goal instructions, matching the stop gate which only judges
+            // that agent's turns.
             const activeGoal = yield* goal.get(sessionID)
-            const goalBlock = activeGoal
+            const turnGoal = activeGoal?.agent === lastUser.agent ? activeGoal : undefined
+            const goalBlock = turnGoal
               ? [
                   "",
                   "<goal_state>",
-                  `  <condition>${activeGoal.condition}</condition>`,
-                  `  <react_count>${activeGoal.react}</react_count>`,
+                  `  <condition>${turnGoal.condition}</condition>`,
+                  `  <react_count>${turnGoal.react}</react_count>`,
                   "  <instructions>",
                   "    You are working toward a user-defined stop-condition goal.",
                   "    The session will not stop until the goal is achieved or declared impossible.",
