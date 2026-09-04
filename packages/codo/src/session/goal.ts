@@ -1,6 +1,6 @@
 import { LayerNode } from "@codo-ai/core/effect/layer-node"
 import { Effect, Layer, Context, Schema, Option } from "effect"
-import { generateObject, streamObject, type ModelMessage } from "ai"
+import { generateObject, generateText, streamObject, type ModelMessage } from "ai"
 import z from "zod"
 import * as OtelTracer from "@effect/opentelemetry/Tracer"
 import { InstanceState } from "@/effect/instance-state"
@@ -31,6 +31,8 @@ export { Event }
 
 export type Goal = {
   condition: string
+  /** The agent the goal was armed with; only turns from this agent judge the goal. */
+  agent: string
   /** Number of judge-driven re-entries so far; bounded by MAX_GOAL_REACT in prompt.ts. */
   react: number
 }
@@ -40,6 +42,12 @@ export const Verdict = z.object({
   impossible: z.boolean().optional(),
   reason: z.string(),
 })
+
+export type Verdict = z.infer<typeof Verdict>
+
+export class JudgeError extends Schema.TaggedErrorClass<JudgeError>()("SessionGoalJudgeError", {
+  cause: Schema.Defect,
+}) {}
 
 // ---- Judge prompts  ----
 
@@ -60,12 +68,36 @@ const judgeUser = (condition: string) =>
 
 Condition: ${condition}`
 
+// Lenient verdict extraction from free text: take the outermost {...}
+// span and decode it as JSON, then validate. Returns undefined when the
+// text holds no parseable verdict so the caller can fall back.
+function parseVerdictText(text: string): Verdict | undefined {
+  const start = text.indexOf("{")
+  const end = text.lastIndexOf("}")
+  if (start < 0 || end <= start) return undefined
+  const decoded = Schema.decodeUnknownOption(Schema.UnknownFromJsonString)(text.slice(start, end + 1))
+  if (Option.isNone(decoded)) return undefined
+  const parsed = Verdict.safeParse(decoded.value)
+  if (!parsed.success) return undefined
+  return parsed.data
+}
+
 export interface Interface {
-  readonly set: (sessionID: SessionID, condition: string) => Effect.Effect<void>
+  readonly set: (sessionID: SessionID, condition: string, agent: string) => Effect.Effect<void>
   readonly get: (sessionID: SessionID) => Effect.Effect<Goal | undefined>
   readonly clear: (sessionID: SessionID) => Effect.Effect<void>
   /** Increment the re-entry counter, returning the new count. */
   readonly bumpReact: (sessionID: SessionID) => Effect.Effect<number>
+  /**
+   * Fail-open release for the prompt stop gate: publish an error verdict and
+   * clear the goal so the loop exits instead of aborting on a
+   * model-dependent judge failure.
+   */
+  readonly failOpen: (input: {
+    sessionID: SessionID
+    attempt: number
+    messageID: string
+  }) => Effect.Effect<void>
   /**
    * Run the judge over the conversation against the active goal's condition.
    * `msgs` is the main thread's message list; it is converted to native model
@@ -76,7 +108,7 @@ export interface Interface {
     condition: string
     msgs: SessionV1.WithParts[]
     model: { providerID: ProviderV2.ID; modelID: ModelV2.ID }
-  }) => Effect.Effect<Verdict, ModelNotFoundError>
+  }) => Effect.Effect<Verdict, ModelNotFoundError | JudgeError>
 }
 
 export class Service extends Context.Service<Service, Interface>()("@codo/SessionGoal") {}
@@ -91,14 +123,16 @@ export const layer = Layer.effect(
 
     const state = yield* InstanceState.make(
       Effect.fn("SessionGoal.state")(function* () {
-        return { goals: new Map<string, Goal>() }
+        return {
+          goals: new Map<string, Goal>(),
+        }
       }),
     )
 
-    const set = Effect.fn("SessionGoal.set")(function* (sessionID: SessionID, condition: string) {
+    const set = Effect.fn("SessionGoal.set")(function* (sessionID: SessionID, condition: string, agent: string) {
       const data = yield* InstanceState.get(state)
-      data.goals.set(sessionID, { condition, react: 0 })
-      yield* Effect.logInfo("goal set", { sessionID, condition })
+      data.goals.set(sessionID, { condition, agent, react: 0 })
+      yield* Effect.logInfo("goal set", { sessionID, condition, agent })
       yield* events.publish(Event.Updated, { sessionID, goal: { condition } })
     })
 
@@ -122,6 +156,24 @@ export const layer = Layer.effect(
       return goal.react
     })
 
+    const failOpen = Effect.fn("SessionGoal.failOpen")(function* (input: {
+      sessionID: SessionID
+      attempt: number
+      messageID: string
+    }) {
+      yield* events.publish(Event.Updated, {
+        sessionID: input.sessionID,
+        lastVerdict: {
+          ok: true,
+          reason: "judge error",
+          error: true,
+          attempt: input.attempt,
+          messageID: input.messageID,
+        },
+      })
+      yield* clear(input.sessionID)
+    })
+
     const evaluate = Effect.fn("SessionGoal.evaluate")(function* (input: {
       condition: string
       msgs: SessionV1.WithParts[]
@@ -134,12 +186,21 @@ export const layer = Layer.effect(
         ? Option.getOrUndefined(yield* Effect.serviceOption(OtelTracer.OtelTracer))
         : undefined
 
-      const authInfo = yield* auth.get(input.model.providerID).pipe(Effect.orDie)
-      const isOpenaiOauth = input.model.providerID === "openai" && authInfo?.type === "oauth"
+      const authInfo = yield* auth.get(resolved.providerID).pipe(Effect.orDie)
+      const isOpenaiOauth = resolved.providerID === "openai" && authInfo?.type === "oauth"
 
       // Convert the conversation to native model messages so the judge sees the
       // real tool calls/results/images — same context the working agent had.
-      const conversation = yield* MessageV2.toModelMessagesEffect(input.msgs, resolved)
+      //
+      // `ensureNonEmptyContent` is applied by hand here because this is the ONE
+      // persisted-parts→provider site that does not run `ProviderTransform.message`:
+      // `model: language` below is the RAW model, with no `wrapLanguageModel` and no
+      // middleware anywhere in this file, so the pre-send invariant that every other
+      // build site inherits from the middleware would otherwise be absent. An empty
+      // user message here reaches the judge's provider unrepaired.
+      const conversation = ProviderTransform.ensureNonEmptyContent(
+        yield* MessageV2.toModelMessagesEffect(input.msgs, resolved),
+      )
 
       // Diagnostic: dump the FULL message array sent to the judge. Long strings
       // (e.g. base64 image data) are clipped with a length marker so the log
@@ -160,46 +221,109 @@ export const layer = Layer.effect(
         messages: JSON.stringify(fullMessages, clip),
       })
 
-      const params = {
+      // `Verdict.impossible` is optional by design, which strict mode rejects.
+      // See ProviderTransform.structuredOutputOptions for the full reasoning.
+      // undefined for SDKs that don't default json_schema strict on, so those
+      // models keep sending no provider options at all.
+      const structuredOutput = ProviderTransform.structuredOutputOptions(resolved)
+      const temperature = ProviderTransform.temperature(resolved)
+
+      const messages = [
+        ...(isOpenaiOauth ? [] : [{ role: "system", content: JUDGE_SYSTEM } satisfies ModelMessage]),
+        ...conversation,
+        {
+          role: "user",
+          content: judgeUser(input.condition),
+        } satisfies ModelMessage,
+      ]
+
+      const telemetry = {
         experimental_telemetry: {
           isEnabled: cfg.experimental?.openTelemetry,
           tracer,
           metadata: { userId: cfg.username ?? "unknown" },
         },
-        temperature: 0,
-        messages: [
-          ...(isOpenaiOauth ? [] : [{ role: "system", content: JUDGE_SYSTEM } satisfies ModelMessage]),
-          ...conversation,
-          {
-            role: "user",
-            content: judgeUser(input.condition),
-          } satisfies ModelMessage,
-        ],
+      }
+
+      // Free-text judge: one generateText call, lenient {...} extraction, and
+      // a not-ok default when the output is unparseable. Output-shape issues
+      // never surface as JudgeError — only transport failures do.
+      const judgeFromText = Effect.fn("SessionGoal.judgeFromText")(function* () {
+        const text = yield* Effect.tryPromise({
+          try: () =>
+            generateText({
+              ...telemetry,
+              ...(temperature !== undefined ? { temperature } : {}),
+              maxOutputTokens: ProviderTransform.maxOutputTokens(resolved),
+              messages,
+              model: language,
+              ...(isOpenaiOauth
+                ? {
+                    providerOptions: ProviderTransform.providerOptions(resolved, {
+                      instructions: JUDGE_SYSTEM,
+                      store: false,
+                    }),
+                  }
+                : {}),
+            }).then((r) => r.text),
+          catch: (error) => new JudgeError({ cause: error }),
+        })
+        return (
+          parseVerdictText(text) ?? {
+            ok: false,
+            reason: `judge returned unparseable output: ${text.slice(0, 200)}`,
+          }
+        )
+      })
+
+      // Providers without function-calling have no constrained decoding to
+      // offer — judge straight from free text instead of failing the gate.
+      if (resolved.capabilities.toolcall === false) return yield* judgeFromText()
+
+      const params = {
+        ...telemetry,
+        ...(temperature !== undefined ? { temperature } : {}),
+        maxOutputTokens: ProviderTransform.maxOutputTokens(resolved),
+        messages,
         model: language,
         schema: Verdict,
+        providerOptions: structuredOutput && ProviderTransform.providerOptions(resolved, structuredOutput),
       } satisfies Parameters<typeof generateObject>[0]
 
       if (isOpenaiOauth) {
-        return yield* Effect.promise(async () => {
-          const result = streamObject({
-            ...params,
-            providerOptions: ProviderTransform.providerOptions(resolved, {
-              instructions: JUDGE_SYSTEM,
-              store: false,
-            }),
-            onError: () => {},
-          })
-          for await (const part of result.fullStream) {
-            if (part.type === "error") throw part.error
-          }
-          return Verdict.parse(await result.object)
+        const object = yield* Effect.tryPromise({
+          try: async () => {
+            const result = streamObject({
+              ...params,
+              providerOptions: ProviderTransform.providerOptions(resolved, {
+                instructions: JUDGE_SYSTEM,
+                store: false,
+                ...structuredOutput,
+              }),
+              onError: () => {},
+            })
+            for await (const part of result.fullStream) {
+              if (part.type === "error") throw part.error
+            }
+            return (await result.object) as unknown
+          },
+          catch: (error) => new JudgeError({ cause: error }),
         })
+        const parsed = Verdict.safeParse(object)
+        if (parsed.success) return parsed.data
+        return yield* judgeFromText()
       }
 
-      return yield* Effect.promise(() => generateObject(params).then((r) => Verdict.parse(r.object)))
+      const object = yield* Effect.tryPromise({
+        try: () => generateObject(params).then((r) => r.object as unknown),
+        catch: (error) => new JudgeError({ cause: error }),
+      })
+      const parsed = Verdict.safeParse(object)
+      if (parsed.success) return parsed.data
+      return yield* judgeFromText()
     })
 
-    return Service.of({ set, get, clear, bumpReact, evaluate })
+    return Service.of({ set, get, clear, bumpReact, failOpen, evaluate })
   }),
 )
 
