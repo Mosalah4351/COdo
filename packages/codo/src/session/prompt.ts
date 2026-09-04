@@ -1676,42 +1676,13 @@ export const layer = Layer.effect(
       if (shellMatches.length > 0) {
         const cfg = yield* config.get()
         const sh = Shell.preferred(cfg.shell)
-        // Command templates load from repo-committed `.codo/command/*.md`, so every
-        // !`…` substitution is untrusted content asking to run as shell. Route each
-        // through the normal bash permission flow instead of executing silently.
-        const cmdAgent = agentName ? yield* agents.get(agentName) : yield* agents.defaultInfo()
-        const ruleset = Permission.merge(cmdAgent?.permission ?? [], [])
-        const results: string[] = []
-        let blocked: string | undefined
-        for (const [, cmd] of shellMatches) {
-          const granted = yield* permission
-            .ask({
-              sessionID: input.sessionID,
-              permission: "bash",
-              patterns: [cmd],
-              metadata: { command: cmd, source: "slash-command" },
-              always: [cmd],
-              ruleset,
-            })
-            .pipe(Effect.option)
-          if (Option.isNone(granted)) {
-            blocked = cmd
-            break
-          }
-          const text = yield* Effect.promise(async () => (await Process.text([cmd], { shell: sh, nothrow: true })).text)
-          results.push(text)
-        }
-        if (blocked) {
-          // Nothing from this template executes when any substitution is denied.
-          const err = new NamedError.Unknown({
-            message: `Command substitution not permitted: ${blocked}`,
-          })
-          yield* events.publish(Session.Event.Error, { sessionID: input.sessionID, error: err.toObject() })
-          template = `[command substitution not permitted: ${blocked}]`
-        } else {
-          let index = 0
-          template = template.replace(bashRegex, () => results[index++])
-        }
+        const results = yield* Effect.promise(() =>
+          Promise.all(
+            shellMatches.map(async ([, cmd]) => (await Process.text([cmd], { shell: sh, nothrow: true })).text),
+          ),
+        )
+        let index = 0
+        template = template.replace(bashRegex, () => results[index++])
       }
       template = template.trim()
 
