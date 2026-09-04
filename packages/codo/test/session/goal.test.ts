@@ -7,7 +7,8 @@ import { Auth } from "../../src/auth"
 import { Config } from "../../src/config/config"
 import { EventV2Bridge } from "../../src/event-v2-bridge"
 import { Provider } from "../../src/provider/provider"
-import { SessionID } from "../../src/session/schema"
+import { MessageID, PartID, SessionID } from "../../src/session/schema"
+import { SessionV1 } from "@codo-ai/core/v1/session"
 import { awaitWithTimeout, testEffect } from "../lib/effect"
 import { ProviderTest } from "../fake/provider"
 import { GlobalBus } from "@/bus/global"
@@ -19,6 +20,7 @@ import { GlobalBus } from "@/bus/global"
 let generateObjectShouldReject = false
 let generateObjectScript: Array<Error | Record<string, unknown>> = []
 let generateObjectCalls = 0
+let lastGenerateObjectInput: unknown
 let generateTextShouldReject = false
 let generateTextScript: Array<Error | string> = []
 let generateTextCalls = 0
@@ -27,6 +29,7 @@ void mock.module("ai", () => ({
   ...actualAi,
   generateObject: (...args: Parameters<typeof actualAi.generateObject>) => {
     generateObjectCalls++
+    lastGenerateObjectInput = args[0]
     const next = generateObjectScript.shift()
     if (next instanceof Error) return Promise.reject(next)
     if (next) return Promise.resolve({ object: next })
@@ -54,6 +57,7 @@ beforeEach(() => {
   generateObjectShouldReject = false
   generateObjectScript = []
   generateObjectCalls = 0
+  lastGenerateObjectInput = undefined
   generateTextShouldReject = false
   generateTextScript = []
   generateTextCalls = 0
@@ -140,6 +144,75 @@ const brokenAuthTest = testEffect(
 
 function makeSessionID(): SessionID {
   return SessionID.descending()
+}
+
+function judgeModelRef() {
+  return { providerID: ProviderV2.ID.make("openai"), modelID: ModelV2.ID.make("gpt-5.2") }
+}
+
+// Minimal user/assistant transcripts for judge-input tests: plain objects are
+// enough for MessageV2.toModelMessagesEffect, which only reads the fields it
+// converts (role, text parts, error markers).
+function userTurn(sessionID: SessionID, text: string, synthetic = false): SessionV1.WithParts {
+  const id = MessageID.ascending()
+  return {
+    info: {
+      id,
+      sessionID,
+      role: "user",
+      time: { created: Date.now() },
+      agent: "main",
+      model: judgeModelRef(),
+    },
+    parts: [
+      {
+        id: PartID.ascending(),
+        sessionID,
+        messageID: id,
+        type: "text",
+        text,
+        synthetic,
+      },
+    ],
+  }
+}
+
+function assistantTurn(sessionID: SessionID, parentID: MessageID, text: string): SessionV1.WithParts {
+  const id = MessageID.ascending()
+  return {
+    info: {
+      id,
+      sessionID,
+      role: "assistant",
+      time: { created: Date.now() },
+      parentID,
+      modelID: ModelV2.ID.make("gpt-5.2"),
+      providerID: ProviderV2.ID.make("openai"),
+      mode: "build",
+      agent: "main",
+      path: { cwd: "/tmp", root: "/tmp" },
+      cost: 0,
+      tokens: { input: 0, output: 0, reasoning: 0, cache: { read: 0, write: 0 } },
+    },
+    parts: [
+      {
+        id: PartID.ascending(),
+        sessionID,
+        messageID: id,
+        type: "text",
+        text,
+      },
+    ],
+  }
+}
+
+// The synthetic re-entry prompt.ts injects on every pending verdict.
+function goalReentryTurn(sessionID: SessionID, reason: string): SessionV1.WithParts {
+  return userTurn(
+    sessionID,
+    `[Goal check — attempt 1/${Goal.MAX_GOAL_REACT}] The goal condition has not been met yet.\n\nVerdict: ${reason}\n\nPlease continue working toward the goal.`,
+    true,
+  )
 }
 
 type WatchedVerdict = {
@@ -737,6 +810,143 @@ describe("Goal Gate", () => {
       expect(Exit.hasFails(exit)).toBe(false)
       expect(generateObjectCalls).toBe(0)
       expect((yield* goal.get(sessionID))?.condition).toBe("fix all bugs")
+    }),
+  )
+})
+
+describe("Goal Judge Transcript Integrity", () => {
+  judgeTest.instance("blind judge with zero assistant turns retries once then fails open", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "fix all bugs", "main")
+      const { seen, first } = yield* watchVerdicts()
+
+      // Blind-judge signature: a confident not-ok with an
+      // "insufficient evidence" rationale and no assistant turn behind it.
+      const msgs = [userTurn(sessionID, "please fix all bugs")]
+      generateObjectScript = [
+        { ok: false, reason: "insufficient evidence in transcript" },
+        { ok: false, reason: "insufficient evidence in transcript" },
+      ]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs,
+        model: judgeModelRef(),
+        messageID: "msg-blind",
+      })
+
+      // Guard triggers: exactly one retry, then fail open via the existing
+      // path — released, goal cleared, error verdict published. The
+      // unverifiable verdict is never accepted as pending.
+      expect(decision).toMatchObject({ status: "released", attempt: 1 })
+      expect(generateObjectCalls).toBe(2)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal error verdict")
+      expect(verdict).toMatchObject({ ok: true, error: true, attempt: 1, messageID: "msg-blind" })
+      expect(yield* goal.get(sessionID)).toBeUndefined()
+      expect(seen.length).toBe(1)
+    }),
+  )
+
+  judgeTest.instance("verdict quoting evidence absent from the transcript retries once then fails open", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "fix all bugs", "main")
+      const { seen, first } = yield* watchVerdicts()
+
+      const user = userTurn(sessionID, "please fix all the bugs in the repo")
+      const assistant = assistantTurn(sessionID, user.info.id, "I fixed two bugs so far, still working on the rest.")
+      generateObjectScript = [
+        {
+          ok: false,
+          reason:
+            'The assistant stated "all thirteen bugs are fixed and deployed" but the goal needs every bug fixed, so work continues.',
+        },
+      ]
+      // The retry hits a transport failure: either way the guard must fail open.
+      generateObjectShouldReject = true
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs: [user, assistant],
+        model: judgeModelRef(),
+        messageID: "msg-hallucinated",
+      })
+
+      expect(decision).toMatchObject({ status: "released", attempt: 1 })
+      expect(generateObjectCalls).toBe(2)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal error verdict")
+      expect(verdict).toMatchObject({ ok: true, error: true, attempt: 1, messageID: "msg-hallucinated" })
+      expect(yield* goal.get(sessionID)).toBeUndefined()
+      expect(seen.length).toBe(1)
+    }),
+  )
+
+  judgeTest.instance("synthetic goal-check re-entries never reach the judge", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+
+      const user = userTurn(sessionID, "please fix all bugs")
+      const assistant = assistantTurn(sessionID, user.info.id, "I fixed two bugs so far.")
+      const reentry = goalReentryTurn(sessionID, "not done yet")
+      generateObjectScript = [{ ok: true, reason: "done" }]
+      const verdict = yield* goal.evaluate({
+        condition: "fix all bugs",
+        msgs: [user, assistant, reentry],
+        model: judgeModelRef(),
+      })
+
+      expect(verdict).toEqual({ ok: true, reason: "done" })
+      const sent = lastGenerateObjectInput as { messages: Array<{ role: string }> }
+      const users = sent.messages.filter((msg) => msg.role === "user")
+      // Original user turn plus the closing judge question — the synthetic
+      // re-entry in between is gone.
+      expect(users.length).toBe(2)
+      const dump = JSON.stringify(lastGenerateObjectInput)
+      expect(dump).toContain("I fixed two bugs so far.")
+      expect(dump).not.toContain("The goal condition has not been met yet")
+    }),
+  )
+
+  judgeTest.instance("healthy transcript with a genuine not-met verdict stays pending", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "fix all bugs", "main")
+      const { first } = yield* watchVerdicts()
+
+      const user = userTurn(sessionID, "please fix all the bugs")
+      const assistant = assistantTurn(sessionID, user.info.id, "I fixed two bugs so far, still working on the rest.")
+      generateObjectScript = [
+        {
+          ok: false,
+          reason:
+            'The assistant said "I fixed two bugs so far" and more work remains before every bug is fixed.',
+        },
+      ]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs: [user, assistant],
+        model: judgeModelRef(),
+        messageID: "msg-healthy",
+      })
+
+      // No false positive from the guard: quoted evidence occurs in the
+      // transcript, so the verdict is accepted as pending with no retry.
+      expect(decision).toMatchObject({ status: "pending", attempt: 1 })
+      expect(generateObjectCalls).toBe(1)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal verdict")
+      expect(verdict).toMatchObject({ ok: false, attempt: 1, messageID: "msg-healthy" })
+      const active = yield* goal.get(sessionID)
+      expect(active?.condition).toBe("fix all bugs")
+      expect(active?.react).toBe(1)
     }),
   )
 })

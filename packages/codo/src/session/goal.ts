@@ -94,6 +94,67 @@ function parseVerdictText(text: string): Verdict | undefined {
   return parsed.data
 }
 
+// Marker for the synthetic goal-check re-entry prompt.ts injects as a user
+// turn on every pending verdict ("[Goal check — attempt …] The goal condition
+// has not been met yet…"). It must never reach the judge: the next round
+// would read the prior false verdict as transcript evidence and anchor on
+// it (self-reinforcement). Only fully-synthetic user turns carrying the
+// marker are dropped — a genuine user turn quoting the phrase is kept.
+const GOAL_REENTRY_MARKER = "The goal condition has not been met yet"
+
+function withoutGoalReentries(msgs: SessionV1.WithParts[]): SessionV1.WithParts[] {
+  return msgs.filter((msg) => {
+    if (msg.info.role !== "user") return true
+    const texts = msg.parts.filter((part): part is SessionV1.TextPart => part.type === "text")
+    if (texts.length === 0) return true
+    if (!texts.every((part) => part.synthetic === true)) return true
+    return !texts.some((part) => part.text.includes(GOAL_REENTRY_MARKER))
+  })
+}
+
+type JudgeResult = {
+  verdict: Verdict
+  /** False for the synthesized not-ok default, which bypasses the guard. */
+  produced: boolean
+}
+
+// Transcript-integrity guard against the blind-judge failure mode: a
+// confident {ok:false} produced from a transcript the judge could not
+// actually see (assistant turns silently dropped upstream, so an
+// "insufficient evidence" claim has nothing behind it) or quoting evidence
+// that never appears in what the judge read. Such verdicts are
+// unverifiable — accepting one as pending publishes a false verdict and
+// re-injects it as a synthetic re-entry the next round anchors on.
+const INSUFFICIENT_EVIDENCE_PATTERN = /insufficient evidence/i
+const MIN_QUOTE_LENGTH = 4
+
+function hasAssistantTurn(conversation: ModelMessage[]): boolean {
+  return conversation.some((msg) => msg.role === "assistant")
+}
+
+function quotedSpans(reason: string): string[] {
+  return Array.from(reason.matchAll(/"([^"]+)"/g)).flatMap((match) => {
+    const span = match[1]?.trim() ?? ""
+    if (span.length < MIN_QUOTE_LENGTH) return []
+    return [span.toLowerCase()]
+  })
+}
+
+function isUnverifiableVerdict(input: {
+  verdict: Verdict
+  conversation: ModelMessage[]
+  condition: string
+}): boolean {
+  if (input.verdict.ok) return false
+  if (input.verdict.impossible) return false
+  if (INSUFFICIENT_EVIDENCE_PATTERN.test(input.verdict.reason) && !hasAssistantTurn(input.conversation))
+    return true
+  const spans = quotedSpans(input.verdict.reason)
+  if (spans.length === 0) return false
+  const haystack = `${JSON.stringify(input.conversation)}\n${input.condition}`.toLowerCase()
+  return spans.some((span) => !haystack.includes(span))
+}
+
 export interface Interface {
   readonly set: (sessionID: SessionID, condition: string, agent: string) => Effect.Effect<void>
   readonly get: (sessionID: SessionID) => Effect.Effect<Goal | undefined>
@@ -121,12 +182,14 @@ export interface Interface {
    *   wedge the session.
    * - ModelNotFoundError (resolution: unknown or deleted judge model) →
    *   fail CLOSED: propagates with suggestions so the misconfiguration
-   *   surfaces loudly instead of silently dropping the goal.
-   * - Auth failures → defect (fail closed): missing credentials are setup
-   *   problems, never silent.
-   * - Output-shape issues (unparseable verdicts) → never throw: the text
-   *   fallback and the not-ok default keep the loop working the goal.
-   *
+    *   surfaces loudly instead of silently dropping the goal.
+    * - Auth failures → defect (fail closed): missing credentials are setup
+    *   problems, never silent.
+    * - Output-shape issues (unparseable verdicts) → never throw: the text
+    *   fallback and the not-ok default keep the loop working the goal.
+    * - Successful-but-unverifiable verdicts (transcript-integrity guard) →
+    *   fail OPEN as JudgeError after one retry: never accepted as pending.
+    *
    * Only `pending` re-enters the loop; every other decision falls through
    * to the loop exit. Only the agent the goal was armed with is judged —
    * other agents' turns return `foreign` with the goal left armed.
@@ -143,12 +206,18 @@ export interface Interface {
    * Run the judge over the conversation against the active goal's condition.
    * `msgs` is the main thread's message list; it is converted to native model
    * messages (tool calls/results/images preserved) so the judge independently
-   * confirms the work rather than trusting the assistant's self-report.
-   *
-   * Fails with JudgeError on transport/provider-call failures and with
-   * ModelNotFoundError when the judge model cannot be resolved. See `gate`
-   * for how each failure class is handled at the stop gate.
-   */
+    * confirms the work rather than trusting the assistant's self-report.
+    *
+    * Fails with JudgeError on transport/provider-call failures, when the judge
+    * twice returns a successful-but-unverifiable verdict (transcript-integrity
+    * guard: an "insufficient evidence" claim with no assistant turn behind it,
+    * or quoted evidence absent from the transcript — retried once first), and
+    * with ModelNotFoundError when the judge model cannot be resolved. See `gate`
+    * for how each failure class is handled at the stop gate.
+    *
+    * Prior synthetic goal-check re-entries are excluded from the judge's
+    * conversation input so past verdicts cannot anchor the next round.
+    */
   readonly evaluate: (input: {
     condition: string
     msgs: SessionV1.WithParts[]
@@ -236,16 +305,28 @@ export const layer = Layer.effect(
 
       // Convert the conversation to native model messages so the judge sees the
       // real tool calls/results/images — same context the working agent had.
+      // Prior synthetic goal-check re-entries are filtered out first so the
+      // judge weighs only original turns instead of anchoring on past verdicts.
       //
       // `ensureNonEmptyContent` is applied by hand here because this is the ONE
       // persisted-parts→provider site that does not run `ProviderTransform.message`:
       // `model: language` below is the RAW model, with no `wrapLanguageModel` and no
       // middleware anywhere in this file, so the pre-send invariant that every other
       // build site inherits from the middleware would otherwise be absent. An empty
-      // user message here reaches the judge's provider unrepaired.
-      const conversation = ProviderTransform.ensureNonEmptyContent(
-        yield* MessageV2.toModelMessagesEffect(input.msgs, resolved),
-      )
+      // user message here reaches the judge's provider unrepaired. Dropped
+      // assistant turns are logged: an empty judge-side transcript behind a
+      // confident verdict is exactly the blind-judge failure mode.
+      const judgeMsgs = withoutGoalReentries(input.msgs)
+      const rawConversation = yield* MessageV2.toModelMessagesEffect(judgeMsgs, resolved)
+      const dropped: ModelMessage[] = []
+      const conversation = ProviderTransform.ensureNonEmptyContent(rawConversation, (msg) => {
+        dropped.push(msg)
+      })
+      if (dropped.length > 0)
+        yield* Effect.logWarning("goal judge input dropped empty assistant turns", {
+          condition: input.condition,
+          dropped: dropped.length,
+        })
 
       // Diagnostic: dump the FULL message array sent to the judge. Long strings
       // (e.g. base64 image data) are clipped with a length marker so the log
@@ -292,7 +373,10 @@ export const layer = Layer.effect(
 
       // Free-text judge: one generateText call, lenient {...} extraction, and
       // a not-ok default when the output is unparseable. Output-shape issues
-      // never surface as JudgeError — only transport failures do.
+      // never surface as JudgeError — only transport failures do. `produced`
+      // marks whether the verdict came from the judge (guarded) or is the
+      // synthesized default (already the conservative keep-working verdict,
+      // so it bypasses the integrity guard).
       const judgeFromText = Effect.fn("SessionGoal.judgeFromText")(function* () {
         const text = yield* Effect.tryPromise({
           try: () =>
@@ -313,59 +397,96 @@ export const layer = Layer.effect(
             }).then((r) => r.text),
           catch: (error) => new JudgeError({ cause: error }),
         })
-        return (
-          parseVerdictText(text) ?? {
+        const verdict = parseVerdictText(text)
+        if (verdict) return { verdict, produced: true } satisfies JudgeResult
+        return {
+          verdict: {
             ok: false,
             reason: `judge returned unparseable output: ${text.slice(0, 200)}`,
-          }
-        )
+          },
+          produced: false,
+        } satisfies JudgeResult
       })
 
-      // Providers without function-calling have no constrained decoding to
-      // offer — judge straight from free text instead of failing the gate.
-      if (resolved.capabilities.toolcall === false) return yield* judgeFromText()
+      const runJudge = Effect.fn("SessionGoal.runJudge")(function* () {
+        // Providers without function-calling have no constrained decoding to
+        // offer — judge straight from free text instead of failing the gate.
+        if (resolved.capabilities.toolcall === false) return yield* judgeFromText()
 
-      const params = {
-        ...telemetry,
-        ...(temperature !== undefined ? { temperature } : {}),
-        maxOutputTokens: ProviderTransform.maxOutputTokens(resolved),
-        messages,
-        model: language,
-        schema: Verdict,
-        providerOptions: structuredOutput && ProviderTransform.providerOptions(resolved, structuredOutput),
-      } satisfies Parameters<typeof generateObject>[0]
+        const params = {
+          ...telemetry,
+          ...(temperature !== undefined ? { temperature } : {}),
+          maxOutputTokens: ProviderTransform.maxOutputTokens(resolved),
+          messages,
+          model: language,
+          schema: Verdict,
+          providerOptions: structuredOutput && ProviderTransform.providerOptions(resolved, structuredOutput),
+        } satisfies Parameters<typeof generateObject>[0]
 
-      if (isOpenaiOauth) {
+        if (isOpenaiOauth) {
+          const object = yield* Effect.tryPromise({
+            try: async () => {
+              const result = streamObject({
+                ...params,
+                providerOptions: ProviderTransform.providerOptions(resolved, {
+                  instructions: JUDGE_SYSTEM,
+                  store: false,
+                  ...structuredOutput,
+                }),
+                onError: () => {},
+              })
+              for await (const part of result.fullStream) {
+                if (part.type === "error") throw part.error
+              }
+              return (await result.object) as unknown
+            },
+            catch: (error) => new JudgeError({ cause: error }),
+          })
+          const parsed = Verdict.safeParse(object)
+          if (parsed.success) return { verdict: parsed.data, produced: true } satisfies JudgeResult
+          return yield* judgeFromText()
+        }
+
         const object = yield* Effect.tryPromise({
-          try: async () => {
-            const result = streamObject({
-              ...params,
-              providerOptions: ProviderTransform.providerOptions(resolved, {
-                instructions: JUDGE_SYSTEM,
-                store: false,
-                ...structuredOutput,
-              }),
-              onError: () => {},
-            })
-            for await (const part of result.fullStream) {
-              if (part.type === "error") throw part.error
-            }
-            return (await result.object) as unknown
-          },
+          try: () => generateObject(params).then((r) => r.object as unknown),
           catch: (error) => new JudgeError({ cause: error }),
         })
         const parsed = Verdict.safeParse(object)
-        if (parsed.success) return parsed.data
+        if (parsed.success) return { verdict: parsed.data, produced: true } satisfies JudgeResult
         return yield* judgeFromText()
+      })
+
+      // Transcript-integrity guard: a judge-produced plain {ok:false} that
+      // fails the check retries once; a second failure surfaces as JudgeError
+      // so the gate fails open via the existing path instead of pending on a
+      // verdict the judge could not have grounded. Satisfied, impossible, and
+      // synthesized-default verdicts bypass the guard.
+      const acceptIfVerifiable = (result: JudgeResult): Verdict | undefined => {
+        if (result.verdict.ok) return result.verdict
+        if (result.verdict.impossible) return result.verdict
+        if (!result.produced) return result.verdict
+        if (!isUnverifiableVerdict({ verdict: result.verdict, conversation, condition: input.condition }))
+          return result.verdict
+        return undefined
       }
 
-      const object = yield* Effect.tryPromise({
-        try: () => generateObject(params).then((r) => r.object as unknown),
-        catch: (error) => new JudgeError({ cause: error }),
+      const first = yield* runJudge()
+      const accepted = acceptIfVerifiable(first)
+      if (accepted) return accepted
+      yield* Effect.logWarning("goal judge verdict failed transcript-integrity check; retrying once", {
+        condition: input.condition,
+        reason: first.verdict.reason,
       })
-      const parsed = Verdict.safeParse(object)
-      if (parsed.success) return parsed.data
-      return yield* judgeFromText()
+      const second = yield* runJudge()
+      const acceptedRetry = acceptIfVerifiable(second)
+      if (acceptedRetry) return acceptedRetry
+      yield* Effect.logWarning("goal judge verdict failed transcript-integrity check twice", {
+        condition: input.condition,
+        reason: second.verdict.reason,
+      })
+      return yield* new JudgeError({
+        cause: new Error("goal judge returned unverifiable verdicts twice"),
+      })
     })
 
     const gate = Effect.fn("SessionGoal.gate")(function* (input: {
