@@ -61,6 +61,116 @@ export class JudgeError extends Schema.TaggedErrorClass<JudgeError>()("SessionGo
   cause: Schema.Defect,
 }) {}
 
+// ---- Judge transport policy (items 1-3) ----
+//
+// Weak/free-tier proxies often reject `generateObject` outright (400 on
+// unsupported response_format/structured output) before any text fallback
+// could run. The previous code threw JudgeError on the FIRST rejection, so
+// the safeParse-fail text fallback never ran and the gate failed open with
+// `Judge: error (stopped)`.
+//
+// Bounded policy (never unbounded):
+// - 400/422 (capability mismatch) → exactly one `judgeFromText` attempt, no
+//   retry. Retrying a capability 400 is pointless.
+// - 429 / 5xx / timeout-abort → up to 2 retries with backoff (50ms, 100ms),
+//   then exactly one `judgeFromText` attempt.
+// - Anything else (including the generic errors the existing tests simulate)
+//   → immediate JudgeError, no retry, no fallback. This preserves the
+//   single-attempt contract for unknown failures.
+// - ModelNotFound stays fail-closed loud; auth stays orDie (untouched).
+//
+// Capability routing (item 3): deliberately NOT changing the global
+// `toolcall ?? true` default in provider.ts (load-bearing for every other
+// caller). The judge keeps its explicit `toolcall === false` fast path and
+// additionally catches the 400-unsupported class into the text path, so
+// models without structured-output support reach the text branch without
+// relying on the optimistic default.
+//
+// SessionRetry.retryable/delay are deliberately NOT reused: they classify
+// SessionV1.APIError shapes and sleep 2s+ (worker-oriented). The judge sees
+// raw AI SDK rejections and must stay fast/advisory, so it owns a small
+// local classifier plus 50/100ms backoff.
+
+const JUDGE_TEXT_FALLBACK = Symbol("SessionGoal.judgeTextFallback")
+
+function judgeRecord(value: unknown): Record<string, unknown> | undefined {
+  if (typeof value !== "object" || value === null) return undefined
+  return value as Record<string, unknown>
+}
+
+function judgeErrorStatus(error: unknown): number | undefined {
+  const candidates = [error, judgeRecord(error)?.cause, judgeRecord(error)?.lastError]
+  const direct = candidates.flatMap((candidate) => {
+    const record = judgeRecord(candidate)
+    if (!record) return []
+    const status = record.status
+    if (typeof status === "number" && Number.isInteger(status)) return [status]
+    const code = record.statusCode
+    if (typeof code === "number" && Number.isInteger(code)) return [code]
+    return []
+  })
+  if (direct.length > 0) return direct[0]
+  const nested = judgeRecord(judgeRecord(error)?.data)?.statusCode
+  if (typeof nested === "number" && Number.isInteger(nested)) return nested
+  return undefined
+}
+
+function judgeErrorMessage(error: unknown): string {
+  const candidates = [error, judgeRecord(error)?.cause]
+  const texts = candidates.flatMap((candidate) => {
+    const message = judgeRecord(candidate)?.message
+    if (typeof message === "string" && message.length > 0) return [message]
+    return []
+  })
+  if (texts.length > 0) return texts.join(" | ")
+  return String(error)
+}
+
+function isUnsupportedStructuredOutputError(error: unknown): boolean {
+  const status = judgeErrorStatus(error)
+  if (status !== 400 && status !== 422) return false
+  return true
+}
+
+const JUDGE_RETRYABLE_MESSAGE_PATTERNS = [
+  "429",
+  "too many requests",
+  "rate limit",
+  "rate increased too quickly",
+  "timeout",
+  "timed out",
+  "abort",
+  "econnreset",
+  "econnaborted",
+  "etimedout",
+  "socket hang up",
+  "temporarily unavailable",
+  "service unavailable",
+  "bad gateway",
+  "gateway timeout",
+  "internal server error",
+  "overloaded",
+]
+
+function isRetryableJudgeTransportError(error: unknown): boolean {
+  const status = judgeErrorStatus(error)
+  if (status === 429) return true
+  if (status !== undefined && status >= 500) return true
+  const message = judgeErrorMessage(error).toLowerCase()
+  return JUDGE_RETRYABLE_MESSAGE_PATTERNS.some((pattern) => message.includes(pattern))
+}
+
+function describeJudgeCause(cause: unknown): Record<string, unknown> {
+  const name = judgeRecord(cause)?.name
+  const status = judgeErrorStatus(cause)
+  const message = judgeErrorMessage(cause)
+  return {
+    errorName: typeof name === "string" ? name : "unknown",
+    errorMessage: message.slice(0, 500),
+    ...(status !== undefined ? { errorStatus: status } : {}),
+  }
+}
+
 // ---- Judge prompts  ----
 
 const JUDGE_SYSTEM = `You are evaluating a stop-condition hook in COdo. Read the conversation transcript carefully, then judge whether the user-provided condition is satisfied.
@@ -465,6 +575,35 @@ export const layer = Layer.effect(
         // offer — judge straight from free text instead of failing the gate.
         if (resolved.capabilities.toolcall === false) return yield* judgeFromText()
 
+        // Bounded transport policy: 400/422 → text fallback, 429/5xx/timeout
+        // → up to 2 retries then text fallback, anything else → immediate
+        // JudgeError. Returns the sentinel when the caller must run exactly
+        // one judgeFromText attempt; JudgeError only when text also fails.
+        const fetchWithTransportPolicy = Effect.fn("SessionGoal.fetchWithTransportPolicy")(function* (
+          request: () => Effect.Effect<unknown, JudgeError>,
+        ) {
+          const once = () =>
+            request().pipe(
+              Effect.map((value) => ({ kind: "value" as const, value })),
+              Effect.catchTag("SessionGoalJudgeError", (error) =>
+                Effect.succeed({ kind: "error" as const, error }),
+              ),
+            )
+          const first = yield* once()
+          if (first.kind === "value") return first.value
+          if (isUnsupportedStructuredOutputError(first.error.cause)) return JUDGE_TEXT_FALLBACK
+          if (!isRetryableJudgeTransportError(first.error.cause)) return yield* first.error
+          yield* Effect.sleep("50 millis")
+          const second = yield* once()
+          if (second.kind === "value") return second.value
+          if (isUnsupportedStructuredOutputError(second.error.cause)) return JUDGE_TEXT_FALLBACK
+          if (!isRetryableJudgeTransportError(second.error.cause)) return JUDGE_TEXT_FALLBACK
+          yield* Effect.sleep("100 millis")
+          const third = yield* once()
+          if (third.kind === "value") return third.value
+          return JUDGE_TEXT_FALLBACK
+        })
+
         const params = {
           ...telemetry,
           ...(temperature !== undefined ? { temperature } : {}),
@@ -476,34 +615,40 @@ export const layer = Layer.effect(
         } satisfies Parameters<typeof generateObject>[0]
 
         if (isOpenaiOauth) {
-          const object = yield* Effect.tryPromise({
-            try: async () => {
-              const result = streamObject({
-                ...params,
-                providerOptions: ProviderTransform.providerOptions(resolved, {
-                  instructions: JUDGE_SYSTEM,
-                  store: false,
-                  ...structuredOutput,
-                }),
-                onError: () => {},
-              })
-              for await (const part of result.fullStream) {
-                if (part.type === "error") throw part.error
-              }
-              return (await result.object) as unknown
-            },
-            catch: (error) => new JudgeError({ cause: error }),
-          })
-          const parsed = Verdict.safeParse(object)
+          const request = () =>
+            Effect.tryPromise({
+              try: async () => {
+                const result = streamObject({
+                  ...params,
+                  providerOptions: ProviderTransform.providerOptions(resolved, {
+                    instructions: JUDGE_SYSTEM,
+                    store: false,
+                    ...structuredOutput,
+                  }),
+                  onError: () => {},
+                })
+                for await (const part of result.fullStream) {
+                  if (part.type === "error") throw part.error
+                }
+                return (await result.object) as unknown
+              },
+              catch: (error) => new JudgeError({ cause: error }),
+            })
+          const fetched = yield* fetchWithTransportPolicy(request)
+          if (fetched === JUDGE_TEXT_FALLBACK) return yield* judgeFromText()
+          const parsed = Verdict.safeParse(fetched)
           if (parsed.success) return { verdict: parsed.data, produced: true } satisfies JudgeResult
           return yield* judgeFromText()
         }
 
-        const object = yield* Effect.tryPromise({
-          try: () => generateObject(params).then((r) => r.object as unknown),
-          catch: (error) => new JudgeError({ cause: error }),
-        })
-        const parsed = Verdict.safeParse(object)
+        const request = () =>
+          Effect.tryPromise({
+            try: () => generateObject(params).then((r) => r.object as unknown),
+            catch: (error) => new JudgeError({ cause: error }),
+          })
+        const fetched = yield* fetchWithTransportPolicy(request)
+        if (fetched === JUDGE_TEXT_FALLBACK) return yield* judgeFromText()
+        const parsed = Verdict.safeParse(fetched)
         if (parsed.success) return { verdict: parsed.data, produced: true } satisfies JudgeResult
         return yield* judgeFromText()
       })
@@ -605,11 +750,12 @@ export const layer = Layer.effect(
         model: input.model,
       }).pipe(
         Effect.map(Option.some),
-        Effect.catchTag("SessionGoalJudgeError", () =>
+        Effect.catchTag("SessionGoalJudgeError", (error) =>
           Effect.gen(function* () {
             yield* Effect.logWarning("goal judge failed; allowing stop", {
               "session.id": input.sessionID,
               attempt,
+              ...describeJudgeCause(error.cause),
             })
             yield* failOpen({ sessionID: input.sessionID, attempt, messageID: input.messageID })
             return Option.none<Verdict>()

@@ -1096,3 +1096,88 @@ describe("Goal Judge Transcript Integrity", () => {
     }),
   )
 })
+
+describe("Goal Judge Transport Policy", () => {
+  function transportError(status: number, message: string): Error {
+    const error = new Error(message)
+    ;(error as unknown as Record<string, unknown>).status = status
+    return error
+  }
+
+  judgeTest.instance("generateObject 400-unsupported falls back to text and accepts the verdict", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+
+      generateObjectScript = [
+        transportError(400, "400 Bad Request: response_format json_schema is not supported by this model"),
+      ]
+      generateTextScript = ['{"ok": true, "reason": "done per transcript"}']
+      const verdict = yield* goal.evaluate({
+        condition: "fix all bugs",
+        msgs: [],
+        model: { providerID: ProviderV2.ID.make("openai"), modelID: ModelV2.ID.make("gpt-5.2") },
+      })
+
+      expect(verdict).toEqual({ ok: true, reason: "done per transcript" })
+      expect(generateObjectCalls).toBe(1)
+      expect(generateTextCalls).toBe(1)
+    }),
+  )
+
+  judgeTest.instance("generateObject 400-unsupported with rejecting text fallback fails open released", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "fix all bugs", "main")
+      const { seen, first } = yield* watchVerdicts()
+
+      generateObjectScript = [transportError(400, "400 response_format not supported")]
+      generateTextScript = [new Error("text transport down")]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs: [],
+        model: { providerID: ProviderV2.ID.make("openai"), modelID: ModelV2.ID.make("gpt-5.2") },
+        messageID: "msg-transport-both-fail",
+      })
+
+      expect(decision).toMatchObject({ status: "released", attempt: 1 })
+      expect(generateObjectCalls).toBe(1)
+      expect(generateTextCalls).toBe(1)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal error verdict")
+      expect(verdict).toMatchObject({ ok: true, error: true, attempt: 1, messageID: "msg-transport-both-fail" })
+      expect(yield* goal.get(sessionID)).toBeUndefined()
+      expect(seen.length).toBe(1)
+    }),
+  )
+
+  judgeTest.instance("429 then success retries with backoff and releases without fail-open", () =>
+    Effect.gen(function* () {
+      const goal = yield* Goal.Service
+      const sessionID = makeSessionID()
+      yield* goal.set(sessionID, "fix all bugs", "main")
+      const { seen, first } = yield* watchVerdicts()
+
+      generateObjectScript = [
+        transportError(429, "429 Too Many Requests: rate limit exceeded"),
+        { ok: true, reason: "recovered after retry" },
+      ]
+      const decision = yield* goal.gate({
+        sessionID,
+        agent: "main",
+        msgs: [],
+        model: { providerID: ProviderV2.ID.make("openai"), modelID: ModelV2.ID.make("gpt-5.2") },
+        messageID: "msg-transport-retry",
+      })
+
+      expect(decision).toMatchObject({ status: "satisfied", attempt: 1 })
+      expect(generateObjectCalls).toBe(2)
+      expect(generateTextCalls).toBe(0)
+      const verdict = yield* awaitWithTimeout(Deferred.await(first), "timed out waiting for goal verdict")
+      expect(verdict).toMatchObject({ ok: true, attempt: 1, messageID: "msg-transport-retry" })
+      expect(verdict.error).toBeUndefined()
+      expect(yield* goal.get(sessionID)).toBeUndefined()
+      expect(seen.length).toBe(1)
+    }),
+  )
+})
