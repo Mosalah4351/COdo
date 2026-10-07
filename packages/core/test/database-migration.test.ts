@@ -64,6 +64,9 @@ describe("DatabaseMigration", () => {
           name: "session",
         })
         expect(
+          yield* db.get(sql`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'security_finding'`),
+        ).toEqual({ name: "security_finding" })
+        expect(
           yield* db.get(sql`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'session_input'`),
         ).toEqual({ name: "session_input" })
         expect(

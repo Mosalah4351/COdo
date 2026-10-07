@@ -33,8 +33,9 @@ jobs:
       - name: Close old PRs without enough positive reactions
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          MAX_CLOSE: ${{ inputs['max-close'] }}
         run: |
-          max_close="${{ inputs['max-close'] }}"
+          max_close="$MAX_CLOSE"
           if [ -z "$max_close" ]; then
             max_close="50"
           fi

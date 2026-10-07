@@ -1,0 +1,1 @@
+Inspect a React fiber by ID — shows props, hooks, state, and source location.

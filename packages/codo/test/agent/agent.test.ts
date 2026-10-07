@@ -440,12 +440,16 @@ it.instance(
 )
 
 it.instance(
-  "Agent.list keeps the default agent first and sorts the rest by name",
+  "Agent.list keeps the configured default agent first, then sec-test, then compose, then alphabetical",
   () =>
     Effect.gen(function* () {
       const names = (yield* load((svc) => svc.list())).map((a) => a.name)
       expect(names[0]).toBe("plan")
-      expect(names.slice(1)).toEqual(names.slice(1).toSorted((a, b) => a.localeCompare(b)))
+      // COdo secondary pins: sec-test first (default workflow), then compose
+      // (legacy orchestration layer); alphabetical for the remainder.
+      expect(names[1]).toBe("sec-test")
+      expect(names[2]).toBe("compose")
+      expect(names.slice(3)).toEqual(names.slice(3).toSorted((a, b) => a.localeCompare(b)))
     }),
   {
     config: {
@@ -651,17 +655,17 @@ it.instance(
   },
 )
 
-it.instance("defaultAgent returns build when no default_agent config", () =>
+it.instance("defaultAgent returns sec-test when no default_agent config", () =>
   Effect.gen(function* () {
     const agent = yield* load((svc) => svc.defaultAgent())
-    expect(agent).toBe("build")
+    expect(agent).toBe("sec-test")
   }),
 )
 
-it.instance("defaultInfo returns resolved build agent when no default_agent config", () =>
+it.instance("defaultInfo returns resolved sec-test agent when no default_agent config", () =>
   Effect.gen(function* () {
     const agent = yield* load((svc) => svc.defaultInfo())
-    expect(agent.name).toBe("build")
+    expect(agent.name).toBe("sec-test")
     expect(agent.mode).toBe("primary")
   }),
 )
@@ -730,12 +734,12 @@ it.instance(
 )
 
 it.instance(
-  "defaultAgent returns plan when build is disabled and default_agent not set",
+  "defaultAgent returns sec-test when build is disabled and default_agent not set",
   () =>
     Effect.gen(function* () {
       const agent = yield* load((svc) => svc.defaultAgent())
-      // build is disabled, so it should return plan (next primary agent)
-      expect(agent).toBe("plan")
+      // build is disabled; COdo's preferred default is sec-test (still primary, not hidden).
+      expect(agent).toBe("sec-test")
     }),
   {
     config: {
@@ -754,6 +758,8 @@ it.instance(
       agent: {
         build: { disable: true },
         plan: { disable: true },
+        compose: { disable: true },
+        "sec-test": { disable: true },
       },
     },
   },

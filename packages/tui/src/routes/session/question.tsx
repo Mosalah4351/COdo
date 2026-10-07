@@ -6,8 +6,10 @@ import { selectedForeground, tint, useTheme } from "../../context/theme"
 import type { QuestionAnswer, QuestionRequest } from "@codo-ai/sdk/v2"
 import { useSDK } from "../../context/sdk"
 import { SplitBorder } from "../../ui/border"
+import { RtlText } from "../../component/rtl-text"
 import { useTuiConfig } from "../../config"
 import { useBindings, useCOdoModeStack } from "../../keymap"
+import { hasReplied, markReplied, neverAskMode } from "../../util/permission-modes"
 
 const QUESTION_MODE = "question"
 
@@ -31,6 +33,17 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
   })
 
   let textarea: TextareaRenderable | undefined
+
+  // Never-ask mode: answer every question with its first option, no dialog.
+  if (neverAskMode() && !hasReplied(props.request.id)) {
+    markReplied(props.request.id)
+    const answers = questions().map((q) => (q.options[0] ? [q.options[0].label] : []))
+    void sdk.client.question.reply({
+      requestID: props.request.id,
+      directory: props.directory,
+      answers,
+    })
+  }
 
   const question = createMemo(() => questions()[store.tab])
   const confirm = createMemo(() => !single() && store.tab === questions().length)
@@ -319,7 +332,7 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
                       selectTab(index())
                     }}
                   >
-                    <text
+                    <RtlText
                       fg={
                         isActive()
                           ? selectedForeground(theme, theme.accent)
@@ -329,7 +342,7 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
                       }
                     >
                       {q.header}
-                    </text>
+                    </RtlText>
                   </box>
                 )
               }}
@@ -347,7 +360,7 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
                 selectTab(questions().length)
               }}
             >
-              <text fg={confirm() ? selectedForeground(theme, theme.accent) : theme.textMuted}>Confirm</text>
+              <RtlText fg={confirm() ? selectedForeground(theme, theme.accent) : theme.textMuted}>Confirm</RtlText>
             </box>
           </box>
         </Show>
@@ -355,10 +368,10 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
         <Show when={!confirm()}>
           <box paddingLeft={1} gap={1}>
             <box>
-              <text fg={theme.text}>
+              <RtlText fg={theme.text}>
                 {question()?.question}
                 {multi() ? " (select all that apply)" : ""}
-              </text>
+              </RtlText>
             </box>
             <box>
               <For each={options()}>
@@ -376,22 +389,22 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
                     >
                       <box flexDirection="row">
                         <box backgroundColor={active() ? theme.backgroundElement : undefined} paddingRight={1}>
-                          <text fg={active() ? tint(theme.textMuted, theme.secondary, 0.6) : theme.textMuted}>
+                          <RtlText fg={active() ? tint(theme.textMuted, theme.secondary, 0.6) : theme.textMuted}>
                             {`${i() + 1}.`}
-                          </text>
+                          </RtlText>
                         </box>
                         <box backgroundColor={active() ? theme.backgroundElement : undefined}>
-                          <text fg={active() ? theme.secondary : picked() ? theme.success : theme.text}>
+                          <RtlText fg={active() ? theme.secondary : picked() ? theme.success : theme.text}>
                             {multi() ? `[${picked() ? "✓" : " "}] ${opt.label}` : opt.label}
-                          </text>
+                          </RtlText>
                         </box>
                         <Show when={!multi()}>
-                          <text fg={theme.success}>{picked() ? " ✓" : ""}</text>
+                          <RtlText fg={theme.success}>{picked() ? " ✓" : ""}</RtlText>
                         </Show>
                       </box>
 
                       <box paddingLeft={3}>
-                        <text fg={theme.textMuted}>{opt.description}</text>
+                        <RtlText fg={theme.textMuted}>{opt.description}</RtlText>
                       </box>
                     </box>
                   )
@@ -408,18 +421,18 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
                 >
                   <box flexDirection="row">
                     <box backgroundColor={other() ? theme.backgroundElement : undefined} paddingRight={1}>
-                      <text fg={other() ? tint(theme.textMuted, theme.secondary, 0.6) : theme.textMuted}>
+                      <RtlText fg={other() ? tint(theme.textMuted, theme.secondary, 0.6) : theme.textMuted}>
                         {`${options().length + 1}.`}
-                      </text>
+                      </RtlText>
                     </box>
                     <box backgroundColor={other() ? theme.backgroundElement : undefined}>
-                      <text fg={other() ? theme.secondary : customPicked() ? theme.success : theme.text}>
+                      <RtlText fg={other() ? theme.secondary : customPicked() ? theme.success : theme.text}>
                         {multi() ? `[${customPicked() ? "✓" : " "}] Type your own answer` : "Type your own answer"}
-                      </text>
+                      </RtlText>
                     </box>
 
                     <Show when={!multi()}>
-                      <text fg={theme.success}>{customPicked() ? " ✓" : ""}</text>
+                      <RtlText fg={theme.success}>{customPicked() ? " ✓" : ""}</RtlText>
                     </Show>
                   </box>
                   <Show when={store.editing}>
@@ -446,7 +459,7 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
                   </Show>
                   <Show when={!store.editing && input()}>
                     <box paddingLeft={3}>
-                      <text fg={theme.textMuted}>{input()}</text>
+                      <RtlText fg={theme.textMuted}>{input()}</RtlText>
                     </box>
                   </Show>
                 </box>
@@ -457,7 +470,7 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
 
         <Show when={confirm() && !single()}>
           <box paddingLeft={1}>
-            <text fg={theme.text}>Review</text>
+            <RtlText fg={theme.text}>Review</RtlText>
           </box>
           <For each={questions()}>
             {(q, index) => {
@@ -465,12 +478,12 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
               const answered = () => Boolean(value())
               return (
                 <box paddingLeft={1}>
-                  <text>
+                  <RtlText>
                     <span style={{ fg: theme.textMuted }}>{q.header}:</span>{" "}
                     <span style={{ fg: answered() ? theme.text : theme.error }}>
                       {answered() ? value() : "(not answered)"}
                     </span>
-                  </text>
+                  </RtlText>
                 </box>
               )
             }}
@@ -488,25 +501,25 @@ export function QuestionPrompt(props: { request: QuestionRequest; directory?: st
       >
         <box flexDirection="row" gap={2}>
           <Show when={!single()}>
-            <text fg={theme.text}>
+            <RtlText fg={theme.text}>
               {"⇆"} <span style={{ fg: theme.textMuted }}>tab</span>
-            </text>
+            </RtlText>
           </Show>
           <Show when={!confirm()}>
-            <text fg={theme.text}>
+            <RtlText fg={theme.text}>
               {"↑↓"} <span style={{ fg: theme.textMuted }}>select</span>
-            </text>
+            </RtlText>
           </Show>
-          <text fg={theme.text}>
+          <RtlText fg={theme.text}>
             enter{" "}
             <span style={{ fg: theme.textMuted }}>
               {confirm() ? "submit" : multi() ? "toggle" : single() ? "submit" : "confirm"}
             </span>
-          </text>
+          </RtlText>
 
-          <text fg={theme.text}>
+          <RtlText fg={theme.text}>
             esc <span style={{ fg: theme.textMuted }}>dismiss</span>
-          </text>
+          </RtlText>
         </box>
       </box>
     </box>

@@ -85,7 +85,11 @@ export const AmazonBedrockPlugin = PluginV2.define({
         const bearerToken =
           process.env.AWS_BEARER_TOKEN_BEDROCK ??
           (typeof options.bearerToken === "string" ? options.bearerToken : undefined)
-        if (bearerToken && !process.env.AWS_BEARER_TOKEN_BEDROCK) process.env.AWS_BEARER_TOKEN_BEDROCK = bearerToken
+        // The Bedrock SDK accepts the bearer token via options.apiKey at factory-call
+        // time; do not mutate process.env (which would leak the credential to other
+        // provider loads in the same runtime and persist past this call).
+        if (bearerToken) options.apiKey = bearerToken
+        delete options.bearerToken
         const containerCreds = Boolean(
           process.env.AWS_CONTAINER_CREDENTIALS_RELATIVE_URI || process.env.AWS_CONTAINER_CREDENTIALS_FULL_URI,
         )

@@ -59,7 +59,7 @@ function model(input: {
     providerID: "codo",
     api: {
       id: "codo",
-      url: "https://opencode.ai",
+      url: "https://codo-ai.vercel.app",
       npm: "@ai-sdk/openai-compatible",
     },
     name: input.name,

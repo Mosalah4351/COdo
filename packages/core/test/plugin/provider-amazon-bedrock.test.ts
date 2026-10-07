@@ -191,7 +191,7 @@ describe("AmazonBedrockPlugin", () => {
     ),
   )
 
-  it.effect("loads bearer token option into env and uses bearer auth", () =>
+  it.effect("threads bearer token option into sdk as apiKey without env mutation", () =>
     withEnv({ AWS_ACCESS_KEY_ID: undefined, AWS_BEARER_TOKEN_BEDROCK: undefined, AWS_PROFILE: undefined }, () =>
       Effect.gen(function* () {
         const plugin = yield* PluginV2.Service
@@ -214,7 +214,8 @@ describe("AmazonBedrockPlugin", () => {
           {},
         )
         yield* Effect.promise(() => bedrockFetch(result.sdk)("https://bedrock.example", { method: "POST" }))
-        expect(process.env.AWS_BEARER_TOKEN_BEDROCK).toBe("option-token")
+        // The whole point of the fix: process.env is NOT mutated by option-driven sdk creation.
+        expect(process.env.AWS_BEARER_TOKEN_BEDROCK).toBeUndefined()
         expect(headers).toEqual(["Bearer option-token"])
       }),
     ),

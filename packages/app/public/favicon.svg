@@ -1,1 +1,5 @@
-../../ui/src/assets/favicon/favicon.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#000000"/>
+  <rect x="3.5" y="3.5" width="25" height="25" fill="none" stroke="#A020F0" stroke-width="3"/>
+  <text x="16" y="22" text-anchor="middle" font-family="monospace" font-weight="800" font-size="15" fill="#00FF66">&gt;_</text>
+</svg>

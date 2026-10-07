@@ -8,6 +8,7 @@ import { usePluginRuntime } from "../../plugin/runtime"
 
 import { getScrollAcceleration } from "../../util/scroll"
 import { WorkspaceLabel } from "../../component/workspace-label"
+import { RtlText } from "../../component/rtl-text"
 import { SplitBorder } from "../../ui/border"
 
 export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
@@ -56,14 +57,14 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
               share_url={session()!.share?.url}
             >
               <box paddingRight={1}>
-                <text fg={theme.text}>
+                <RtlText fg={theme.text}>
                   <b>{session()!.title}</b>
-                </text>
+                </RtlText>
                 <Show when={InstallationChannel !== "latest"}>
-                  <text fg={theme.textMuted}>{props.sessionID}</text>
+                  <RtlText fg={theme.textMuted}>{props.sessionID}</RtlText>
                 </Show>
                 <Show when={session()!.workspaceID}>
-                  <text fg={theme.textMuted}>
+                  <RtlText fg={theme.textMuted}>
                     <Show
                       when={workspace()}
                       fallback={<WorkspaceLabel type="unknown" name={session()!.workspaceID!} status="error" icon />}
@@ -77,10 +78,10 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
                         />
                       )}
                     </Show>
-                  </text>
+                  </RtlText>
                 </Show>
                 <Show when={session()!.share?.url}>
-                  <text fg={theme.textMuted}>{session()!.share!.url}</text>
+                  <RtlText fg={theme.textMuted}>{session()!.share!.url}</RtlText>
                 </Show>
               </box>
             </pluginRuntime.Slot>
@@ -91,19 +92,19 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
             })()}>
               <box>
                 <box flexDirection="row" gap={1}>
-                  <text fg={theme.text}>
+                  <RtlText fg={theme.text}>
                     <b>Goal</b>
-                  </text>
+                  </RtlText>
                 </box>
                 <Show when={goal()?.condition}>
                   {(condition) => (
                     <box flexDirection="row" gap={1}>
-                      <text flexShrink={0} fg={theme.primary}>
+                      <RtlText flexShrink={0} fg={theme.primary}>
                         •
-                      </text>
-                      <text fg={theme.textMuted} wrapMode="word">
+                      </RtlText>
+                      <RtlText fg={theme.textMuted} wrapMode="word">
                         {condition()}
-                      </text>
+                      </RtlText>
                     </box>
                   )}
                 </Show>
@@ -119,12 +120,12 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
                 })()}>
                   {(status) => (
                     <box flexDirection="row" gap={1}>
-                      <text flexShrink={0} fg={status().dot}>
+                      <RtlText flexShrink={0} fg={status().dot}>
                         •
-                      </text>
-                      <text fg={theme.textMuted} wrapMode="word">
+                      </RtlText>
+                      <RtlText fg={theme.textMuted} wrapMode="word">
                         Judge: {status().label}
-                      </text>
+                      </RtlText>
                     </box>
                   )}
                 </Show>
@@ -135,13 +136,13 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
 
         <box flexShrink={0} gap={1} paddingTop={1}>
           <pluginRuntime.Slot name="sidebar_footer" mode="single_winner" session_id={props.sessionID}>
-            <text fg={theme.textMuted}>
+            <RtlText fg={theme.textMuted}>
               <span style={{ fg: theme.success }}>•</span> <b>CO</b>
               <span style={{ fg: theme.text }}>
                 <b>do</b>
               </span>{" "}
               <span>{InstallationVersion}</span>
-            </text>
+            </RtlText>
           </pluginRuntime.Slot>
         </box>
       </box>

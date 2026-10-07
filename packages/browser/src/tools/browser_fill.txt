@@ -1,0 +1,3 @@
+Clear an input field and fill it with the specified value.
+Use this to populate form fields like text inputs, textareas, and search boxes.
+The element is cleared before typing the new value.

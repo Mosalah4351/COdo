@@ -2,10 +2,10 @@
   "name": "@codo-ai/web",
   "type": "module",
   "license": "MIT",
-  "version": "1.17.4",
+  "version": "1.18.21",
   "scripts": {
     "dev": "astro dev",
-    "dev:remote": "VITE_API_URL=https://api.opencode.ai astro dev",
+    "dev:remote": "VITE_API_URL=https://api.codo-ai.vercel.app astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

@@ -1,4 +1,5 @@
 /** @jsxImportSource @opentui/solid */
+import { RtlText } from "@codo-ai/tui/component/rtl-text"
 import { TextAttributes, type ColorInput } from "@opentui/core"
 import { useTerminalDimensions } from "@opentui/solid"
 import { createEffect, createMemo, createSignal, type Accessor } from "solid-js"
@@ -237,9 +238,9 @@ export function RunFooterMenu(props: {
           backgroundColor={props.background ? props.theme().shade : transparent}
         >
           {border() ? (
-            <text fg={props.theme().border} wrapMode="none">
+            <RtlText fg={props.theme().border} wrapMode="none">
               ┃
-            </text>
+            </RtlText>
           ) : undefined}
           <box
             flexGrow={1}
@@ -248,9 +249,9 @@ export function RunFooterMenu(props: {
             paddingRight={props.paddingRight ?? 0}
             backgroundColor={props.background ? props.theme().shade : transparent}
           >
-            <text fg={props.theme().muted} wrapMode="none" truncate>
+            <RtlText fg={props.theme().muted} wrapMode="none" truncate>
               {props.empty ?? "No matching items"}
-            </text>
+            </RtlText>
           </box>
         </box>
       ) : (
@@ -262,14 +263,14 @@ export function RunFooterMenu(props: {
           if (row.type === "header") {
             return (
               <box paddingLeft={props.paddingLeft ?? 1} paddingRight={props.paddingRight ?? 1}>
-                <text
+                <RtlText
                   fg={props.headerColor ?? props.theme().highlight}
                   attributes={TextAttributes.BOLD}
                   wrapMode="none"
                   truncate
                 >
                   {row.label}
-                </text>
+                </RtlText>
               </box>
             )
           }
@@ -286,9 +287,9 @@ export function RunFooterMenu(props: {
           return (
             <box paddingRight={0} flexDirection="row" backgroundColor={background()}>
               {border() ? (
-                <text fg={props.theme().highlight} bg={background()} wrapMode="none">
+                <RtlText fg={props.theme().highlight} bg={background()} wrapMode="none">
                   {active() ? "▌" : " "}
-                </text>
+                </RtlText>
               ) : undefined}
               <box
                 flexGrow={1}
@@ -299,7 +300,7 @@ export function RunFooterMenu(props: {
               >
                 <box width="100%" flexDirection="row" justifyContent="space-between" gap={1}>
                   <box flexDirection="row" gap={0} flexGrow={1} flexShrink={1}>
-                    <text
+                    <RtlText
                       fg={active() ? props.theme().selectedText : props.theme().text}
                       attributes={active() ? TextAttributes.BOLD : undefined}
                       wrapMode="none"
@@ -307,17 +308,17 @@ export function RunFooterMenu(props: {
                       flexShrink={0}
                     >
                       {row.item.display}
-                    </text>
+                    </RtlText>
                     {row.item.description ? (
                       <>
-                        <text
+                        <RtlText
                           fg={active() ? props.theme().selectedText : props.theme().muted}
                           wrapMode="none"
                           flexShrink={0}
                         >
                           {descriptionPad(row.item)}
-                        </text>
-                        <text
+                        </RtlText>
+                        <RtlText
                           fg={active() ? props.theme().selectedText : props.theme().muted}
                           wrapMode="none"
                           truncate
@@ -325,12 +326,12 @@ export function RunFooterMenu(props: {
                           flexShrink={1}
                         >
                           {descriptionText(row.item)}
-                        </text>
+                        </RtlText>
                       </>
                     ) : undefined}
                   </box>
                   {row.item.footer ? (
-                    <text
+                    <RtlText
                       fg={active() ? props.theme().selectedText : props.theme().muted}
                       attributes={active() ? TextAttributes.BOLD : undefined}
                       wrapMode="none"
@@ -338,7 +339,7 @@ export function RunFooterMenu(props: {
                       flexShrink={0}
                     >
                       {row.item.footer}
-                    </text>
+                    </RtlText>
                   ) : undefined}
                 </box>
               </box>

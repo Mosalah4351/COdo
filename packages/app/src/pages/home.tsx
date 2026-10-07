@@ -360,7 +360,7 @@ function HomeDesign() {
           clearNotifications={clearNotifications}
           unseenCount={unseenCount}
           openSettings={openSettings}
-          openHelp={() => platform.openLink("https://COdo.ai/desktop-feedback")}
+          openHelp={() => platform.openLink("https://codo.ai/desktop-feedback")}
           language={language}
         />
 
@@ -1106,7 +1106,7 @@ function LegacyHome() {
   const recent = createMemo(() => {
     return sync.data.project
       .slice()
-      .sort((a, b) => (b.time.updated ?? b.time.created) - (a.time.updated ?? a.time.created))
+      .sort((a: any, b: any) => (b.time.updated ?? b.time.created) - (a.time.updated ?? a.time.created))
       .slice(0, 5)
   })
 

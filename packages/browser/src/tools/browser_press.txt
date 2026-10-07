@@ -1,0 +1,3 @@
+Press a keyboard key (Enter, Tab, Escape, Arrow keys, etc.).
+Use this to submit forms, navigate between fields, dismiss dialogs, or trigger keyboard shortcuts.
+Supports standard keyboard key names recognized by Playwright/CDP.

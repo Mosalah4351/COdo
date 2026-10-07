@@ -1,0 +1,3 @@
+Get page URL, page title, or an element attribute.
+Use property "url" to get the current URL, "title" to get the page title.
+When ref or selector is provided, gets the specified attribute from that element.

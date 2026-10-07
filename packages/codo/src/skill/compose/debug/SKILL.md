@@ -4,6 +4,12 @@ hidden: true
 description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:debug`** via the skill tool instead of following the instructions below. It follows the same systematic four-phase approach.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Systematic Debugging
 
 ## Overview

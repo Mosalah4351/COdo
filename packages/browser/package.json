@@ -1,0 +1,27 @@
+{
+  "name": "@codo-ai/browser",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent-browser": "./src/agent-browser.ts",
+    "./config": "./src/config.ts",
+    "./daemon": "./src/daemon.ts",
+    "./plugin": "./src/plugin.ts",
+    "./tools/core": "./src/tools/core.ts",
+    "./tools/tab": "./src/tools/tab.ts",
+    "./tools/react": "./src/tools/react.ts",
+    "./tools/network": "./src/tools/network.ts"
+  },
+  "dependencies": {
+    "@codo-ai/core": "workspace:*",
+    "@codo-ai/plugin": "workspace:*",
+    "codo": "workspace:*",
+    "effect": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "@tsconfig/bun": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

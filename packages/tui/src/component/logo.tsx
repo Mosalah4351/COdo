@@ -3,6 +3,7 @@ import { useRenderer } from "@opentui/solid"
 import { For, createMemo, createSignal, onCleanup, onMount, type JSX } from "solid-js"
 import { useTheme, tint } from "../context/theme"
 import { go, logo } from "../logo"
+import { RtlText } from "./rtl-text"
 
 export type LogoShape = {
   left: string[]
@@ -551,9 +552,16 @@ function buildIdleState(t: number, ctx: LogoContext): IdleState {
   return { cfg, reach, rings, active }
 }
 
+// Brand colors from the user's brief.
+const BRAND_GREEN = RGBA.fromInts(0, 255, 102) // #00FF66
+const BRAND_VIOLET = RGBA.fromInts(148, 0, 228) // #9400e4
+
 export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean } = {}) {
   const ctx = props.shape ? build(props.shape) : DEFAULT
   const { theme } = useTheme()
+  // When the caller doesn't pin `ink`, the left half (the C block) reads violet
+  // and the right half (O-D-O) reads the brand green — the two-color split from
+  // the brief the shape.
   const renderer = useRenderer()
   const [rings, setRings] = createSignal<Ring[]>([])
   const [hold, setHold] = createSignal<Hold>()
@@ -693,9 +701,9 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean } = 
     return Array.from(line).map((char, i) => {
       if (char === " ") {
         return (
-          <text fg={ink} attributes={attrs} selectable={false}>
+          <RtlText fg={ink} attributes={attrs} selectable={false}>
             {char}
-          </text>
+          </RtlText>
         )
       }
 
@@ -740,82 +748,82 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean } = 
 
       if (char === "_") {
         return (
-          <text
+          <RtlText
             fg={shade(inkTinted, theme, s * 0.08)}
             bg={shade(shadowTinted, theme, ghost(s, 0.24) + ghost(q, 0.06))}
             attributes={attrs}
             selectable={false}
           >
             {" "}
-          </text>
+          </RtlText>
         )
       }
 
       if (char === "^") {
         return (
-          <text
+          <RtlText
             fg={shade(inkTop, theme, n + p + e + b)}
             bg={shade(shadowBot, theme, ghost(s, 0.18) + ghost(q, 0.05) + ghost(b, 0.08))}
             attributes={attrs}
             selectable={false}
           >
             ▀
-          </text>
+          </RtlText>
         )
       }
 
       if (char === "~") {
         return (
-          <text fg={shade(shadowTop, theme, ghost(s, 0.22) + ghost(q, 0.05))} attributes={attrs} selectable={false}>
+          <RtlText fg={shade(shadowTop, theme, ghost(s, 0.22) + ghost(q, 0.05))} attributes={attrs} selectable={false}>
             ▀
-          </text>
+          </RtlText>
         )
       }
 
       if (char === ",") {
         return (
-          <text fg={shade(shadowBot, theme, ghost(s, 0.22) + ghost(q, 0.05))} attributes={attrs} selectable={false}>
+          <RtlText fg={shade(shadowBot, theme, ghost(s, 0.22) + ghost(q, 0.05))} attributes={attrs} selectable={false}>
             ▄
-          </text>
+          </RtlText>
         )
       }
 
       // Solid █: render as ▀ so the top pixel (fg) and bottom pixel (bg) can carry independent shimmer values
       if (char === "█" && useSubpixelBlocks()) {
         return (
-          <text
+          <RtlText
             fg={shade(inkTop, theme, n + p + e + b)}
             bg={shade(inkBot, theme, n + p + e + b)}
             attributes={attrs}
             selectable={false}
           >
             ▀
-          </text>
+          </RtlText>
         )
       }
 
       // ▀ top-half-lit: fg uses top-pixel sample, bg stays transparent/panel
       if (char === "▀") {
         return (
-          <text fg={shade(inkTop, theme, n + p + e + b)} attributes={attrs} selectable={false}>
+          <RtlText fg={shade(inkTop, theme, n + p + e + b)} attributes={attrs} selectable={false}>
             ▀
-          </text>
+          </RtlText>
         )
       }
 
       // ▄ bottom-half-lit: fg uses bottom-pixel sample
       if (char === "▄") {
         return (
-          <text fg={shade(inkBot, theme, n + p + e + b)} attributes={attrs} selectable={false}>
+          <RtlText fg={shade(inkBot, theme, n + p + e + b)} attributes={attrs} selectable={false}>
             ▄
-          </text>
+          </RtlText>
         )
       }
 
       return (
-        <text fg={shade(inkTinted, theme, n + p + e + b)} attributes={attrs} selectable={false}>
+        <RtlText fg={shade(inkTinted, theme, n + p + e + b)} attributes={attrs} selectable={false}>
           {char}
-        </text>
+        </RtlText>
       )
     })
   }
@@ -857,13 +865,14 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean } = 
         {(line, index) => (
           <box flexDirection="row" gap={1}>
             <box flexDirection="row">
-              {renderLine(line, index(), props.ink ?? theme.textMuted, !!props.ink, 0, frame(), dusk(), idleState())}
+              {renderLine(line, index(), props.ink ?? BRAND_VIOLET, !!props.ink, 0, frame(), dusk(), idleState())}
             </box>
             <box flexDirection="row">
               {renderLine(
                 ctx.shape.right[index()],
                 index(),
-                props.ink ?? theme.text,
+                // Right half (O-D-O) takes the brand's brighter ink for emphasis.
+                props.ink ?? BRAND_GREEN,
                 true,
                 ctx.LEFT + GAP,
                 frame(),

@@ -1,4 +1,5 @@
 import { createResource, createMemo } from "solid-js"
+import { RtlText } from "./rtl-text"
 import { DialogSelect } from "../ui/dialog-select"
 import { useSDK } from "../context/sdk"
 import { useDialog } from "../ui/dialog"
@@ -71,8 +72,8 @@ export function DialogConsoleOrg() {
         category: accountLabel(item),
         categoryView: (
           <box flexDirection="row" gap={2}>
-            <text fg={theme.accent}>{item.accountEmail}</text>
-            <text fg={theme.textMuted}>{accountHost(item.accountUrl)}</text>
+            <RtlText fg={theme.accent}>{item.accountEmail}</RtlText>
+            <RtlText fg={theme.textMuted}>{accountHost(item.accountUrl)}</RtlText>
           </box>
         ),
         onSelect: async () => {

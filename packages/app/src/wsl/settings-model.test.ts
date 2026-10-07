@@ -11,7 +11,7 @@ describe("WSL server settings presentation", () => {
     expect(wslRuntimeRetryable({ kind: "stopped" })).toBe(true)
   })
 
-  test("offers install and update only when OpenCode needs attention", () => {
+  test("offers install and update only when COdo needs attention", () => {
     expect(wslCOdoAction(undefined)).toBeUndefined()
     expect(
       wslCOdoAction({
@@ -22,21 +22,21 @@ describe("WSL server settings presentation", () => {
         matchesDesktop: null,
         error: null,
       }),
-    ).toBe("Install OpenCode")
+    ).toBe("Install COdo")
     expect(
       wslCOdoAction({
         distro: "Debian",
-        resolvedPath: "/usr/local/bin/opencode",
+        resolvedPath: "/usr/local/bin/COdo",
         version: "1.2.2",
         expectedVersion: "1.2.3",
         matchesDesktop: false,
         error: null,
       }),
-    ).toBe("Update OpenCode")
+    ).toBe("Update COdo")
     expect(
       wslCOdoAction({
         distro: "Debian",
-        resolvedPath: "/usr/local/bin/opencode",
+        resolvedPath: "/usr/local/bin/COdo",
         version: "1.2.3",
         expectedVersion: "1.2.3",
         matchesDesktop: true,
@@ -45,13 +45,13 @@ describe("WSL server settings presentation", () => {
     ).toBeUndefined()
   })
 
-  test("probes the selected distro before entering the OpenCode step", async () => {
+  test("probes the selected distro before entering the COdo step", async () => {
     const calls: string[] = []
     await enterWslCOdoStep(
       "Debian",
       async (distro) => calls.push(distro),
       (step) => calls.push(step),
     )
-    expect(calls).toEqual(["Debian", "opencode"])
+    expect(calls).toEqual(["Debian", "COdo"])
   })
 })

@@ -81,12 +81,16 @@ export async function listen(opts: ListenOptions): Promise<Listener> {
 
 const listenEffect: (opts: ListenOptions) => Effect.Effect<EffectListener, unknown> = Effect.fn("Server.listen")(
   function* (opts: ListenOptions) {
+    console.error("[Server.listen] Starting server on", opts.hostname, opts.port)
     const state = yield* startWithPortFallback(opts)
+    console.error("[Server.listen] Got state")
     const address = yield* tcpAddress(state)
+    console.error("[Server.listen] Got address", address)
     const listenerUrl = makeURL(opts.hostname, address.port)
     url = listenerUrl
 
     const unpublishMdns = yield* setupMdns(opts, address.port, state.scope)
+    console.error("[Server.listen] MDNS setup done")
 
     return {
       hostname: opts.hostname,
@@ -122,10 +126,16 @@ function startWithPortFallback(opts: ListenOptions) {
 }
 
 function startListener(opts: ListenOptions, port: number) {
+  console.error("[startListener] Starting listener on port", port)
   const scope = Scope.makeUnsafe()
   return Layer.buildWithMemoMap(listenerLayer(opts, port), Layer.makeMemoMapUnsafe(), scope).pipe(
     Effect.provide(HttpApiApp.context),
-    Effect.onError(() => Scope.close(scope, Exit.void).pipe(Effect.ignore)),
+    Effect.tap(() => Effect.sync(() => console.error("[startListener] Layer built successfully"))),
+    Effect.onError((cause) => {
+      const msg = cause?.failures?.[0]?.error?.message || cause?.message || String(cause)
+      console.error("[startListener] Error building layer:", msg)
+      return Scope.close(scope, Exit.void).pipe(Effect.ignore)
+    }),
     Effect.map(
       (ctx): ListenerState => ({
         scope,

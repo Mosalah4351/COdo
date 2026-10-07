@@ -22,17 +22,20 @@ export const files = Effect.fn("ConfigPaths.projectFiles")(function* (
 
 export const directories = Effect.fn("ConfigPaths.directories")(function* (directory: string, worktree?: string) {
   const afs = yield* FSUtil.Service
+  // `.opencode` fallback: read-only. COdo never creates that directory;
+  // it exists solely so users who still have `~/.opencode/` can be read from
+  // during migration. New installs write to `.codo/` only.
   return unique([
     Global.Path.config,
     ...(!Flag.CODO_DISABLE_PROJECT_CONFIG
       ? yield* afs.up({
-          targets: [".codo"],
+          targets: [".codo", ".opencode"],
           start: directory,
           stop: worktree,
         })
       : []),
     ...(yield* afs.up({
-      targets: [".codo"],
+      targets: [".codo", ".opencode"],
       start: Global.Path.home,
       stop: Global.Path.home,
     })),

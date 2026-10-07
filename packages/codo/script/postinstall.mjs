@@ -24,9 +24,9 @@ const archMap = {
 
 const platform = platformMap[os.platform()] ?? os.platform()
 const arch = archMap[os.arch()] ?? os.arch()
-const base = `opencode-${platform}-${arch}`
-const sourceBinary = platform === "windows" ? "opencode.exe" : "opencode"
-const targetBinary = path.join(__dirname, "bin", "opencode.exe")
+const base = `codo-${platform}-${arch}`
+const sourceBinary = platform === "windows" ? "codo.exe" : "codo"
+const targetBinary = path.join(__dirname, "bin", "codo.exe")
 
 function supportsAvx2() {
   if (arch !== "x64") return false
@@ -116,27 +116,43 @@ function packageNames() {
   return [base]
 }
 
+// Published packages may name the binary exactly ("codo.exe" / "codo") or with
+// a version suffix ("codo-2.23.5.exe"), so resolve by pattern rather than by
+// a single hardcoded filename.
+function findBinary(dir) {
+  const entries = fs.readdirSync(path.join(dir, "bin"))
+  const match =
+    entries.find((entry) => entry === sourceBinary) ??
+    (platform === "windows"
+      ? entries.find((entry) => entry.startsWith("codo") && entry.endsWith(".exe"))
+      : undefined) ??
+    entries.find((entry) => entry.startsWith("codo"))
+  if (!match) throw new Error(`Binary not found in ${path.join(dir, "bin")}`)
+  return path.join(dir, "bin", match)
+}
+
+// Platform binaries live in scoped packages (@codo-ai/codo-<platform>-<arch>),
+// while packageNames() works with the unscoped suffix.
+const scope = "@codo-ai/"
+
 function resolveBinary(name) {
-  const packageJsonPath = require.resolve(`${name}/package.json`)
-  const binaryPath = path.join(path.dirname(packageJsonPath), "bin", sourceBinary)
-  if (!fs.existsSync(binaryPath)) throw new Error(`Binary not found at ${binaryPath}`)
-  return binaryPath
+  return findBinary(path.dirname(require.resolve(`${scope}${name}/package.json`)))
 }
 
 function installPackage(name) {
-  const version = packageJson.optionalDependencies?.[name]
+  const version = packageJson.optionalDependencies?.[`${scope}${name}`]
   if (!version) return
 
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "opencode-install-"))
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "codo-install-"))
   try {
     const result = childProcess.spawnSync(
       "npm",
-      ["install", "--ignore-scripts", "--no-save", "--loglevel=error", "--prefix", temp, `${name}@${version}`],
+      ["install", "--ignore-scripts", "--no-save", "--loglevel=error", "--prefix", temp, `${scope}${name}@${version}`],
       { stdio: "inherit", windowsHide: true },
     )
     if (result.status !== 0) return
-    const packageDir = path.join(temp, "node_modules", name)
-    copyBinary(path.join(packageDir, "bin", sourceBinary), targetBinary)
+    const packageDir = path.join(temp, "node_modules", scope, name)
+    copyBinary(findBinary(packageDir), targetBinary)
     return true
   } finally {
     fs.rmSync(temp, { recursive: true, force: true })
@@ -175,8 +191,8 @@ function main() {
   }
 
   throw new Error(
-    `It seems your package manager failed to install the right opencode CLI package. Try manually installing ${packageNames()
-      .map((name) => JSON.stringify(name))
+    `It seems your package manager failed to install the right codo CLI package. Try manually installing ${packageNames()
+      .map((name) => JSON.stringify(`@codo-ai/${name}`))
       .join(" or ")}.`,
   )
 }

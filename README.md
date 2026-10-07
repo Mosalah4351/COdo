@@ -1,315 +1,149 @@
-<div align="center">
-
 # COdo
 
-**A terminal-native AI coding assistant with structured, workflow-driven development.**
+> The security-native AI coding agent. Six specialized security personas, scope-gated
+> pentesting, a durable findings store, and an orchestrated multi-agent workflow — all in
+> one terminal-first CLI.
 
-Your terminal asked for an AI assistant. We gave it a whole personality.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)](#)
+[![npm](https://img.shields.io/npm/v/codo-ai)](https://www.npmjs.com/package/codo-ai)
 
-[![npm](https://img.shields.io/npm/v/@codo-ai/cli?color=ff6b6b&label=npm)](https://www.npmjs.com/package/@codo-ai/cli)
-[![npm downloads](https://img.shields.io/npm/dw/@codo-ai/cli?color=00ff00&label=downloads%2Fweek)](https://www.npmjs.com/package/@codo-ai/cli)
-[![License](https://img.shields.io/github/license/anomalyco/opencode?color=blue)](./LICENSE)
-[![Built with Bun](https://img.shields.io/badge/built%20with-Bun-f9f1e1)](https://bun.sh)
-[![Themes](https://img.shields.io/badge/themes-35%2B-a78bfa)](https://github.com/anomalyco/opencode)
-
-```bash
-npm i -g @codo-ai/cli && codo
+```text
+ ██████╗  ██████╗  ██████╗   ██████╗
+██╔════╝ ██╔═══██╗ ██╔══██╗ ██╔═══██╗
+██║      ██║   ██║ ██║  ██║ ██║   ██║
+██║      ██║   ██║ ██║  ██║ ██║   ██║
+╚██████╗ ╚██████╔╝ ██████╔╝ ╚██████╔╝
+ ╚═════╝  ╚═════╝  ╚═════╝   ╚═════╝
 ```
 
-<br>
-
-![COdo TUI — main screen showing the pixel logo, input prompt, and keyboard shortcuts](assets/screenshot-main.png)
-
-</div>
-
----
-
-> No browser tab. No separate app. No context-switching. Just you, your terminal, and an AI that knows what phase of the project you're in.
-
-Most AI coding tools give you a place to type questions. COdo gives you a **system** — different modes for different kinds of work, a goal anchor so nothing goes off-script, and a skills layer that keeps the agent focused on what actually matters right now.
+COdo is an AI coding agent for teams that treat security as part of the workflow, not a
+separate step. It writes code like any agent — and then it audits that code, threat-models
+the features you're about to build, scopes and executes authorized penetration tests, and
+remembers every finding across sessions. Stop losing vulnerabilities in markdown notes;
+every finding gets an ID, a severity, evidence, and a remediation path.
 
 ---
 
-## Table of Contents
-
-- [Install](#install)
-- [Workflows](#workflows)
-  - [Powered by GSD Pi](#powered-by-gsd-pi)
-- [Commands](#commands)
-- [BYOK — Bring Your Own Key](#byok)
-- [Skills System](#skills-system)
-- [Themes](#themes)
-- [VS Code Extension](#vs-code-extension)
-- [Running Locally](#running-locally)
-- [Contributing](#contributing)
-- [Tech Stack](#tech-stack)
-- [License](#license)
-
----
-
-## Install
+## Installation
 
 ```bash
-npm i -g @codo-ai/cli
+npm install -g codo-ai
 ```
 
-Then in any terminal:
+The npm package `codo-ai` installs a native binary for your platform (macOS, Linux, or
+Windows; Intel or Apple Silicon/ARM64; glibc or musl; baseline AVX2 fallbacks included) via
+a zero-dependency postinstall. No Node runtime required after install.
 
 ```bash
 codo
 ```
 
-No YAML config ritual. No 47-step setup guide. It just runs.
+You'll land in the COdo TUI. The default agent is `compose` for orchestrated multi-step
+work, and `@sec-test` handles everything security-related. Type `/help` to see the built-in
+commands.
 
 ---
 
-## Workflows
+## ✦ sec-test: security at the heart of the agent
 
-COdo's `/workflow` command is the core of the system. Pick a mode and the entire agent — its tools, skills, and behavior — adapts to match.
+`@sec-test` is not a script or a lint rule — it's the full security lifecycle, built from
+**six specialized personas** and a **29-skill library**. You invoke it the same way you ask
+any other question; COdo routes to the right specialist.
 
-| Workflow | What it's for |
-|---|---|
-| **Vibe Mode** | Freeform, no rules. Great for side projects at 2am. |
-| **GSD** *(Get Shit Done)* | Spec → milestones → phases → shipped. No detours. |
-| **SpecKit** | GitHub's own spec-driven toolkit, baked in. |
-| **GStack** | Garry Tan's 23-tool startup playbook. For when you mean business. |
+### The six personas
 
-When you switch workflows, `/skills` auto-filters to only show tools relevant to that mode. No "startup pitch deck" skill showing up while you're debugging a null pointer.
+| Persona | Phase | What it does |
+|---|---|---|
+| **`sec-architect`** | Design | Threat-model features before code exists (STRIDE/PASTA, ASVS mapping) |
+| **`sec-appsec`** | Code | Static audit of any diff or PR — injection, secrets, authz, OWASP Top 10 |
+| **`sec-devsecops`** | Build/ship | Pipeline hardening (NIST SSDF), SBOMs, container scans, supply-chain attestation |
+| **`sec-pentest`** | Validate | Scope-gated dynamic testing against running targets |
+| **`sec-qa`** | Verify | Test generation, coverage audits, mutation testing, regression guards |
+| **`sec-secops`** | Operate | Audits COdo itself, tracks posture trend over time |
 
-```
-/workflow → "GSD" selected
-              ↓
-        COdo enters spec-driven mode
-        /skills shows only GSD tools
-        Agent follows your milestone plan
-        You ship the thing
-```
+### What makes it different
 
-> [!TIP]
-> Start with **GSD** when building from scratch. Set the spec, define the goal, and let COdo drive phase by phase.
+- **A durable findings store.** Every vulnerability is written to a SQLite
+  `security_finding` table — ID, severity, CVSS, evidence, remediation, status. Query it,
+  report on it, watch it age. Re-running a scan de-duplicates instead of duplicating.
+- **A real scope gate.** `sec-pentest` cannot send a single packet to a target unless
+  `.codo/security-scope.json` exists, is signed, unexpired, and names that target. The
+  network path is code-enforced — `curl`, `nmap`, and friends are denied for personas.
+- **29 ready-to-run skills.** From `threat-model` and `code-audit` to `secrets-scan`,
+  `dependency-audit`, `fuzz`, `exploit-verify`, `mutation-test`, `incident-runbook`,
+  `regression-guard`, and `posture-report`.
+- **Human-readable + machine-readable.** Every skill writes markdown under
+  `.planning/security/` *and* records findings in the store; `codo sec report` exports
+  markdown, JSON, or SARIF for your CI.
+- **Regression guards for every fix.** When a finding is fixed, `sec-qa` can convert it
+  into a permanent test so the bug can't come back unnoticed.
 
-### Powered by GSD Pi
+### Example flows
 
-The GSD workflow runs on [GSD Pi](https://github.com/open-gsd/gsd-pi) — a meta-prompting, context engineering, and spec-driven development system built to keep agents on track across long autonomous sessions.
+```text
+# Threat-model a feature before it's built
+@sec-test threat-model the new payment flow
 
-GSD Pi handles the hard parts: breaking work into milestones, slices, and tasks; isolating implementation in Git worktrees; and tracking project state locally so the agent never loses the thread. COdo integrates this directly into the `/workflow` system so you get the full power of spec-driven development without leaving your terminal.
+# Audit the current branch's changes
+@sec-test audit this branch for security issues
 
-> [!NOTE]
-> Want to use GSD Pi standalone or learn more about how it works under the hood? See the [GSD Pi repository](https://github.com/open-gsd/gsd-pi) and join the [GSD Discord community](https://discord.com/invite/nKXTsAcmbT).
+# Authorize and pentest a running target (scope file required)
+@sec-test scope https://staging.example.com
+@sec-test pentest
 
----
-
-## Commands
-
-| Command | What it does |
-|---|---|
-| `/workflow` | Switch modes — GSD, SpecKit, GStack, or Vibe |
-| `/goal` | Anchor every suggestion to a single objective |
-| `/scraper` | Pull structured data from websites, legally |
-| `/skills` | Browse tools available for your current workflow |
-
-### `/goal`
-
-Set this before anything else:
-
-```
-/goal Build a real-time notification system with WebSockets
-```
-
-Every suggestion, tool call, and line of code is now anchored to that. No drift. No surprise architecture rewrites halfway through.
-
-### `/scraper`
-
-```
-/scraper get product listings from example.com/shop
-```
-
-Checks `robots.txt` and ToS before touching anything. Uses adaptive HTML parsing so it doesn't break when a site updates its CSS. If direct access is blocked, it generates a standalone Python script you can run locally.
-
----
-
-## BYOK
-
-COdo doesn't lock you into any AI provider. Plug in OpenAI, Anthropic, NVIDIA, or any OpenAI-compatible API. Switch models mid-project. Your workflow, your keys.
-
-### Free API key — no credit card required
-
-NVIDIA's NIM platform gives you free-tier access to production-quality models (Llama, Mistral, and more):
-
-**https://build.nvidia.com/**
-
-Once you have a key, add it to your config:
-
-<details>
-<summary>Config file location</summary>
-
-- **Windows:** `C:\Users\<you>\.codo\config.json`
-- **Mac/Linux:** `~/.codo/config.json`
-
-</details>
-
-```json
-{
-  "providers": {
-    "nvidia": {
-      "apiKey": "YOUR_NVIDIA_KEY_HERE"
-    }
-  }
-}
+# Weekly posture digest
+@sec-test report
 ```
 
 ---
 
-## Skills System
+## compose: orchestrated multi-agent work
 
-Skills are markdown files that load into the agent's context when needed. Think of them as modular instructions — swappable, composable, and scoped to workflows.
+For everything that's not security — and the glue around it — COdo routes through the
+**`compose` agent**: an orchestrator that plans your request, dispatches specialized
+subagents (33 workflow agents), and produces structured artifacts as it goes:
 
-**Where they live:**
-
-| Path | Scope |
-|---|---|
-| `.opencode/skills/` | Project-specific, checked into your repo |
-| `~/.codo/skills/` | Global, follows you across all projects |
-
-Skills can be **workflow-specific** (only appear in the right mode) or **universal** (always available).
-
-**Writing a skill:**
-
-```markdown
----
-name: my-skill
-description: "Does the thing I always forget how to do"
-compatibility: "OpenCode (with tools)"
----
-
-# Instructions for the agent here
+```text
+discuss → plan → execute → verify → review
 ```
+
+Ask for a feature and get a roadmap, a numbered plan, parallel waves of implementation,
+and verification against acceptance criteria — with commit hygiene built in. `compose`
+also runs the GSD workflow system for milestone-driven development (`.planning/` project
+state, phases, cross-agent audits).
 
 ---
 
-## Themes
+## And more
 
-35+ built-in themes. Your terminal should look good.
-
-<details>
-<summary>Browse all themes</summary>
-
-| Taste | Themes |
-|---|---|
-| Dark & brooding | Dracula, AMOLED, One Dark, Cobalt2, Nightowl |
-| Cozy & aesthetic | Catppuccin, Rose Pine, Aura, Tokyo Night, Palenight |
-| Nature-coded | Everforest, Gruvbox, Nord, Kanagawa, Flexoki |
-| Chaotic energy | Synthwave84, Matrix, Osaka Jade, Lucent Orange |
-| Calm & minimal | Vesper, Zenburn, Mercury, GitHub, Solarized |
-
-</details>
-
-Includes a custom `codo` theme and all the classics.
+- **Terminal-first TUI** — SolidJS + OpenTUI, with an embedded web workbench
+  (`codo web`) and an optional Electron desktop shell.
+- **Persistent sessions** — durable session inputs, crash-safe resume, and process-local
+  execution orchestration with EventV2 replay.
+- **Every major model provider** — OpenAI, Anthropic, Google, Bedrock, Azure, Groq,
+  Mistral, xAI, OpenRouter, and more via the AI SDK gateway, plus OAuth sign-in.
+- **Plugins** — a typed plugin API for extending the agent, tools, and skills.
+- **Generated SDK** — the HTTP API is spec-first, with a JS/TS SDK generated from the
+  OpenAPI schema.
 
 ---
 
+## Requirements
 
-
-## Running Locally
-
-```bash
-# Clone the repo
-git clone https://github.com/anomalyco/opencode
-cd opencode
-
-# Start the dev server
-cd packages/opencode
-bun dev
-
-# Type check
-bun typecheck
-
-# Run tests (from the package dir, not the root)
-bun test
-```
-
----
-
-## Contributing
-
-**Branches** — short, 2–3 words, hyphens only:
-
-```
-# Good
-session-recovery
-fix-scroll
-workflow-filter
-
-# Bad
-feat/session-recovery
-fix_scroll
-iHopeThisWorks
-```
-
-**Commits** — conventional style:
-
-```
-feat(tui): add workflow selector
-fix(core): resolve session timeout
-docs: update README
-```
-
-> [!NOTE]
-> The default branch is `dev`, not `main`.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Runtime | Bun |
-| UI Framework | Solid.js |
-| Docs Site | Astro + Starlight |
-| Database | SQLite via Drizzle ORM |
-| Async System | Effect-TS |
-| Terminal Layout | Yoga layout engine |
-| AI Providers | Multi-provider (OpenAI, Anthropic, NVIDIA, etc.) |
-| i18n | 17 languages |
-
-<details>
-<summary>Project structure</summary>
-
-```
-COdo/
-├── packages/
-│   ├── tui/                  # Terminal UI (Solid.js)
-│   │   └── src/
-│   │       ├── app.tsx
-│   │       ├── component/
-│   │       ├── theme/        # 35+ built-in themes
-│   │       └── workflow/
-│   └── web/                  # Docs site (Astro + Starlight)
-│       └── src/
-│           └── content/
-│               └── docs/     # i18n docs (17 languages)
-├── sdks/
-│   └── vscode/               # VS Code extension
-├── specs/                    # Architecture & feature specs
-├── script/                   # Build, publish, release scripts
-└── .opencode/
-    ├── skills/               # Workspace-level skills
-    ├── command/              # Custom commands
-    └── agent/                # Custom agents
-```
-
-</details>
-
----
+- macOS 12+, Linux (glibc or musl), or Windows 10+ (x64 with AVX2, or baseline fallback)
+- ARM64 (Apple Silicon / AArch64 Linux / Windows on ARM) supported natively
 
 ## License
 
-COdo is an open-source fork of [OpenCode](https://github.com/anomalyco/opencode). See [LICENSE](./LICENSE) for details.
+MIT — see [`LICENSE`](LICENSE). COdo was initially derived from OpenCode (MIT); the
+OpenCode license text is preserved at [`LICENSES/OPENCODE-LICENSE.txt`](LICENSES/OPENCODE-LICENSE.txt).
 
----
+## Community
 
-<div align="center">
+- **Issues** → <https://github.com/Mosalah4351/COdo/issues>
+- **Discussions** → <https://github.com/Mosalah4351/COdo/discussions>
+- **Docs** → <https://codo-ai.vercel.app/docs>
 
-*Built for developers who are tired of AI tools that feel like fancy autocomplete.*
-
-</div>
+If you find a vulnerability in COdo, please do **not** open a public issue — email
+`security@codo.run` with a proof-of-concept.

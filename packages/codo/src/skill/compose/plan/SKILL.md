@@ -4,6 +4,12 @@ hidden: true
 description: Use when you have a spec or requirements for a multi-step task, before touching code
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:plan-phase`** via the skill tool instead of following the instructions below. GSD creates PLAN.md with numbered tasks, file paths, code blocks, and verification criteria.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Writing Plans
 
 ## Overview

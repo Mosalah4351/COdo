@@ -1,0 +1,3 @@
+Take a screenshot of the current page or viewport.
+Use full_page mode to capture the entire page including content below the fold.
+When annotate is enabled, elements in the snapshot are visually labeled with their references.

@@ -28,6 +28,9 @@ import { SessionCommand } from "./cli/cmd/session"
 import { DbCommand } from "./cli/cmd/db"
 import { errorMessage } from "./util/error"
 import { PluginCommand } from "./cli/cmd/plug"
+import { BrowserCommand } from "./cli/cmd/browser"
+import { AddonCommand } from "./cli/cmd/addons"
+import { SecCommand } from "./cli/cmd/sec"
 import { Heap } from "./cli/heap"
 
 const args = hideBin(process.argv)
@@ -100,7 +103,10 @@ const cli = yargs(args)
   .command(PrCommand)
   .command(SessionCommand)
   .command(PluginCommand)
+  .command(BrowserCommand)
+  .command(AddonCommand)
   .command(DbCommand)
+  .command(SecCommand)
   .fail((msg, err) => {
     if (
       msg?.startsWith("Unknown argument") ||

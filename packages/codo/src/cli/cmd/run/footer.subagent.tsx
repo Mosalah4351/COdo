@@ -1,4 +1,5 @@
 /** @jsxImportSource @opentui/solid */
+import { RtlText } from "@codo-ai/tui/component/rtl-text"
 import type { ScrollBoxRenderable } from "@opentui/core"
 import { useKeyboard } from "@opentui/solid"
 import "opentui-spinner/solid"
@@ -129,20 +130,20 @@ export function RunFooterSubagentBody(props: {
                   <spinner frames={SPINNER_FRAMES} interval={80} color={statusColor(footer(), current().status)} />
                 </box>
               ) : (
-                <text fg={statusColor(footer(), current().status)} wrapMode="none" truncate flexShrink={0}>
+                <RtlText fg={statusColor(footer(), current().status)} wrapMode="none" truncate flexShrink={0}>
                   {statusIcon(current().status)}
-                </text>
+                </RtlText>
               )}
-              <text fg={footer().text} wrapMode="none" truncate flexGrow={1} flexShrink={1}>
+              <RtlText fg={footer().text} wrapMode="none" truncate flexGrow={1} flexShrink={1}>
                 {title()}
                 <Show when={subtitle().length > 0}>
                   <span style={{ fg: footer().muted }}>{"  " + subtitle()}</span>
                 </Show>
-              </text>
+              </RtlText>
               <Show when={props.total() > 1 && props.index() > 0}>
-                <text fg={footer().muted} wrapMode="none" truncate flexShrink={0}>
+                <RtlText fg={footer().muted} wrapMode="none" truncate flexShrink={0}>
                   {props.index()} of {props.total()}
-                </text>
+                </RtlText>
               </Show>
             </box>
           )}
@@ -161,9 +162,9 @@ export function RunFooterSubagentBody(props: {
             {commits().length > 0 ? (
               rows()
             ) : (
-              <text fg={footer().muted} wrapMode="word">
+              <RtlText fg={footer().muted} wrapMode="word">
                 No subagent activity yet
-              </text>
+              </RtlText>
             )}
           </box>
         </scrollbox>

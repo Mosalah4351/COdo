@@ -4,6 +4,19 @@ hidden: true
 description: Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:code-review-fix`** via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG.
+
+When GSD is active, code review feedback is handled through the audit-fix pipeline:
+- `gsd:code-review` first produces REVIEW.md with categorized findings
+- `gsd:code-review-fix` then spawns a fixer agent that auto-applies the changes, commits each fix atomically, and produces REVIEW-FIX.md
+- The compose agent's role is to translate the findings and fixes back to the user in plain language
+
+(Other workflows TBD.)
+
 # Code Review Reception
 
 ## Overview

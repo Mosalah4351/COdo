@@ -37,6 +37,12 @@ export type NetworkOptions = InferredOptionTypes<typeof options>
 export function withNetworkOptions<T>(yargs: Argv<T>) {
   return yargs.options(options)
 }
+
+// Anything beyond loopback exposes the API to the network; callers must refuse
+// to start a non-loopback listener unless CODO_SERVER_PASSWORD is configured.
+export function requiresPassword(hostname: string) {
+  return !["127.0.0.1", "localhost", "::1"].includes(hostname.toLowerCase())
+}
 export const resolveNetworkOptions = Effect.fn("Cli.resolveNetworkOptions")(function* (args: NetworkOptions) {
   const { Config } = yield* Effect.promise(() => import("@/config/config"))
   const config = yield* Config.Service.use((cfg) => cfg.getGlobal())

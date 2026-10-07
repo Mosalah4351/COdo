@@ -2,6 +2,7 @@ import type { AssistantMessage } from "@codo-ai/sdk/v2"
 import type { TuiPlugin, TuiPluginApi } from "@codo-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo } from "solid-js"
+import { RtlText } from "../../component/rtl-text"
 
 const id = "internal:sidebar-context"
 
@@ -43,13 +44,13 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
 
   return (
     <box>
-      <text fg={theme().text}>
+      <RtlText fg={theme().text}>
         <b>Context</b>
-      </text>
-      <text fg={theme().textMuted}>{state().tokens.toLocaleString()} tokens</text>
-      <text fg={theme().textMuted}>{state().percent ?? 0}% used</text>
-      {state().throughput !== null && <text fg={theme().textMuted}>{state().throughput} t/s</text>}
-      <text fg={theme().textMuted}>{money.format(cost())} spent</text>
+      </RtlText>
+      <RtlText fg={theme().textMuted}>{state().tokens.toLocaleString()} tokens</RtlText>
+      <RtlText fg={theme().textMuted}>{state().percent ?? 0}% used</RtlText>
+      {state().throughput !== null && <RtlText fg={theme().textMuted}>{state().throughput} t/s</RtlText>}
+      <RtlText fg={theme().textMuted}>{money.format(cost())} spent</RtlText>
     </box>
   )
 }

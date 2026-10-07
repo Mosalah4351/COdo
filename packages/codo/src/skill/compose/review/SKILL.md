@@ -4,6 +4,12 @@ hidden: true
 description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:code-review`** (for file-level review with categorized findings) or **`gsd:review`** (for cross-AI peer review of plans) via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Requesting Code Review
 
 Dispatch a code reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.

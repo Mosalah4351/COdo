@@ -476,6 +476,68 @@ export function message(msgs: ModelMessage[], model: Provider.Model, options: Re
   return msgs
 }
 
+// Backfill for a message whose content carries nothing a provider will accept.
+// Same intent as a trailing-user continuation prompt: "no new instruction
+// here, keep going".
+const EMPTY_CONTENT_PLACEHOLDER = "Continue."
+
+// Emptiness of a message CANNOT be judged by `content.length`: the AI SDK
+// strips empty text parts AFTER every transform here — its user branch drops
+// them even when they carry providerOptions, the assistant branch keeps those —
+// so a length-1 array holding one "" text part still reaches the provider as
+// `content: []`. Judge each role by what survives the SDK's own post-filter.
+type SdkPart = { type?: unknown; text?: unknown; providerOptions?: unknown }
+
+function sdkVisibleParts(content: readonly unknown[], assistant: boolean) {
+  return (content as readonly SdkPart[]).filter(
+    (part) =>
+      !part || part.type !== "text" || part.text !== "" || (assistant && part.providerOptions != null),
+  )
+}
+
+// True when a message will reach the provider with no usable content.
+function hasNoSendableContent(msg: ModelMessage): boolean {
+  const content = msg.content as unknown
+  if (typeof content === "string") return content === ""
+  if (!Array.isArray(content)) return true
+  if (msg.role === "user") return sdkVisibleParts(content, false).length === 0
+  if (msg.role === "assistant") return sdkVisibleParts(content, true).length === 0
+  return content.length === 0
+}
+
+// THE global pre-send content invariant: no message may reach the provider with
+// empty content. Policy is per-role and deliberately asymmetric:
+//   - user      → BACKFILL a minimal non-empty text turn. Dropping it would end
+//                 the request with an assistant message, which Bedrock rejects
+//                 as a prefill — trading this 400 for the prefill 400.
+//   - assistant → DROP. Residue with nothing to preserve.
+//   - tool      → LEAVE UNTOUCHED. Tool content must stay keyed to a preceding
+//                 tool-call; injecting text would break tool_use/tool_result
+//                 pairing (a different 400).
+//
+// Provider-agnostic on purpose: the AI SDK applies its stripping filter for
+// every provider, so gating this on an npm package name is what created the
+// hole this closes.
+//
+// `onDropAssistant` is diagnostics only: callers that must know when an
+// assistant turn vanished (the goal judge — an empty judge-side transcript
+// behind a confident verdict is the blind-judge failure mode) pass a hook.
+// Behavior is unchanged when it is omitted.
+export function ensureNonEmptyContent(
+  msgs: ModelMessage[],
+  onDropAssistant?: (msg: ModelMessage) => void,
+): ModelMessage[] {
+  return msgs.flatMap((msg): ModelMessage[] => {
+    if (!hasNoSendableContent(msg)) return [msg]
+    if (msg.role === "assistant") {
+      onDropAssistant?.(msg)
+      return []
+    }
+    if (msg.role === "tool") return [msg]
+    return [{ ...msg, content: [{ type: "text", text: EMPTY_CONTENT_PLACEHOLDER }] } as ModelMessage]
+  })
+}
+
 export function temperature(model: Provider.Model) {
   const id = model.id.toLowerCase()
   if (id.includes("north-mini-code")) return 1.0
@@ -1280,6 +1342,28 @@ export function providerOptions(model: Provider.Model, options: { [x: string]: a
     return { openai: options, azure: options }
   }
   return { [key]: options }
+}
+
+// SDKs whose `generateObject`/`streamObject` response-format handling defaults
+// `strictJsonSchema` to TRUE. `@ai-sdk/openai-compatible` is included: it looks
+// up provider options under the name it was constructed with, which provider.ts
+// sets to `model.providerID` — the same key `providerOptions()` falls back to
+// when `sdkKey()` has no mapping.
+const DEFAULT_STRICT_SCHEMA_SDKS = ["@ai-sdk/openai", "@ai-sdk/azure", "@ai-sdk/openai-compatible"]
+
+// Strict JSON-schema mode requires every key in `properties` to appear in
+// `required`, and the goal judge's Verdict marks `impossible` optional BY
+// DESIGN (the judge is told to omit it when in doubt), so OpenAI-backed models
+// reject the request unless strict is turned off explicitly. Schemas that ARE
+// strict-compatible are deliberately left alone so they keep constrained
+// decoding.
+//
+// Feed through `providerOptions()` before handing to generateObject/streamObject.
+// Returns undefined — not `{}` — for SDKs that do not default strict on, so
+// callers can skip attaching a provider-options bag entirely.
+export function structuredOutputOptions(model: Provider.Model) {
+  if (!DEFAULT_STRICT_SCHEMA_SDKS.includes(model.api.npm)) return undefined
+  return { strictJsonSchema: false }
 }
 
 export function maxOutputTokens(model: Provider.Model, outputTokenMax = OUTPUT_TOKEN_MAX): number {

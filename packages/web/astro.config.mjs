@@ -31,7 +31,7 @@ export default defineConfig({
     configSchema(),
     solidJs(),
     starlight({
-      title: "OpenCode",
+      title: "COdo",
       defaultLocale: "root",
       locales: {
         root: {
@@ -157,7 +157,6 @@ export default defineConfig({
       expressiveCode: { themes: ["github-light", "github-dark"] },
       social: [
         { icon: "github", label: "GitHub", href: config.github },
-        { icon: "discord", label: "Discord", href: config.discord },
       ],
       editLink: {
         baseUrl: `${config.github}/edit/dev/packages/web/`,
@@ -225,6 +224,31 @@ export default defineConfig({
             "zh-TW": "使用",
           },
           items: ["go", "tui", "cli", "web", "ide", "zen", "share", "github", "gitlab"],
+        },
+
+        {
+          label: "COdo",
+          translations: {
+            en: "COdo",
+            ar: "كودو",
+            "bs-BA": "COdo",
+            "da-DK": "COdo",
+            "de-DE": "COdo",
+            "es-ES": "COdo",
+            "fr-FR": "COdo",
+            "it-IT": "COdo",
+            "ja-JP": "COdo",
+            "ko-KR": "COdo",
+            "nb-NO": "COdo",
+            "pl-PL": "COdo",
+            "pt-BR": "COdo",
+            "ru-RU": "COdo",
+            "th-TH": "COdo",
+            "tr-TR": "COdo",
+            "zh-CN": "COdo",
+            "zh-TW": "COdo",
+          },
+          items: ["codo"],
         },
 
         {
@@ -299,6 +323,7 @@ export default defineConfig({
         Head: "./src/components/Head.astro",
         Header: "./src/components/Header.astro",
         Footer: "./src/components/Footer.astro",
+        LanguageSelect: "./src/components/LanguageSelect.astro",
         SiteTitle: "./src/components/SiteTitle.astro",
       },
       plugins: [
@@ -316,7 +341,13 @@ function configSchema() {
     hooks: {
       "astro:build:done": async () => {
         console.log("generating config schema")
-        spawnSync("../opencode/script/schema.ts", ["./dist/config.json", "./dist/tui.json"])
+        // Run through bun explicitly so this also works on Windows where shebangs are not resolved.
+        const result = spawnSync("bun", ["../codo/script/schema.ts", "./dist/config.json", "./dist/tui.json"], {
+          stdio: "inherit",
+        })
+        if (result.status !== 0) {
+          console.warn(`[configSchema] schema generation failed (exit ${result.status}) — dist/config.json and dist/tui.json were not regenerated`)
+        }
       },
     },
   }

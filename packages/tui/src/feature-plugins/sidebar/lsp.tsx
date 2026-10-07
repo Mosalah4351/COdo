@@ -1,6 +1,7 @@
 import type { TuiPlugin, TuiPluginApi } from "@codo-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, For, Show, createSignal } from "solid-js"
+import { RtlText } from "../../component/rtl-text"
 
 const id = "internal:sidebar-lsp"
 
@@ -14,30 +15,30 @@ function View(props: { api: TuiPluginApi }) {
     <box>
       <box flexDirection="row" gap={1} onMouseDown={() => list().length > 2 && setOpen((x) => !x)}>
         <Show when={list().length > 2}>
-          <text fg={theme().text}>{open() ? "▼" : "▶"}</text>
+          <RtlText fg={theme().text}>{open() ? "▼" : "▶"}</RtlText>
         </Show>
-        <text fg={theme().text}>
+        <RtlText fg={theme().text}>
           <b>LSP</b>
-        </text>
+        </RtlText>
       </box>
       <Show when={list().length <= 2 || open()}>
         <Show when={list().length === 0}>
-          <text fg={theme().textMuted}>{off() ? "LSPs are disabled" : "LSPs will activate as files are read"}</text>
+          <RtlText fg={theme().textMuted}>{off() ? "LSPs are disabled" : "LSPs will activate as files are read"}</RtlText>
         </Show>
         <For each={list()}>
           {(item) => (
             <box flexDirection="row" gap={1}>
-              <text
+              <RtlText
                 flexShrink={0}
                 style={{
                   fg: item.status === "connected" ? theme().success : theme().error,
                 }}
               >
                 •
-              </text>
-              <text fg={theme().textMuted}>
+              </RtlText>
+              <RtlText fg={theme().textMuted}>
                 {item.id} {item.root}
-              </text>
+              </RtlText>
             </box>
           )}
         </For>

@@ -3,6 +3,7 @@ import { useTheme } from "../context/theme"
 import { useDialog, type DialogContext } from "./dialog"
 import { Show, createEffect, createSignal, onMount, type JSX } from "solid-js"
 import { Spinner } from "../component/spinner"
+import { RtlText } from "../component/rtl-text"
 import { useTuiConfig } from "../config"
 import { useBindings, useCommandShortcut } from "../keymap"
 
@@ -75,12 +76,12 @@ export function DialogPrompt(props: DialogPromptProps) {
   return (
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           {props.title}
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
       <box gap={1}>
         {props.description}
@@ -102,11 +103,11 @@ export function DialogPrompt(props: DialogPromptProps) {
         </Show>
       </box>
       <box paddingBottom={1} gap={1} flexDirection="row">
-        <Show when={!props.busy} fallback={<text fg={theme.textMuted}>processing...</text>}>
+        <Show when={!props.busy} fallback={<RtlText fg={theme.textMuted}>processing...</RtlText>}>
           <Show when={submitShortcut()}>
-            <text fg={theme.text}>
+            <RtlText fg={theme.text}>
               {submitShortcut()} <span style={{ fg: theme.textMuted }}>submit</span>
-            </text>
+            </RtlText>
           </Show>
         </Show>
       </box>

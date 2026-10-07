@@ -2,6 +2,7 @@ import type { TuiPlugin, TuiPluginApi } from "@codo-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, For, Show, createSignal } from "solid-js"
 import { Locale } from "../../util/locale"
+import { RtlText } from "../../component/rtl-text"
 
 const id = "internal:sidebar-files"
 
@@ -21,25 +22,25 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
       <box>
         <box flexDirection="row" gap={1} onMouseDown={() => list().length > 2 && setOpen((x) => !x)}>
           <Show when={list().length > 2}>
-            <text fg={theme().text}>{open() ? "▼" : "▶"}</text>
+            <RtlText fg={theme().text}>{open() ? "▼" : "▶"}</RtlText>
           </Show>
-          <text fg={theme().text}>
+          <RtlText fg={theme().text}>
             <b>Modified Files</b>
-          </text>
+          </RtlText>
         </box>
         <Show when={list().length <= 2 || open()}>
           <For each={list()}>
             {(item) => (
               <box flexDirection="row" gap={1} justifyContent="space-between">
-                <text fg={theme().textMuted} wrapMode="none">
+                <RtlText fg={theme().textMuted} wrapMode="none">
                   {Locale.truncateLeft(item.file, Math.max(2, 36 - changeCountWidth(item)))}
-                </text>
+                </RtlText>
                 <box flexDirection="row" gap={1} flexShrink={0}>
                   <Show when={item.additions}>
-                    <text fg={theme().diffAdded}>+{item.additions}</text>
+                    <RtlText fg={theme().diffAdded}>+{item.additions}</RtlText>
                   </Show>
                   <Show when={item.deletions}>
-                    <text fg={theme().diffRemoved}>-{item.deletions}</text>
+                    <RtlText fg={theme().diffRemoved}>-{item.deletions}</RtlText>
                   </Show>
                 </box>
               </box>

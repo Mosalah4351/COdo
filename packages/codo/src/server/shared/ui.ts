@@ -6,14 +6,16 @@ import { ProxyUtil } from "../proxy-util"
 
 let embeddedUIPromise: Promise<Record<string, string> | null> | undefined
 
-export const UI_UPSTREAM = new URL("https://app.codo.ai")
+const UI_UPSTREAM_DEFAULT = "https://app.codo.ai"
+const uiUpstreamEnv = process.env.CODO_WEB_UPSTREAM?.trim()
+const UI_UPSTREAM = uiUpstreamEnv ? new URL(uiUpstreamEnv) : new URL(UI_UPSTREAM_DEFAULT)
 
 export const csp = (hash = "") =>
   `default-src 'self'; script-src 'self' 'wasm-unsafe-eval'${hash ? ` 'sha256-${hash}'` : ""}; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; media-src 'self' data:; connect-src * data:`
 export const DEFAULT_CSP = csp()
 
 export function themePreloadHash(body: string) {
-  return body.match(/<script\b(?![^>]*\bsrc\s*=)[^>]*\bid=(['"])oc-theme-preload-script\1[^>]*>([\s\S]*?)<\/script>/i)
+  return body.match(/<script\b(?![^>]*\bsrc\s*=)[^>]*\bid=(['"])codo-theme-preload\1[^>]*>([\s\S]*?)<\/script>/i)
 }
 
 export function cspForHtml(body: string) {
@@ -45,7 +47,13 @@ export function embeddedUI(disableEmbeddedWebUi: boolean) {
   if (disableEmbeddedWebUi) return Promise.resolve(null)
   return (embeddedUIPromise ??=
     // @ts-expect-error - generated file at build time
-    import("COdo-web-ui.gen.ts").then((module) => module.default as Record<string, string>).catch(() => null))
+    import("COdo-web-ui.gen.ts").then((module) => {
+      console.error("[embeddedUI] Loaded embedded UI, keys:", Object.keys(module.default).slice(0, 10))
+      return module.default as Record<string, string>
+    }).catch((err) => {
+      console.error("[embeddedUI] Failed to load embedded UI:", err)
+      return null
+    }))
 }
 
 function notFound() {
@@ -82,15 +90,17 @@ export function serveUIEffect(
   return Effect.gen(function* () {
     const embeddedWebUI = yield* Effect.promise(() => embeddedUI(services.disableEmbeddedWebUi))
     const path = new URL(request.url, "http://localhost").pathname
+    yield* Effect.logDebug("serveUIEffect", { path, hasEmbeddedUI: !!embeddedWebUI, keys: embeddedWebUI ? Object.keys(embeddedWebUI).slice(0, 10) : [] })
 
     if (embeddedWebUI) return yield* serveEmbeddedUIEffect(path, services.fs, embeddedWebUI)
 
+    yield* Effect.logDebug("serveUIEffect: proxying to upstream", { upstream: upstreamURL(path) })
     const response = yield* services.client.execute(
       HttpClientRequest.make(request.method)(upstreamURL(path), {
         headers: ProxyUtil.headers(request.headers, { host: UI_UPSTREAM.host }),
         body: requestBody(request),
       }),
-    )
+    ).pipe(Effect.tapCause(cause => Effect.logError("Proxy request failed", { cause })))
     const headers = proxyResponseHeaders(response.headers)
 
     if (response.headers["content-type"]?.includes("text/html")) {

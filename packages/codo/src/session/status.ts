@@ -86,6 +86,22 @@ export const layer = Layer.effect(
       data.set(sessionID, status)
     })
 
+    // V2 runner never calls SessionStatus.set. Listen for step-end/step-failed
+    // events to auto-transition busy sessions back to idle.
+    yield* events.listen((event) =>
+      Effect.gen(function* () {
+        if (event.type !== "session.next.step.ended" && event.type !== "session.next.step.failed") return
+        console.error("[SessionStatus] Received step completion event:", event.type, "for session:", (event.data as { sessionID: SessionID }).sessionID)
+        const data = yield* InstanceState.get(state)
+        const sessionID = (event.data as { sessionID: SessionID }).sessionID
+        const current = data.get(sessionID)
+        console.error("[SessionStatus] Current status:", current, "setting to idle")
+        if (current?.type === "busy" || current?.type === "retry") {
+          yield* set(sessionID, { type: "idle" })
+        }
+      }),
+    )
+
     return Service.of({ get, list, set })
   }),
 )

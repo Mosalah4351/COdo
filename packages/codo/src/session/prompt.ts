@@ -61,6 +61,8 @@ import { SessionReminders } from "./reminders"
 import { SessionTools } from "./tools"
 import { LLMEvent } from "@codo-ai/llm"
 import { Goal } from "./goal"
+import { Workflow } from "@/config/workflow"
+import { GSD } from "@/skill/gsd-installer"
 
 // @ts-ignore
 globalThis.AI_SDK_LOG_WARNINGS = false
@@ -82,6 +84,25 @@ function isOrphanedInterruptedTool(part: SessionV1.ToolPart) {
   // cleanup() marks abandoned tool_use blocks this way after retries/aborts.
   // They are not pending work and must not trigger an assistant-prefill request.
   return part.state.status === "error" && part.state.metadata?.interrupted === true
+}
+
+// Session IDs carrying an instant heuristic title (set synchronously in
+// prompt()) mapped to that text, so the background LLM refine may still
+// overwrite it — but never a user rename. Process-local: drains are
+// process-local, so a plain map is enough; a restart just keeps the
+// heuristic text, which is still a meaningful title.
+const heuristicTitles = new Map<string, string>()
+
+function heuristicTitle(parts: PromptInput["parts"]): string | undefined {
+  const text = parts
+    .filter((p): p is SessionV1.TextPartInput => p.type === "text")
+    .filter((p) => !p.synthetic)
+    .map((p) => p.text)
+    .join("\n")
+    .replace(/\s+/g, " ")
+    .trim()
+  if (!text) return undefined
+  return text.length > 60 ? text.substring(0, 59) + "…" : text
 }
 
 export interface Interface {
@@ -126,6 +147,8 @@ export const layer = Layer.effect(
     const flags = yield* RuntimeFlags.Service
     const database = yield* Database.Service
     const goal = yield* Goal.Service
+    const gsd = yield* GSD.Service
+    const workflowSvc = Workflow.Service.live()
     const { db } = database
     const ops = Effect.fn("SessionPrompt.ops")(function* () {
       return {
@@ -183,13 +206,22 @@ export const layer = Layer.effect(
       modelID: ModelV2.ID
     }) {
       if (input.session.parentID) return
-      if (!Session.isDefaultTitle(input.session.title)) return
+      // Refine when still default-titled, or when the current title is our
+      // own instant heuristic (never a user rename).
+      const marked = heuristicTitles.get(input.session.id)
+      if (!Session.isDefaultTitle(input.session.title) && input.session.title !== marked) {
+        heuristicTitles.delete(input.session.id)
+        return
+      }
 
       const real = (m: SessionV1.WithParts) =>
         m.info.role === "user" && !m.parts.every((p) => "synthetic" in p && p.synthetic)
       const idx = input.history.findIndex(real)
       if (idx === -1) return
-      if (input.history.filter(real).length !== 1) return
+      // ponytail: retry on later prompts until a real title sticks. The first
+      // attempt can die with an interrupted session or a failing title model,
+      // and the old `!== 1` gate blocked every retry after that.
+      if (input.history.filter(real).length < 1) return
 
       const context = input.history.slice(0, idx + 1)
       const firstUser = context[idx]
@@ -208,24 +240,42 @@ export const layer = Layer.effect(
       const msgs = onlySubtasks
         ? [{ role: "user" as const, content: subtasks.map((p) => p.prompt).join("\n") }]
         : yield* MessageV2.toModelMessagesEffect(context, mdl)
-      const text = yield* llm
-        .stream({
-          agent: ag,
-          user: firstInfo,
-          system: [],
-          small: true,
-          tools: {},
-          model: mdl,
-          sessionID: input.session.id,
-          retries: 2,
-          messages: [{ role: "user", content: "Generate a title for this conversation:\n" }, ...msgs],
-        })
-        .pipe(
-          Stream.filter(LLMEvent.is.textDelta),
-          Stream.map((e) => e.text),
-          Stream.mkString,
-          Effect.orDie,
-        )
+      const generate = (model: Provider.Model) =>
+        llm
+          .stream({
+            agent: ag,
+            user: firstInfo,
+            system: [],
+            // ponytail: keep this shaped like a normal request (small: false).
+            // small:true injects the first reasoning variant (Codex-only params
+            // like reasoning.encrypted_content) which non-GPT models reject.
+            small: false,
+            tools: {},
+            model,
+            sessionID: input.session.id,
+            // Fail fast: title is advisory, and ensureTitle already retries
+            // on later prompts until a real title sticks. Retries here only
+            // add seconds before the fallback candidate is tried.
+            retries: 0,
+            messages: [{ role: "user", content: "Generate a title for this conversation:\n" }, ...msgs],
+          })
+          .pipe(
+            Stream.filter(LLMEvent.is.textDelta),
+            Stream.map((e) => e.text),
+            Stream.mkString,
+          )
+      // ponytail: the small/title model can be unusable on some providers
+      // (e.g. paid-only small model with no billing); fall back to the session
+      // model instead of keeping the default timestamp title.
+      const fallback = yield* provider.getModel(input.providerID, input.modelID)
+      const sessionFirst = input.providerID.startsWith("opencode")
+      const candidates =
+        mdl.id === fallback.id ? [mdl] : sessionFirst ? [fallback, mdl] : [mdl, fallback]
+      let text = ""
+      for (const candidate of candidates) {
+        text = yield* generate(candidate).pipe(Effect.catchCause(() => Effect.succeed("")))
+        if (text.trim()) break
+      }
       const cleaned = text
         .replace(/<think>[\s\S]*?<\/think>\s*/g, "")
         .split("\n")
@@ -235,7 +285,10 @@ export const layer = Layer.effect(
       const t = cleaned.length > 100 ? cleaned.substring(0, 97) + "..." : cleaned
       yield* sessions
         .setTitle({ sessionID: input.session.id, title: t })
-        .pipe(Effect.catchCause((cause) => Effect.logError("failed to generate title", { error: Cause.squash(cause) })))
+        .pipe(
+          Effect.tap(() => Effect.sync(() => heuristicTitles.delete(input.session.id))),
+          Effect.catchCause((cause) => Effect.logError("failed to generate title", { error: Cause.squash(cause) })),
+        )
     })
 
     const handleSubtask = Effect.fn("SessionPrompt.handleSubtask")(function* (input: {
@@ -1110,6 +1163,15 @@ export const layer = Layer.effect(
       const session = yield* sessions.get(input.sessionID).pipe(Effect.orDie)
       yield* revert.cleanup(session)
       const message = yield* createUserMessage(input)
+      // Instant heuristic title so the sidebar renames in ~0ms with zero LLM
+      // cost. The forked LLM refine in runLoop overwrites it when ready.
+      const instant = heuristicTitle(input.parts)
+      if (instant && Session.isDefaultTitle(session.title)) {
+        heuristicTitles.set(session.id, instant)
+        yield* sessions
+          .setTitle({ sessionID: session.id, title: instant })
+          .pipe(Effect.catchCause((cause) => Effect.logWarning("heuristic title failed", { error: cause })))
+      }
       yield* sessions.touch(input.sessionID)
 
       const permissions: PermissionV1.Rule[] = []
@@ -1133,7 +1195,8 @@ export const layer = Layer.effect(
       throw new Error("Impossible")
     })
 
-    const runLoop: (sessionID: SessionID) => Effect.Effect<SessionV1.WithParts> = Effect.fn("SessionPrompt.run")(
+    const runLoop: (sessionID: SessionID) => Effect.Effect<SessionV1.WithParts, Provider.ModelNotFoundError | Error> =
+      Effect.fn("SessionPrompt.run")(
       function* (sessionID: SessionID) {
         const ctx = yield* InstanceState.context
         let structured: unknown
@@ -1163,76 +1226,42 @@ export const layer = Layer.effect(
               (part) => part.type === "tool" && !part.metadata?.providerExecuted && !isOrphanedInterruptedTool(part),
             ) ?? false
 
-          // Goal gate: if a stop-condition goal is active, the loop refuses to
-          // stop until an independent judge model decides the condition is
-          // satisfied (or genuinely impossible). The judge is a separate model
-          // call that only reads the transcript — it does not do the work, so
-          // its verdict stays cold relative to the working agent's optimism.
-          const MAX_GOAL_REACT = 20
+          // Goal gate: if a stop-condition goal is active for this turn's
+          // agent, the loop refuses to stop until an independent judge model
+          // decides the condition is satisfied (or genuinely impossible). The
+          // judge is a separate model call that only reads the transcript —
+          // it does not do the work, so its verdict stays cold relative to
+          // the working agent's optimism. Only "pending" re-enters the loop;
+          // every other decision falls through to the loop exit below.
+          // Judge transport failures fail open (released); unresolvable
+          // judge models fail closed by propagating. See SessionGoal.gate.
           if (
             lastAssistant?.finish &&
             !["tool-calls"].includes(lastAssistant.finish) &&
             !hasToolCalls &&
             lastUser.id < lastAssistant.id
           ) {
-            const activeGoal = yield* goal.get(sessionID)
-            if (activeGoal) {
-              const react = yield* goal.bumpReact(sessionID)
-              if (react > MAX_GOAL_REACT) {
-                yield* Effect.logWarning("goal react limit exceeded, clearing goal", {
-                  "session.id": sessionID,
-                  react,
-                })
-                yield* goal.clear(sessionID)
-              } else {
-                yield* Effect.logInfo("goal judge evaluating", {
-                  "session.id": sessionID,
-                  condition: activeGoal.condition,
-                  attempt: react,
-                })
-                const verdict = yield* goal.evaluate({
-                  condition: activeGoal.condition,
-                  msgs,
-                  model: lastUser.model,
-                })
-                yield* events.publish(Goal.Event.Updated, {
-                  sessionID,
-                  lastVerdict: { ...verdict, attempt: react, messageID: lastAssistant.id },
-                })
-                if (verdict.ok) {
-                  yield* Effect.logInfo("goal satisfied, clearing", {
-                    "session.id": sessionID,
-                    reason: verdict.reason,
-                  })
-                  yield* goal.clear(sessionID)
-                } else if (verdict.impossible) {
-                  yield* Effect.logInfo("goal impossible, clearing", {
-                    "session.id": sessionID,
-                    reason: verdict.reason,
-                  })
-                  yield* goal.clear(sessionID)
-                } else {
-                  // Goal not met — inject a reminder and continue the loop
-                  yield* Effect.logInfo("goal not met, continuing", {
-                    "session.id": sessionID,
-                    reason: verdict.reason,
-                    attempt: react,
-                  })
-                  yield* prompt({
-                    sessionID,
-                    agent: lastUser.agent,
-                    parts: [
-                      {
-                        type: "text",
-                        text: `[Goal check — attempt ${react}/${MAX_GOAL_REACT}] The goal condition has not been met yet.\n\nVerdict: ${verdict.reason}\n\nPlease continue working toward the goal. The session will not stop until the goal is achieved or declared impossible.`,
-                        synthetic: true,
-                      },
-                    ],
-                    noReply: true,
-                  })
-                  continue
-                }
-              }
+            const decision = yield* goal.gate({
+              sessionID,
+              agent: lastUser.agent,
+              msgs,
+              model: lastUser.model,
+              messageID: lastAssistant.id,
+            })
+            if (decision.status === "pending") {
+              yield* prompt({
+                sessionID,
+                agent: lastUser.agent,
+                parts: [
+                  {
+                    type: "text",
+                    text: `[Goal check — attempt ${decision.attempt}/${Goal.MAX_GOAL_REACT}] The goal condition has not been met yet.\n\nVerdict: ${decision.verdict.reason}\n\nPlease continue working toward the goal. The session will not stop until the goal is achieved or declared impossible.`,
+                    synthetic: true,
+                  },
+                ],
+                noReply: true,
+              })
+              continue
             }
           }
 
@@ -1264,7 +1293,12 @@ export const layer = Layer.effect(
               modelID: lastUser.model.modelID,
               providerID: lastUser.model.providerID,
               history: msgs,
-            }).pipe(Effect.ignore, Effect.forkIn(scope))
+            }).pipe(
+              Effect.catchCause((cause) =>
+                Effect.logWarning("title generation failed", { error: Cause.squash(cause) }),
+              ),
+              Effect.forkIn(scope),
+            )
 
           const model = yield* getModel(lastUser.model.providerID, lastUser.model.modelID, sessionID)
           const task = tasks.pop()
@@ -1406,14 +1440,18 @@ export const layer = Layer.effect(
               MessageV2.toModelMessagesEffect(msgs, model),
             ])
 
-            // Inject active goal state into system prompt
+            // Inject active goal state into system prompt. Goals are
+            // agent-scoped: only the agent the goal was armed with sees the
+            // goal instructions, matching the stop gate which only judges
+            // that agent's turns.
             const activeGoal = yield* goal.get(sessionID)
-            const goalBlock = activeGoal
+            const turnGoal = activeGoal?.agent === lastUser.agent ? activeGoal : undefined
+            const goalBlock = turnGoal
               ? [
                   "",
                   "<goal_state>",
-                  `  <condition>${activeGoal.condition}</condition>`,
-                  `  <react_count>${activeGoal.react}</react_count>`,
+                  `  <condition>${turnGoal.condition}</condition>`,
+                  `  <react_count>${turnGoal.react}</react_count>`,
                   "  <instructions>",
                   "    You are working toward a user-defined stop-condition goal.",
                   "    The session will not stop until the goal is achieved or declared impossible.",
@@ -1498,7 +1536,7 @@ export const layer = Layer.effect(
     const loop: (input: LoopInput) => Effect.Effect<SessionV1.WithParts> = Effect.fn("SessionPrompt.loop")(function* (
       input: LoopInput,
     ) {
-      return yield* state.ensureRunning(input.sessionID, lastAssistant(input.sessionID), runLoop(input.sessionID))
+      return yield* state.ensureRunning(input.sessionID, lastAssistant(input.sessionID), runLoop(input.sessionID).pipe(Effect.orDie))
     })
 
     const shell: (input: ShellInput) => Effect.Effect<SessionV1.WithParts, Session.BusyError> = Effect.fn(
@@ -1540,7 +1578,95 @@ export const layer = Layer.effect(
             noReply: true,
           })
         }
-        yield* goal.set(input.sessionID, condition)
+        // The goal is armed with the agent that will pursue it this turn;
+        // the stop gate only judges turns from that same agent.
+        const goalAgent = agentName ?? (yield* agents.defaultAgent())
+        yield* goal.set(input.sessionID, condition, goalAgent)
+      }
+
+      const ctx = yield* InstanceState.context
+
+      // /workflow — pick or toggle the active SDD workflow. For `gsd` we install
+      // the full gsd-core runtime (agents, commands, skills, templates,
+      // workflows, references, hooks, plugins) under the chosen scope, then
+      // write the selected workflow into ~/.codo/workflow.json so Agent.Service
+      // re-registers the gsd-* subagents on the next turn. "default" turns gsd
+      // off and is a no-op install. speckit / gstack are recognized but not
+      // yet wired in.
+      if (input.command === Command.Default.WORKFLOW) {
+        const argsLine = input.arguments.trim()
+        const m = argsLine.match(/^(\S+)?\s*(\S+)?/)
+        const requested = (m?.[1] ?? "").toLowerCase()
+        const scopeArg = (m?.[2] ?? "").toLowerCase()
+        const current = workflowSvc.workflow
+
+        // Bare /workflow reports the active choice.
+        if (!requested) {
+          return yield* prompt({
+            sessionID: input.sessionID,
+            messageID: input.messageID,
+            agent: agentName,
+            parts: [{ type: "text", text: `Active workflow: ${current}. Usage: /workflow gsd [local|global] | /workflow default`, synthetic: true }],
+            noReply: true,
+          })
+        }
+
+        if (requested === "default" || requested === "vibe") {
+          yield* Workflow.setWorkflow("default")
+          return yield* prompt({
+            sessionID: input.sessionID,
+            messageID: input.messageID,
+            agent: agentName,
+            parts: [{ type: "text", text: "Workflow switched to default (vibe).", synthetic: true }],
+            noReply: true,
+          })
+        }
+
+        if (requested === "gsd") {
+          const scope: GSD.Scope = scopeArg === "local" ? "local" : "global"
+          const result = yield* gsd.install(scope, ctx.directory ?? process.cwd()).pipe(
+            Effect.catch((err) => Effect.succeed({ error: String(err) } as const)),
+          )
+          if ("error" in result) {
+            const err = new NamedError.Unknown({ message: `Failed to install gsd-core: ${result.error}` })
+            yield* events.publish(Session.Event.Error, {
+              sessionID: input.sessionID,
+              error: err.toObject(),
+            })
+            return yield* prompt({
+              sessionID: input.sessionID,
+              messageID: input.messageID,
+              agent: agentName,
+              parts: [{ type: "text", text: `Failed to install GSD: ${result.error}`, synthetic: true }],
+              noReply: true,
+            })
+          }
+          yield* Workflow.setWorkflow("gsd")
+          return yield* prompt({
+            sessionID: input.sessionID,
+            messageID: input.messageID,
+            agent: agentName,
+            parts: [{
+              type: "text",
+              text: `GSD v${GSD.GSD_VERSION} installed (${result.filesInstalled} files) to ${result.installRoot}. Workflow is now gsd. All 33 gsd-* subagents are available. Start with /gsd-new-project or /gsd:help.`,
+              synthetic: true,
+            }],
+            noReply: true,
+          })
+        }
+
+        const err = new NamedError.Unknown({ message: `Workflow "${requested}" is not yet supported. Use "gsd" or "default".` })
+        yield* events.publish(Session.Event.Error, {
+          sessionID: input.sessionID,
+          error: err.toObject(),
+        })
+        return yield* prompt({
+          sessionID: input.sessionID,
+          messageID: input.messageID,
+          agent: agentName,
+          parts: [{ type: "text", text: `Workflow "${requested}" is not yet supported.`, synthetic: true }],
+          noReply: true,
+        })
       }
 
       const raw = input.arguments.match(argsRegex) ?? []
@@ -1665,8 +1791,21 @@ export const layer = Layer.effect(
   }),
 )
 
-export const defaultLayer = Layer.suspend(() =>
-  layer.pipe(
+export const defaultLayer = Layer.suspend(() => {
+  const pipelineEnd = Layer.mergeAll(
+    Image.defaultLayer,
+    Workflow.defaultLayer,
+    GSD.defaultLayer,
+    Goal.defaultLayer,
+    Agent.defaultLayer,
+    Database.defaultLayer,
+    SystemPrompt.defaultLayer,
+    LLM.defaultLayer,
+    CrossSpawnSpawner.defaultLayer,
+    RuntimeFlags.defaultLayer,
+    EventV2Bridge.defaultLayer,
+  )
+  return layer.pipe(
     Layer.provide(SessionRunState.defaultLayer),
     Layer.provide(SessionStatus.defaultLayer),
     Layer.provide(SessionCompaction.defaultLayer),
@@ -1685,21 +1824,9 @@ export const defaultLayer = Layer.suspend(() =>
     Layer.provide(Session.defaultLayer),
     Layer.provide(SessionRevert.defaultLayer),
     Layer.provide(SessionSummary.defaultLayer),
-    Layer.provide(Image.defaultLayer),
-    Layer.provide(Goal.defaultLayer),
-    Layer.provide(
-      Layer.mergeAll(
-        Agent.defaultLayer,
-        Database.defaultLayer,
-        SystemPrompt.defaultLayer,
-        LLM.defaultLayer,
-        CrossSpawnSpawner.defaultLayer,
-        RuntimeFlags.defaultLayer,
-        EventV2Bridge.defaultLayer,
-      ),
-    ),
-  ),
-)
+    Layer.provide(pipelineEnd),
+  )
+})
 const ModelRef = Schema.Struct({
   providerID: ProviderV2.ID,
   modelID: ModelV2.ID,
@@ -1832,6 +1959,7 @@ export const node = LayerNode.make(layer, [
   RuntimeFlags.node,
   Database.node,
   Goal.node,
+  GSD.node,
 ])
 
 export * as SessionPrompt from "./prompt"

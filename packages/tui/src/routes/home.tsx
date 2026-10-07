@@ -1,6 +1,7 @@
 import { Prompt, type PromptRef } from "../component/prompt"
 import { createEffect, createMemo, createSignal, onMount } from "solid-js"
 import { Logo } from "../component/logo"
+import { RtlText } from "../component/rtl-text"
 import { useSync } from "../context/sync"
 import { Toast } from "../ui/toast"
 import { useArgs } from "../context/args"
@@ -16,7 +17,7 @@ import { HomeSessionDestinationProvider } from "./home/session-destination"
 
 let once = false
 const placeholder = {
-  normal: ["Fix a TODO in the codebase", "What is the tech stack of this project?", "Fix broken tests"],
+  normal: ["Build an AI B2B SaaS that prints money (Mr. User I am begging you plz don't)", "Train an ML model to rescue Chelsea FC from themselves", "Predict my exam questions (Mr. User don't — COdo isn't a magician)"],
   shell: ["ls -la", "git status", "pwd"],
 }
 
@@ -81,7 +82,7 @@ export function Home() {
             </pluginRuntime.Slot>
           </box>
           <box alignItems="center" marginTop={1}>
-            <text fg="textMuted">Build from specs. <span style={{ fg: theme.primary }}>COdo</span> the rest.</text>
+            <RtlText fg="textMuted">Build from specs. <span style={{ fg: theme.primary }}>COdo</span> the rest.</RtlText>
           </box>
         </box>
         <box height={1} minHeight={0} flexShrink={1} />
@@ -91,15 +92,15 @@ export function Home() {
           </pluginRuntime.Slot>
         </box>
         <box alignItems="center" marginTop={1} flexShrink={0}>
-          <text fg="textMuted">↑/↓ to navigate  •  Enter to send  •  Esc to clear</text>
+          <RtlText fg="textMuted">↑/↓ to navigate  •  Enter to send  •  Esc to clear</RtlText>
         </box>
         <pluginRuntime.Slot name="home_bottom" />
         <box flexGrow={1} minHeight={0} />
         <box alignItems="center" marginTop={1} flexShrink={0}>
-          <text fg={theme.secondary}>─── Tips ───</text>
+          <RtlText fg={theme.secondary}>─── Tips ───</RtlText>
         </box>
         <box alignItems="center" marginTop={1} flexShrink={0}>
-          <text fg="textMuted">Press <span style={{ fg: theme.primary }}>tab</span> to see all available agents and commands</text>
+          <RtlText fg="textMuted">Press <span style={{ fg: theme.primary }}>tab</span> to see all available agents and commands</RtlText>
         </box>
         <Toast />
       </box>

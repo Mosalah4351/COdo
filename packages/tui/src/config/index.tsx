@@ -4,6 +4,7 @@ import { createBindingLookup } from "@opentui/keymap/extras"
 import { Schema } from "effect"
 import { createContext, type JSX, useContext } from "solid-js"
 import { TuiKeybind } from "./keybind"
+import { RtlPolicyProvider } from "../component/rtl-text"
 
 export const AttentionSoundName = Schema.Literals([
   "default",
@@ -59,6 +60,11 @@ export const Info = Schema.Struct({
   leader_timeout: Schema.optional(LeaderTimeout),
   attention: Schema.optional(Attention),
   prompt: Schema.optional(Prompt),
+  rtl: Schema.optional(
+    Schema.Struct({
+      forceShaping: Schema.optional(Schema.Union([Schema.Boolean, Schema.Literal("auto")])),
+    }),
+  ),
   scroll_speed: Schema.optional(ScrollSpeed).annotate({ description: "TUI scroll speed" }),
   scroll_acceleration: Schema.optional(ScrollAcceleration),
   diff_style: Schema.optional(DiffStyle),
@@ -119,7 +125,11 @@ export function resolve(input: Info, options: ResolveOptions): Resolved {
 const ConfigContext = createContext<Resolved>()
 
 export function TuiConfigProvider(props: { config: Resolved; children: JSX.Element }) {
-  return <ConfigContext.Provider value={props.config}>{props.children}</ConfigContext.Provider>
+  return (
+    <ConfigContext.Provider value={props.config}>
+      <RtlPolicyProvider forceShaping={props.config.rtl?.forceShaping}>{props.children}</RtlPolicyProvider>
+    </ConfigContext.Provider>
+  )
 }
 
 export function useTuiConfig() {

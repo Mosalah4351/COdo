@@ -1,6 +1,6 @@
 # Tool migration
 
-Practical reference for the current tool-migration state in `packages/opencode`.
+Practical reference for the current tool-migration state in `packages/codo`.
 
 ## Status
 

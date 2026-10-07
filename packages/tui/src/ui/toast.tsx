@@ -1,6 +1,7 @@
 import { createContext, useContext, type ParentProps, Show } from "solid-js"
 import { createStore } from "solid-js/store"
 import { useTheme } from "../context/theme"
+import { RtlText } from "../component/rtl-text"
 import { useTerminalDimensions } from "@opentui/solid"
 import { SplitBorder } from "./border"
 import { TextAttributes } from "@opentui/core"
@@ -37,13 +38,13 @@ export function Toast() {
           customBorderChars={SplitBorder.customBorderChars}
         >
           <Show when={current().title}>
-            <text attributes={TextAttributes.BOLD} marginBottom={1} fg={theme.text}>
+            <RtlText attributes={TextAttributes.BOLD} marginBottom={1} fg={theme.text}>
               {current().title}
-            </text>
+            </RtlText>
           </Show>
-          <text fg={theme.text} wrapMode="word" width="100%">
+          <RtlText fg={theme.text} wrapMode="word" width="100%">
             {current().message}
-          </text>
+          </RtlText>
         </box>
       )}
     </Show>

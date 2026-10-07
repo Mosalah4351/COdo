@@ -1,0 +1,1 @@
+View tracked network requests with optional filters for status, method, or URL pattern.

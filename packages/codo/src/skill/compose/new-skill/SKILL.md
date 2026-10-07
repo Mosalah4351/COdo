@@ -4,6 +4,12 @@ hidden: true
 description: Use when creating new skills, editing existing skills, or verifying skills work before deployment
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:spike-wrap-up`** (for technical findings) or **`gsd:sketch-wrap-up`** (for design findings) via the skill tool instead of following the instructions below. These package experiment/design findings into reusable SKILL.md files.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Writing Skills
 
 ## Overview

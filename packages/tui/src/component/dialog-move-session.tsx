@@ -15,6 +15,7 @@ import { useToast } from "../ui/toast"
 import { useCommandShortcut } from "../keymap"
 import { useProject } from "../context/project"
 import { Spinner } from "./spinner"
+import { RtlText } from "./rtl-text"
 import { DialogWorkspaceFileChanges } from "./dialog-workspace-file-changes"
 import type { ProjectDirectories } from "@codo-ai/sdk/v2"
 import { useRoute } from "../context/route"
@@ -272,9 +273,9 @@ export function DialogMoveSession(props: {
         title="Move session"
         titleView={
           <box flexDirection="row" gap={1}>
-            <text fg={theme.text} attributes={TextAttributes.BOLD}>
+            <RtlText fg={theme.text} attributes={TextAttributes.BOLD}>
               Move session
-            </text>
+            </RtlText>
             <Show when={working()}>
               <Spinner />
             </Show>

@@ -3,6 +3,7 @@ import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, Show } from "solid-js"
 import { abbreviateHome } from "../../runtime"
 import { useTuiPaths } from "../../context/runtime"
+import { RtlText } from "../../component/rtl-text"
 
 const id = "internal:sidebar-footer"
 
@@ -41,40 +42,40 @@ function View(props: { api: TuiPluginApi; sessionID: string }) {
           flexDirection="row"
           gap={1}
         >
-          <text flexShrink={0} fg={theme().text}>
+          <RtlText flexShrink={0} fg={theme().text}>
             ⬖
-          </text>
+          </RtlText>
           <box flexGrow={1} gap={1}>
             <box flexDirection="row" justifyContent="space-between">
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 <b>Getting started</b>
-              </text>
-              <text fg={theme().textMuted} onMouseDown={() => props.api.kv.set("dismissed_getting_started", true)}>
+              </RtlText>
+              <RtlText fg={theme().textMuted} onMouseDown={() => props.api.kv.set("dismissed_getting_started", true)}>
                 ✕
-              </text>
+              </RtlText>
             </box>
-            <text fg={theme().textMuted}>COdo includes free models so you can start immediately.</text>
-            <text fg={theme().textMuted}>
+            <RtlText fg={theme().textMuted}>COdo includes free models so you can start immediately.</RtlText>
+            <RtlText fg={theme().textMuted}>
               Connect from 75+ providers to use other models, including Claude, GPT, Gemini etc
-            </text>
+            </RtlText>
             <box flexDirection="row" gap={1} justifyContent="space-between">
-              <text fg={theme().text}>Connect provider</text>
-              <text fg={theme().textMuted}>/connect</text>
+              <RtlText fg={theme().text}>Connect provider</RtlText>
+              <RtlText fg={theme().textMuted}>/connect</RtlText>
             </box>
           </box>
         </box>
       </Show>
-      <text>
+      <RtlText>
         <span style={{ fg: theme().textMuted }}>{path().parent}/</span>
         <span style={{ fg: theme().text }}>{path().name}</span>
-      </text>
-      <text fg={theme().textMuted}>
+      </RtlText>
+      <RtlText fg={theme().textMuted}>
         <span style={{ fg: theme().success }}>•</span> <b>CO</b>
         <span style={{ fg: theme().text }}>
           <b>do</b>
         </span>{" "}
         <span>{props.api.app.version}</span>
-      </text>
+      </RtlText>
     </box>
   )
 }

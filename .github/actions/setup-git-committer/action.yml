@@ -2,10 +2,10 @@ name: "Setup Git Committer"
 description: "Create app token and configure git user"
 inputs:
   opencode-app-id:
-    description: "OpenCode GitHub App ID"
+    description: "COdo GitHub App ID"
     required: true
   opencode-app-secret:
-    description: "OpenCode GitHub App private key"
+    description: "COdo GitHub App private key"
     required: true
 outputs:
   token:
@@ -39,5 +39,9 @@ runs:
 
     - name: Configure git remote
       run: |
-        git remote set-url origin https://x-access-token:${{ steps.apptoken.outputs.token }}@github.com/${{ github.repository }}
+        # Never embed the token in the remote URL — it persists to .git/config
+        # and leaks into logs (`git remote -v`, `git config --list`). Use an
+        # extraheader instead so the token only exists in this runner's shell.
+        token="${{ steps.apptoken.outputs.token }}"
+        git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $(printf 'x-access-token:%s' "$token" | base64 -w0)"
       shell: bash

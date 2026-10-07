@@ -23,7 +23,7 @@ const Handlers = Runtime.handlers(Commands, {
   serve: () => import("./commands/handlers/serve"),
 })
 
-Runtime.run(Commands, Handlers, { version: "local" }).pipe(
+Runtime.run(Commands, Handlers, { version: typeof COdo_VERSION !== "undefined" ? COdo_VERSION : "local" }).pipe(
   Effect.provide(Daemon.defaultLayer),
   Effect.provide(NodeServices.layer),
   Effect.scoped,

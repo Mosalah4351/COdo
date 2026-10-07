@@ -46,7 +46,7 @@ describe("GoogleVertexPlugin", () => {
           provider.api = {
             type: "aisdk",
             package: "@ai-sdk/openai-compatible",
-            url: "https://opencode.ai/zen/v1",
+            url: "https://codo-ai.vercel.app/zen/v1",
           }
         }),
       )

@@ -1,4 +1,5 @@
 /** @jsxImportSource @opentui/solid */
+import { RtlText } from "@codo-ai/tui/component/rtl-text"
 import { TextAttributes, type InputRenderable, type KeyEvent } from "@opentui/core"
 import { useKeyboard, type JSX } from "@opentui/solid"
 import fuzzysort from "fuzzysort"
@@ -230,18 +231,18 @@ function PanelShell(props: {
         flexShrink={0}
         backgroundColor={background()}
       >
-        <text fg={props.theme().text} attributes={TextAttributes.BOLD} wrapMode="none" flexShrink={0}>
+        <RtlText fg={props.theme().text} attributes={TextAttributes.BOLD} wrapMode="none" flexShrink={0}>
           {props.title}
-        </text>
+        </RtlText>
         {props.countVisible !== false ? (
-          <text fg={props.theme().muted} wrapMode="none" flexShrink={0}>
+          <RtlText fg={props.theme().muted} wrapMode="none" flexShrink={0}>
             {countLabel(props.count, props.total, props.query)}
-          </text>
+          </RtlText>
         ) : null}
         <box flexGrow={1} flexShrink={1} backgroundColor="transparent" />
-        <text fg={props.theme().muted} wrapMode="none" truncate flexShrink={0}>
+        <RtlText fg={props.theme().muted} wrapMode="none" truncate flexShrink={0}>
           esc
-        </text>
+        </RtlText>
       </box>
       <box height={1} flexShrink={0} backgroundColor={background()} />
       <box

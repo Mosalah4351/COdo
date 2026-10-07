@@ -1,0 +1,3 @@
+Get the accessibility tree snapshot of the current page with element references (@e1, @e2, etc.).
+Use this to see the page structure, find elements to interact with, and understand page layout.
+Accepts optional flags to control output depth, interactivity filtering, and compact display.

@@ -1,0 +1,3 @@
+Open a URL in the browser. The browser starts in headless mode by default.
+Uses Chrome via the agent-browser CLI. Each session gets its own browser instance.
+The browser daemon persists between commands and auto-shuts down after 5 minutes of inactivity.

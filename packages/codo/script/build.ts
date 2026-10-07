@@ -134,7 +134,9 @@ const targets = singleFlag
     })
   : allTargets
 
-await $`rm -rf dist`
+// ponytail: on Windows, the running codo.exe inside dist/ is locked and can't be deleted.
+// fs.rmSync with try-catch survives gracefully; Bun's $ shell would kill the script.
+try { fs.rmSync("dist", { recursive: true, force: true }) } catch { /* locked file on Windows */ }
 
 const binaries: Record<string, string> = {}
 if (!skipInstall) {
@@ -166,7 +168,7 @@ for (const item of targets) {
   const workerRelativePath = path.relative(dir, parserWorker).replaceAll("\\", "/")
 
   await Bun.build({
-    conditions: ["bun", "node"],
+    conditions: ["bun", "node", "browser"],
     tsconfig: "./tsconfig.json",
     plugins: [plugin],
     external: ["node-gyp"],
@@ -180,7 +182,7 @@ for (const item of targets) {
       autoloadTsconfig: true,
       autoloadPackageJson: true,
       target: name.replace(pkg.name, "bun") as any,
-      outfile: `dist/${name}/bin/COdo`,
+      outfile: `dist/${name}/bin/codo-${Script.version}`,
       execArgv: [`--user-agent=COdo/${Script.version}`, "--use-system-ca", "--"],
       windows: {},
     },
@@ -200,7 +202,7 @@ for (const item of targets) {
 
   // Smoke test: only run if binary is for current platform
   if (item.os === process.platform && item.arch === process.arch && !item.abi) {
-    const binaryPath = `dist/${name}/bin/COdo`
+    const binaryPath = `dist/${name}/bin/codo-${Script.version}`
     console.log(`Running smoke test: ${binaryPath} --version`)
     try {
       const versionOutput = await $`${binaryPath} --version`.text()
@@ -215,12 +217,15 @@ for (const item of targets) {
   await Bun.file(`dist/${name}/package.json`).write(
     JSON.stringify(
       {
-        name,
+        name: `@codo-ai/${name}`,
         version: Script.version,
         preferUnplugged: true,
         os: [item.os],
         cpu: [item.arch],
         ...(item.abi ? { libc: [item.abi] } : {}),
+        // No bin field: platform packages are binary carriers resolved by
+        // codo-ai's postinstall. A bin entry whose target misses the Windows
+        // ".exe" suffix makes npm's bin-linker silently skip shim creation.
       },
       null,
       2,

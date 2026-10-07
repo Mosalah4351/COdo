@@ -5,6 +5,7 @@ import { fileURLToPath } from "url"
 import { DialogSelect, type DialogSelectOption } from "../../ui/dialog-select"
 import { Show, createEffect, createMemo, createSignal } from "solid-js"
 import { useBindings } from "../../keymap"
+import { RtlText } from "../../component/rtl-text"
 
 const id = "internal:plugin-manager"
 
@@ -52,12 +53,12 @@ function Install(props: { api: TuiPluginApi }) {
       busyText="Installing plugin..."
       description={() => (
         <box flexDirection="row" gap={1}>
-          <text fg={props.api.theme.current.textMuted}>scope:</text>
-          <text fg={busy() ? props.api.theme.current.textMuted : props.api.theme.current.text}>
+          <RtlText fg={props.api.theme.current.textMuted}>scope:</RtlText>
+          <RtlText fg={busy() ? props.api.theme.current.textMuted : props.api.theme.current.text}>
             {global() ? "global" : "local"}
-          </text>
+          </RtlText>
           <Show when={!busy()}>
-            <text fg={props.api.theme.current.textMuted}>(tab toggle)</text>
+            <RtlText fg={props.api.theme.current.textMuted}>(tab toggle)</RtlText>
           </Show>
         </box>
       )}

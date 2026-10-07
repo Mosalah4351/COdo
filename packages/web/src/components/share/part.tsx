@@ -27,7 +27,7 @@ import { ContentBash } from "./content-bash"
 import { ContentError } from "./content-error"
 import { formatCount, formatDuration, formatNumber, normalizeLocale, useShareMessages } from "../share/common"
 import { ContentMarkdown } from "./content-markdown"
-import type { MessageV2 } from "COdo/session/message-v2"
+import type { MessageV2 } from "codo/session/message-v2"
 import type { Diagnostic } from "vscode-languageserver-types"
 
 import styles from "./part.module.css"
@@ -616,7 +616,6 @@ export function BashTool(props: ToolProps) {
     <ContentBash
       command={props.state.input.command}
       output={props.state.metadata.output ?? props.state.metadata?.stdout}
-      description={props.state.metadata.description}
     />
   )
 }

@@ -3,6 +3,7 @@ import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, Match, Show, Switch } from "solid-js"
 import { abbreviateHome } from "../../runtime"
 import { useTuiPaths } from "../../context/runtime"
+import { RtlText } from "../../component/rtl-text"
 import { useHomeSessionDestination } from "../../routes/home/session-destination"
 
 const id = "internal:home-footer"
@@ -21,7 +22,7 @@ function Directory(props: { api: TuiPluginApi }) {
     return out
   })
 
-  return <Show when={dir()}>{(value) => <text fg={theme().textMuted}>{value()}</text>}</Show>
+  return <Show when={dir()}>{(value) => <RtlText fg={theme().textMuted}>{value()}</RtlText>}</Show>
 }
 
 function Mcp(props: { api: TuiPluginApi }) {
@@ -34,7 +35,7 @@ function Mcp(props: { api: TuiPluginApi }) {
   return (
     <Show when={has()}>
       <box gap={1} flexDirection="row" flexShrink={0}>
-        <text fg={theme().text}>
+        <RtlText fg={theme().text}>
           <Switch>
             <Match when={err()}>
               <span style={{ fg: theme().error }}>⊙ </span>
@@ -44,8 +45,8 @@ function Mcp(props: { api: TuiPluginApi }) {
             </Match>
           </Switch>
           {count()} MCP
-        </text>
-        <text fg={theme().textMuted}>/status</text>
+        </RtlText>
+        <RtlText fg={theme().textMuted}>/status</RtlText>
       </box>
     </Show>
   )
@@ -56,7 +57,7 @@ function Version(props: { api: TuiPluginApi }) {
 
   return (
     <box flexShrink={0}>
-      <text fg={theme().textMuted}>{props.api.app.version}</text>
+      <RtlText fg={theme().textMuted}>{props.api.app.version}</RtlText>
     </box>
   )
 }

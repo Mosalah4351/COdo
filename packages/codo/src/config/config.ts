@@ -421,7 +421,7 @@ export const layer = Layer.effect(
         const deps: Fiber.Fiber<void>[] = []
 
         for (const dir of directories) {
-          if (dir.endsWith(".codo") || dir === Flag.CODO_CONFIG_DIR) {
+          if (dir.endsWith(".codo") || dir.endsWith(".opencode") || dir === Flag.CODO_CONFIG_DIR) {
             for (const file of ["COdo.json", "COdo.jsonc"]) {
               const source = path.join(dir, file)
               yield* Effect.logDebug(`loading config from ${source}`)

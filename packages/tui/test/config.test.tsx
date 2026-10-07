@@ -41,6 +41,29 @@ test("validates config constraints", () => {
   expect(decodeInfo({ attention: { sounds: { unknown: "sound.wav" } } })).toEqual({ attention: { sounds: {} } })
 })
 
+test.each([true, false, "auto"] as const)("accepts and preserves rtl forceShaping %s", (forceShaping) => {
+  const input = { rtl: { forceShaping } }
+  expect(decodeInfo(input)).toEqual(input)
+  expect(resolve(input, { terminalSuspend: true }).rtl).toEqual(input.rtl)
+})
+
+test("allows omitted rtl settings", () => {
+  expect(decodeInfo({}).rtl).toBeUndefined()
+  expect(decodeInfo({ rtl: {} }).rtl).toEqual({})
+  expect(resolve({}, { terminalSuspend: true }).rtl).toBeUndefined()
+})
+
+test.each(["true", "false", "always", 0, 1, null, [], {}].map((forceShaping) => ({ forceShaping })))(
+  "rejects invalid rtl forceShaping %j",
+  (rtl) => {
+    expect(() => decodeInfo({ rtl })).toThrow()
+  },
+)
+
+test.each([true, "auto", null])("rejects invalid rtl settings %j", (rtl) => {
+  expect(() => decodeInfo({ rtl })).toThrow()
+})
+
 test("resolves host-neutral defaults", () => {
   const config = resolve({}, { terminalSuspend: true })
 

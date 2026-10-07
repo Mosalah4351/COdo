@@ -1,6 +1,7 @@
 import type { TuiPlugin, TuiPluginApi } from "@codo-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { createMemo, For, Match, Show, Switch, createSignal } from "solid-js"
+import { RtlText } from "../../component/rtl-text"
 
 const id = "internal:sidebar-mcp"
 
@@ -31,9 +32,9 @@ function View(props: { api: TuiPluginApi }) {
       <box>
         <box flexDirection="row" gap={1} onMouseDown={() => list().length > 2 && setOpen((x) => !x)}>
           <Show when={list().length > 2}>
-            <text fg={theme().text}>{open() ? "▼" : "▶"}</text>
+            <RtlText fg={theme().text}>{open() ? "▼" : "▶"}</RtlText>
           </Show>
-          <text fg={theme().text}>
+          <RtlText fg={theme().text}>
             <b>MCP</b>
             <Show when={!open()}>
               <span style={{ fg: theme().textMuted }}>
@@ -41,21 +42,21 @@ function View(props: { api: TuiPluginApi }) {
                 ({on()} active{bad() > 0 ? `, ${bad()} error${bad() > 1 ? "s" : ""}` : ""})
               </span>
             </Show>
-          </text>
+          </RtlText>
         </box>
         <Show when={list().length <= 2 || open()}>
           <For each={list()}>
             {(item) => (
               <box flexDirection="row" gap={1}>
-                <text
+                <RtlText
                   flexShrink={0}
                   style={{
                     fg: dot(item.status),
                   }}
                 >
                   •
-                </text>
-                <text fg={theme().text} wrapMode="word">
+                </RtlText>
+                <RtlText fg={theme().text} wrapMode="word">
                   {item.name}{" "}
                   <span style={{ fg: theme().textMuted }}>
                     <Switch fallback={item.status}>
@@ -68,7 +69,7 @@ function View(props: { api: TuiPluginApi }) {
                       <Match when={item.status === "needs_client_registration"}>Needs client ID</Match>
                     </Switch>
                   </span>
-                </text>
+                </RtlText>
               </box>
             )}
           </For>

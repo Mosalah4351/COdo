@@ -1,0 +1,1 @@
+Start or stop HAR (HTTP Archive) recording for network analysis.

@@ -12,6 +12,10 @@ import { ProviderTransform } from "@/provider/transform"
 import PROMPT_GENERATE from "./generate.txt"
 import PROMPT_COMPACTION from "./prompt/compaction.txt"
 import PROMPT_COMPOSE from "./prompt/compose.txt"
+import PROMPT_SEC_TEST from "./prompt/sec-test.txt"
+import PROMPT_BUSINESS from "./prompt/business.txt"
+import PROMPT_SCRAPE from "./prompt/scrape.txt"
+import { SCRAPE_AGENTS } from "./scrape-topic"
 import PROMPT_EXPLORE from "./prompt/explore.txt"
 import PROMPT_SUMMARY from "./prompt/summary.txt"
 import PROMPT_TITLE from "./prompt/title.txt"
@@ -21,6 +25,9 @@ import { Global } from "@codo-ai/core/global"
 import path from "path"
 import { Plugin } from "@/plugin"
 import { Skill } from "../skill"
+import { Workflow } from "@/config/workflow"
+import { GSD } from "./gsd"
+import { Sec } from "./sec"
 import { Effect, Context, Layer, Schema } from "effect"
 import { InstanceState } from "@/effect/instance-state"
 import * as Option from "effect/Option"
@@ -50,6 +57,7 @@ export const Info = Schema.Struct({
     }),
   ),
   variant: Schema.optional(Schema.String),
+  workflow: Schema.optional(Schema.String),
   prompt: Schema.optional(Schema.String),
   options: Schema.Record(Schema.String, Schema.Unknown),
   steps: Schema.optional(Schema.Finite),
@@ -94,6 +102,7 @@ export const layer = Layer.effect(
     const plugin = yield* Plugin.Service
     const skill = yield* Skill.Service
     const provider = yield* Provider.Service
+    const workflow = Workflow.Service.live()
     const locations = yield* LocationServiceMap
 
     const state = yield* InstanceState.make<State>(
@@ -107,6 +116,12 @@ export const layer = Layer.effect(
         const whitelistedDirs = [
           Truncate.GLOB,
           path.join(Global.Path.tmp, "*"),
+          // Installed GSD trees (project-local + global) — subagents are ordered
+          // to Read their workflow files at boot; without this, "agents/… not on
+          // the whitelist" would turn that into an interactive permission prompt.
+          path.join(ctx.directory, ".codo", "gsd", "*"),
+          path.join(ctx.directory, ".agents", "gsd-core", "*"),
+          path.join(Global.Path.config, "gsd", "*"),
           ...skillDirs.map((dir) => path.join(dir, "*")),
           ...referenceDirs.map((dir) => path.join(dir, "*")),
         ]
@@ -137,6 +152,22 @@ export const layer = Layer.effect(
         const user = Permission.fromConfig(cfg.permission ?? {})
 
         const agents: Record<string, Info> = {
+          // Always register GSD subagents so '@' autocomplete + the task tool can
+          // summon them directly (e.g. `@gsd-planner`) regardless of which SDD
+          // workflow is currently selected. The `workflow` setting changes which
+          // subagent compose picks by default, not whether they exist.
+          ...Object.fromEntries(
+            GSD.GSD_AGENTS.map((a) => [a.name, {
+              ...a,
+              // Bake the execution context in at registry time: resolves the
+              // installed GSD tree (project-local first, then global), rewrites
+              // the stale `.agents/gsd-core/*` references to real paths, and
+              // prepends the role-matched workflow files the subagent MUST read
+              // first — COdo's execution_context preamble.
+              prompt: a.withPrompt(ctx.directory),
+              permission: Permission.merge(defaults, a.permission, user),
+            }]),
+          ),
           build: {
             name: "build",
             description: "The default agent. Executes tools based on configured permissions.",
@@ -188,6 +219,13 @@ export const layer = Layer.effect(
               Permission.fromConfig({
                 question: "allow",
                 skill: "allow",
+                workflow: "allow",
+                external_directory: {
+                  [path.join(Global.Path.home, ".codo", "*")]: "allow",
+                  [path.join(Global.Path.home, ".agents", "skills", "*")]: "allow",
+                  [path.join(Global.Path.home, ".Codex", "*")]: "allow",
+                  [path.join(Global.Path.home, ".codex", "*")]: "allow",
+                },
               }),
               user,
             ),
@@ -195,6 +233,94 @@ export const layer = Layer.effect(
             mode: "primary",
             native: true,
           },
+          "sec-test": {
+            name: "sec-test",
+            color: "#e0715a",
+            description:
+              "Security & testing orchestrator. Dispatches read-only audit personas (architect/appsec/devsecops/secops), the scope-gated pentest persona for authorized validation, and the QA persona for test design and coverage.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                question: "allow",
+                skill: "allow",
+                task: "allow",
+              }),
+              user,
+            ),
+            prompt: PROMPT_SEC_TEST,
+            mode: "primary",
+            native: true,
+          },
+          business: {
+            name: "business",
+            color: "#c3e88d",
+            description:
+              "Business deliverables orchestrator. Routes work to the business skills (xlsx, docx, pptx, pdf, deep research, papers, sales, video, arxiv, data-analytics, design, learning courses, python setup, skill authoring) and executes them end to end - real files on disk, verified before handoff.",
+            options: {},
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                question: "allow",
+                skill: "allow",
+              }),
+              user,
+            ),
+            prompt: PROMPT_BUSINESS,
+            mode: "primary",
+            native: true,
+          },
+          scrape: {
+            name: "scrape",
+            color: "#4d9e6a",
+            description:
+              "Web-extraction orchestrator. Plans runs (scrape:brief), dispatches a parallel topic-subagent swarm, climbs the escalation ladder, checkpoints to .codo/scrape/<run-id>/, delivers Excel via business:xlsx-official.",
+            options: {},
+            // ⚠️ permission REQUIRED — omitting it 500-crashes production boot
+            // (the /agent endpoint dereferences it for every registered agent).
+            permission: Permission.merge(
+              defaults,
+              Permission.fromConfig({
+                question: "allow",
+                skill: "allow",
+                task: "allow", // REQUIRED — enables the TaskTool topic swarm
+              }),
+              user,
+            ),
+            prompt: PROMPT_SCRAPE,
+            mode: "primary",
+            native: true,
+          },
+          // The six sec-* personas (architect, appsec, devsecops, pentest,
+          // secops, qa) are registered from their spec module so each one
+          // gets a baked `<execution_context>` preamble (project dir,
+          // deliverable path, mandatory first skill) the same way the GSD
+          // subagents do. Without that preamble a persona never learns where
+          // its artifacts go or which skill encodes its procedure.
+          ...Object.fromEntries(
+            Sec.SEC_AGENTS.map((a) => [
+              a.name,
+              {
+                ...a,
+                prompt: a.withPrompt(ctx.directory),
+                permission: Permission.merge(defaults, a.permission, user),
+              },
+            ]),
+          ),
+          // The scrape-topic persona (one generic worker; rung selection stays
+          // dynamic in-prompt) registers from its spec module the same way —
+          // baked execution_context with politeness-first skill, checkpoint
+          // workspace, and toolchain line.
+          ...Object.fromEntries(
+            SCRAPE_AGENTS.map((a) => [
+              a.name,
+              {
+                ...a,
+                prompt: a.withPrompt(ctx.directory),
+                permission: Permission.merge(defaults, a.permission, user),
+              },
+            ]),
+          ),
           general: {
             name: "general",
             description: `General-purpose agent for researching complex questions and executing multi-step tasks. Use this agent to execute multiple units of work in parallel.`,
@@ -335,7 +461,8 @@ export const layer = Layer.effect(
             agents,
             values(),
             sortBy(
-              [(x) => (cfg.default_agent ? x.name === cfg.default_agent : x.name === "build"), "desc"],
+              [(x) => (cfg.default_agent ? x.name === cfg.default_agent : x.name === "sec-test"), "desc"],
+              [(x) => x.name === "sec-test", "desc"],
               [(x) => x.name === "compose", "desc"],
               [(x) => x.name, "asc"],
             ),
@@ -351,6 +478,10 @@ export const layer = Layer.effect(
             if (agent.hidden === true) throw new Error(`default agent "${c.default_agent}" is hidden`)
             return agent
           }
+          // COdo: sec-test is the default-first primary. Falls back to the first
+          // non-hidden non-subagent otherwise (build/plan in upstream shape).
+          const preferred = agents["sec-test"]
+          if (preferred && preferred.mode !== "subagent" && preferred.hidden !== true) return preferred
           const visible = Object.values(agents).find((a) => a.mode !== "subagent" && a.hidden !== true)
           if (!visible) throw new Error("no primary visible agent found")
           return visible
@@ -460,6 +591,7 @@ export const defaultLayer = layer.pipe(
   Layer.provide(Provider.defaultLayer),
   Layer.provide(Auth.defaultLayer),
   Layer.provide(Config.defaultLayer),
+  Layer.provide(Workflow.defaultLayer),
   Layer.provide(Skill.defaultLayer),
   Layer.provide(LocationServiceMap.layer),
 )

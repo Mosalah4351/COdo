@@ -164,14 +164,15 @@ export function registerIpcHandlers(deps: Deps) {
   )
 
   ipcMain.on("open-link", (_event: IpcMainEvent, url: string) => {
+    if (!isAllowedExternalUrl(url)) return
     void shell.openExternal(url)
   })
 
   ipcMain.handle("open-path", async (_event: IpcMainInvokeEvent, path: string, app?: string) => {
     if (!app) return shell.openPath(path)
     await new Promise<void>((resolve, reject) => {
-      const [cmd, args] =
-        process.platform === "darwin" ? (["open", ["-a", app, path]] as const) : ([app, [path]] as const)
+      const [cmd, args] = resolveOpener(process.platform, app, path)
+      if (!cmd) return reject(new Error(`Application "${app}" is not allowed to be used as an opener`))
       execFile(cmd, args, (err) => (err ? reject(err) : resolve()))
     })
   })
@@ -239,4 +240,29 @@ export function sendMenuCommand(win: BrowserWindow, id: string) {
 
 export function sendDeepLinks(win: BrowserWindow, urls: string[]) {
   win.webContents.send("deep-link", urls)
+}
+
+function isAllowedExternalUrl(url: string) {
+  return url.startsWith("https://") || url.startsWith("http://")
+}
+
+const ALLOWED_OPENERS: Readonly<Record<NodeJS.Platform, readonly string[]>> = {
+  aix: [],
+  android: [],
+  darwin: ["open"],
+  freebsd: ["xdg-open"],
+  haiku: [],
+  linux: ["xdg-open"],
+  openbsd: ["xdg-open"],
+  sunos: [],
+  win32: ["explorer"],
+  cygwin: [],
+  netbsd: [],
+}
+
+function resolveOpener(platform: NodeJS.Platform, app: string, path: string): [cmd: string, args: string[]] | [null, []] {
+  const allowed = ALLOWED_OPENERS[platform] ?? []
+  if (!allowed.includes(app)) return [null, []]
+  if (platform === "darwin") return ["open", ["-a", app, path]]
+  return [app, [path]]
 }

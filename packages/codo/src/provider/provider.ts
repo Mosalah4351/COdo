@@ -176,7 +176,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           },
         },
       }),
-    COdo: Effect.fnUntraced(function* (input: Info) {
+    opencode: Effect.fnUntraced(function* (input: Info) {
       const env = yield* dep.env()
       const hasKey = iife(() => {
         if (input.env.some((item) => env[item])) return true
@@ -185,7 +185,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       const ok =
         hasKey ||
         Boolean(yield* dep.auth(input.id)) ||
-        Boolean((yield* dep.config()).provider?.["COdo"]?.options?.apiKey)
+        Boolean((yield* dep.config()).provider?.["opencode"]?.options?.apiKey)
 
       if (!ok) {
         for (const [key, value] of Object.entries(input.models)) {
@@ -296,17 +296,11 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       const awsAccessKeyId = env["AWS_ACCESS_KEY_ID"]
       const configApiKey = providerConfig?.options?.apiKey
 
-      // TODO: Using process.env directly because Env.set only updates a process.env shallow copy,
-      // until the scope of the Env API is clarified (test only or runtime?)
-      const awsBearerToken = iife(() => {
-        const envToken = process.env.AWS_BEARER_TOKEN_BEDROCK
-        if (envToken) return envToken
-        if (auth?.type === "api") {
-          process.env.AWS_BEARER_TOKEN_BEDROCK = auth.key
-          return auth.key
-        }
-        return undefined
-      })
+      // The Bedrock SDK accepts the bearer token via `apiKey` at createAmazonBedrock()
+      // time — no need to mutate process.env (which leaks the credential to any
+      // child process and persists across provider reloads in the same runtime).
+      // Precedence: explicit env var (existing behavior respected) > stored auth.
+      const awsBearerToken = env["AWS_BEARER_TOKEN_BEDROCK"] ?? (auth?.type === "api" ? auth.key : undefined)
 
       const awsWebIdentityTokenFile = env["AWS_WEB_IDENTITY_TOKEN_FILE"]
 
@@ -328,6 +322,11 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
 
       const providerOptions: Record<string, any> = {
         region: defaultRegion,
+      }
+
+      // Pass bearer token through to the SDK as apiKey (preferred over env mutation).
+      if (awsBearerToken) {
+        providerOptions.apiKey = awsBearerToken
       }
 
       // Only use credential chain if no bearer token exists
@@ -556,17 +555,14 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
     }),
     "sap-ai-core": Effect.fnUntraced(function* () {
       const auth = yield* dep.auth("sap-ai-core")
-      // TODO: Using process.env directly because Env.set only updates a shallow copy (not process.env),
-      // until the scope of the Env API is clarified (test only or runtime?)
-      const envServiceKey = iife(() => {
-        const envAICoreServiceKey = process.env.AICORE_SERVICE_KEY
-        if (envAICoreServiceKey) return envAICoreServiceKey
-        if (auth?.type === "api") {
-          process.env.AICORE_SERVICE_KEY = auth.key
-          return auth.key
-        }
-        return undefined
-      })
+      const env = yield* dep.env()
+      // The SAP AI Core SDK reads AICORE_SERVICE_KEY only during factory-call
+      // construction, not at request time. Don't seed process.env here; the
+      // plugin (plugin/provider/sap-ai-core.ts) threads the credential into
+      // the SDK constructor via a scoped try/finally so it can't leak to
+      // later provider loads in the same runtime. This block only decides
+      // whether to autoload the provider at all.
+      const envServiceKey = env["AICORE_SERVICE_KEY"] ?? (auth?.type === "api" ? auth.key : undefined)
       const deploymentId = process.env.AICORE_DEPLOYMENT_ID
       const resourceGroup = process.env.AICORE_RESOURCE_GROUP
 
@@ -1847,7 +1843,7 @@ export const layer = Layer.effect(
         "gemini-2.5-flash",
         "gpt-5-nano",
       ]
-      const priority = providerID.startsWith("COdo")
+      const priority = providerID.startsWith("opencode")
         ? ["gpt-5-nano"]
         : providerID.startsWith("github-copilot")
           ? ["gpt-5-mini", "claude-haiku-4.5", ...defaultPriority]

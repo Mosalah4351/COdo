@@ -16,6 +16,9 @@ import { WebFetchTool } from "./webfetch"
 import { WriteTool } from "./write"
 import { InvalidTool } from "./invalid"
 import { SkillTool } from "./skill"
+import { SecProbeTool } from "./sec_probe"
+import { SecFindingTool } from "./sec_finding"
+import { WorkflowTool } from "./workflow"
 import * as Tool from "./tool"
 import { Config } from "@/config/config"
 import { type ToolContext as PluginToolContext, type ToolDefinition } from "@codo-ai/plugin"
@@ -46,6 +49,7 @@ import { Instruction } from "../session/instruction"
 import { FSUtil } from "@codo-ai/core/fs-util"
 import { EventV2Bridge } from "@/event-v2-bridge"
 import { Agent } from "../agent/agent"
+import { Workflow } from "@/config/workflow"
 import { Skill } from "../skill"
 import { Permission } from "@/permission"
 import { BackgroundJob } from "@/background/job"
@@ -84,6 +88,7 @@ export const layer = Layer.effect(
   Service,
   Effect.gen(function* () {
     const config = yield* Config.Service
+    const workflow = yield* Workflow.Service
     const plugin = yield* Plugin.Service
     const agents = yield* Agent.Service
     const truncate = yield* Truncate.Service
@@ -105,6 +110,9 @@ export const layer = Layer.effect(
     const greptool = yield* GrepTool
     const patchtool = yield* ApplyPatchTool
     const skilltool = yield* SkillTool
+    const secprobe = yield* SecProbeTool
+    const secfinding = yield* SecFindingTool
+    const workflowtool = yield* WorkflowTool
     const agent = yield* Agent.Service
 
     const state = yield* InstanceState.make<State>(
@@ -208,10 +216,13 @@ export const layer = Layer.effect(
           todo: Tool.init(todo),
           search: Tool.init(websearch),
           skill: Tool.init(skilltool),
+          sec_probe: Tool.init(secprobe),
+          sec_finding: Tool.init(secfinding),
           patch: Tool.init(patchtool),
           question: Tool.init(question),
           lsp: Tool.init(lsptool),
           plan: Tool.init(plan),
+          workflow: Tool.init(workflowtool),
         })
 
         return {
@@ -230,7 +241,10 @@ export const layer = Layer.effect(
             tool.todo,
             tool.search,
             tool.skill,
+            tool.sec_probe,
+            tool.sec_finding,
             tool.patch,
+            tool.workflow,
             ...(flags.experimentalLspTool ? [tool.lsp] : []),
             ...(flags.experimentalPlanMode && flags.client === "cli" ? [tool.plan] : []),
           ],
@@ -250,7 +264,10 @@ export const layer = Layer.effect(
     })
 
     const describeTask = Effect.fn("ToolRegistry.describeTask")(function* (agent: Agent.Info) {
-      const items = (yield* agents.list()).filter((item) => item.mode !== "primary")
+      const items = (yield* agents.list()).filter((item) => item.mode !== "primary").filter((item) => {
+        if (item.workflow === "gsd" && workflow.workflow !== "gsd") return false
+        return true
+      })
       const filtered = items.filter(
         (item) => Permission.evaluate("task", item.name, agent.permission).action !== "deny",
       )
@@ -319,6 +336,7 @@ export const defaultLayer = Layer.suspend(() =>
   layer
     .pipe(
       Layer.provide(Config.defaultLayer),
+      Layer.provide(Workflow.defaultLayer),
       Layer.provide(Plugin.defaultLayer),
       Layer.provide(Question.defaultLayer),
       Layer.provide(Todo.defaultLayer),
@@ -417,6 +435,7 @@ function isJsonSchemaObject(value: unknown): value is Record<string, unknown> {
 
 export const node = LayerNode.make(layer.pipe(Layer.provide(Ripgrep.defaultLayer)), [
   Config.node,
+  Workflow.node,
   Plugin.node,
   Question.node,
   Todo.node,

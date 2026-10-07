@@ -6,6 +6,7 @@ import { useBindings, useKeymapSelector } from "../../keymap"
 import type { ActiveKey } from "@opentui/keymap"
 import type { TuiPlugin, TuiPluginApi } from "@codo-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
+import { RtlText } from "../../component/rtl-text"
 
 const command = {
   toggle: "which-key.toggle",
@@ -174,9 +175,9 @@ function HomeHint(props: { api: TuiPluginApi }) {
 
   return (
     <box width="100%" maxWidth={75} alignItems="center" paddingTop={1} flexShrink={0}>
-      <text fg={look().muted} wrapMode="none">
+      <RtlText fg={look().muted} wrapMode="none">
         Show keyboard shortcuts with <span style={{ fg: look().subtle }}>{trigger() || command.toggle}</span>
-      </text>
+      </RtlText>
     </box>
   )
 }
@@ -415,11 +416,11 @@ function WhichKeyPanel(props: {
                   when={item.type === "tab" ? item.group : undefined}
                   fallback={
                     <box flexShrink={0}>
-                      <text wrapMode="none">
+                      <RtlText wrapMode="none">
                         <span style={{ fg: upActive() ? look().text : look().muted }}>↑</span>
                         <span style={{ fg: look().muted }}> </span>
                         <span style={{ fg: downActive() ? look().text : look().muted }}>↓</span>
-                      </text>
+                      </RtlText>
                     </box>
                   }
                 >
@@ -436,13 +437,13 @@ function WhichKeyPanel(props: {
                           setOffset(0)
                         }}
                       >
-                        <text
+                        <RtlText
                           fg={selected() ? look().tabText : look().muted}
                           attributes={selected() ? TextAttributes.BOLD : undefined}
                           wrapMode="none"
                         >
                           {group().label}
-                        </text>
+                        </RtlText>
                       </box>
                     )
                   }}
@@ -455,7 +456,7 @@ function WhichKeyPanel(props: {
           <box height={TAB_CONTENT_GAP} flexShrink={0} />
         </Show>
         <box height={rows()} flexShrink={0} flexDirection="column">
-          <Show when={shown().length > 0} fallback={<text fg={look().muted}>No reachable bindings</text>}>
+          <Show when={shown().length > 0} fallback={<RtlText fg={look().muted}>No reachable bindings</RtlText>}>
             <For each={rowIndexes()}>
               {(row) => (
                 <box width="100%" flexDirection="row" justifyContent="center" gap={COLUMN_GAP}>
@@ -474,26 +475,26 @@ function WhichKeyPanel(props: {
                               <Show
                                 when={entry()}
                                 fallback={
-                                  <text fg={look().accent} attributes={TextAttributes.BOLD} wrapMode="none" truncate>
+                                  <RtlText fg={look().accent} attributes={TextAttributes.BOLD} wrapMode="none" truncate>
                                     {value().label}
-                                  </text>
+                                  </RtlText>
                                 }
                               >
                                 {(binding) => (
                                   <>
                                     <box flexGrow={1} minWidth={0}>
-                                      <text
+                                      <RtlText
                                         fg={binding().continues ? look().accent : look().muted}
                                         wrapMode="none"
                                         truncate
                                       >
                                         {binding().label}
-                                      </text>
+                                      </RtlText>
                                     </box>
                                     <box flexShrink={0}>
-                                      <text fg={look().text} attributes={TextAttributes.BOLD} wrapMode="none" truncate>
+                                      <RtlText fg={look().text} attributes={TextAttributes.BOLD} wrapMode="none" truncate>
                                         {binding().key}
-                                      </text>
+                                      </RtlText>
                                     </box>
                                   </>
                                 )}
@@ -513,14 +514,14 @@ function WhichKeyPanel(props: {
           <box height={FOOTER_MARGIN} flexShrink={0} />
           <box width="100%" flexDirection="row" justifyContent="space-between" flexShrink={0}>
             <box>
-              <text fg={look().text} wrapMode="none">
+              <RtlText fg={look().text} wrapMode="none">
                 toggle <span style={{ fg: look().subtle }}>{trigger() || command.toggle}</span>
-              </text>
+              </RtlText>
             </box>
             <box>
-              <text fg={look().text} wrapMode="none">
+              <RtlText fg={look().text} wrapMode="none">
                 {nextMode()} <span style={{ fg: look().subtle }}>{modeTrigger() || command.toggleLayout}</span>
-              </text>
+              </RtlText>
             </box>
           </box>
         </Show>

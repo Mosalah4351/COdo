@@ -4,6 +4,12 @@ hidden: true
 description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:verify-work`** (conversational UAT testing) or **`gsd:validate-phase`** (Nyquist coverage audit) via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Verification Before Completion
 
 ## Overview

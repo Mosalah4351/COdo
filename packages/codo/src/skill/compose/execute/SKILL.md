@@ -4,6 +4,12 @@ hidden: true
 description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:execute-phase`** (for multiple plans) or **`gsd:execute-plan`** (for a single plan) via the skill tool instead of following the instructions below. GSD uses wave-based parallel execution with integrated gates.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Executing Plans
 
 ## Overview

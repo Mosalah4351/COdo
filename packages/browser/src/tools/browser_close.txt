@@ -1,0 +1,3 @@
+Close the current browser session and release its resources.
+The browser daemon is stopped and all pages are discarded.
+Call this when you are done with a site to free up memory and processes.

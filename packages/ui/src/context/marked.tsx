@@ -6,6 +6,8 @@ import { bundledLanguages, type BundledLanguage } from "shiki"
 import { createSimpleContext } from "./helper"
 import { getSharedHighlighter, registerCustomTheme, ThemeRegistrationResolved } from "@pierre/diffs"
 
+export const COdoTheme = "COdo" as unknown as ThemeRegistrationResolved
+
 registerCustomTheme("COdo", () => {
   return Promise.resolve({
     name: "COdo",

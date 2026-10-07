@@ -14,7 +14,6 @@ import subagentContent from "./compose/subagent/SKILL.md" with { type: "text" }
 import tddContent from "./compose/tdd/SKILL.md" with { type: "text" }
 import verifyContent from "./compose/verify/SKILL.md" with { type: "text" }
 import worktreeContent from "./compose/worktree/SKILL.md" with { type: "text" }
-
 export interface ComposeSkill {
   name: string
   description: string

@@ -38,7 +38,10 @@ if (isDocs) {
     truncatedDesc = encodeURIComponent(description.substring(0, 400))
   }
 
-  ogImage = `${config.socialCard}/opencode-docs/${encodedTitle}.png?desc=${truncatedDesc}`;
+  // Only use the generated-card service when one is configured; otherwise keep the static asset from line 22.
+  if (config.socialCard) {
+    ogImage = `${config.socialCard}/COdo-docs/${encodedTitle}.png?desc=${truncatedDesc}`;
+  }
 }
 ---
 

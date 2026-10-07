@@ -1,6 +1,6 @@
 import { Config as EffectConfig, Context, Effect, Layer } from "effect"
 import { HttpApiBuilder, OpenApi } from "effect/unstable/httpapi"
-import { HttpClient, HttpMiddleware, HttpRouter, HttpServer, HttpServerResponse } from "effect/unstable/http"
+import { HttpClient, HttpMiddleware, HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/unstable/http"
 import * as Socket from "effect/unstable/socket/Socket"
 import { FSUtil } from "@codo-ai/core/fs-util"
 import * as Observability from "@codo-ai/core/observability"
@@ -10,6 +10,7 @@ import { Auth } from "@/auth"
 import { BackgroundJob } from "@/background/job"
 import { Command } from "@/command"
 import { Config } from "@/config/config"
+import { Workflow } from "@/config/workflow"
 import { Workspace } from "@/control-plane/workspace"
 import { Env } from "@/env"
 import { EventV2Bridge } from "@/event-v2-bridge"
@@ -42,6 +43,7 @@ import { Todo } from "@/session/todo"
 import { SessionShare } from "@/share/session"
 import { ShareNext } from "@/share/share-next"
 import { Skill } from "@/skill"
+import { GSD } from "@/skill/gsd-installer"
 import { Discovery } from "@/skill/discovery"
 import { Snapshot } from "@/snapshot"
 import { Storage } from "@/storage/storage"
@@ -62,7 +64,7 @@ import { PtyTicket } from "@codo-ai/core/pty/ticket"
 import { Ripgrep } from "@codo-ai/core/ripgrep"
 import { SessionProjector } from "@codo-ai/core/session/projector"
 import { lazy } from "@/util/lazy"
-import { CorsConfig, isAllowedCorsOrigin, type CorsOptions } from "@/server/cors"
+import { CorsConfig, isAllowedCorsOrigin, requestOriginAllowed, type CorsOptions } from "@/server/cors"
 import { serveUIEffect } from "@/server/shared/ui"
 import { ServerAuth } from "@/server/auth"
 import { InstanceHttpApi, RootHttpApi } from "./api"
@@ -117,6 +119,21 @@ const cors = (corsOptions?: CorsOptions) =>
     }),
     { global: true },
   )
+
+// Global request gate: rejects cross-site origins and DNS-rebound hosts for
+// every route, not just PTY. Without this, a malicious webpage could drive
+// permission approvals, shell sessions, and arbitrary process spawns.
+const originGuard = HttpRouter.middleware(
+  (effect) =>
+    Effect.gen(function* () {
+      const request = yield* HttpServerRequest.HttpServerRequest
+      if (requestOriginAllowed(request.headers.origin, request.headers.host, yield* CorsConfig)) {
+        return yield* effect
+      }
+      return HttpServerResponse.empty({ status: 403 })
+    }),
+  { global: true },
+)
 
 // Route tree:
 // - rootApiRoutes: typed /global/* and control routes; auth is declared by RootHttpApi.
@@ -221,6 +238,7 @@ const app = LayerNode.group([
   Question.node,
   Permission.node,
   Todo.node,
+  Workflow.node,
   Session.node,
   SessionProjector.node,
   SessionStatus.node,
@@ -243,6 +261,7 @@ const app = LayerNode.group([
   Truncate.node,
   ToolRegistry.node,
   Format.node,
+  GSD.node,
   Project.node,
   Vcs.node,
   Workspace.node,
@@ -275,6 +294,7 @@ export function createRoutes(
       compressionLayer,
       corsVaryFix,
       fenceLayer,
+      originGuard,
       cors(corsOptions),
       MoveSession.defaultLayer,
       HttpServer.layerServices,

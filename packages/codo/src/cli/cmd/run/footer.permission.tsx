@@ -11,6 +11,8 @@
 // The diff view (when available) uses the same diff component as scrollback
 // tool snapshots.
 /** @jsxImportSource @opentui/solid */
+import { RtlText } from "@codo-ai/tui/component/rtl-text"
+import { RtlDiff } from "@codo-ai/tui/component/rtl-content"
 import type { TextareaRenderable } from "@opentui/core"
 import { useKeyboard, useTerminalDimensions } from "@opentui/solid"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal } from "solid-js"
@@ -57,7 +59,7 @@ function buttons(
               if (!disabled) onSelect(option)
             }}
           >
-            <text fg={option === selected ? theme.surface : theme.muted}>{permissionLabel(option)}</text>
+            <RtlText fg={option === selected ? theme.surface : theme.muted}>{permissionLabel(option)}</RtlText>
           </box>
         )}
       </For>
@@ -268,23 +270,23 @@ export function RunPermissionBody(props: {
         flexShrink={0}
       >
         <box flexDirection="row" gap={1} paddingLeft={1}>
-          <text fg={state().stage === "reject" ? props.theme.error : props.theme.warning}>△</text>
-          <text fg={props.theme.text}>{title()}</text>
+          <RtlText fg={state().stage === "reject" ? props.theme.error : props.theme.warning}>△</RtlText>
+          <RtlText fg={props.theme.text}>{title()}</RtlText>
         </box>
         <Switch>
           <Match when={state().stage === "permission"}>
             <box flexDirection="row" gap={1} paddingLeft={2}>
-              <text fg={props.theme.muted} flexShrink={0}>
+              <RtlText fg={props.theme.muted} flexShrink={0}>
                 {info().icon}
-              </text>
-              <text fg={props.theme.text} wrapMode="word">
+              </RtlText>
+              <RtlText fg={props.theme.text} wrapMode="word">
                 {info().title}
-              </text>
+              </RtlText>
             </box>
           </Match>
           <Match when={state().stage === "reject"}>
             <box paddingLeft={1}>
-              <text fg={props.theme.muted}>Tell COdo what to do differently</text>
+              <RtlText fg={props.theme.muted}>Tell COdo what to do differently</RtlText>
             </box>
           </Match>
         </Switch>
@@ -324,18 +326,18 @@ export function RunPermissionBody(props: {
               <Show
                 when={!busy()}
                 fallback={
-                  <text fg={props.theme.muted} wrapMode="word" flexShrink={0}>
+                  <RtlText fg={props.theme.muted} wrapMode="word" flexShrink={0}>
                     Waiting for permission event...
-                  </text>
+                  </RtlText>
                 }
               >
                 <box flexDirection="row" gap={2} flexShrink={0}>
-                  <text fg={props.theme.text}>
+                  <RtlText fg={props.theme.text}>
                     enter <span style={{ fg: props.theme.muted }}>confirm</span>
-                  </text>
-                  <text fg={props.theme.text}>
+                  </RtlText>
+                  <RtlText fg={props.theme.text}>
                     esc <span style={{ fg: props.theme.muted }}>cancel</span>
-                  </text>
+                  </RtlText>
                 </box>
               </Show>
             </box>
@@ -362,16 +364,16 @@ export function RunPermissionBody(props: {
                       <box width="100%" flexDirection="column" gap={1} paddingLeft={1}>
                         <For each={info().lines}>
                           {(line) => (
-                            <text fg={props.theme.text} wrapMode="word">
+                            <RtlText fg={props.theme.text} wrapMode="word">
                               {line}
-                            </text>
+                            </RtlText>
                           )}
                         </For>
                       </box>
                     }
                   >
-                    <diff
-                      diff={info().diff!}
+                    <RtlDiff
+                      diff={info().diff}
                       view="unified"
                       filetype={ft()}
                       syntaxStyle={props.block.syntax}
@@ -392,7 +394,7 @@ export function RunPermissionBody(props: {
                   </Show>
                   <Show when={!info().diff && info().lines.length === 0}>
                     <box paddingLeft={1}>
-                      <text fg={props.theme.muted}>No diff provided</text>
+                      <RtlText fg={props.theme.muted}>No diff provided</RtlText>
                     </box>
                   </Show>
                 </box>
@@ -412,9 +414,9 @@ export function RunPermissionBody(props: {
                 <box width="100%" flexDirection="column" gap={1} paddingLeft={1}>
                   <For each={permissionAlwaysLines(props.request)}>
                     {(line) => (
-                      <text fg={props.theme.text} wrapMode="word">
+                      <RtlText fg={props.theme.text} wrapMode="word">
                         {line}
-                      </text>
+                      </RtlText>
                     )}
                   </For>
                 </box>
@@ -448,21 +450,21 @@ export function RunPermissionBody(props: {
           <Show
             when={!busy()}
             fallback={
-              <text fg={props.theme.muted} wrapMode="word" flexShrink={0}>
+              <RtlText fg={props.theme.muted} wrapMode="word" flexShrink={0}>
                 Waiting for permission event...
-              </text>
+              </RtlText>
             }
           >
             <box flexDirection="row" gap={2} flexShrink={0}>
-              <text fg={props.theme.text}>
+              <RtlText fg={props.theme.text}>
                 {"⇆"} <span style={{ fg: props.theme.muted }}>select</span>
-              </text>
-              <text fg={props.theme.text}>
+              </RtlText>
+              <RtlText fg={props.theme.text}>
                 enter <span style={{ fg: props.theme.muted }}>confirm</span>
-              </text>
-              <text fg={props.theme.text}>
+              </RtlText>
+              <RtlText fg={props.theme.text}>
                 esc <span style={{ fg: props.theme.muted }}>{state().stage === "always" ? "cancel" : "reject"}</span>
-              </text>
+              </RtlText>
             </box>
           </Show>
         </box>

@@ -103,7 +103,7 @@ describe("plugin.workspace", () => {
           path.join(dir, "codo.json"),
           JSON.stringify(
             {
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://codo-ai.vercel.app/config.json",
               plugin: [pathToFileURL(file).href],
             },
             null,

@@ -4,6 +4,12 @@ hidden: true
 description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
 ---
 
+## Workflow Routing
+
+If the active workflow is **GSD**, invoke **`gsd:ship`** (creates PR with auto-generated body) and optionally **`gsd:pr-branch`** (filters .planning commits from history) via the skill tool instead of following the instructions below.
+
+**DO NOT skip this routing** — GSD applies to ALL projects, even standalone tools. The reasoning "this is a standalone project, GSD doesn't apply" is WRONG. (Other workflows TBD.)
+
 # Finishing a Development Branch
 
 ## Overview

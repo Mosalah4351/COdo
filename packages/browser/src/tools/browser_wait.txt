@@ -1,0 +1,3 @@
+Wait for a condition on the page: an element to appear, text to be present,
+or a specific load state (domcontentloaded, load, networkidle).
+Use this before interacting with elements that may not yet be visible or ready.

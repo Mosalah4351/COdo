@@ -1,0 +1,51 @@
+Access the GSD workflow system — project state, context injection, verification, and health checks.
+
+## When to use
+
+Use this tool when executing GSD workflow skills to:
+- **get-state** — Read the current project state (active milestone, slice, task)
+- **get-next-unit** — Determine what to work on next based on dependencies
+- **next-step** — Determine the next GSD lifecycle step (discuss → plan → execute → verify → complete)
+- **inject-context** — Get focused context blocks for a specific unit type
+- **verify** — Run verification commands and evaluate quality gates
+- **doctor** — Check .planning/ directory structure and health
+- **summary** — Get a human-readable project overview
+
+## When NOT to use
+
+Skip when:
+- Not executing a GSD workflow skill
+- The project has no .planning/ directory
+- User is asking a simple question that doesn't need workflow state
+
+## Actions
+
+### get-state
+Returns the current project state from .planning/STATE.md.
+No additional parameters needed.
+
+### get-next-unit
+Determines the next unit (milestone, slice, or task) to work on.
+Uses dependency graph analysis to find the first unblocked unit.
+
+### next-step
+Determines the next GSD lifecycle step by reading `.planning/STATE.md`,
+`ROADMAP.md`, and `phases/` on disk. Returns one of: new-project,
+discuss-phase, plan-phase, execute-phase, verify-work, complete-milestone,
+resume-work, or blocked (with a reason). No additional parameters needed.
+
+### inject-context
+Returns focused context blocks for a specific unit.
+Required: unitType (milestone, slice, or task), milestoneId.
+Optional: sliceId, taskId.
+
+### verify
+Discovers and runs verification commands for a task.
+Optional: taskId (defaults to first task in plan).
+
+### doctor
+Runs health checks on .planning/ directory.
+Checks for STATE.md, ROADMAP.md, phases/, templates/, .gitignore.
+
+### summary
+Returns a human-readable overview of project state and progress.

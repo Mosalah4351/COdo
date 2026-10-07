@@ -17,9 +17,11 @@ import { RuntimeFlags } from "@/effect/runtime-flags"
 import { Glob } from "@codo-ai/core/util/glob"
 import { Discovery } from "./discovery"
 import { isRecord } from "@/util/record"
+import { ensureGsdLocal } from "./gsd-local"
 
 const CLAUDE_EXTERNAL_DIR = ".claude"
 const AGENTS_EXTERNAL_DIR = ".agents"
+const CODO_EXTERNAL_DIR = ".codo"
 const EXTERNAL_SKILL_PATTERN = "skills/**/SKILL.md"
 const CODO_SKILL_PATTERN = "{skill,skills}/**/SKILL.md"
 const SKILL_PATTERN = "**/SKILL.md"
@@ -35,6 +37,11 @@ const CUSTOMIZE_CODO_SKILL_DESCRIPTION =
 const CUSTOMIZE_CODO_SKILL_BODY = SkillPlugin.CustomizeCOdoContent
 
 import { composeSkills, COMPOSE_SKILL_NAMES, isComposeSkill } from "./compose-skills"
+import { secTestSkills, SEC_TEST_SKILL_NAMES, isSecTestSkill } from "./sec-test-skills"
+import { businessSkills } from "./business-skills"
+import { BusinessBundle } from "./business-bundle"
+import { standaloneSkills } from "./standalone-skills"
+import { scrapeSkills } from "./scrape-skills"
 
 export const Info = Schema.Struct({
   name: Schema.String,
@@ -141,6 +148,50 @@ const add = Effect.fnUntraced(function* (state: State, match: string, events: Ev
   }
 })
 
+/**
+ * Scan skill directory for router-pattern subdirectories.
+ *
+ * Looks for workflows/, references/, and templates/ subdirectories
+ * and returns their contents for skill activation.
+ */
+async function scanSkillSubDirs(
+  skillDir: string,
+): Promise<{
+  workflows: Array<{ name: string; path: string }>
+  references: Array<{ name: string; path: string }>
+  templates: Array<{ name: string; path: string }>
+}> {
+  const { readdir } = await import("fs/promises")
+  const { join } = await import("path")
+
+  const result = {
+    workflows: [] as Array<{ name: string; path: string }>,
+    references: [] as Array<{ name: string; path: string }>,
+    templates: [] as Array<{ name: string; path: string }>,
+  }
+
+  const subDirs = ["workflows", "references", "templates"] as const
+
+  for (const subDir of subDirs) {
+    const subDirPath = join(skillDir, subDir)
+    try {
+      const entries = await readdir(subDirPath, { withFileTypes: true })
+      for (const entry of entries) {
+        if (entry.isFile() && entry.name.endsWith(".md")) {
+          result[subDir].push({
+            name: entry.name.replace(/\.md$/, ""),
+            path: join(subDirPath, entry.name),
+          })
+        }
+      }
+    } catch {
+      // Subdirectory doesn't exist or can't be read — skip
+    }
+  }
+
+  return result
+}
+
 const scan = Effect.fnUntraced(function* (
   state: ScanState,
   root: string,
@@ -182,18 +233,16 @@ const discoverSkills = Effect.fnUntraced(function* (
   directory: string,
   worktree: string,
 ) {
+  yield* Effect.sync(() => ensureGsdLocal(directory))
+  const localGsdExists = yield* fsys.isDir(path.join(directory, ".agents", "gsd-core", "bin"))
+
   const state: ScanState = { matches: new Set(), dirs: new Set() }
 
   const externalDirs: string[] = []
   if (!disableExternalSkills) {
-    if (!disableClaudeCodeSkills) externalDirs.push(CLAUDE_EXTERNAL_DIR)
+    if (!disableClaudeCodeSkills && !localGsdExists) externalDirs.push(CLAUDE_EXTERNAL_DIR)
     externalDirs.push(AGENTS_EXTERNAL_DIR)
-
-    for (const dir of externalDirs) {
-      const root = path.join(global.home, dir)
-      if (!(yield* fsys.isDir(root))) continue
-      yield* scan(state, root, EXTERNAL_SKILL_PATTERN, { dot: true, scope: "global" })
-    }
+    externalDirs.push(CODO_EXTERNAL_DIR)
 
     const upDirs = yield* fsys
       .up({ targets: externalDirs, start: directory, stop: worktree })
@@ -201,6 +250,27 @@ const discoverSkills = Effect.fnUntraced(function* (
 
     for (const root of upDirs) {
       yield* scan(state, root, EXTERNAL_SKILL_PATTERN, { dot: true, scope: "project" })
+      // Project-local GSD trees keep their skills nested under operations dirs:
+      // .codo/gsd/skills/<name>/SKILL.md, .agents/gsd-core/skills/<name>/SKILL.md.
+      // The flat scan won't reach them — drill in directly when present.
+      for (const sub of ["gsd/skills", "gsd-core/skills"]) {
+        const nested = path.join(root, sub)
+        if (yield* fsys.isDir(nested)) {
+          yield* scan(state, nested, SKILL_PATTERN, { dot: true, scope: "project" })
+        }
+      }
+    }
+
+    for (const dir of externalDirs) {
+      const root = path.join(global.home, dir)
+      if (!(yield* fsys.isDir(root))) continue
+      yield* scan(state, root, EXTERNAL_SKILL_PATTERN, { dot: true, scope: "global" })
+      for (const sub of ["gsd/skills", "gsd-core/skills"]) {
+        const nested = path.join(root, sub)
+        if (yield* fsys.isDir(nested)) {
+          yield* scan(state, nested, SKILL_PATTERN, { dot: true, scope: "global" })
+        }
+      }
     }
   }
 
@@ -292,7 +362,61 @@ export const layer = Layer.effect(
             content: cs.content,
           }
         }
-        yield* loadSkills(s, yield* InstanceState.get(discovered), events)
+        // Register sec-test skills as built-in skills
+        for (const st of secTestSkills) {
+          s.skills[st.name] = {
+            name: st.name,
+            description: st.description,
+            location: `<built-in:sec-test:${st.name}>`,
+            content: st.content,
+          }
+        }
+        // Register business skills as built-in skills. The full bundle trees
+        // (SKILL.md plus workflows/, references/, scripts/) are extracted to
+        // the data dir so the relative references inside each skill resolve
+        // to real files. Registering a pseudo-location here instead hands the
+        // skill tool a base directory that does not exist, and every bundled
+        // reference 404s at routing time.
+        const businessRoot = yield* BusinessBundle.extract(fsys, global).pipe(
+          Effect.catch((error) =>
+            Effect.logWarning("business skill bundle extraction failed, registering content-only", { error }).pipe(
+              Effect.as(undefined),
+            ),
+          ),
+        )
+        const discoveredState = yield* InstanceState.get(discovered)
+        for (const bs of businessSkills) {
+          const skillDir = businessRoot ? path.join(businessRoot, bs.dir) : undefined
+          s.skills[bs.name] = {
+            name: bs.name,
+            description: bs.description,
+            location: skillDir ? path.join(skillDir, "SKILL.md") : `<built-in:business:${bs.name}>`,
+            content: bs.content,
+          }
+          if (skillDir) {
+            s.dirs.add(skillDir)
+            discoveredState.dirs.push(skillDir)
+          }
+        }
+        // Register scrape skills as built-in skills
+        for (const ss of scrapeSkills) {
+          s.skills[ss.name] = {
+            name: ss.name,
+            description: ss.description,
+            location: `<built-in:scrape:${ss.name}>`,
+            content: ss.content,
+          }
+        }
+        // Register standalone built-in skills
+        for (const ss of standaloneSkills) {
+          s.skills[ss.name] = {
+            name: ss.name,
+            description: ss.description,
+            location: `<built-in:${ss.name}>`,
+            content: ss.content,
+          }
+        }
+        yield* loadSkills(s, discoveredState, events)
         return s
       }),
     )

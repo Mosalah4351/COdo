@@ -1,0 +1,3 @@
+Type text into an element without clearing it first.
+Use this to append text to existing content or for typing into rich text editors.
+Unlike browser_fill, this does not clear the element before typing.

@@ -7,7 +7,7 @@ import { fixtureProvider, it, model, npmLayer, withEnv } from "./provider-helper
 const pluginWithNpm = { id: SapAICorePlugin.id, effect: SapAICorePlugin.effect.pipe(Effect.provide(npmLayer)) }
 
 describe("SapAICorePlugin", () => {
-  it.effect("copies serviceKey option into AICORE_SERVICE_KEY but keeps SDK options to deployment metadata", () =>
+  it.effect("threads serviceKey option into scoped AICORE_SERVICE_KEY then restores", () =>
     withEnv(
       { AICORE_SERVICE_KEY: undefined, AICORE_DEPLOYMENT_ID: "deployment", AICORE_RESOURCE_GROUP: "resource-group" },
       () =>
@@ -23,7 +23,8 @@ describe("SapAICorePlugin", () => {
             },
             {},
           )
-          expect(process.env.AICORE_SERVICE_KEY).toBe("service-key")
+          // The fix: env mutation is scoped to the factory call only.
+          expect(process.env.AICORE_SERVICE_KEY).toBeUndefined()
           expect(sdk.sdk.options).toEqual({ deploymentId: "deployment", resourceGroup: "resource-group" })
         }),
     ),

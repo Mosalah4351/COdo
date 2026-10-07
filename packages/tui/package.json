@@ -29,6 +29,7 @@
     "./editor-zed": "./src/editor-zed.ts",
     "./runtime": "./src/runtime.tsx",
     "./terminal-win32": "./src/terminal-win32.ts",
+    "./terminal-cleanup": "./src/terminal-cleanup.ts",
     "./config/keybind": "./src/config/keybind.ts",
     "./keymap": "./src/keymap.tsx",
     "./prompt/display": "./src/prompt/display.ts",
@@ -44,7 +45,9 @@
     "./ui/dialog": "./src/ui/dialog.tsx",
     "./ui/spinner": "./src/ui/spinner.ts",
     "./ui/toast": "./src/ui/toast.tsx",
-    "./component/spinner": "./src/component/spinner.tsx"
+    "./component/spinner": "./src/component/spinner.tsx",
+    "./component/rtl-text": "./src/component/rtl-text.tsx",
+    "./component/rtl-content": "./src/component/rtl-content.tsx"
   },
   "dependencies": {
     "@codo-ai/core": "workspace:*",
@@ -54,6 +57,7 @@
     "@opentui/core": "catalog:",
     "@opentui/keymap": "catalog:",
     "@opentui/solid": "catalog:",
+    "bidi-shaper": "0.1.2",
     "clipboardy": "4.0.0",
     "diff": "catalog:",
     "effect": "catalog:",

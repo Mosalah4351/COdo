@@ -4,10 +4,10 @@
   "version": "1.17.4",
   "type": "module",
   "license": "MIT",
-  "homepage": "https://opencode.ai",
+  "homepage": "https://codo-ai.vercel.app",
   "author": {
-    "name": "OpenCode",
-    "email": "hello@opencode.ai"
+    "name": "COdo",
+    "email": "team@msa.edu.eg"
   },
   "scripts": {
     "typecheck": "tsgo -b",

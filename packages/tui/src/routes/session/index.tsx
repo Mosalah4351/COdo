@@ -24,6 +24,9 @@ import { useEvent } from "../../context/event"
 import { SplitBorder } from "../../ui/border"
 import { useTuiPaths, useTuiTerminalEnvironment } from "../../context/runtime"
 import { Spinner } from "../../component/spinner"
+import { RtlText, useRtlPolicy } from "../../component/rtl-text"
+import { hasRtl, shouldShape } from "../../util/rtl"
+import { RtlCode, RtlDiff, RtlMarkdown } from "../../component/rtl-content"
 import { createSyntaxStyleMemo, generateSubtleSyntax, selectedForeground, useTheme } from "../../context/theme"
 import { BoxRenderable, ScrollBoxRenderable, addDefaultParsers, TextAttributes, RGBA } from "@opentui/core"
 import { Prompt, type PromptRef } from "../../component/prompt"
@@ -40,7 +43,7 @@ import type {
 import { useLocal } from "../../context/local"
 import { Locale } from "../../util/locale"
 import { webSearchProviderLabel } from "../../util/tool-display"
-import { useRenderer, useTerminalDimensions, type JSX } from "@opentui/solid"
+import { useRenderer, useTerminalDimensions, type CodeProps, type JSX } from "@opentui/solid"
 import { useSDK } from "../../context/sdk"
 import { useEditorContext } from "../../context/editor"
 import { openEditor } from "../../editor"
@@ -421,6 +424,19 @@ export function Session() {
   }
 
   const local = useLocal()
+
+  // Persona accent for the scrollbox + footer. Only meaningful when the
+  // current session is a subagent (has parentID and persona-tagged title) —
+  // otherwise we fall back to the default border color.
+  const sessionAccent = createMemo(() => {
+    const s = session()
+    if (!s) return undefined
+    // Subagents always carry a parentID; primary sessions don't
+    if (!s.parentID) return undefined
+    const match = s.title.match(/@([\w-]+) subagent/)
+    if (!match) return undefined
+    return local.agent.color(match[1].toLowerCase())
+  })
 
   function enterChild(sessionID: string) {
     navigate({
@@ -1176,7 +1192,7 @@ export function Session() {
                   visible: showScrollbar(),
                   trackOptions: {
                     backgroundColor: theme.backgroundElement,
-                    foregroundColor: theme.border,
+                    foregroundColor: sessionAccent() ?? theme.border,
                   },
                 }}
                 stickyScroll={true}
@@ -1222,15 +1238,15 @@ export function Session() {
                                 paddingLeft={2}
                                 backgroundColor={hover() ? theme.backgroundElement : theme.backgroundPanel}
                               >
-                                <text fg={theme.textMuted}>{revert()!.reverted.length} message reverted</text>
-                                <text fg={theme.textMuted}>
+                                <RtlText fg={theme.textMuted}>{revert()!.reverted.length} message reverted</RtlText>
+                                <RtlText fg={theme.textMuted}>
                                   <span style={{ fg: theme.text }}>{redoShortcut()}</span> or /redo to restore
-                                </text>
+                                </RtlText>
                                 <Show when={revert()!.diffFiles?.length}>
                                   <box marginTop={1}>
                                     <For each={revert()!.diffFiles}>
                                       {(file) => (
-                                        <text fg={theme.text}>
+                                        <RtlText fg={theme.text}>
                                           {file.filename}
                                           <Show when={file.additions > 0}>
                                             <span style={{ fg: theme.diffAdded }}> +{file.additions}</span>
@@ -1238,7 +1254,7 @@ export function Session() {
                                           <Show when={file.deletions > 0}>
                                             <span style={{ fg: theme.diffRemoved }}> -{file.deletions}</span>
                                           </Show>
-                                        </text>
+                                        </RtlText>
                                       )}
                                     </For>
                                   </box>
@@ -1412,7 +1428,7 @@ function UserMessage(props: {
             backgroundColor={hover() ? theme.backgroundElement : theme.backgroundPanel}
             flexShrink={0}
           >
-            <text fg={theme.text}>{text()}</text>
+            <RtlText fg={theme.text}>{text()}</RtlText>
             <Show when={files().length}>
               <box flexDirection="row" paddingBottom={metadataVisible() ? 1 : 0} paddingTop={1} gap={1} flexWrap="wrap">
                 <For each={files()}>
@@ -1423,10 +1439,10 @@ function UserMessage(props: {
                       return theme.secondary
                     })
                     return (
-                      <text fg={theme.text}>
+                      <RtlText fg={theme.text}>
                         <span style={{ bg: bg(), fg: theme.background }}> {MIME_BADGE[file.mime] ?? file.mime} </span>
                         <span style={{ bg: theme.backgroundElement, fg: theme.textMuted }}> {file.filename} </span>
-                      </text>
+                      </RtlText>
                     )
                   }}
                 </For>
@@ -1436,17 +1452,17 @@ function UserMessage(props: {
               when={queued()}
               fallback={
                 <Show when={ctx.showTimestamps()}>
-                  <text fg={theme.textMuted}>
+                  <RtlText fg={theme.textMuted}>
                     <span style={{ fg: theme.textMuted }}>
                       {Locale.todayTimeOrDateTime(props.message.time.created)}
                     </span>
-                  </text>
+                  </RtlText>
                 </Show>
               }
             >
-              <text fg={theme.textMuted}>
+              <RtlText fg={theme.textMuted}>
                 <span style={{ bg: color(), fg: queuedFg(), bold: true }}> QUEUED </span>
-              </text>
+              </RtlText>
             </Show>
           </box>
         </box>
@@ -1506,7 +1522,7 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
       </For>
       <Show when={props.parts.some((x) => x.type === "tool" && x.tool === "task")}>
         <box paddingTop={1} paddingLeft={3}>
-          <text fg={theme.text}>
+          <RtlText fg={theme.text}>
             {childShortcut()}
             <span style={{ fg: theme.textMuted }}> view subagents</span>
             <Show
@@ -1522,7 +1538,7 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
               {backgroundShortcut()}
               <span style={{ fg: theme.textMuted }}> background</span>
             </Show>
-          </text>
+          </RtlText>
         </box>
       </Show>
       <Show when={props.message.error && props.message.error.name !== "MessageAbortedError"}>
@@ -1537,13 +1553,13 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
           customBorderChars={SplitBorder.customBorderChars}
           borderColor={theme.error}
         >
-          <text fg={theme.textMuted}>{props.message.error?.data.message}</text>
+          <RtlText fg={theme.textMuted}>{props.message.error?.data.message}</RtlText>
         </box>
       </Show>
       <Switch>
         <Match when={props.last || final() || props.message.error?.name === "MessageAbortedError"}>
           <box id={`assistant-summary-${props.message.id}`} paddingLeft={3}>
-            <text marginTop={1}>
+            <RtlText marginTop={1}>
               <span
                 style={{
                   fg:
@@ -1562,7 +1578,7 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
               <Show when={props.message.error?.name === "MessageAbortedError"}>
                 <span style={{ fg: theme.textMuted }}> · interrupted</span>
               </Show>
-            </text>
+            </RtlText>
           </box>
         </Match>
       </Switch>
@@ -1583,17 +1599,17 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
           })
           return (
             <box paddingLeft={3} onMouseUp={() => setOpen(x => !x)}>
-              <text>
+              <RtlText>
                 <span style={{ fg: theme.textMuted }}>{open() ? "▼" : "▶"} </span>
                 <span style={{ fg: mark().fg }}>
                   {mark().icon} {mark().label}
                 </span>
-              </text>
+              </RtlText>
               <Show when={open()}>
                 <box paddingLeft={2}>
-                  <text fg={theme.textMuted} wrapMode="word">
+                  <RtlText fg={theme.textMuted} wrapMode="word">
                     {verdict().reason}
-                  </text>
+                  </RtlText>
                 </box>
               </Show>
             </box>
@@ -1659,13 +1675,12 @@ function ReasoningPart(props: { last: boolean; part: ReasoningPart; message: Ass
         </box>
         <Show when={(!inMinimal() || expanded()) && summary().body}>
           <box paddingLeft={inMinimal() ? 2 : 0} marginTop={1}>
-            <code
-              filetype="markdown"
-              drawUnstyledText={false}
+            <RtlMarkdown
               streaming={true}
               syntaxStyle={syntax()}
               content={summary().body}
               conceal={ctx.conceal()}
+              concealCode={ctx.conceal()}
               fg={theme.textMuted}
             />
           </box>
@@ -1696,7 +1711,7 @@ function ReasoningHeader(props: {
         </box>
       </Match>
       <Match when={true}>
-        <text fg={fg()} wrapMode="none">
+        <RtlText fg={fg()} wrapMode="none">
           <Show when={props.toggleable}>
             <span>{props.open ? "- " : "+ "}</span>
           </Show>
@@ -1713,7 +1728,7 @@ function ReasoningHeader(props: {
               {props.duration}
             </span>
           </Show>
-        </text>
+        </RtlText>
       </Match>
     </Switch>
   )
@@ -1725,7 +1740,7 @@ function TextPart(props: { last: boolean; part: TextPart; message: AssistantMess
   return (
     <Show when={props.part.text.trim()}>
       <box id={`text-${props.part.messageID}-${props.part.id}`} paddingLeft={3} marginTop={1} flexShrink={0}>
-        <markdown
+        <RtlMarkdown
           syntaxStyle={syntax()}
           streaming={true}
           internalBlockMode="top-level"
@@ -1856,9 +1871,9 @@ function GenericTool(props: ToolProps) {
         onClick={collapsed().overflow ? () => setExpanded((prev) => !prev) : undefined}
       >
         <box gap={1}>
-          <text fg={theme.text}>{limited()}</text>
+          <RtlText fg={theme.text}>{limited()}</RtlText>
           <Show when={collapsed().overflow}>
-            <text fg={theme.textMuted}>{expanded() ? "Click to collapse" : "Click to expand"}</text>
+            <RtlText fg={theme.textMuted}>{expanded() ? "Click to collapse" : "Click to expand"}</RtlText>
           </Show>
         </box>
       </BlockTool>
@@ -1996,38 +2011,38 @@ export function InlineToolRow(props: {
         <Match when={true}>
           <Show
             fallback={
-              <text
+              <RtlText
                 paddingLeft={3}
                 fg={props.color}
                 attributes={props.denied ? TextAttributes.STRIKETHROUGH : undefined}
               >
                 ~ {props.pending}
-              </text>
+              </RtlText>
             }
             when={props.complete || props.failed}
           >
             <box flexDirection="row">
-              <text
+              <RtlText
                 width={INLINE_TOOL_ICON_WIDTH}
                 fg={props.failed ? props.errorColor : (props.iconColor ?? props.color)}
                 attributes={props.denied ? TextAttributes.STRIKETHROUGH : undefined}
               >
                 {props.icon}
-              </text>
-              <text
+              </RtlText>
+              <RtlText
                 flexGrow={1}
                 fg={props.failed ? props.errorColor : props.color}
                 attributes={props.denied ? TextAttributes.STRIKETHROUGH : undefined}
               >
                 {props.failed && !props.complete ? (props.failure ?? props.children) : props.children}
-              </text>
+              </RtlText>
             </box>
           </Show>
         </Match>
       </Switch>
       <Show when={props.failed && props.errorExpanded}>
         <box paddingLeft={INLINE_TOOL_ICON_WIDTH}>
-          <text fg={props.errorColor}>{props.error}</text>
+          <RtlText fg={props.errorColor}>{props.error}</RtlText>
         </box>
       </Show>
     </box>
@@ -2067,16 +2082,16 @@ function BlockTool(props: {
       <Show
         when={props.spinner}
         fallback={
-          <text paddingLeft={3} fg={theme.textMuted}>
+          <RtlText paddingLeft={3} fg={theme.textMuted}>
             {props.title}
-          </text>
+          </RtlText>
         }
       >
         <Spinner color={theme.textMuted}>{props.title.replace(/^# /, "")}</Spinner>
       </Show>
       {props.children}
       <Show when={error()}>
-        <text fg={theme.error}>{error()}</text>
+        <RtlText fg={theme.error}>{error()}</RtlText>
       </Show>
     </box>
   )
@@ -2121,12 +2136,12 @@ function Shell(props: ToolProps) {
           onClick={collapsed().overflow ? () => setExpanded((prev) => !prev) : undefined}
         >
           <box gap={1}>
-            <text fg={theme.text}>$ {stringValue(props.input.command)}</text>
+            <RtlText fg={theme.text}>$ {stringValue(props.input.command)}</RtlText>
             <Show when={output()}>
-              <text fg={theme.text}>{limited()}</text>
+              <RtlText fg={theme.text}>{limited()}</RtlText>
             </Show>
             <Show when={collapsed().overflow}>
-              <text fg={theme.textMuted}>{expanded() ? "Click to collapse" : "Click to expand"}</text>
+              <RtlText fg={theme.textMuted}>{expanded() ? "Click to collapse" : "Click to expand"}</RtlText>
             </Show>
           </box>
         </BlockTool>
@@ -2151,15 +2166,14 @@ function Write(props: ToolProps) {
     <Switch>
       <Match when={props.metadata.diagnostics !== undefined}>
         <BlockTool title={"# Wrote " + pathFormatter.format(stringValue(props.input.filePath))} part={props.part}>
-          <line_number fg={theme.textMuted} minWidth={3} paddingRight={1}>
-            <code
-              conceal={false}
-              fg={theme.text}
-              filetype={filetype(stringValue(props.input.filePath))}
-              syntaxStyle={syntax()}
-              content={code()}
-            />
-          </line_number>
+          <WriteCode
+            conceal={false}
+            fg={theme.text}
+            lineNumberFg={theme.textMuted}
+            filetype={filetype(stringValue(props.input.filePath))}
+            syntaxStyle={syntax()}
+            content={code()}
+          />
           <Diagnostics diagnostics={props.metadata.diagnostics} filePath={stringValue(props.input.filePath) ?? ""} />
         </BlockTool>
       </Match>
@@ -2174,6 +2188,26 @@ function Write(props: ToolProps) {
         </InlineTool>
       </Match>
     </Switch>
+  )
+}
+
+export function WriteCode(props: Pick<CodeProps, "conceal" | "fg" | "filetype" | "syntaxStyle" | "content"> & { lineNumberFg: CodeProps["fg"] }) {
+  const policy = useRtlPolicy()
+  const shaped = createMemo(() => shouldShape(policy()) && props.filetype !== "markdown" && hasRtl(props.content ?? ""))
+  return (
+    <For each={[shaped()]}>
+      {() => (
+        <line_number fg={props.lineNumberFg} minWidth={3} paddingRight={1}>
+          <RtlCode
+            conceal={props.conceal}
+            fg={props.fg}
+            filetype={props.filetype}
+            syntaxStyle={props.syntaxStyle}
+            content={props.content}
+          />
+        </line_number>
+      )}
+    </For>
   )
 }
 
@@ -2215,9 +2249,9 @@ function Read(props: ToolProps) {
       <For each={loaded()}>
         {(filepath, index) => (
           <box id={`tool-inline-loaded-${props.part.messageID}-${props.part.id}-${index()}`} paddingLeft={3}>
-            <text paddingLeft={3} fg={theme.textMuted}>
+            <RtlText paddingLeft={3} fg={theme.textMuted}>
               ↳ Loaded {pathFormatter.format(filepath)}
-            </text>
+            </RtlText>
           </box>
         )}
       </For>
@@ -2391,7 +2425,7 @@ function Edit(props: ToolProps) {
       <Match when={stringValue(props.metadata.diff) !== undefined}>
         <BlockTool title={"← Edit " + pathFormatter.format(stringValue(props.input.filePath))} part={props.part}>
           <box paddingLeft={1}>
-            <diff
+            <RtlDiff
               diff={diffContent()}
               view={view()}
               filetype={ft()}
@@ -2439,7 +2473,7 @@ function ApplyPatch(props: ToolProps) {
   function Diff(p: { diff: string; filePath: string }) {
     return (
       <box paddingLeft={1}>
-        <diff
+        <RtlDiff
           diff={p.diff}
           view={view()}
           filetype={filetype(p.filePath)}
@@ -2478,9 +2512,9 @@ function ApplyPatch(props: ToolProps) {
               <Show
                 when={file.type !== "delete"}
                 fallback={
-                  <text fg={theme.diffRemoved}>
+                  <RtlText fg={theme.diffRemoved}>
                     -{file.deletions} line{file.deletions !== 1 ? "s" : ""}
-                  </text>
+                  </RtlText>
                 }
               >
                 <Diff diff={file.patch} filePath={file.filePath} />
@@ -2544,8 +2578,8 @@ function Question(props: ToolProps) {
             <For each={questions()}>
               {(q, i) => (
                 <box flexDirection="column">
-                  <text fg={theme.textMuted}>{q.question}</text>
-                  <text fg={theme.text}>{format(answers()?.[i()])}</text>
+                  <RtlText fg={theme.textMuted}>{q.question}</RtlText>
+                  <RtlText fg={theme.text}>{format(answers()?.[i()])}</RtlText>
                 </box>
               )}
             </For>
@@ -2585,9 +2619,9 @@ function Diagnostics(props: { diagnostics: unknown; filePath: string }) {
       <box>
         <For each={errors()}>
           {(diagnostic) => (
-            <text fg={theme.error}>
+            <RtlText fg={theme.error}>
               Error [{diagnostic.range.start.line + 1}:{diagnostic.range.start.character + 1}] {diagnostic.message}
-            </text>
+            </RtlText>
           )}
         </For>
       </box>

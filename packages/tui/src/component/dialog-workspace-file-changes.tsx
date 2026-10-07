@@ -8,6 +8,7 @@ import { useTheme } from "../context/theme"
 import { useTuiConfig } from "../config"
 import { useDialog, type DialogContext } from "../ui/dialog"
 import { getScrollAcceleration } from "../util/scroll"
+import { RtlText } from "./rtl-text"
 
 const options = ["no", "yes"] as const
 
@@ -68,17 +69,17 @@ export function DialogWorkspaceFileChanges(props: {
   return (
     <box gap={1}>
       <box flexDirection="row" justifyContent="space-between" paddingLeft={2} paddingRight={2}>
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           {props.title ?? "File Changes Found"}
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
       <box paddingLeft={2} paddingRight={2}>
-        <text fg={theme.textMuted} wrapMode="word">
+        <RtlText fg={theme.textMuted} wrapMode="word">
           {props.message ?? "Do you want to move these changes with the session?"}
-        </text>
+        </RtlText>
       </box>
       <scrollbox
         height={height()}
@@ -91,18 +92,18 @@ export function DialogWorkspaceFileChanges(props: {
             <box flexDirection="row" justifyContent="space-between" paddingLeft={2} paddingRight={2}>
               <box flexDirection="row" minWidth={0} flexShrink={1}>
                 <box width={2} flexShrink={0}>
-                  <text fg={theme.textMuted}>{statusLabel(item.status)}</text>
+                  <RtlText fg={theme.textMuted}>{statusLabel(item.status)}</RtlText>
                 </box>
-                <text fg={theme.textMuted} wrapMode="none">
+                <RtlText fg={theme.textMuted} wrapMode="none">
                   {Locale.truncateLeft(item.file, fileNameWidth())}
-                </text>
+                </RtlText>
               </box>
               <box flexDirection="row" gap={1} minWidth={7} flexShrink={0} justifyContent="flex-end">
-                <text>
+                <RtlText>
                   {" "}
                   {item.additions ? <span style={{ fg: theme.diffAdded }}>+{item.additions}</span> : null}
                   {item.deletions ? <span style={{ fg: theme.diffRemoved }}> -{item.deletions}</span> : null}
-                </text>
+                </RtlText>
               </box>
             </box>
           )}
@@ -121,7 +122,7 @@ export function DialogWorkspaceFileChanges(props: {
                 dialog.clear()
               }}
             >
-              <text fg={item === store.active ? theme.selectedListItemText : theme.textMuted}>{item}</text>
+              <RtlText fg={item === store.active ? theme.selectedListItemText : theme.textMuted}>{item}</RtlText>
             </box>
           )}
         </For>
