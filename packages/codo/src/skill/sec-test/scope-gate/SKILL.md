@@ -18,7 +18,7 @@ The single source of truth for "is this test authorized?" Five skills currently 
 4. **Not expired.** `expires` parses as ISO-8601 and is strictly in the future.
 5. **Target named.** The full URL/host being tested must satisfy `targetMatches(scoped, target)` — exact match, or in-origin path-prefix. See "Matching semantics" below.
 
-Any check fails → return `## PENTEST BLOCKED` with the failure reason and a one-line recommendation: what's missing or how to fix. Never proceed.
+Any check fails → return `## SEC-RESULT skill=sec-test:scope-gate status=blocked reason=<missing|unparseable|expired|no-targets|target-not-in-scope>` with a one-line recommendation. Never proceed.
 
 ## Matching semantics
 

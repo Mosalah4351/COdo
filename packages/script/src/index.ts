@@ -18,10 +18,11 @@ if (!semver.satisfies(process.versions.bun, expectedBunVersionRange)) {
 }
 
 const env = {
-  CODO_CHANNEL: process.env["CODO_CHANNEL"],
-  CODO_BUMP: process.env["CODO_BUMP"],
-  CODO_VERSION: process.env["CODO_VERSION"],
-  CODO_RELEASE: process.env["CODO_RELEASE"],
+  // CODO_* wins; OPENCODE_* is the legacy name still used by CI workflows.
+  CODO_CHANNEL: process.env["CODO_CHANNEL"] ?? process.env["OPENCODE_CHANNEL"],
+  CODO_BUMP: process.env["CODO_BUMP"] ?? process.env["OPENCODE_BUMP"],
+  CODO_VERSION: process.env["CODO_VERSION"] ?? process.env["OPENCODE_VERSION"],
+  CODO_RELEASE: process.env["CODO_RELEASE"] ?? process.env["OPENCODE_RELEASE"],
 }
 const CHANNEL = await (async () => {
   if (env.CODO_CHANNEL) return env.CODO_CHANNEL
@@ -47,7 +48,7 @@ const VERSION = await (async () => {
   return `${major}.${minor}.${patch + 1}`
 })()
 
-const bot = ["actions-user", "COdo", "COdo-agent[bot]"]
+const bot = ["COdo", "COdo-agent[bot]"]
 const teamPath = path.resolve(import.meta.dir, "../../../.github/TEAM_MEMBERS")
 const team = [
   ...(await Bun.file(teamPath)

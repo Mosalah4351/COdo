@@ -11,7 +11,7 @@ Aby debugować problemy z COdo, zacznij od sprawdzenia dzienników i danych loka
 
 Pliki logów są zapisywane w:
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.local\share\COdo\log`
 
 Nazwy plików dziennika zawierają znaczniki czasu (np. `2025-01-09T123456.log`) i przechowywanych jest 10 ostatnich plików dziennika.
@@ -24,7 +24,7 @@ Możesz ustawić poziom dziennika za pomocą opcji wiersza poleceń `--log-level
 
 COdo przechowuje dane sesji i inne dane aplikacji na dysku pod adresem:
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.local\share\COdo`
 
 Ten katalog zawiera:
@@ -57,8 +57,8 @@ Jeśli aplikacja komputerowa ulega awarii podczas uruchamiania, zawiesza się lu
 
 Otwórz globalny plik konfiguracyjny i poszukaj klucza `plugin`.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (lub `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (starsze instalacje): `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc` (lub `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (starsze instalacje): `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 Jeśli masz skonfigurowane wtyczki, tymczasowo je wyłącz, usuwając klucz lub ustawiając go na pustą tablicę:
@@ -75,10 +75,10 @@ Jeśli masz skonfigurowane wtyczki, tymczasowo je wyłącz, usuwając klucz lub 
 COdo może także ładować lokalne wtyczki z dysku. Tymczasowo usuń je (lub zmień nazwę folderu) i uruchom ponownie aplikację komputerową:
 
 - **Wtyczki globalne**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: Naciśnij `WIN+R` i wklej `%USERPROFILE%\.config\COdo\plugins`
 - **Wtyczki projektowe** (tylko jeśli używasz konfiguracji dla poszczególnych projektów)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 Jeśli aplikacja ponownie zacznie działać, włączaj ponownie wtyczki pojedynczo, aby dowiedzieć się, która powoduje problem.
 
@@ -115,9 +115,9 @@ Jeśli Twój `COdo.json(c)` zawiera sekcję `server`, tymczasowo usuń ją i uru
 
 #### Sprawdź zmienne środowiskowe
 
-Jeśli w swoim środowisku masz ustawiony `OPENCODE_PORT`, aplikacja komputerowa spróbuje użyć tego portu dla serwera lokalnego.
+Jeśli w swoim środowisku masz ustawiony `CODO_PORT`, aplikacja komputerowa spróbuje użyć tego portu dla serwera lokalnego.
 
-- usuń `OPENCODE_PORT` (lub wybierz wolny port) i uruchom ponownie.
+- usuń `CODO_PORT` (lub wybierz wolny port) i uruchom ponownie.
 
 ---
 
@@ -177,7 +177,7 @@ Jeśli masz problemy z COdo:
 
    Najlepszym sposobem zgłaszania błędów lub zgłaszania żądań funkcji jest skorzystanie z naszego repozytorium GitHub:
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    Przed utworzeniem nowego problemu przeszukaj istniejące i sprawdź, czy Twój problem nie został już zgłoszony.
 
@@ -225,7 +225,7 @@ Przykłady:
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 Aby dowiedzieć się, do jakich modeli masz dostęp, uruchom `COdo models`
 

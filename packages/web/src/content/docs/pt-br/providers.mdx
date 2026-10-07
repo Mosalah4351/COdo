@@ -17,7 +17,7 @@ Para adicionar um provedor, você precisa:
 
 ### Credenciais
 
-Quando você adiciona as chaves da API de um provedor com o comando `/connect`, elas são armazenadas em `~/.local/share/opencode/auth.json`.
+Quando você adiciona as chaves da API de um provedor com o comando `/connect`, elas são armazenadas em `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -845,7 +845,7 @@ Para acessar ferramentas do GitLab (merge requests, issues, pipelines, CI/CD, et
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1023,7 +1023,7 @@ Caso você veja um recurso ou modelo do Helicone que não está configurado auto
 
 Aqui está o [Diretório de Modelos do Helicone](https://helicone.ai/models), você precisará disso para pegar os IDs dos modelos que deseja adicionar.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1051,7 +1051,7 @@ Aqui está o [Diretório de Modelos do Helicone](https://helicone.ai/models), vo
 
 Helicone suporta cabeçalhos personalizados para recursos como cache, rastreamento de usuários e gerenciamento de sessões. Adicione-os à sua configuração do provedor usando `options.headers`:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1082,7 +1082,7 @@ Adicione-o à sua configuração.
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

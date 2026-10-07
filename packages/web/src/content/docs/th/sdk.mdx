@@ -18,7 +18,7 @@ COdo JS/TS SDK จัดเตรียมไคลเอ็นต์ประ�
 ติดตั้ง SDK จาก npm:
 
 ```bash
-npm install @COdo-ai/sdk
+npm install @codo-ai/sdk
 ```
 
 ---
@@ -28,7 +28,7 @@ npm install @COdo-ai/sdk
 สร้างอินสแตนซ์ของ COdo:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const { client } = await createOpencode()
 ```
@@ -52,7 +52,7 @@ const { client } = await createOpencode()
 คุณสามารถส่งผ่านออบเจ็กต์การกำหนดค่าเพื่อปรับแต่งลักษณะการทำงานได้ อินสแตนซ์ยังคงรับ `COdo.json` ของคุณ แต่คุณสามารถแทนที่หรือเพิ่มการกำหนดค่าแบบอินไลน์ได้:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const COdo = await createOpencode({
   hostname: "127.0.0.1",
@@ -72,7 +72,7 @@ COdo.server.close()
 หากคุณมีอินสแตนซ์ COdo ที่ทำงานอยู่แล้ว คุณสามารถสร้างอินสแตนซ์ไคลเอ็นต์เพื่อเชื่อมต่อได้:
 
 ```javascript
-import { createOpencodeClient } from "@COdo-ai/sdk"
+import { createOpencodeClient } from "@codo-ai/sdk"
 
 const client = createOpencodeClient({
   baseUrl: "http://localhost:4096",
@@ -96,7 +96,7 @@ const client = createOpencodeClient({
 SDK มีคำจำกัดความ TypeScript สำหรับ API ประเภททั้งหมด นำเข้าโดยตรง:
 
 ```typescript
-import type { Session, Message, Part } from "@COdo-ai/sdk"
+import type { Session, Message, Part } from "@codo-ai/sdk"
 ```
 
 ทุกประเภทสร้างขึ้นจากข้อกำหนด OpenAPI ของเซิร์ฟเวอร์และมีอยู่ใน <a href={typesUrl}>ไฟล์ประเภท</a>

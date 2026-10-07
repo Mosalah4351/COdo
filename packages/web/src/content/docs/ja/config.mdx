@@ -43,16 +43,16 @@ COdo は、**JSON** と **JSONC** (コメント付きの JSON) 形式の両方�
 設定ソースは次の順序でロードされます (後のソースは前のソースをオーバーライドします)。
 
 1. **リモート設定** (`.well-known/COdo` から) - 組織のデフォルト
-2. **グローバル設定** (`~/.config/opencode/opencode.json`) - ユーザー設定
-3. **カスタム設定** (`OPENCODE_CONFIG` 環境変数) - カスタムオーバーライド
+2. **グローバル設定** (`~/.config/COdo/COdo.json`) - ユーザー設定
+3. **カスタム設定** (`CODO_CONFIG` 環境変数) - カスタムオーバーライド
 4. **プロジェクト設定** (プロジェクト内の `COdo.json`) - プロジェクト固有の設定
-5. **`.opencode` ディレクトリ** - エージェント、コマンド、プラグイン
-6. **インライン設定** (`OPENCODE_CONFIG_CONTENT` 環境変数) - ランタイムオーバーライド
+5. **`.COdo` ディレクトリ** - エージェント、コマンド、プラグイン
+6. **インライン設定** (`CODO_CONFIG_CONTENT` 環境変数) - ランタイムオーバーライド
 
 つまり、プロジェクト設定はグローバルのデフォルトをオーバーライドでき、グローバル設定はリモート組織のデフォルトをオーバーライドできます。
 
 :::note
-`.opencode` および `~/.config/opencode` ディレクトリでは、サブディレクトリに **複数名** が使用されています: `agents/`、`commands/`、`modes/`、`plugins/`、`skills/`、`tools/`、および `themes/`。下位互換性のために、単数形の名前 (`agent/` など) もサポートされています。
+`.COdo` および `~/.config/COdo` ディレクトリでは、サブディレクトリに **複数名** が使用されています: `agents/`、`commands/`、`modes/`、`plugins/`、`skills/`、`tools/`、および `themes/`。下位互換性のために、単数形の名前 (`agent/` など) もサポートされています。
 :::
 
 ---
@@ -95,9 +95,9 @@ COdo は、**JSON** と **JSONC** (コメント付きの JSON) 形式の両方�
 
 ### グローバル
 
-グローバル COdo 設定を `~/.config/opencode/opencode.json` に配置します。プロバイダー、モデル、権限などのユーザー全体の設定にはグローバル設定を使用します。
+グローバル COdo 設定を `~/.config/COdo/COdo.json` に配置します。プロバイダー、モデル、権限などのユーザー全体の設定にはグローバル設定を使用します。
 
-TUI 固有の設定には、`~/.config/opencode/tui.json` を使用します。
+TUI 固有の設定には、`~/.config/COdo/tui.json` を使用します。
 
 グローバル設定はリモート組織のデフォルトをオーバーライドします。
 
@@ -121,10 +121,10 @@ COdo が起動すると、現在のディレクトリで設定ファイルを検
 
 ### カスタムパス
 
-`OPENCODE_CONFIG` 環境変数を使用してカスタム設定ファイルのパスを指定します。
+`CODO_CONFIG` 環境変数を使用してカスタム設定ファイルのパスを指定します。
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -134,17 +134,17 @@ COdo run "Hello world"
 
 ### カスタムディレクトリ
 
-`OPENCODE_CONFIG_DIR` を使用してカスタム設定ディレクトリを指定します。
+`CODO_CONFIG_DIR` を使用してカスタム設定ディレクトリを指定します。
 環境変数。このディレクトリでは、エージェント、コマンド、
-モードとプラグインは標準の `.opencode` ディレクトリと同様であり、次のようにする必要があります。
+モードとプラグインは標準の `.COdo` ディレクトリと同様であり、次のようにする必要があります。
 同じ構造に従います。
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-カスタムディレクトリはグローバル config ディレクトリと `.opencode` ディレクトリの後にロードされるため、それらの設定を**オーバーライド**できます。
+カスタムディレクトリはグローバル config ディレクトリと `.COdo` ディレクトリの後にロードされるため、それらの設定を**オーバーライド**できます。
 
 ---
 
@@ -173,7 +173,7 @@ TUI 固有の設定には、専用の `tui.json` (または `tui.jsonc`) ファ�
 }
 ```
 
-カスタム TUI 設定ファイルを指定するには、`OPENCODE_TUI_CONFIG` を使用します。
+カスタム TUI 設定ファイルを指定するには、`CODO_TUI_CONFIG` を使用します。
 
 `COdo.json` 内の従来の `theme`、`keybinds`、および `tui` キーは非推奨となり、可能であれば自動的に移行されます。
 
@@ -338,7 +338,7 @@ UI テーマを `tui.json` で設定します。
 }
 ```
 
-`~/.config/opencode/agents/` または `.opencode/agents/` の Markdown ファイルを使用してエージェントを定義することもできます。 [詳細はこちら](/docs/agents)。
+`~/.config/COdo/agents/` または `.COdo/agents/` の Markdown ファイルを使用してエージェントを定義することもできます。 [詳細はこちら](/docs/agents)。
 
 ---
 
@@ -402,7 +402,7 @@ UI テーマを `tui.json` で設定します。
 }
 ```
 
-`~/.config/opencode/commands/` または `.opencode/commands/` の Markdown ファイルを使用してコマンドを定義することもできます。 [詳細はこちら](/docs/commands)。
+`~/.config/COdo/commands/` または `.COdo/commands/` の Markdown ファイルを使用してコマンドを定義することもできます。 [詳細はこちら](/docs/commands)。
 
 ---
 
@@ -538,12 +538,12 @@ COdo は起動時に新しいアップデートを自動的にダウンロード
 
 [Plugins](/docs/plugins) は、カスタムツール、フック、統合を使用して COdo を拡張します。
 
-プラグインファイルを `.opencode/plugins/` または `~/.config/opencode/plugins/` に配置します。 `plugin` オプションを使用して npm からプラグインをロードすることもできます。
+プラグインファイルを `.COdo/plugins/` または `~/.config/COdo/plugins/` に配置します。 `plugin` オプションを使用して npm からプラグインをロードすることもできます。
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -638,7 +638,7 @@ COdo は起動時に新しいアップデートを自動的にダウンロード
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

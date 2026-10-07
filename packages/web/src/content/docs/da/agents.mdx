@@ -189,10 +189,10 @@ Konfigurer agent i din `COdo.json`-konfigurationsfil:
 
 Du kan også definere agenter ved hjælp af markdown-filer. Placer dem i:
 
-- Globalt: `~/.config/opencode/agents/`
-- Pr. projekt: `.opencode/agents/`
+- Globalt: `~/.config/COdo/agents/`
+- Pr. projekt: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -367,7 +367,7 @@ Hvis du ikke angiver en model, bruger primære agenter [model konfigureret globa
 }
 ```
 
-Model-id'et i din COdo-konfiguration brugerformatet `provider/model-id`. For eksempel, hvis du bruger [COdo Zen](/docs/zen), vil du bruge `opencode/gpt-5.1-codex` til GPT 5.1 Codex.
+Model-id'et i din COdo-konfiguration brugerformatet `provider/model-id`. For eksempel, hvis du bruger [COdo Zen](/docs/zen), vil du bruge `COdo/gpt-5.1-codex` til GPT 5.1 Codex.
 
 ---
 
@@ -455,7 +455,7 @@ Du kan tilsidesætte disse tilladelser pr. agent.
 
 Du kan også angive tilladelser i Markdown-agenter.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -705,14 +705,14 @@ Her er nogle almindelige use cases for forskellige agenter.
 Her er nogle eksempler på agenter, du kan finde nyttige.
 
 :::tip
-Har du en agent, du gerne vil dele? [Send en PR](https://github.com/anomalyco/COdo).
+Har du en agent, du gerne vil dele? [Send en PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Dokumentations-agent
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -734,7 +734,7 @@ Focus on:
 
 ### Sikkerheds-agent
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

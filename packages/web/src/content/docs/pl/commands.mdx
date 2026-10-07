@@ -17,9 +17,9 @@ Polecenia są dodatkiem do wbudowanych, takich jak `/init`, `/undo`, `/redo`, `/
 
 Utwórz pliki Markdown w katalogu `commands/`, aby zdefiniować polecenia.
 
-Utwórz `.opencode/commands/test.md`:
+Utwórz `.COdo/commands/test.md`:
 
-```md title=".opencode/commands/test.md"
+```md title=".COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -79,10 +79,10 @@ Teraz możesz wybrać opcję w TUI:
 
 Można także definiować polecenia za pomocą plików Markdown. Trzymaj je w:
 
-- Globalnie: `~/.config/opencode/commands/`
-- Na projekt: `.opencode/commands/`
+- Globalnie: `~/.config/COdo/commands/`
+- Na projekt: `.COdo/commands/`
 
-```markdown title="~/.config/opencode/commands/test.md"
+```markdown title="~/.config/COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -112,7 +112,7 @@ Prompty niestandardowych poleceń obsługują kilka specjalnych symboli zastępc
 
 Przekazuj argumenty do promptu, używając symbolu zastępczego `$ARGUMENTS`.
 
-```md title=".opencode/commands/component.md"
+```md title=".COdo/commands/component.md"
 ---
 description: Create a new component
 ---
@@ -138,7 +138,7 @@ Dostęp do poszczególnych argumentów można uzyskać za pomocą parametrów po
 
 Na przykład:
 
-```md title=".opencode/commands/create-file.md"
+```md title=".COdo/commands/create-file.md"
 ---
 description: Create a new file with content
 ---
@@ -167,7 +167,7 @@ Użyj `!command`, aby wstawić dane wyjściowe [polecenia bash](/docs/tui#bash-c
 
 Na przykład, aby przeanalizować pokrycie testami:
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".COdo/commands/analyze-coverage.md"
 ---
 description: Analyze test coverage
 ---
@@ -180,7 +180,7 @@ Based on these results, suggest improvements to increase coverage.
 
 Lub aby przejrzeć ostatnie zmiany:
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".COdo/commands/review-changes.md"
 ---
 description: Review recent changes
 ---
@@ -199,7 +199,7 @@ Polecenia są uruchamiane w powłoce, a ich dane wyjściowe są wstawiane do pro
 
 Dołącz pliki do swojego polecenia, używając `@` i ścieżki do pliku.
 
-```md title=".opencode/commands/review-component.md"
+```md title=".COdo/commands/review-component.md"
 ---
 description: Review component
 ---

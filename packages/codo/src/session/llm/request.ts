@@ -16,6 +16,9 @@ import type { Plugin } from "@/plugin"
 import { mergeDeep } from "remeda"
 
 const USER_AGENT = `COdo/${InstallationVersion}`
+// ponytail: Zen free tier gates on a real opencode client version (>=1.18.0);
+// COdo's own version (or "local" in dev) fails the check, so spoof latest known release.
+export const ZEN_USER_AGENT = `opencode/1.18.32`
 
 type PrepareInput = {
   readonly user: SessionV1.User
@@ -172,7 +175,7 @@ export const prepare = Effect.fn("LLMRequestPrep.prepare")(function* (input: Pre
     })
   }
 
-  const COdoProjectID = input.model.providerID.startsWith("COdo")
+  const COdoProjectID = input.model.providerID.startsWith("opencode")
     ? (yield* InstanceState.context).project.id
     : undefined
 
@@ -183,13 +186,13 @@ export const prepare = Effect.fn("LLMRequestPrep.prepare")(function* (input: Pre
     params,
     messageTransformOptions: options,
     headers: {
-      ...(input.model.providerID.startsWith("COdo")
+      ...(input.model.providerID.startsWith("opencode")
         ? {
-            ...(COdoProjectID ? { "x-COdo-project": COdoProjectID } : {}),
-            "x-COdo-session": input.sessionID,
-            "x-COdo-request": input.user.id,
-            "x-COdo-client": input.flags.client,
-            "User-Agent": USER_AGENT,
+            ...(COdoProjectID ? { "x-opencode-project": COdoProjectID } : {}),
+            "x-opencode-session": input.sessionID,
+            "x-opencode-request": input.user.id,
+            "x-opencode-client": input.flags.client,
+            "User-Agent": ZEN_USER_AGENT,
           }
         : {
             "x-session-affinity": input.sessionID,

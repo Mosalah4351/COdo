@@ -25,7 +25,7 @@ The user-facing output of the secops loop. Distinct from `sec-test:report` which
 3. **Output:** `.planning/security/reports/YYYY-MM-DD-posture-digest.md` plus an appended line in `posture.md`.
 4. **Scatter to leadership context.** Recommendations stay business-readable — "rotate keys", "tighten rate limits on /auth" — not "fix CWE-798".
 
-Return `## POSTURE REPORT COMPLETE` with the digest path.
+Return `## SEC-RESULT skill=sec-test:posture-report status=complete doc=<digest-path>`.
 
 ## Rules
 

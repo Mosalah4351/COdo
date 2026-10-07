@@ -21,6 +21,8 @@ import { EmptyBorder, SplitBorder, RoundedBorder } from "../../ui/border"
 import { useTuiPaths, useTuiTerminalEnvironment } from "../../context/runtime"
 import { useClipboard } from "../../context/clipboard"
 import { Spinner } from "../spinner"
+import { RtlText } from "../rtl-text"
+import "opentui-spinner/solid"
 import { useSDK } from "../../context/sdk"
 import { useRoute } from "../../context/route"
 import { useProject } from "../../context/project"
@@ -42,7 +44,7 @@ import type { AssistantMessage, FilePart, UserMessage } from "@codo-ai/sdk/v2"
 import { Locale } from "../../util/locale"
 import { errorMessage } from "../../util/error"
 import { formatDuration } from "../../util/format"
-import { createCometColors, createCometFrames } from "../../ui/comet"
+import { createColors, createFrames, createCometColors, createCometFrames } from "../../ui/spinner"
 import { useDialog } from "../../ui/dialog"
 import { DialogProvider as DialogProviderConnect } from "../dialog-provider"
 import { DialogAlert } from "../../ui/dialog-alert"
@@ -50,6 +52,7 @@ import { useToast } from "../../ui/toast"
 import { useKV } from "../../context/kv"
 import { createFadeIn } from "../../util/signal"
 import { DialogSkill } from "../dialog-skill"
+import { neverAskMode, skipPermissions, toggleNeverAsk, toggleSkipPermissions } from "../../util/permission-modes"
 import { DialogWorkspaceUnavailable } from "../dialog-workspace-unavailable"
 import { useArgs } from "../../context/args"
 import { CODO_BASE_MODE, useBindings, useCommandShortcut, useLeaderActive, useCOdoKeymap } from "../../keymap"
@@ -100,6 +103,7 @@ const money = new Intl.NumberFormat("en-US", {
 })
 
 const DRAFT_RETENTION_MIN_CHARS = 20
+const COMET_FRAMES = createCometFrames()
 
 function randomIndex(count: number) {
   if (count <= 0) return 0
@@ -339,6 +343,26 @@ export function Prompt(props: PromptProps) {
         hidden: true,
         run: () => {
           clearPrompt()
+          dialog.clear()
+        },
+      },
+      {
+        title: `Skip-permissions: ${skipPermissions() ? "on" : "off"} - click to toggle`,
+        name: "permission.toggle_skip",
+        category: "Permissions",
+        suggested: true,
+        run: () => {
+          toggleSkipPermissions()
+          dialog.clear()
+        },
+      },
+      {
+        title: `Never-ask: ${neverAskMode() ? "on" : "off"} - click to toggle`,
+        name: "permission.toggle_never_ask",
+        category: "Permissions",
+        suggested: true,
+        run: () => {
+          toggleNeverAsk()
           dialog.clear()
         },
       },
@@ -956,13 +980,11 @@ export function Prompt(props: PromptProps) {
     if (auto()?.visible) return false
     if (!store.prompt.input) return false
     
-    // Handle /scraper command
+    // Handle /scraper command — re-pointed to the @scrape orchestrator
     const scraperMatch = /^\/scraper\s+(.+)/i.exec(store.prompt.input.trim())
     if (scraperMatch) {
       const query = scraperMatch[1]
-      const scraperPrompt = `Use web-scraping skill for: ${query}`
-      
-      setStore("prompt", "input", scraperPrompt)
+      setStore("prompt", "input", `@scrape ${query}`)
       syncExtmarksWithPromptParts()
     }
     
@@ -995,6 +1017,7 @@ export function Prompt(props: PromptProps) {
     }
 
     const variant = local.model.variant.current()
+    console.log("[TUI] Submit called with input:", store.prompt.input)
     let sessionID = props.sessionID
     let finishMoveProgress = false
     if (sessionID == null) {
@@ -1338,19 +1361,7 @@ export function Prompt(props: PromptProps) {
       status().type !== "idle"
         ? (local.agent.list().find((a) => a.name === lastUserMessage()?.agent) ?? local.agent.current())
         : local.agent.current()
-    const color = agent ? local.agent.color(agent.name) : theme.border
-    return {
-      frames: createCometFrames({
-        color,
-        tailLength: 4,
-        gap: 6,
-      }),
-      color: createCometColors({
-        color,
-        tailLength: 4,
-        gap: 6,
-      }),
-    }
+    return agent ? local.agent.color(agent.name) : theme.border
   })
   const maxHeight = createMemo(() => tuiConfig.prompt?.max_height ?? Math.max(6, Math.floor(dimensions().height / 3)))
   const moveLabelWidth = createMemo(() => Math.max(12, Math.min(44, dimensions().width - 48)))
@@ -1358,27 +1369,12 @@ export function Prompt(props: PromptProps) {
   return (
     <>
       <box ref={(r: BoxRenderable) => (anchor = r)} visible={props.visible !== false} width="100%">
-        <box width="100%" flexDirection="row" alignItems="stretch">
-          <Show when={local.agent.current()}>
-            <box
-              width={2}
-              flexShrink={0}
-              flexGrow={0}
-              backgroundColor={highlight()}
-              borderColor={highlight()}
-            />
-          </Show>
-          <box
-            flexBasis={0}
-            flexGrow={1}
-            minWidth={0}
-            border={["left"]}
-            borderColor={borderHighlight()}
-            customBorderChars={{
-              ...SplitBorder.customBorderChars,
-              bottomLeft: "╹",
-            }}
-          >
+        <box
+          width="100%"
+          border={RoundedBorder.border}
+          borderColor={borderHighlight()}
+          customBorderChars={RoundedBorder.customBorderChars}
+        >
           <box
             paddingLeft={2}
             paddingRight={2}
@@ -1467,32 +1463,62 @@ export function Prompt(props: PromptProps) {
                   <Show when={local.agent.current()} fallback={<box height={1} />}>
                     {(agent) => (
                       <>
-                        <text fg={fadeColor(highlight(), agentMetaAlpha())}>
+                        <RtlText fg={fadeColor(highlight(), agentMetaAlpha())}>
                           {store.mode === "shell" ? "Shell" : Locale.titlecase(agent().name)}
-                        </text>
+                        </RtlText>
                         <Show when={store.mode === "normal"}>
                           <box flexDirection="row" gap={1}>
-                            <text fg={fadeColor(theme.textMuted, modelMetaAlpha())}>·</text>
-                            <text
+                            <RtlText fg={fadeColor(theme.textMuted, modelMetaAlpha())}>·</RtlText>
+                            <RtlText
                               flexShrink={0}
                               fg={fadeColor(leader() ? theme.textMuted : theme.text, modelMetaAlpha())}
                             >
                               {local.model.parsed().model}
-                            </text>
-                            <text fg={fadeColor(theme.textMuted, modelMetaAlpha())}>{currentProviderLabel()}</text>
+                            </RtlText>
+                            <RtlText fg={fadeColor(theme.textMuted, modelMetaAlpha())}>{currentProviderLabel()}</RtlText>
                             <Show when={showVariant()}>
-                              <text fg={fadeColor(theme.textMuted, variantMetaAlpha())}>·</text>
-                              <text>
+                              <RtlText fg={fadeColor(theme.textMuted, variantMetaAlpha())}>·</RtlText>
+                              <RtlText>
                                 <span style={{ fg: fadeColor(theme.warning, variantMetaAlpha()), bold: true }}>
                                   {local.model.variant.current()}
                                 </span>
-                              </text>
+                              </RtlText>
                             </Show>
                           </box>
                         </Show>
                       </>
                     )}
-                   </Show>
+                  </Show>
+                </box>
+                <Show when={usage()}>
+                  {(item) => (
+                    <RtlText fg={theme.textMuted} wrapMode="none">
+                      <span style={{ fg: theme.primary }}>
+                        [{item().pct !== undefined ? "█".repeat(Math.floor(item().pct! / 10)) + "░".repeat(10 - Math.floor(item().pct! / 10)) : "░".repeat(10)}]
+                      </span>{" "}
+                      <span style={{ fg: theme.primary }}>{item().pct !== undefined ? `${item().pct}%` : ""}</span>{" "}
+                      <span style={{ fg: theme.textMuted }}>context used</span>{" "}
+                      <span style={{ fg: theme.text }}>{item().tokens ? `${Locale.number(item().tokens!)}` : ""}</span>
+                    </RtlText>
+                  )}
+                </Show>
+                <box flexDirection="row" gap={2} flexShrink={0}>
+                  <box
+                    onMouseUp={() => toggleSkipPermissions()}
+                    backgroundColor={skipPermissions() ? theme.backgroundElement : undefined}
+                  >
+                    <RtlText fg={skipPermissions() ? theme.success : theme.textMuted}>
+                      {skipPermissions() ? "Skip-permissions: on" : "Skip-permissions: off"}
+                    </RtlText>
+                  </box>
+                  <box
+                    onMouseUp={() => toggleNeverAsk()}
+                    backgroundColor={neverAskMode() ? theme.backgroundElement : undefined}
+                  >
+                    <RtlText fg={neverAskMode() ? theme.success : theme.textMuted}>
+                      {neverAskMode() ? "Never-ask: on" : "Never-ask: off"}
+                    </RtlText>
+                  </box>
                 </box>
               </box>
               <Show when={hasRightContent()}>
@@ -1503,6 +1529,13 @@ export function Prompt(props: PromptProps) {
             </box>
           </box>
         </box>
+        <Show when={store.mode === "normal" && !usage()}>
+          <RtlText fg={theme.text} paddingLeft={2}>
+            <span style={{ fg: theme.primary }}>{agentShortcut()}</span> <span style={{ fg: theme.textMuted }}>agents</span>
+            {"  "}
+            <span style={{ fg: theme.primary }}>{paletteShortcut()}</span> <span style={{ fg: theme.textMuted }}>commands</span>
+          </RtlText>
+        </Show>
         <box width="100%" flexDirection="row" justifyContent="space-between">
           <Switch>
             <Match when={status().type !== "idle"}>
@@ -1510,14 +1543,14 @@ export function Prompt(props: PromptProps) {
                 flexDirection="row"
                 gap={1}
                 flexGrow={1}
+                alignItems="center"
                 justifyContent={status().type === "retry" ? "space-between" : "flex-start"}
               >
                 <box flexShrink={0} flexDirection="row" gap={1}>
-                  <box marginLeft={1}>
-                      <spinner color={spinnerDef().color} frames={spinnerDef().frames} interval={40} />
+                  <box marginLeft={1} flexShrink={0}>
+                    <spinner frames={COMET_FRAMES} color={createCometColors({ color: theme.primary })} interval={40} />
                   </box>
-                  <box flexDirection="row" gap={1} flexShrink={0}>
-                    {(() => {
+                  {(() => {
                       const retry = createMemo(() => {
                         const s = status()
                         if (s.type !== "retry") return
@@ -1565,28 +1598,27 @@ export function Prompt(props: PromptProps) {
                         return baseMessage + truncatedHint + retryInfo
                       }
 
-                      return (
-                        <Show when={retry()}>
-                          <box onMouseUp={handleMessageClick}>
-                            <text fg={theme.error}>{retryText()}</text>
-                          </box>
-                        </Show>
-                      )
-                    })()}
-                  </box>
+                       return (
+                         <Show when={retry()}>
+                           <box onMouseUp={handleMessageClick}>
+                             <RtlText fg={theme.error}>{retryText()}</RtlText>
+                           </box>
+                         </Show>
+                       )
+                     })()}
                 </box>
-                <text fg={store.interrupt > 0 ? theme.primary : theme.text}>
+                <RtlText fg={store.interrupt > 0 ? theme.primary : theme.text}>
                   esc{" "}
                   <span style={{ fg: store.interrupt > 0 ? theme.primary : theme.textMuted }}>
                     {store.interrupt > 0 ? "again to interrupt" : "interrupt"}
                   </span>
-                </text>
+                </RtlText>
               </box>
             </Match>
             <Match when={workspace.notice()}>
               {(notice) => (
                 <box paddingLeft={3}>
-                  <text fg={theme.accent}>{notice()}</text>
+                  <RtlText fg={theme.accent}>{notice()}</RtlText>
                 </box>
               )}
             </Match>
@@ -1596,7 +1628,7 @@ export function Prompt(props: PromptProps) {
                   <Show when={workspace.creating()}>
                     <Spinner color={theme.accent} />
                   </Show>
-                  <text fg={workspace.creating() ? theme.accent : theme.text}>
+                  <RtlText fg={workspace.creating() ? theme.accent : theme.text}>
                     {(() => {
                       const item = label()
                       if (item.type === "new") {
@@ -1614,7 +1646,7 @@ export function Prompt(props: PromptProps) {
                         </>
                       )
                     })()}
-                  </text>
+                  </RtlText>
                 </box>
               )}
             </Match>
@@ -1630,47 +1662,27 @@ export function Prompt(props: PromptProps) {
             </Match>
             <Match when={move.pendingNew()}>
               <box paddingLeft={3}>
-                <text fg={theme.accent}>(new working copy)</text>
+                <RtlText fg={theme.accent}>(new working copy)</RtlText>
               </box>
             </Match>
-            <Match when={true}>{props.hint ?? <text />}</Match>
+            <Match when={true}>{props.hint ?? <RtlText />}</Match>
           </Switch>
           <Show when={status().type !== "retry"}>
             <box gap={2} flexDirection="row">
               <Show when={editorContextLabelState() !== "none" ? editorFileLabelDisplay() : undefined}>
                 {(file) => (
-                  <text fg={editorContextLabelState() === "pending" ? theme.secondary : theme.textMuted}>{file()}</text>
+                  <RtlText fg={editorContextLabelState() === "pending" ? theme.secondary : theme.textMuted}>{file()}</RtlText>
                 )}
               </Show>
               <Switch>
-                <Match when={store.mode === "normal"}>
-                  <Switch>
-                    <Match when={usage()}>
-                      {(item) => (
-                        <text fg={theme.textMuted} wrapMode="none">
-                          {[item().context, item().cost].filter(Boolean).join(" · ")}
-                        </text>
-                      )}
-                    </Match>
-                    <Match when={true}>
-                      <text fg={theme.text}>
-                        {agentShortcut()} <span style={{ fg: theme.textMuted }}>agents</span>
-                      </text>
-                    </Match>
-                  </Switch>
-                  <text fg={theme.text}>
-                    {paletteShortcut()} <span style={{ fg: theme.textMuted }}>commands</span>
-                  </text>
-                </Match>
                 <Match when={store.mode === "shell"}>
-                  <text fg={theme.text}>
+                  <RtlText fg={theme.text}>
                     esc <span style={{ fg: theme.textMuted }}>exit shell mode</span>
-                  </text>
+                  </RtlText>
                 </Match>
               </Switch>
             </box>
           </Show>
-        </box>
         </box>
       </box>
       <Autocomplete

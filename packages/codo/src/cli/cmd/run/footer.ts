@@ -29,6 +29,7 @@ import type { Keymap } from "@opentui/keymap"
 import { render } from "@opentui/solid"
 import { createComponent, createSignal, type Accessor, type Setter } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
+import { RtlPolicyProvider } from "@codo-ai/tui/component/rtl-text"
 import { COdoKeymapProvider } from "@codo-ai/tui/keymap"
 import { RUN_COMMAND_PANEL_ROWS, RUN_SUBAGENT_PANEL_ROWS } from "./footer.command"
 import { SUBAGENT_INSPECTOR_ROWS } from "./footer.subagent"
@@ -220,6 +221,7 @@ export class RunFooter implements FooterApi {
   private createScrollback(wrote: boolean): RunScrollbackStream {
     return new RunScrollbackStream(this.renderer, this.theme(), {
       diffStyle: this.options.diffStyle,
+      rtl: this.options.tuiConfig.rtl,
       wrote,
       sessionID: this.options.sessionID,
       treeSitterClient: this.options.treeSitterClient,
@@ -300,7 +302,10 @@ export class RunFooter implements FooterApi {
     const footer = this
     void render(
       () =>
-        createComponent(COdoKeymapProvider, {
+        createComponent(RtlPolicyProvider, {
+          forceShaping: options.tuiConfig.rtl?.forceShaping,
+          get children() {
+            return createComponent(COdoKeymapProvider, {
           keymap: options.keymap,
           get children() {
             return createComponent(RunFooterView, {
@@ -342,6 +347,8 @@ export class RunFooter implements FooterApi {
               onStatus: footer.setStatus,
               onSubagentSelect: options.onSubagentSelect,
               onQueuedRemove: footer.handleQueuedRemove,
+            })
+          },
             })
           },
         }),

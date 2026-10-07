@@ -18,7 +18,7 @@ COdo использует [AI SDK](https://ai-sdk.dev/) и [Models.dev](https://
 ### Учетные данные
 
 Когда вы добавляете ключи API провайдера с помощью команды `/connect`, они сохраняются
-в `~/.local/share/opencode/auth.json`.
+в `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -841,7 +841,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1021,7 +1021,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 
 Вот [Справочник моделей Helicone](https://helicone.ai/models), он понадобится вам, чтобы получить идентификаторы моделей, которые вы хотите добавить.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1049,7 +1049,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 
 Helicone поддерживает пользовательские заголовки для таких функций, как кэширование, отслеживание пользователей и управление сеансами. Добавьте их в конфигурацию вашего провайдера, используя `options.headers`:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1080,7 +1080,7 @@ npm install -g COdo-helicone-session
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

@@ -31,102 +31,14 @@ To use COdo in your terminal, you'll need:
 
 ## Install
 
-The easiest way to install COdo is through the install script.
+COdo is installed from source via GitHub:
 
 ```bash
-curl -fsSL https://codo-ai.vercel.app/install | bash
+git clone https://github.com/Mosalah4351/COdo && cd COdo && bun install
 ```
 
-You can also install it with the following commands:
-
-- **Using Node.js**
-
-        <Tabs>
-
-      <TabItem label="npm">
-      ```bash
-      npm install -g COdo-ai
-      ```
-
-          </TabItem>
-
-        <TabItem label="Bun">
-        ```bash
-        bun install -g COdo-ai
-        ```
-
-          </TabItem>
-
-        <TabItem label="pnpm">
-        ```bash
-        pnpm install -g COdo-ai
-        ```
-
-          </TabItem>
-
-        <TabItem label="Yarn">
-        ```bash
-        yarn global add COdo-ai
-        ```
-
-      </TabItem>
-
-  </Tabs>
-
-- **Using Homebrew on macOS and Linux**
-
-  ```bash
-  brew install anomalyco/tap/COdo
-  ```
-
-  > We recommend using the COdo tap for the most up to date releases. The official `brew install COdo` formula is maintained by the Homebrew team and is updated less frequently.
-
-- **Installing on Arch Linux**
-
-  ```bash
-  sudo pacman -S COdo           # Arch Linux (Stable)
-  paru -S COdo-bin              # Arch Linux (Latest from AUR)
-  ```
-
-#### Windows
-
-:::tip[Recommended: Use WSL]
-For the best experience on Windows, we recommend using [Windows Subsystem for Linux (WSL)](/docs/windows-wsl). It provides better performance and full compatibility with COdo's features.
-:::
-
-- **Using Chocolatey**
-
-  ```bash
-  choco install COdo
-  ```
-
-- **Using Scoop**
-
-  ```bash
-  scoop install COdo
-  ```
-
-- **Using NPM**
-
-  ```bash
-  npm install -g COdo-ai
-  ```
-
-- **Using Mise**
-
-  ```bash
-  mise use -g github:anomalyco/COdo
-  ```
-
-- **Using Docker**
-
-  ```bash
-  docker run -it --rm ghcr.io/anomalyco/COdo
-  ```
-
-Support for installing COdo on Windows using Bun is currently in progress.
-
-You can also grab the binary from the [Releases](https://github.com/anomalyco/opencode/releases).
+> Package-manager distributions (npm, Homebrew, Chocolatey, etc.) are not published yet.
+> Watch the [Releases](https://github.com/Mosalah4351/COdo/releases) page for prebuilt binaries.
 
 ---
 

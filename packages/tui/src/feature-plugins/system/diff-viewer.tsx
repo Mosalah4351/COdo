@@ -11,6 +11,7 @@ import {
 import { LANGUAGE_EXTENSIONS } from "../../util/filetype"
 import { useBindings, useCommandShortcut } from "../../keymap"
 import { useTheme } from "../../context/theme"
+import { RtlText } from "../../component/rtl-text"
 import { useTerminalDimensions } from "@opentui/solid"
 import path from "path"
 import { createEffect, createMemo, createResource, createSignal, For, Match, onCleanup, Show, Switch } from "solid-js"
@@ -735,12 +736,12 @@ function DiffViewer(props: { api: TuiPluginApi }) {
     <box position="absolute" zIndex={2500} left={0} top={0} width={dimensions().width} height={dimensions().height}>
       <PanelGroup axis="y" width="100%" height="100%">
         <Panel border="none" flexShrink={0} padding={0} paddingLeft={1}>
-          <text fg={theme().text}>Diff </text>
-          <text fg={theme().textMuted}>{mode() === "last-turn" ? "last turn" : "working tree"}</text>
+          <RtlText fg={theme().text}>Diff </RtlText>
+          <RtlText fg={theme().textMuted}>{mode() === "last-turn" ? "last turn" : "working tree"}</RtlText>
           <box flexGrow={1} />
-          <text fg={theme().textMuted}>
+          <RtlText fg={theme().textMuted}>
             {files().length} {files().length === 1 ? "file" : "files"}
-          </text>
+          </RtlText>
         </Panel>
 
         <box flexGrow={1} minHeight={0}>
@@ -748,19 +749,19 @@ function DiffViewer(props: { api: TuiPluginApi }) {
             <Match when={diff.loading}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().textMuted}>Loading diff...</text>
+                <RtlText fg={theme().textMuted}>Loading diff...</RtlText>
               </box>
             </Match>
             <Match when={!diff.loading && files().length === 0}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().textMuted}>No diff!</text>
+                <RtlText fg={theme().textMuted}>No diff!</RtlText>
               </box>
             </Match>
             <Match when={!diff.loading && diff.error}>
               <Separator axis="x" />
               <box flexGrow={1} paddingLeft={1}>
-                <text fg={theme().error}>Failed to load diff</text>
+                <RtlText fg={theme().error}>Failed to load diff</RtlText>
               </box>
             </Match>
             <Match when={!diff.loading}>
@@ -806,19 +807,19 @@ function DiffViewer(props: { api: TuiPluginApi }) {
                               border={patchLeftBorder()}
                               borderColor={theme().border}
                             >
-                              <text fg={reviewed() ? theme().textMuted : theme().text}>{entry.file.file}</text>
+                              <RtlText fg={reviewed() ? theme().textMuted : theme().text}>{entry.file.file}</RtlText>
                               <box flexGrow={1} />
-                              <text fg={reviewed() ? theme().textMuted : theme().diffAdded}>
+                              <RtlText fg={reviewed() ? theme().textMuted : theme().diffAdded}>
                                 +{entry.file.additions}
-                              </text>
-                              <text fg={reviewed() ? theme().textMuted : theme().diffRemoved}>
+                              </RtlText>
+                              <RtlText fg={reviewed() ? theme().textMuted : theme().diffRemoved}>
                                 -{entry.file.deletions}
-                              </text>
+                              </RtlText>
                             </box>
                             <Separator axis="x" start={showFileTree() ? "edge" : undefined} />
                             <Show
                               when={entry.file.patch}
-                              fallback={<text fg={theme().textMuted}>No patch available for this file.</text>}
+                              fallback={<RtlText fg={theme().textMuted}>No patch available for this file.</RtlText>}
                             >
                               {(patch) => (
                                 <box border={patchLeftBorder()} borderColor={theme().border}>
@@ -865,58 +866,58 @@ function DiffViewer(props: { api: TuiPluginApi }) {
         <Panel flexShrink={0} gap={2} paddingLeft={1} border="none">
           <Show when={switchFocusShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>focus file tree</span>
-              </text>
+              </RtlText>
             )}
           </Show>
           <Show when={nextFileShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>next file</span>
-              </text>
+              </RtlText>
             )}
           </Show>
           <Show when={nextHunkShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>next hunk</span>
-              </text>
+              </RtlText>
             )}
           </Show>
           <Show when={previousHunkShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>previous hunk</span>
-              </text>
+              </RtlText>
             )}
           </Show>
           <Show when={previousFileShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>previous file</span>
-              </text>
+              </RtlText>
             )}
           </Show>
           <Show when={switchSourceShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>switch source</span>
-              </text>
+              </RtlText>
             )}
           </Show>
           <Show when={markReviewedShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>mark reviewed</span>
-              </text>
+              </RtlText>
             )}
           </Show>
           <Show when={helpShortcut()}>
             {(shortcut) => (
-              <text fg={theme().text}>
+              <RtlText fg={theme().text}>
                 {shortcut()} <span style={{ fg: theme().textMuted }}>all</span>
-              </text>
+              </RtlText>
             )}
           </Show>
         </Panel>
@@ -993,30 +994,30 @@ function DiffViewerHelpDialog() {
   return (
     <box paddingLeft={2} paddingRight={2} paddingBottom={1} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           Diff shortcuts
-        </text>
-        <text fg={theme.textMuted}>esc</text>
+        </RtlText>
+        <RtlText fg={theme.textMuted}>esc</RtlText>
       </box>
       <box flexDirection="row">
-        <text fg={theme.textMuted} width={5} wrapMode="none">
+        <RtlText fg={theme.textMuted} width={5} wrapMode="none">
           Key
-        </text>
-        <text fg={theme.textMuted} width={22} wrapMode="none">
+        </RtlText>
+        <RtlText fg={theme.textMuted} width={22} wrapMode="none">
           Action
-        </text>
-        <text fg={theme.textMuted}>Description</text>
+        </RtlText>
+        <RtlText fg={theme.textMuted}>Description</RtlText>
       </box>
       <For each={rows}>
         {(row) => (
           <box flexDirection="row">
-            <text fg={theme.text} width={5} wrapMode="none">
+            <RtlText fg={theme.text} width={5} wrapMode="none">
               {row.shortcut() || "-"}
-            </text>
-            <text fg={theme.text} width={22} wrapMode="none">
+            </RtlText>
+            <RtlText fg={theme.text} width={22} wrapMode="none">
               {row.action}
-            </text>
-            <text fg={theme.textMuted}>{row.description}</text>
+            </RtlText>
+            <RtlText fg={theme.textMuted}>{row.description}</RtlText>
           </box>
         )}
       </For>

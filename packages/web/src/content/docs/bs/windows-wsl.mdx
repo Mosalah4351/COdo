@@ -26,7 +26,7 @@ WSL nudi bolje performanse fajl sistema, punu terminalsku podrsku i kompatibilno
    Kad je WSL spreman, otvorite WSL terminal i instalirajte COdo jednom od [metoda instalacije](/docs/).
 
    ```bash
-   curl -fsSL https://codo-ai.vercel.app/install | bash
+   git clone https://github.com/Mosalah4351/COdo && cd COdo && bun install
    ```
 
 3. **Koristite COdo iz WSL-a**
@@ -59,10 +59,10 @@ Ako `localhost` ne radi u vasem setupu, povezte se preko WSL IP adrese (u WSL-u:
 :::
 
 :::caution
-Kada koristite `--hostname 0.0.0.0`, postavite `OPENCODE_SERVER_PASSWORD` da zastitite server.
+Kada koristite `--hostname 0.0.0.0`, postavite `CODO_SERVER_PASSWORD` da zastitite server.
 
 ```bash
-OPENCODE_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
+CODO_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
 ```
 
 :::
@@ -110,4 +110,4 @@ Za najgladje iskustvo, razmislite da klonirate/kopirate repo u WSL fajl sistem (
 
 - Drzite COdo u WSL-u za projekte na Windows diskovima - pristup fajlovima je jednostavan
 - Koristite VS Code [WSL ekstenziju](https://code.visualstudio.com/docs/remote/wsl) uz COdo za integrisan tok rada
-- Vase COdo konfiguracije i sesije cuvaju se u WSL okruzenju na `~/.local/share/opencode/`
+- Vase COdo konfiguracije i sesije cuvaju se u WSL okruzenju na `~/.local/share/COdo/`

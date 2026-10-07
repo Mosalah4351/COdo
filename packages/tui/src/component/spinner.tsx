@@ -3,6 +3,7 @@ import { useTheme } from "../context/theme"
 import { useKV } from "../context/kv"
 import type { JSX } from "@opentui/solid"
 import type { RGBA } from "@opentui/core"
+import { RtlText } from "./rtl-text"
 
 export const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 const THINKING_FRAMES = SPINNER_FRAMES
@@ -32,11 +33,11 @@ export function Spinner(props: { children?: JSX.Element; color?: RGBA; variant?:
   })
   
   return (
-    <Show when={kv.get("animations_enabled", true)} fallback={<text fg={color()}>⋯ {props.children}</text>}>
+    <Show when={kv.get("animations_enabled", true)} fallback={<RtlText fg={color()}>⋯ {props.children}</RtlText>}>
       <box flexDirection="row" gap={1}>
-        <text fg={color()}>{frames()[frame()]}</text>
+        <RtlText fg={color()}>{frames()[frame()]}</RtlText>
         <Show when={props.children}>
-          <text fg={color()}>{props.children}</text>
+          <RtlText fg={color()}>{props.children}</RtlText>
         </Show>
       </box>
     </Show>

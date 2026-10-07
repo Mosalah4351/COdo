@@ -19,8 +19,8 @@ Hay dos formas de cargar complementos.
 
 Coloque los archivos JavaScript o TypeScript en el directorio del complemento.
 
-- `.opencode/plugins/` - Complementos a nivel de proyecto
-- `~/.config/opencode/plugins/` - Complementos globales
+- `.COdo/plugins/` - Complementos a nivel de proyecto
+- `~/.config/COdo/plugins/` - Complementos globales
 
 Los archivos en estos directorios se cargan automáticamente al inicio.
 
@@ -33,7 +33,7 @@ Especifique paquetes npm en su archivo de configuración.
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "COdo-wakatime", "@my-org/custom-plugin"]
 }
 ```
 
@@ -45,7 +45,7 @@ Explore los complementos disponibles en el [ecosistema](/docs/ecosystem#plugins)
 
 ### Cómo se instalan los complementos
 
-Los **complementos npm** se instalan automáticamente usando Bun al inicio. Los paquetes y sus dependencias se almacenan en caché en `~/.cache/opencode/node_modules/`.
+Los **complementos npm** se instalan automáticamente usando Bun al inicio. Los paquetes y sus dependencias se almacenan en caché en `~/.cache/COdo/node_modules/`.
 
 **Los complementos locales** se cargan directamente desde el directorio de complementos. Para usar paquetes externos, debe crear un `package.json` dentro de su directorio de configuración (consulte [Dependencias](#dependencies)), o publicar el complemento en npm y [agregarlo a su configuración](/docs/config#plugins).
 
@@ -55,10 +55,10 @@ Los **complementos npm** se instalan automáticamente usando Bun al inicio. Los 
 
 Los complementos se cargan desde todas las fuentes y todos los enlaces se ejecutan en secuencia. El orden de carga es:
 
-1. Configuración global (`~/.config/opencode/opencode.json`)
+1. Configuración global (`~/.config/COdo/COdo.json`)
 2. Configuración del proyecto (`COdo.json`)
-3. Directorio global de complementos (`~/.config/opencode/plugins/`)
-4. Directorio de complementos del proyecto (`.opencode/plugins/`)
+3. Directorio global de complementos (`~/.config/COdo/plugins/`)
+4. Directorio de complementos del proyecto (`.COdo/plugins/`)
 
 Los paquetes npm duplicados con el mismo nombre y versión se cargan una vez. Sin embargo, un complemento local y un complemento npm con nombres similares se cargan por separado.
 
@@ -75,7 +75,7 @@ funciones. Cada función recibe un objeto de contexto y devuelve un objeto de en
 
 Los complementos locales y las herramientas personalizadas pueden utilizar paquetes npm externos. Agregue un `package.json` a su directorio de configuración con las dependencias que necesita.
 
-```json title=".opencode/package.json"
+```json title=".COdo/package.json"
 {
   "dependencies": {
     "shescape": "^2.1.0"
@@ -85,7 +85,7 @@ Los complementos locales y las herramientas personalizadas pueden utilizar paque
 
 COdo ejecuta `bun install` al inicio para instalarlos. Luego, sus complementos y herramientas pueden importarlos.
 
-```ts title=".opencode/plugins/my-plugin.ts"
+```ts title=".COdo/plugins/my-plugin.ts"
 import { escape } from "shescape"
 
 export const MyPlugin = async (ctx) => {
@@ -103,7 +103,7 @@ export const MyPlugin = async (ctx) => {
 
 ### Estructura básica
 
-```js title=".opencode/plugins/example.js"
+```js title=".COdo/plugins/example.js"
 export const MyPlugin = async ({ project, client, $, directory, worktree }) => {
   console.log("Plugin initialized!")
 
@@ -128,7 +128,7 @@ La función del complemento recibe:
 Para los complementos TypeScript, puede importar tipos desde el paquete de complementos:
 
 ```ts title="my-plugin.ts" {1}
-import type { Plugin } from "@COdo-ai/plugin"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree }) => {
   return {
@@ -219,7 +219,7 @@ A continuación se muestran algunos ejemplos de complementos que puede utilizar 
 
 Enviar notificaciones cuando ocurran ciertos eventos:
 
-```js title=".opencode/plugins/notification.js"
+```js title=".COdo/plugins/notification.js"
 export const NotificationPlugin = async ({ project, client, $, directory, worktree }) => {
   return {
     event: async ({ event }) => {
@@ -244,7 +244,7 @@ Si está utilizando la aplicación de escritorio COdo, puede enviar notificacion
 
 Evite que COdo lea archivos `.env`:
 
-```javascript title=".opencode/plugins/env-protection.js"
+```javascript title=".COdo/plugins/env-protection.js"
 export const EnvProtection = async ({ project, client, $, directory, worktree }) => {
   return {
     "tool.execute.before": async (input, output) => {
@@ -262,7 +262,7 @@ export const EnvProtection = async ({ project, client, $, directory, worktree })
 
 Inyecte variables de entorno en toda la ejecución del shell (herramientas de inteligencia artificial y terminales de usuario):
 
-```javascript title=".opencode/plugins/inject-env.js"
+```javascript title=".COdo/plugins/inject-env.js"
 export const InjectEnvPlugin = async () => {
   return {
     "shell.env": async (input, output) => {
@@ -279,8 +279,8 @@ export const InjectEnvPlugin = async () => {
 
 Los complementos también pueden agregar herramientas personalizadas a COdo:
 
-```ts title=".opencode/plugins/custom-tools.ts"
-import { type Plugin, tool } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/custom-tools.ts"
+import { type Plugin, tool } from "@codo-ai/plugin"
 
 export const CustomToolsPlugin: Plugin = async (ctx) => {
   return {
@@ -318,7 +318,7 @@ Si una herramienta de complemento utiliza el mismo nombre que una herramienta in
 
 Utilice `client.app.log()` en lugar de `console.log` para el registro estructurado:
 
-```ts title=".opencode/plugins/my-plugin.ts"
+```ts title=".COdo/plugins/my-plugin.ts"
 export const MyPlugin = async ({ client }) => {
   await client.app.log({
     body: {
@@ -339,8 +339,8 @@ Niveles: `debug`, `info`, `warn`, `error`. Consulte la [documentación del SDK](
 
 Personalice el contexto incluido cuando se compacta una sesión:
 
-```ts title=".opencode/plugins/compaction.ts"
-import type { Plugin } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/compaction.ts"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const CompactionPlugin: Plugin = async (ctx) => {
   return {
@@ -363,8 +363,8 @@ El hook `experimental.session.compacting` se activa antes de que LLM genere un r
 
 También puede reemplazar completamente el mensaje de compactación configurando `output.prompt`:
 
-```ts title=".opencode/plugins/custom-compaction.ts"
-import type { Plugin } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/custom-compaction.ts"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const CustomCompactionPlugin: Plugin = async (ctx) => {
   return {

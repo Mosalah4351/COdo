@@ -84,8 +84,8 @@ COdo attach http://10.20.30.40:4096
 | <nobr><code>{"--continue"}</code></nobr> | `-c` | Fortsett siste økt                                                                                 |
 | <nobr><code>{"--session"}</code></nobr>  | `-s` | Økt ID for å fortsette                                                                             |
 | <nobr><code>{"--fork"}</code></nobr>     |      | Forgren økten ved fortsettelse (bruk med `--continue` eller `--session`)                           |
-| <nobr><code>{"--password"}</code></nobr> | `-p` | Passord for grunnleggende autentisering (standard: `OPENCODE_SERVER_PASSWORD`)                     |
-| <nobr><code>{"--username"}</code></nobr> | `-u` | Brukernavn for grunnleggende autentisering (standard: `OPENCODE_SERVER_USERNAME` eller `COdo`) |
+| <nobr><code>{"--password"}</code></nobr> | `-p` | Passord for grunnleggende autentisering (standard: `CODO_SERVER_PASSWORD`)                     |
+| <nobr><code>{"--username"}</code></nobr> | `-u` | Brukernavn for grunnleggende autentisering (standard: `CODO_SERVER_USERNAME` eller `COdo`) |
 
 ---
 
@@ -123,7 +123,7 @@ COdo auth [command]
 
 #### login
 
-COdo drives av leverandørlisten på [Models.dev](https://models.dev), så du kan bruke `opencode auth login` til å konfigurere API-nøkler for enhver leverandør du vil bruke. Dette er lagret i `~/.local/share/opencode/auth.json`.
+COdo drives av leverandørlisten på [Models.dev](https://models.dev), så du kan bruke `COdo auth login` til å konfigurere API-nøkler for enhver leverandør du vil bruke. Dette er lagret i `~/.local/share/COdo/auth.json`.
 
 ```bash
 COdo auth login
@@ -352,8 +352,8 @@ COdo run --attach http://localhost:4096 "Explain async/await in JavaScript"
 | <nobr><code>{"--format"}</code></nobr>   |      | Format: standard (formatert) eller json (rå JSON hendelser)                                        |
 | <nobr><code>{"--title"}</code></nobr>    |      | Tittel for økten (bruker avkortet ledetekst hvis ingen verdi er oppgitt)                           |
 | <nobr><code>{"--attach"}</code></nobr>   |      | Koble til en kjørende COdo-server (f.eks. http://localhost:4096)                               |
-| <nobr><code>{"--password"}</code></nobr> | `-p` | Passord for grunnleggende autentisering (standard: `OPENCODE_SERVER_PASSWORD`)                     |
-| <nobr><code>{"--username"}</code></nobr> | `-u` | Brukernavn for grunnleggende autentisering (standard: `OPENCODE_SERVER_USERNAME` eller `COdo`) |
+| <nobr><code>{"--password"}</code></nobr> | `-p` | Passord for grunnleggende autentisering (standard: `CODO_SERVER_PASSWORD`)                     |
+| <nobr><code>{"--username"}</code></nobr> | `-u` | Brukernavn for grunnleggende autentisering (standard: `CODO_SERVER_USERNAME` eller `COdo`) |
 | <nobr><code>{"--dir"}</code></nobr>      |      | Katalog å kjøre i, eller sti på fjernserveren ved tilkobling                                       |
 | <nobr><code>{"--variant"}</code></nobr>  |      | Modellvariant (leverandørspesifikk resonneringsinnsats)                                            |
 | <nobr><code>{"--thinking"}</code></nobr> |      | Vis tenkeblokker                                                                                   |
@@ -369,7 +369,7 @@ Start en headless COdo-server for API-tilgang. Sjekk ut [server-dokumentene](/do
 COdo serve
 ```
 
-Dette starter en HTTP-server som gir API tilgang til COdo-funksjonalitet uten TUI-grensesnittet. Sett `OPENCODE_SERVER_PASSWORD` for å aktivere HTTP grunnleggende autentisering (brukernavn er standard til `COdo`).
+Dette starter en HTTP-server som gir API tilgang til COdo-funksjonalitet uten TUI-grensesnittet. Sett `CODO_SERVER_PASSWORD` for å aktivere HTTP grunnleggende autentisering (brukernavn er standard til `COdo`).
 
 #### Flagg
 
@@ -465,7 +465,7 @@ Start en headless COdo-server med et webgrensesnitt.
 COdo web
 ```
 
-Dette starter en HTTP-server og åpner en nettleser for å få tilgang til COdo via et nettgrensesnitt. Sett `OPENCODE_SERVER_PASSWORD` for å aktivere HTTP grunnleggende autentisering (brukernavn er standard til `COdo`).
+Dette starter en HTTP-server og åpner en nettleser for å få tilgang til COdo via et nettgrensesnitt. Sett `CODO_SERVER_PASSWORD` for å aktivere HTTP grunnleggende autentisering (brukernavn er standard til `COdo`).
 
 #### Flagg
 
@@ -564,30 +564,30 @@ COdo kan konfigureres ved hjelp av miljøvariabler.
 
 | Variabel                              | Type   | Beskrivelse                                                           |
 | ------------------------------------- | ------ | --------------------------------------------------------------------- |
-| `OPENCODE_AUTO_SHARE`                 | boolsk | Del økter automatisk                                                  |
-| `OPENCODE_GIT_BASH_PATH`              | streng | Bane til Git Bash-kjørbar på Windows                                  |
-| `OPENCODE_CONFIG`                     | streng | Bane til konfigurasjonsfil                                            |
-| `OPENCODE_TUI_CONFIG`                 | streng | Bane til TUI-konfigurasjonsfil                                        |
-| `OPENCODE_CONFIG_DIR`                 | streng | Bane til konfigurasjonskatalog                                        |
-| `OPENCODE_CONFIG_CONTENT`             | streng | Innebygd json-konfigurasjonsinnhold                                   |
-| `OPENCODE_DISABLE_AUTOUPDATE`         | boolsk | Deaktiver automatiske oppdateringskontroller                          |
-| `OPENCODE_DISABLE_PRUNE`              | boolsk | Deaktiver beskjæring av gamle data                                    |
-| `OPENCODE_DISABLE_TERMINAL_TITLE`     | boolsk | Deaktiver automatiske terminaltitteloppdateringer                     |
-| `OPENCODE_PERMISSION`                 | streng | Innebygd json-tillatelseskonfigurasjon                                |
-| `OPENCODE_DISABLE_DEFAULT_PLUGINS`    | boolsk | Deaktiver standard plugins                                            |
-| `OPENCODE_DISABLE_LSP_DOWNLOAD`       | boolsk | Deaktiver automatiske LSP servernedlastinger                          |
-| `OPENCODE_ENABLE_EXPERIMENTAL_MODELS` | boolsk | Aktiver eksperimentelle modeller                                      |
-| `OPENCODE_DISABLE_AUTOCOMPACT`        | boolsk | Deaktiver automatisk kontekstkomprimering                             |
-| `OPENCODE_DISABLE_CLAUDE_CODE`        | boolsk | Deaktiver lesing fra `.claude` (spørsmål + ferdigheter)               |
-| `OPENCODE_DISABLE_CLAUDE_CODE_PROMPT` | boolsk | Deaktiver lesing `~/.claude/CLAUDE.md`                                |
-| `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS` | boolsk | Deaktiver innlasting av `.claude/skills`                              |
-| `OPENCODE_DISABLE_MODELS_FETCH`       | boolsk | Deaktiver henting av modeller fra eksterne kilder                     |
-| `OPENCODE_FAKE_VCS`                   | streng | Falsk VCS-leverandør for testformål                                   |
-| `OPENCODE_CLIENT`                     | streng | Klientidentifikator (standard til `cli`)                              |
-| `OPENCODE_ENABLE_EXA`                 | boolsk | Aktiver Exa-nettsøkeverktøy                                           |
-| `OPENCODE_SERVER_PASSWORD`            | streng | Aktiver grunnleggende autentisering for `serve`/`web`                 |
-| `OPENCODE_SERVER_USERNAME`            | streng | Overstyr grunnleggende autentiseringsbrukernavn (standard `COdo`) |
-| `OPENCODE_MODELS_URL`                 | streng | Egendefinert URL for henting av modellkonfigurasjon                   |
+| `CODO_AUTO_SHARE`                 | boolsk | Del økter automatisk                                                  |
+| `CODO_GIT_BASH_PATH`              | streng | Bane til Git Bash-kjørbar på Windows                                  |
+| `CODO_CONFIG`                     | streng | Bane til konfigurasjonsfil                                            |
+| `CODO_TUI_CONFIG`                 | streng | Bane til TUI-konfigurasjonsfil                                        |
+| `CODO_CONFIG_DIR`                 | streng | Bane til konfigurasjonskatalog                                        |
+| `CODO_CONFIG_CONTENT`             | streng | Innebygd json-konfigurasjonsinnhold                                   |
+| `CODO_DISABLE_AUTOUPDATE`         | boolsk | Deaktiver automatiske oppdateringskontroller                          |
+| `CODO_DISABLE_PRUNE`              | boolsk | Deaktiver beskjæring av gamle data                                    |
+| `CODO_DISABLE_TERMINAL_TITLE`     | boolsk | Deaktiver automatiske terminaltitteloppdateringer                     |
+| `CODO_PERMISSION`                 | streng | Innebygd json-tillatelseskonfigurasjon                                |
+| `CODO_DISABLE_DEFAULT_PLUGINS`    | boolsk | Deaktiver standard plugins                                            |
+| `CODO_DISABLE_LSP_DOWNLOAD`       | boolsk | Deaktiver automatiske LSP servernedlastinger                          |
+| `CODO_ENABLE_EXPERIMENTAL_MODELS` | boolsk | Aktiver eksperimentelle modeller                                      |
+| `CODO_DISABLE_AUTOCOMPACT`        | boolsk | Deaktiver automatisk kontekstkomprimering                             |
+| `CODO_DISABLE_CLAUDE_CODE`        | boolsk | Deaktiver lesing fra `.claude` (spørsmål + ferdigheter)               |
+| `CODO_DISABLE_CLAUDE_CODE_PROMPT` | boolsk | Deaktiver lesing `~/.claude/CLAUDE.md`                                |
+| `CODO_DISABLE_CLAUDE_CODE_SKILLS` | boolsk | Deaktiver innlasting av `.claude/skills`                              |
+| `CODO_DISABLE_MODELS_FETCH`       | boolsk | Deaktiver henting av modeller fra eksterne kilder                     |
+| `CODO_FAKE_VCS`                   | streng | Falsk VCS-leverandør for testformål                                   |
+| `CODO_CLIENT`                     | streng | Klientidentifikator (standard til `cli`)                              |
+| `CODO_ENABLE_EXA`                 | boolsk | Aktiver Exa-nettsøkeverktøy                                           |
+| `CODO_SERVER_PASSWORD`            | streng | Aktiver grunnleggende autentisering for `serve`/`web`                 |
+| `CODO_SERVER_USERNAME`            | streng | Overstyr grunnleggende autentiseringsbrukernavn (standard `COdo`) |
+| `CODO_MODELS_URL`                 | streng | Egendefinert URL for henting av modellkonfigurasjon                   |
 
 ---
 
@@ -597,21 +597,21 @@ Disse miljøvariablene muliggjør eksperimentelle funksjoner som kan endres elle
 
 | Variabel                                        | Type   | Beskrivelse                                           |
 | ----------------------------------------------- | ------ | ----------------------------------------------------- |
-| `OPENCODE_EXPERIMENTAL`                         | boolsk | Aktiver eksperimentelle funksjoner under samleflagget |
-| `OPENCODE_EXPERIMENTAL_ICON_DISCOVERY`          | boolsk | Aktiver ikonoppdagelse                                |
-| `OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT`  | boolsk | Deaktiver kopi ved valg i TUI                         |
-| `OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS` | tall   | Standard tidsavbrudd for bash-kommandoer i ms         |
-| `OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX`        | tall   | Maks Output Tokens for LLM-svar                       |
-| `OPENCODE_EXPERIMENTAL_FILEWATCHER`             | boolsk | Aktiver filovervåker for hele dir                     |
-| `OPENCODE_EXPERIMENTAL_OXFMT`                   | boolsk | Aktiver oxfmt formatter                               |
-| `OPENCODE_EXPERIMENTAL_LSP_TOOL`                | boolsk | Aktiver eksperimentelt LSP-verktøy                    |
-| `OPENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER`     | boolsk | Deaktiver filovervåking                               |
-| `OPENCODE_EXPERIMENTAL_EXA`                     | boolsk | Aktiver eksperimentelle Exa-funksjoner                |
-| `OPENCODE_EXPERIMENTAL_LSP_TY`                  | boolsk | Aktiver TY LSP for python-filer                       |
-| `OPENCODE_EXPERIMENTAL_PLAN_MODE`               | boolsk | Aktiver planmodus                                     |
-| `OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS`    | boolsk | Aktiver bakgrunnsoppgaver for subagenter              |
-| `OPENCODE_EXPERIMENTAL_EVENT_SYSTEM`            | boolsk | Aktiver eksperimentelt hendelsessystem                |
-| `OPENCODE_EXPERIMENTAL_NATIVE_LLM`              | boolsk | Aktiver innebygd LLM-forespørselsvei                  |
-| `OPENCODE_EXPERIMENTAL_PARALLEL`                | boolsk | Aktiver parallell kjøring av websøk                   |
-| `OPENCODE_EXPERIMENTAL_SCOUT`                   | boolsk | Aktiver Scout-subagent                                |
-| `OPENCODE_EXPERIMENTAL_WORKSPACES`              | boolsk | Aktiver arbeidsområde-støtte                          |
+| `CODO_EXPERIMENTAL`                         | boolsk | Aktiver eksperimentelle funksjoner under samleflagget |
+| `CODO_EXPERIMENTAL_ICON_DISCOVERY`          | boolsk | Aktiver ikonoppdagelse                                |
+| `CODO_EXPERIMENTAL_DISABLE_COPY_ON_SELECT`  | boolsk | Deaktiver kopi ved valg i TUI                         |
+| `CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS` | tall   | Standard tidsavbrudd for bash-kommandoer i ms         |
+| `CODO_EXPERIMENTAL_OUTPUT_TOKEN_MAX`        | tall   | Maks Output Tokens for LLM-svar                       |
+| `CODO_EXPERIMENTAL_FILEWATCHER`             | boolsk | Aktiver filovervåker for hele dir                     |
+| `CODO_EXPERIMENTAL_OXFMT`                   | boolsk | Aktiver oxfmt formatter                               |
+| `CODO_EXPERIMENTAL_LSP_TOOL`                | boolsk | Aktiver eksperimentelt LSP-verktøy                    |
+| `CODO_EXPERIMENTAL_DISABLE_FILEWATCHER`     | boolsk | Deaktiver filovervåking                               |
+| `CODO_EXPERIMENTAL_EXA`                     | boolsk | Aktiver eksperimentelle Exa-funksjoner                |
+| `CODO_EXPERIMENTAL_LSP_TY`                  | boolsk | Aktiver TY LSP for python-filer                       |
+| `CODO_EXPERIMENTAL_PLAN_MODE`               | boolsk | Aktiver planmodus                                     |
+| `CODO_EXPERIMENTAL_BACKGROUND_SUBAGENTS`    | boolsk | Aktiver bakgrunnsoppgaver for subagenter              |
+| `CODO_EXPERIMENTAL_EVENT_SYSTEM`            | boolsk | Aktiver eksperimentelt hendelsessystem                |
+| `CODO_EXPERIMENTAL_NATIVE_LLM`              | boolsk | Aktiver innebygd LLM-forespørselsvei                  |
+| `CODO_EXPERIMENTAL_PARALLEL`                | boolsk | Aktiver parallell kjøring av websøk                   |
+| `CODO_EXPERIMENTAL_SCOUT`                   | boolsk | Aktiver Scout-subagent                                |
+| `CODO_EXPERIMENTAL_WORKSPACES`              | boolsk | Aktiver arbeidsområde-støtte                          |

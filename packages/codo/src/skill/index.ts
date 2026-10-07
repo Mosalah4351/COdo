@@ -38,6 +38,10 @@ const CUSTOMIZE_CODO_SKILL_BODY = SkillPlugin.CustomizeCOdoContent
 
 import { composeSkills, COMPOSE_SKILL_NAMES, isComposeSkill } from "./compose-skills"
 import { secTestSkills, SEC_TEST_SKILL_NAMES, isSecTestSkill } from "./sec-test-skills"
+import { businessSkills } from "./business-skills"
+import { BusinessBundle } from "./business-bundle"
+import { standaloneSkills } from "./standalone-skills"
+import { scrapeSkills } from "./scrape-skills"
 
 export const Info = Schema.Struct({
   name: Schema.String,
@@ -367,7 +371,52 @@ export const layer = Layer.effect(
             content: st.content,
           }
         }
-        yield* loadSkills(s, yield* InstanceState.get(discovered), events)
+        // Register business skills as built-in skills. The full bundle trees
+        // (SKILL.md plus workflows/, references/, scripts/) are extracted to
+        // the data dir so the relative references inside each skill resolve
+        // to real files. Registering a pseudo-location here instead hands the
+        // skill tool a base directory that does not exist, and every bundled
+        // reference 404s at routing time.
+        const businessRoot = yield* BusinessBundle.extract(fsys, global).pipe(
+          Effect.catch((error) =>
+            Effect.logWarning("business skill bundle extraction failed, registering content-only", { error }).pipe(
+              Effect.as(undefined),
+            ),
+          ),
+        )
+        const discoveredState = yield* InstanceState.get(discovered)
+        for (const bs of businessSkills) {
+          const skillDir = businessRoot ? path.join(businessRoot, bs.dir) : undefined
+          s.skills[bs.name] = {
+            name: bs.name,
+            description: bs.description,
+            location: skillDir ? path.join(skillDir, "SKILL.md") : `<built-in:business:${bs.name}>`,
+            content: bs.content,
+          }
+          if (skillDir) {
+            s.dirs.add(skillDir)
+            discoveredState.dirs.push(skillDir)
+          }
+        }
+        // Register scrape skills as built-in skills
+        for (const ss of scrapeSkills) {
+          s.skills[ss.name] = {
+            name: ss.name,
+            description: ss.description,
+            location: `<built-in:scrape:${ss.name}>`,
+            content: ss.content,
+          }
+        }
+        // Register standalone built-in skills
+        for (const ss of standaloneSkills) {
+          s.skills[ss.name] = {
+            name: ss.name,
+            description: ss.description,
+            location: `<built-in:${ss.name}>`,
+            content: ss.content,
+          }
+        }
+        yield* loadSkills(s, discoveredState, events)
         return s
       }),
     )

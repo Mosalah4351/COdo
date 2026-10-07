@@ -18,7 +18,7 @@ Per aggiungere un provider devi:
 ### Credenziali
 
 Quando aggiungi le API key di un provider con `/connect`, vengono salvate
-in `~/.local/share/opencode/auth.json`.
+in `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -819,7 +819,7 @@ Per accedere agli strumenti GitLab (merge requests, issues, pipelines, CI/CD, ec
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -998,7 +998,7 @@ Nel caso vedessi una funzionalità o un modello di Helicone che non viene config
 
 Ecco la [Model Directory di Helicone](https://helicone.ai/models), ti servirà per recuperare gli ID dei modelli che vuoi aggiungere.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1026,7 +1026,7 @@ Ecco la [Model Directory di Helicone](https://helicone.ai/models), ti servirà p
 
 Helicone supporta header personalizzati per funzionalità come caching, user tracking e gestione sessioni. Aggiungili alla configurazione del provider usando `options.headers`:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1057,7 +1057,7 @@ Aggiungilo alla tua configurazione.
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

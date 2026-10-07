@@ -26,7 +26,7 @@ WSL giver bedre filsystemydelse, fuld terminalunderstøttelse og kompatibilitet 
    Når WSL er sat op, skal du åbne din WSL-terminal og installere COdo med en af [installationsmetoderne](/docs/).
 
    ```bash
-   curl -fsSL https://codo-ai.vercel.app/install | bash
+   git clone https://github.com/Mosalah4351/COdo && cd COdo && bun install
    ```
 
 3. **Brug COdo fra WSL**
@@ -59,10 +59,10 @@ Hvis `localhost` ikke virker i din opsætning, så forbind i stedet med WSL-IP-a
 :::
 
 :::caution
-Når du bruger `--hostname 0.0.0.0`, skal du sætte `OPENCODE_SERVER_PASSWORD` for at sikre serveren.
+Når du bruger `--hostname 0.0.0.0`, skal du sætte `CODO_SERVER_PASSWORD` for at sikre serveren.
 
 ```bash
-OPENCODE_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
+CODO_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
 ```
 
 :::
@@ -110,4 +110,4 @@ For den mest problemfri oplevelse kan du overveje at klone/kopiere dit repo ind 
 
 - Lad COdo køre i WSL for projekter, der ligger på Windows-drev - filadgangen er problemfri
 - Brug VS Codes [WSL-udvidelse](https://code.visualstudio.com/docs/remote/wsl) sammen med COdo for et integreret udviklingsworkflow
-- Din COdo-konfiguration og dine sessioner gemmes i WSL-miljøet i `~/.local/share/opencode/`
+- Din COdo-konfiguration og dine sessioner gemmes i WSL-miljøet i `~/.local/share/COdo/`

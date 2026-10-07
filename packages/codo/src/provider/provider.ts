@@ -176,7 +176,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           },
         },
       }),
-    COdo: Effect.fnUntraced(function* (input: Info) {
+    opencode: Effect.fnUntraced(function* (input: Info) {
       const env = yield* dep.env()
       const hasKey = iife(() => {
         if (input.env.some((item) => env[item])) return true
@@ -185,7 +185,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       const ok =
         hasKey ||
         Boolean(yield* dep.auth(input.id)) ||
-        Boolean((yield* dep.config()).provider?.["COdo"]?.options?.apiKey)
+        Boolean((yield* dep.config()).provider?.["opencode"]?.options?.apiKey)
 
       if (!ok) {
         for (const [key, value] of Object.entries(input.models)) {
@@ -1843,7 +1843,7 @@ export const layer = Layer.effect(
         "gemini-2.5-flash",
         "gpt-5-nano",
       ]
-      const priority = providerID.startsWith("COdo")
+      const priority = providerID.startsWith("opencode")
         ? ["gpt-5-nano"]
         : providerID.startsWith("github-copilot")
           ? ["gpt-5-mini", "claude-haiku-4.5", ...defaultPriority]

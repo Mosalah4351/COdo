@@ -26,17 +26,24 @@ async function copySkillsFrom(source: string, target: string) {
   }
 }
 
-const GSD_CORE_DIRS = ["bin", "templates", "references", "commands", "contexts", "workflows", "scripts"]
+const GSD_CORE_DIRS = ["bin", "templates", "references", "commands", "contexts", "workflows"]
 const GSD_CORE_ROOT_FILES = [".gsd-runtime", "VERSION"]
+// Scripts live at .agents/scripts/ (parent of gsd-core/), matching the global
+// layout where .claude/scripts/ sits beside .claude/gsd-core/. The compiled
+// bin/lib/*.cjs files use require('../../../scripts/...') which resolves here.
+const GSD_SCRIPTS_DIR = "scripts"
 
 async function copyGsdCore(source: string, projectDir: string): Promise<boolean> {
   const dest = join(projectDir, ".agents", "gsd-core")
-  if (existsSync(join(dest, "bin", "gsd-tools.cjs"))) return false
+  const binExists = existsSync(join(dest, "bin", "gsd-tools.cjs"))
+  const scriptsOk = existsSync(join(projectDir, ".agents", "scripts", "fix-slash-commands.cjs"))
+  if (binExists && scriptsOk) return false
   const gsdCore = join(source, "gsd-core")
   const root = existsSync(gsdCore) ? gsdCore : source
   await mkdir(dest, { recursive: true })
   for (const dir of GSD_CORE_DIRS) {
-    const src = join(root, dir)
+    // Check root first (gsd-core/ subdir), then source root (e.g. scripts/ is at repo root)
+    const src = existsSync(join(root, dir)) ? join(root, dir) : join(source, dir)
     if (existsSync(src)) {
       await rm(join(dest, dir), { recursive: true, force: true })
       await cp(src, join(dest, dir), { recursive: true })
@@ -51,10 +58,12 @@ async function copyGsdCore(source: string, projectDir: string): Promise<boolean>
   }
   // Write .gsd-runtime as "opencode" (overwriting whatever was copied)
   await writeFile(join(dest, ".gsd-runtime"), "opencode", "utf-8")
-  // Create scripts/ placeholder if missing (fixes command-roster.cjs require)
-  const scriptsDir = join(dest, "scripts")
-  if (!existsSync(scriptsDir)) {
-    await mkdir(scriptsDir, { recursive: true })
+  // Scripts live at .agents/scripts/ (parent of gsd-core/), matching global layout
+  const agentsScripts = join(projectDir, ".agents", "scripts")
+  const srcScripts = existsSync(join(root, GSD_SCRIPTS_DIR)) ? join(root, GSD_SCRIPTS_DIR) : join(source, GSD_SCRIPTS_DIR)
+  if (existsSync(srcScripts)) {
+    await rm(agentsScripts, { recursive: true, force: true })
+    await cp(srcScripts, agentsScripts, { recursive: true })
   }
   return true
 }
@@ -65,8 +74,8 @@ function hasGsdCore(projectDir?: string): boolean {
     const localPath = join(projectDir, ".agents", "gsd-core", "bin", "gsd-tools.cjs")
     if (existsSync(localPath)) return true
   }
-  // Fall back to global
-  return existsSync(join(homedir(), ".claude", "gsd-core", "bin", "gsd-tools.cjs"))
+  // Fall back to global codo path
+  return existsSync(join(homedir(), ".config", "codo", "gsd", "bin", "gsd-tools.cjs"))
 }
 
 export async function initGsd(scope: "local" | "global") {

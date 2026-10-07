@@ -11,7 +11,7 @@ description: المشكلات الشائعة وكيفية حلها.
 
 يتم حفظ ملفات السجل في:
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: اضغط `WIN+R` والصق `%USERPROFILE%\.local\share\COdo\log`
 
 تتم تسمية ملفات السجل بطوابع زمنية (مثل `2025-01-09T123456.log`) ويتم الاحتفاظ بأحدث 10 ملفات سجل.
@@ -24,7 +24,7 @@ description: المشكلات الشائعة وكيفية حلها.
 
 يخزن COdo بيانات الجلسات وبيانات التطبيق الأخرى على القرص في:
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: اضغط `WIN+R` والصق `%USERPROFILE%\.local\share\COdo`
 
 يحتوي هذا الدليل على:
@@ -57,8 +57,8 @@ description: المشكلات الشائعة وكيفية حلها.
 
 افتح ملف الإعدادات العام وابحث عن المفتاح `plugin`.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (أو `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (عمليات تثبيت أقدم): `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc` (أو `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (عمليات تثبيت أقدم): `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: اضغط `WIN+R` والصق `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 إذا كانت لديك إضافات مضبوطة، فقم بتعطيلها مؤقتا بإزالة المفتاح أو ضبطه على مصفوفة فارغة:
@@ -75,10 +75,10 @@ description: المشكلات الشائعة وكيفية حلها.
 يمكن لـ COdo أيضا تحميل إضافات محلية من القرص. انقلها مؤقتا إلى مكان آخر (أو أعد تسمية المجلد) ثم أعد تشغيل تطبيق سطح المكتب:
 
 - **إضافات عامة**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: اضغط `WIN+R` والصق `%USERPROFILE%\.config\COdo\plugins`
 - **إضافات المشروع** (فقط إذا كنت تستخدم إعدادات لكل مشروع)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 إذا عاد التطبيق للعمل، فأعد تفعيل الإضافات واحدة تلو الأخرى لمعرفة أيها يسبب المشكلة.
 
@@ -115,9 +115,9 @@ description: المشكلات الشائعة وكيفية حلها.
 
 #### تحقق من متغيرات البيئة
 
-إذا كان `OPENCODE_PORT` مضبوطا في بيئتك، فسيحاول تطبيق سطح المكتب استخدام ذلك المنفذ للخادم المحلي.
+إذا كان `CODO_PORT` مضبوطا في بيئتك، فسيحاول تطبيق سطح المكتب استخدام ذلك المنفذ للخادم المحلي.
 
-- أزل ضبط `OPENCODE_PORT` (أو اختر منفذا متاحا) ثم أعد التشغيل.
+- أزل ضبط `CODO_PORT` (أو اختر منفذا متاحا) ثم أعد التشغيل.
 
 ---
 
@@ -177,7 +177,7 @@ description: المشكلات الشائعة وكيفية حلها.
 
    أفضل طريقة للإبلاغ عن الأخطاء أو طلب الميزات هي عبر مستودعنا على GitHub:
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    قبل إنشاء مشكلة جديدة، ابحث في المشكلات الموجودة لمعرفة ما إذا كانت مشكلتك قد تم الإبلاغ عنها بالفعل.
 
@@ -224,7 +224,7 @@ description: المشكلات الشائعة وكيفية حلها.
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 لمعرفة النماذج التي لديك صلاحية الوصول إليها، شغّل `COdo models`
 

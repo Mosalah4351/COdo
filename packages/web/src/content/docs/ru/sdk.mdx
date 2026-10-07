@@ -18,7 +18,7 @@ SDK JS/TS с открытым кодом предоставляет типобе
 Установите SDK из npm:
 
 ```bash
-npm install @COdo-ai/sdk
+npm install @codo-ai/sdk
 ```
 
 ---
@@ -28,7 +28,7 @@ npm install @COdo-ai/sdk
 Создайте экземпляр COdo:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const { client } = await createOpencode()
 ```
@@ -52,7 +52,7 @@ const { client } = await createOpencode()
 Вы можете передать объект конфигурации для настройки поведения. Экземпляр по-прежнему получает ваш `COdo.json`, но вы можете переопределить или добавить встроенную конфигурацию:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const COdo = await createOpencode({
   hostname: "127.0.0.1",
@@ -72,7 +72,7 @@ COdo.server.close()
 Если у вас уже есть работающий экземпляр COdo, вы можете создать экземпляр клиента для подключения к нему:
 
 ```javascript
-import { createOpencodeClient } from "@COdo-ai/sdk"
+import { createOpencodeClient } from "@codo-ai/sdk"
 
 const client = createOpencodeClient({
   baseUrl: "http://localhost:4096",
@@ -96,7 +96,7 @@ const client = createOpencodeClient({
 SDK включает определения TypeScript для всех типов API. Импортируйте их напрямую:
 
 ```typescript
-import type { Session, Message, Part } from "@COdo-ai/sdk"
+import type { Session, Message, Part } from "@codo-ai/sdk"
 ```
 
 Все типы генерируются на основе спецификации OpenAPI сервера и доступны в файле <a href={typesUrl}>types</a>.

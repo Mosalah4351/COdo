@@ -28,7 +28,7 @@ COdo — like any agent — has an attack surface distinct from the code it writ
    - **MCP Top10** — is each MCP server pinned to a version/hash? Is there credential leakage between servers sharing a session?
    - **ASI01 Memory Poisoning / ASI02 Tool Misuse / ASI05 Unexpected Code Execution** — any persistence path where a skill modifies memory files or registers new tools without the user seeing?
 4. **Write the audit report** to `.planning/security/findings/YYYY-MM-DD-agent-surface.md` (persona: sec-secops, category references `ASI##` / `LLM##` / `MCP##`).
-5. Return `## POSTURE REPORT COMPLETE` with a component count by trust tier and the finding count.
+5. Return `## SEC-RESULT skill=sec-test:agent-surface-audit status=complete findings=<n> critical=<n> high=<n> doc=<path>` plus a component count by trust tier.
 
 ## Rules
 

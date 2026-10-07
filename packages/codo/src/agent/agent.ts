@@ -13,11 +13,9 @@ import PROMPT_GENERATE from "./generate.txt"
 import PROMPT_COMPACTION from "./prompt/compaction.txt"
 import PROMPT_COMPOSE from "./prompt/compose.txt"
 import PROMPT_SEC_TEST from "./prompt/sec-test.txt"
-import PROMPT_SEC_ARCHITECT from "./prompt/sec-architect.txt"
-import PROMPT_SEC_APPSEC from "./prompt/sec-appsec.txt"
-import PROMPT_SEC_DEVSECOPS from "./prompt/sec-devsecops.txt"
-import PROMPT_SEC_PENTEST from "./prompt/sec-pentest.txt"
-import PROMPT_SEC_SECOPS from "./prompt/sec-secops.txt"
+import PROMPT_BUSINESS from "./prompt/business.txt"
+import PROMPT_SCRAPE from "./prompt/scrape.txt"
+import { SCRAPE_AGENTS } from "./scrape-topic"
 import PROMPT_EXPLORE from "./prompt/explore.txt"
 import PROMPT_SUMMARY from "./prompt/summary.txt"
 import PROMPT_TITLE from "./prompt/title.txt"
@@ -29,6 +27,7 @@ import { Plugin } from "@/plugin"
 import { Skill } from "../skill"
 import { Workflow } from "@/config/workflow"
 import { GSD } from "./gsd"
+import { Sec } from "./sec"
 import { Effect, Context, Layer, Schema } from "effect"
 import { InstanceState } from "@/effect/instance-state"
 import * as Option from "effect/Option"
@@ -238,7 +237,7 @@ export const layer = Layer.effect(
             name: "sec-test",
             color: "#e0715a",
             description:
-              "Security & testing orchestrator. Dispatches read-only personas (architect/appsec/devsecops/secops) for audits and the scope-gated pentest persona for authorized validation.",
+              "Security & testing orchestrator. Dispatches read-only audit personas (architect/appsec/devsecops/secops), the scope-gated pentest persona for authorized validation, and the QA persona for test design and coverage.",
             options: {},
             permission: Permission.merge(
               defaults,
@@ -253,171 +252,75 @@ export const layer = Layer.effect(
             mode: "primary",
             native: true,
           },
-          "sec-architect": {
-            name: "sec-architect",
-            description: "Threat modeling and architecture persona (STRIDE/PASTA, ASVS). Read-only review — identifies threats at the design layer.",
+          business: {
+            name: "business",
+            color: "#c3e88d",
+            description:
+              "Business deliverables orchestrator. Routes work to the business skills (xlsx, docx, pptx, pdf, deep research, papers, sales, video, arxiv, data-analytics, design, learning courses, python setup, skill authoring) and executes them end to end - real files on disk, verified before handoff.",
             options: {},
             permission: Permission.merge(
               defaults,
               Permission.fromConfig({
-                "*": "deny",
-                grep: "allow",
-                glob: "allow",
-                list: "allow",
-                read: "allow",
-                webfetch: "allow",
-                websearch: "allow",
-                bash: {
-                  "*": "deny",
-                  "git log*": "allow",
-                  "git diff*": "allow",
-                },
-                edit: {
-                  "*": "deny",
-                  [path.join(".planning", "security", "**", "*")]: "allow",
-                },
-                external_directory: readonlyExternalDirectory,
+                question: "allow",
+                skill: "allow",
               }),
               user,
             ),
-            prompt: PROMPT_SEC_ARCHITECT,
-            mode: "subagent",
+            prompt: PROMPT_BUSINESS,
+            mode: "primary",
             native: true,
           },
-          "sec-appsec": {
-            name: "sec-appsec",
-            description: "Application security code auditor (OWASP Top 10:2025, CWE Top 25). Read-only detection of vulnerabilities in implementation.",
+          scrape: {
+            name: "scrape",
+            color: "#4d9e6a",
+            description:
+              "Web-extraction orchestrator. Plans runs (scrape:brief), dispatches a parallel topic-subagent swarm, climbs the escalation ladder, checkpoints to .codo/scrape/<run-id>/, delivers Excel via business:xlsx-official.",
             options: {},
+            // ⚠️ permission REQUIRED — omitting it 500-crashes production boot
+            // (the /agent endpoint dereferences it for every registered agent).
             permission: Permission.merge(
               defaults,
               Permission.fromConfig({
-                "*": "deny",
-                grep: "allow",
-                glob: "allow",
-                list: "allow",
-                read: "allow",
-                bash: {
-                  "*": "deny",
-                  "semgrep*": "allow",
-                  "opengrep*": "allow",
-                  "gitleaks*": "allow",
-                  "trufflehog*": "allow",
-                  // Local coverage-guided fuzzing (non-network, deterministic):
-                  "go test -fuzz*": "allow",
-                  "cargo fuzz*": "allow",
-                  "jsfuzz*": "allow",
-                  "atheris*": "allow",
-                  "bun test --fuzz*": "allow",
-                },
-                edit: {
-                  "*": "deny",
-                  [path.join(".planning", "security", "**", "*")]: "allow",
-                },
-                external_directory: readonlyExternalDirectory,
+                question: "allow",
+                skill: "allow",
+                task: "allow", // REQUIRED — enables the TaskTool topic swarm
               }),
               user,
             ),
-            prompt: PROMPT_SEC_APPSEC,
-            mode: "subagent",
+            prompt: PROMPT_SCRAPE,
+            mode: "primary",
             native: true,
           },
-          "sec-devsecops": {
-            name: "sec-devsecops",
-            description: "Build pipeline auditor (NIST SSDF, SLSA provenance, Sigstore). Reviews CI/CD config and supply-chain hygiene.",
-            options: {},
-            permission: Permission.merge(
-              defaults,
-              Permission.fromConfig({
-                "*": "deny",
-                grep: "allow",
-                glob: "allow",
-                list: "allow",
-                read: "allow",
-                bash: {
-                  "*": "deny",
-                  "syft*": "allow",
-                  "grype*": "allow",
-                  "trivy*": "allow",
-                  "osv-scanner*": "allow",
-                  "cosign*": "allow",
-                },
-                edit: {
-                  "*": "deny",
-                  [path.join(".planning", "security", "**", "*")]: "allow",
-                },
-                external_directory: readonlyExternalDirectory,
-              }),
-              user,
-            ),
-            prompt: PROMPT_SEC_DEVSECOPS,
-            mode: "subagent",
-            native: true,
-          },
-          "sec-pentest": {
-            name: "sec-pentest",
-            description: "Scope-gated validation persona (PTES/WSTG). HARD-GATED by .codo/security-scope.json — refuses all work without a valid, unexpired scope file.",
-            options: {},
-            permission: Permission.merge(
-              defaults,
-              Permission.fromConfig({
-                "*": "deny",
-                grep: "allow",
-                glob: "allow",
-                list: "allow",
-                read: "allow",
-                bash: {
-                  "*": "deny",
-                  "curl*": "allow",
-                  "nmap*": "ask",
-                  "nikto*": "ask",
-                  // Baseline scan is bounded and confirmatory — same posture as nmap/nikto/nuclei.
-                  // Full/active scan still denied regardless of scope (must be manually authorized out-of-band).
-                  "zap-baseline*": "ask",
-                  "zap*full*": "deny",
-                  "sqlmap*": "deny",
-                  "nuclei*": "ask",
-                },
-                edit: {
-                  "*": "deny",
-                  [path.join(".planning", "security", "**", "*")]: "allow",
-                },
-                external_directory: {
-                  "*": "deny",
-                },
-              }),
-              user,
-            ),
-            prompt: PROMPT_SEC_PENTEST,
-            mode: "subagent",
-            native: true,
-          },
-          "sec-secops": {
-            name: "sec-secops",
-            description: "Operations + meta persona. Audits the agent-surface itself (skills, plugins, MCP) against OWASP LLM/Agentic Top 10 and tracks posture over time.",
-            options: {},
-            permission: Permission.merge(
-              defaults,
-              Permission.fromConfig({
-                "*": "deny",
-                grep: "allow",
-                glob: "allow",
-                list: "allow",
-                read: "allow",
-                edit: {
-                  "*": "deny",
-                  [path.join(".planning", "security", "**", "*")]: "allow",
-                },
-                external_directory: {
-                  "*": "deny",
-                  [path.join(Global.Path.data, "**", "*")]: "allow",
-                },
-              }),
-              user,
-            ),
-            prompt: PROMPT_SEC_SECOPS,
-            mode: "subagent",
-            native: true,
-          },
+          // The six sec-* personas (architect, appsec, devsecops, pentest,
+          // secops, qa) are registered from their spec module so each one
+          // gets a baked `<execution_context>` preamble (project dir,
+          // deliverable path, mandatory first skill) the same way the GSD
+          // subagents do. Without that preamble a persona never learns where
+          // its artifacts go or which skill encodes its procedure.
+          ...Object.fromEntries(
+            Sec.SEC_AGENTS.map((a) => [
+              a.name,
+              {
+                ...a,
+                prompt: a.withPrompt(ctx.directory),
+                permission: Permission.merge(defaults, a.permission, user),
+              },
+            ]),
+          ),
+          // The scrape-topic persona (one generic worker; rung selection stays
+          // dynamic in-prompt) registers from its spec module the same way —
+          // baked execution_context with politeness-first skill, checkpoint
+          // workspace, and toolchain line.
+          ...Object.fromEntries(
+            SCRAPE_AGENTS.map((a) => [
+              a.name,
+              {
+                ...a,
+                prompt: a.withPrompt(ctx.directory),
+                permission: Permission.merge(defaults, a.permission, user),
+              },
+            ]),
+          ),
           general: {
             name: "general",
             description: `General-purpose agent for researching complex questions and executing multi-step tasks. Use this agent to execute multiple units of work in parallel.`,

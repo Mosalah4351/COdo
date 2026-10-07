@@ -18,7 +18,7 @@ COdo web
 Isso inicia um servidor local em `127.0.0.1` com uma porta aleatória disponível e abre automaticamente o COdo no seu navegador padrão.
 
 :::caution
-Se `OPENCODE_SERVER_PASSWORD` não estiver definido, o servidor ficará sem segurança. Isso é aceitável para uso local, mas deve ser configurado para acesso à rede.
+Se `CODO_SERVER_PASSWORD` não estiver definido, o servidor ficará sem segurança. Isso é aceitável para uso local, mas deve ser configurado para acesso à rede.
 :::
 
 :::tip[Usuários do Windows]
@@ -80,13 +80,13 @@ COdo web --cors https://example.com
 
 ### Autenticação
 
-Para proteger o acesso, defina uma senha usando a variável de ambiente `OPENCODE_SERVER_PASSWORD`:
+Para proteger o acesso, defina uma senha usando a variável de ambiente `CODO_SERVER_PASSWORD`:
 
 ```bash
-OPENCODE_SERVER_PASSWORD=secret COdo web
+CODO_SERVER_PASSWORD=secret COdo web
 ```
 
-O nome de usuário padrão é `COdo`, mas pode ser alterado com `OPENCODE_SERVER_USERNAME`.
+O nome de usuário padrão é `COdo`, mas pode ser alterado com `CODO_SERVER_USERNAME`.
 
 ---
 

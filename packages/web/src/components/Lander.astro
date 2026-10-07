@@ -28,10 +28,8 @@ const docsCliHref = getRelativeLocaleUrl(locale, "cli")
 const docsIdeHref = getRelativeLocaleUrl(locale, "ide")
 const docsGithubHref = getRelativeLocaleUrl(locale, "github")
 
-const command = "curl -fsSL"
-const protocol = "https://"
-const url = "codo-ai.vercel.app/install"
-const bash = "| bash"
+const installCommand = "git clone https://github.com/Mosalah4351/COdo"
+const installFollowup = "cd COdo && bun install"
 
 let darkImage: ImageMetadata | undefined;
 let lightImage: ImageMetadata | undefined;
@@ -67,9 +65,9 @@ if (image) {
         <a href={docsHref}>{t('app.lander.cta.getStarted')}</a>
       </div>
       <div class="col2">
-      <button class="command" data-command={`${command} ${protocol}${url} ${bash}`}>
+      <button class="command" data-command={`${installCommand} && ${installFollowup}`}>
           <code>
-            <span>{command}&nbsp;</span><span class="protocol">{protocol}</span><span class="highlight">{url}</span>&nbsp;{bash}
+            <span class="highlight">{installCommand}</span>&nbsp;&&&nbsp;<span>{installFollowup}</span>
           </code>
           <span class="copy">
             <CopyIcon />
@@ -85,6 +83,9 @@ if (image) {
         <li><b>{t('app.lander.features.lsp_enabled.title')}</b>: {t('app.lander.features.lsp_enabled.description')}</li>
         <li><b>{t('app.lander.features.multi_session.title')}</b>: {t('app.lander.features.multi_session.description')}</li>
         <li><b>{t('app.lander.features.shareable_links.title')}</b>: {t('app.lander.features.shareable_links.description')}</li>
+        <li><b>{t('app.lander.features.compose_agent.title')}</b>: {t('app.lander.features.compose_agent.description')}</li>
+        <li><b>{t('app.lander.features.scraping.title')}</b>: {t('app.lander.features.scraping.description')}</li>
+        <li><b>{t('app.lander.features.business.title')}</b>: {t('app.lander.features.business.description')}</li>
         <li><b>GitHub Copilot</b>: {t('app.lander.features.github_copilot.description')}</li>
         <li><b>ChatGPT Plus/Pro</b>: {t('app.lander.features.chatgpt_plus_pro.description')}</li>
         <li><b>{t('app.lander.features.use_any_model.title')}</b>: {t('app.lander.features.use_any_model.prefix')} <a href="https://models.dev">Models.dev</a>, {t('app.lander.features.use_any_model.suffix')}</li>
@@ -93,10 +94,10 @@ if (image) {
 
     <section class="alternatives">
       <div class="col1">
-        <h3>npm</h3>
-        <button class="command" data-command="npm install -g COdo-ai">
+        <h3>GitHub</h3>
+        <button class="command" data-command="git clone https://github.com/Mosalah4351/COdo">
           <code>
-            <span>npm install -g</span> <span class="highlight">COdo-ai</span>
+            <span>git clone</span> <span class="highlight">https://github.com/Mosalah4351/COdo</span>
           </code>
           <span class="copy">
             <CopyIcon />
@@ -105,46 +106,10 @@ if (image) {
         </button>
       </div>
       <div class="col2">
-        <h3>Bun</h3>
-        <button class="command" data-command="bun install -g COdo-ai">
+        <h3>Web UI</h3>
+        <button class="command" data-command="cd COdo/packages/web && bun run dev">
           <code>
-            <span>bun install -g</span> <span class="highlight">COdo-ai</span>
-          </code>
-          <span class="copy">
-            <CopyIcon />
-            <CheckIcon />
-          </span>
-        </button>
-      </div>
-      <div class="col3">
-        <h3>Homebrew</h3>
-        <button class="command" data-command="brew install COdo">
-          <code>
-            <span>brew install</span> <span class="highlight">COdo</span>
-          </code>
-          <span class="copy">
-            <CopyIcon />
-            <CheckIcon />
-          </span>
-        </button>
-      </div>
-      <div class="col4">
-        <h3>Paru</h3>
-        <button class="command" data-command="paru -S COdo-bin">
-          <code>
-            <span>paru -S</span> <span class="highlight">COdo-bin</span>
-          </code>
-          <span class="copy">
-            <CopyIcon />
-            <CheckIcon />
-          </span>
-        </button>
-      </div>
-      <div class="col4">
-        <h3>Mise</h3>
-        <button class="command" data-command="mise use -g github:anomalyco/COdo">
-          <code>
-            <span>mise use -g</span> <span class="highlight">github:anomalyco/COdo</span>
+            <span>cd COdo/packages/web &&</span> <span class="highlight">bun run dev</span>
           </code>
           <span class="copy">
             <CopyIcon />

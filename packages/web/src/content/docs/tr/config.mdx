@@ -43,16 +43,16 @@ Yapılandırma dosyaları değiştirilmez, birleştirilir. Aşağıdaki yapılan
 Yapılandırma kaynakları bu sırayla yüklenir (sonraki kaynaklar öncekileri geçersiz kılar):
 
 1. **Uzak yapılandırma** (`.well-known/COdo`'dan) - kurumsal varsayılanlar
-2. **Genel yapılandırma** (`~/.config/opencode/opencode.json`) - kullanıcı tercihleri
-3. **Özel yapılandırma** (`OPENCODE_CONFIG` env var) - özel geçersiz kılmalar
+2. **Genel yapılandırma** (`~/.config/COdo/COdo.json`) - kullanıcı tercihleri
+3. **Özel yapılandırma** (`CODO_CONFIG` env var) - özel geçersiz kılmalar
 4. **Proje yapılandırması** (projedeki `COdo.json`) - projeye özgü ayarlar
-5. **`.opencode` dizinleri** - agent'lar, komutlar, eklentiler
-6. **Satır içi yapılandırma** (`OPENCODE_CONFIG_CONTENT` env var) - çalışma zamanı geçersiz kılmaları
+5. **`.COdo` dizinleri** - agent'lar, komutlar, eklentiler
+6. **Satır içi yapılandırma** (`CODO_CONFIG_CONTENT` env var) - çalışma zamanı geçersiz kılmaları
 
 Bu, proje yapılandırmalarının genel varsayılanları geçersiz kılabileceği ve genel yapılandırmaların uzak organizasyonel varsayılanları geçersiz kılabileceği anlamına gelir.
 
 :::note
-`.opencode` ve `~/.config/opencode` dizinleri alt dizinler için **çoğul adlar** kullanır: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` ve `themes/`. Tekil adlar (örneğin, `agent/`) da geriye dönük uyumluluk açısından desteklenir.
+`.COdo` ve `~/.config/COdo` dizinleri alt dizinler için **çoğul adlar** kullanır: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` ve `themes/`. Tekil adlar (örneğin, `agent/`) da geriye dönük uyumluluk açısından desteklenir.
 :::
 
 ---
@@ -95,7 +95,7 @@ Yerel yapılandırmanızda belirli sunucuları etkinleştirebilirsiniz:
 
 ### Global
 
-Global opencode yapılandırmanızı `~/.config/opencode/opencode.json` içine yerleştirin. Temalar, sağlayıcılar veya tuş atamaları gibi kullanıcı çapındaki tercihler için genel yapılandırmayı kullanın.
+Global COdo yapılandırmanızı `~/.config/COdo/COdo.json` içine yerleştirin. Temalar, sağlayıcılar veya tuş atamaları gibi kullanıcı çapındaki tercihler için genel yapılandırmayı kullanın.
 
 Genel yapılandırma, uzak kurumsal varsayılanları geçersiz kılar.
 
@@ -117,10 +117,10 @@ Bunun Git'te kontrol edilmesi de güvenlidir ve global olanla aynı şemayı kul
 
 ### Özel yol
 
-`OPENCODE_CONFIG` ortam değişkenini kullanarak özel bir yapılandırma dosyası yolu belirtin.
+`CODO_CONFIG` ortam değişkenini kullanarak özel bir yapılandırma dosyası yolu belirtin.
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -130,17 +130,17 @@ COdo run "Hello world"
 
 ### Özel dizin
 
-`OPENCODE_CONFIG_DIR` kullanarak özel bir yapılandırma dizini belirtin
+`CODO_CONFIG_DIR` kullanarak özel bir yapılandırma dizini belirtin
 ortam değişkeni. Bu dizin agent'lar, komutlar için aranacaktır.
-modlar ve eklentiler tıpkı standart `.opencode` dizini gibi olmalıdır ve
+modlar ve eklentiler tıpkı standart `.COdo` dizini gibi olmalıdır ve
 aynı yapıyı takip edin.
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-Özel dizin, genel yapılandırma ve `.opencode` dizinlerinden sonra yüklenir, böylece bunların ayarlarını **geçersiz kılabilir**.
+Özel dizin, genel yapılandırma ve `.COdo` dizinlerinden sonra yüklenir, böylece bunların ayarlarını **geçersiz kılabilir**.
 
 ---
 
@@ -337,7 +337,7 @@ COdo yapılandırmanızda kullanmak istediğiniz temayı `theme` seçeneği arac
 }
 ```
 
-Agent'ları `~/.config/opencode/agents/` veya `.opencode/agents/` içindeki Markdown dosyalarıyla da tanımlayabilirsiniz. [Daha fazla bilgi](/docs/agents).
+Agent'ları `~/.config/COdo/agents/` veya `.COdo/agents/` içindeki Markdown dosyalarıyla da tanımlayabilirsiniz. [Daha fazla bilgi](/docs/agents).
 
 ---
 
@@ -401,7 +401,7 @@ Varsayılan olarak paylaşım, `/share` komutunu kullanarak konuşmaları açık
 }
 ```
 
-Komutları `~/.config/opencode/commands/` veya `.opencode/commands/` içindeki Markdown dosyalarıyla da tanımlayabilirsiniz. [Daha fazla bilgi](/docs/commands).
+Komutları `~/.config/COdo/commands/` veya `.COdo/commands/` içindeki Markdown dosyalarıyla da tanımlayabilirsiniz. [Daha fazla bilgi](/docs/commands).
 
 ---
 
@@ -539,12 +539,12 @@ Kullanmak istediğiniz MCP sunucularını `mcp` seçeneği aracılığıyla yap�
 
 [Eklentiler](/docs/plugins) COdo'u özel araçlar, kancalar ve entegrasyonlarla genişletin.
 
-Eklenti dosyalarını `.opencode/plugins/` veya `~/.config/opencode/plugins/` içine yerleştirin. Ayrıca eklentileri `plugin` seçeneği aracılığıyla npm'den de yükleyebilirsiniz.
+Eklenti dosyalarını `.COdo/plugins/` veya `~/.config/COdo/plugins/` içine yerleştirin. Ayrıca eklentileri `plugin` seçeneği aracılığıyla npm'den de yükleyebilirsiniz.
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -641,7 +641,7 @@ Ortam değişkenlerini değiştirmek için `{env:VARIABLE_NAME}` kullanın:
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

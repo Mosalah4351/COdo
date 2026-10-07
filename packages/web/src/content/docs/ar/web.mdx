@@ -18,7 +18,7 @@ COdo web
 يؤدي ذلك إلى تشغيل خادم محلي على `127.0.0.1` بمنفذ عشوائي متاح، ويفتح COdo تلقائيا في المتصفح الافتراضي لديك.
 
 :::caution
-إذا لم يتم تعيين `OPENCODE_SERVER_PASSWORD` فسيكون الخادم دون حماية. هذا مناسب للاستخدام المحلي، لكنه يجب أن يكون مُعينا عند إتاحة الوصول عبر الشبكة.
+إذا لم يتم تعيين `CODO_SERVER_PASSWORD` فسيكون الخادم دون حماية. هذا مناسب للاستخدام المحلي، لكنه يجب أن يكون مُعينا عند إتاحة الوصول عبر الشبكة.
 :::
 
 :::tip[مستخدمو Windows]
@@ -80,13 +80,13 @@ COdo web --cors https://example.com
 
 ### المصادقة
 
-لحماية الوصول، عيّن كلمة مرور عبر متغير البيئة `OPENCODE_SERVER_PASSWORD`:
+لحماية الوصول، عيّن كلمة مرور عبر متغير البيئة `CODO_SERVER_PASSWORD`:
 
 ```bash
-OPENCODE_SERVER_PASSWORD=secret COdo web
+CODO_SERVER_PASSWORD=secret COdo web
 ```
 
-اسم المستخدم الافتراضي هو `COdo`، ويمكن تغييره عبر `OPENCODE_SERVER_USERNAME`.
+اسم المستخدم الافتراضي هو `COdo`، ويمكن تغييره عبر `CODO_SERVER_USERNAME`.
 
 ---
 

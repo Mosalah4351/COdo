@@ -18,7 +18,7 @@ export const console = config.console
 ### بيانات الاعتماد
 
 عند إضافة مفاتيح API الخاصة بمزوّد عبر الأمر `/connect`، يتم تخزينها
-في `~/.local/share/opencode/auth.json`.
+في `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -838,7 +838,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1017,7 +1017,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 
 هذه هي [Helicone's Model Directory](https://helicone.ai/models)، وستحتاجها للحصول على IDs الخاصة بالنماذج التي تريد إضافتها.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1045,7 +1045,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 
 تدعم Helicone ترويسات مخصّصة لميزات مثل التخزين المؤقت وتتبع المستخدم وإدارة الجلسات. أضفها إلى إعداد المزوّد عبر `options.headers`:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1076,7 +1076,7 @@ npm install -g COdo-helicone-session
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

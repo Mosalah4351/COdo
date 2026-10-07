@@ -86,6 +86,25 @@ function isOrphanedInterruptedTool(part: SessionV1.ToolPart) {
   return part.state.status === "error" && part.state.metadata?.interrupted === true
 }
 
+// Session IDs carrying an instant heuristic title (set synchronously in
+// prompt()) mapped to that text, so the background LLM refine may still
+// overwrite it — but never a user rename. Process-local: drains are
+// process-local, so a plain map is enough; a restart just keeps the
+// heuristic text, which is still a meaningful title.
+const heuristicTitles = new Map<string, string>()
+
+function heuristicTitle(parts: PromptInput["parts"]): string | undefined {
+  const text = parts
+    .filter((p): p is SessionV1.TextPartInput => p.type === "text")
+    .filter((p) => !p.synthetic)
+    .map((p) => p.text)
+    .join("\n")
+    .replace(/\s+/g, " ")
+    .trim()
+  if (!text) return undefined
+  return text.length > 60 ? text.substring(0, 59) + "…" : text
+}
+
 export interface Interface {
   readonly cancel: (sessionID: SessionID) => Effect.Effect<void>
   readonly prompt: (input: PromptInput) => Effect.Effect<SessionV1.WithParts, Image.Error>
@@ -187,13 +206,22 @@ export const layer = Layer.effect(
       modelID: ModelV2.ID
     }) {
       if (input.session.parentID) return
-      if (!Session.isDefaultTitle(input.session.title)) return
+      // Refine when still default-titled, or when the current title is our
+      // own instant heuristic (never a user rename).
+      const marked = heuristicTitles.get(input.session.id)
+      if (!Session.isDefaultTitle(input.session.title) && input.session.title !== marked) {
+        heuristicTitles.delete(input.session.id)
+        return
+      }
 
       const real = (m: SessionV1.WithParts) =>
         m.info.role === "user" && !m.parts.every((p) => "synthetic" in p && p.synthetic)
       const idx = input.history.findIndex(real)
       if (idx === -1) return
-      if (input.history.filter(real).length !== 1) return
+      // ponytail: retry on later prompts until a real title sticks. The first
+      // attempt can die with an interrupted session or a failing title model,
+      // and the old `!== 1` gate blocked every retry after that.
+      if (input.history.filter(real).length < 1) return
 
       const context = input.history.slice(0, idx + 1)
       const firstUser = context[idx]
@@ -212,24 +240,42 @@ export const layer = Layer.effect(
       const msgs = onlySubtasks
         ? [{ role: "user" as const, content: subtasks.map((p) => p.prompt).join("\n") }]
         : yield* MessageV2.toModelMessagesEffect(context, mdl)
-      const text = yield* llm
-        .stream({
-          agent: ag,
-          user: firstInfo,
-          system: [],
-          small: true,
-          tools: {},
-          model: mdl,
-          sessionID: input.session.id,
-          retries: 2,
-          messages: [{ role: "user", content: "Generate a title for this conversation:\n" }, ...msgs],
-        })
-        .pipe(
-          Stream.filter(LLMEvent.is.textDelta),
-          Stream.map((e) => e.text),
-          Stream.mkString,
-          Effect.orDie,
-        )
+      const generate = (model: Provider.Model) =>
+        llm
+          .stream({
+            agent: ag,
+            user: firstInfo,
+            system: [],
+            // ponytail: keep this shaped like a normal request (small: false).
+            // small:true injects the first reasoning variant (Codex-only params
+            // like reasoning.encrypted_content) which non-GPT models reject.
+            small: false,
+            tools: {},
+            model,
+            sessionID: input.session.id,
+            // Fail fast: title is advisory, and ensureTitle already retries
+            // on later prompts until a real title sticks. Retries here only
+            // add seconds before the fallback candidate is tried.
+            retries: 0,
+            messages: [{ role: "user", content: "Generate a title for this conversation:\n" }, ...msgs],
+          })
+          .pipe(
+            Stream.filter(LLMEvent.is.textDelta),
+            Stream.map((e) => e.text),
+            Stream.mkString,
+          )
+      // ponytail: the small/title model can be unusable on some providers
+      // (e.g. paid-only small model with no billing); fall back to the session
+      // model instead of keeping the default timestamp title.
+      const fallback = yield* provider.getModel(input.providerID, input.modelID)
+      const sessionFirst = input.providerID.startsWith("opencode")
+      const candidates =
+        mdl.id === fallback.id ? [mdl] : sessionFirst ? [fallback, mdl] : [mdl, fallback]
+      let text = ""
+      for (const candidate of candidates) {
+        text = yield* generate(candidate).pipe(Effect.catchCause(() => Effect.succeed("")))
+        if (text.trim()) break
+      }
       const cleaned = text
         .replace(/<think>[\s\S]*?<\/think>\s*/g, "")
         .split("\n")
@@ -239,7 +285,10 @@ export const layer = Layer.effect(
       const t = cleaned.length > 100 ? cleaned.substring(0, 97) + "..." : cleaned
       yield* sessions
         .setTitle({ sessionID: input.session.id, title: t })
-        .pipe(Effect.catchCause((cause) => Effect.logError("failed to generate title", { error: Cause.squash(cause) })))
+        .pipe(
+          Effect.tap(() => Effect.sync(() => heuristicTitles.delete(input.session.id))),
+          Effect.catchCause((cause) => Effect.logError("failed to generate title", { error: Cause.squash(cause) })),
+        )
     })
 
     const handleSubtask = Effect.fn("SessionPrompt.handleSubtask")(function* (input: {
@@ -1114,6 +1163,15 @@ export const layer = Layer.effect(
       const session = yield* sessions.get(input.sessionID).pipe(Effect.orDie)
       yield* revert.cleanup(session)
       const message = yield* createUserMessage(input)
+      // Instant heuristic title so the sidebar renames in ~0ms with zero LLM
+      // cost. The forked LLM refine in runLoop overwrites it when ready.
+      const instant = heuristicTitle(input.parts)
+      if (instant && Session.isDefaultTitle(session.title)) {
+        heuristicTitles.set(session.id, instant)
+        yield* sessions
+          .setTitle({ sessionID: session.id, title: instant })
+          .pipe(Effect.catchCause((cause) => Effect.logWarning("heuristic title failed", { error: cause })))
+      }
       yield* sessions.touch(input.sessionID)
 
       const permissions: PermissionV1.Rule[] = []
@@ -1235,7 +1293,12 @@ export const layer = Layer.effect(
               modelID: lastUser.model.modelID,
               providerID: lastUser.model.providerID,
               history: msgs,
-            }).pipe(Effect.ignore, Effect.forkIn(scope))
+            }).pipe(
+              Effect.catchCause((cause) =>
+                Effect.logWarning("title generation failed", { error: Cause.squash(cause) }),
+              ),
+              Effect.forkIn(scope),
+            )
 
           const model = yield* getModel(lastUser.model.providerID, lastUser.model.modelID, sessionID)
           const task = tasks.pop()

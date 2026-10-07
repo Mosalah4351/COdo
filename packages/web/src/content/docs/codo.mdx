@@ -1,0 +1,71 @@
+---
+title: Why COdo
+description: What COdo adds on top of opencode — an orchestrated agent team, web scraping, business tooling, and security testing built in.
+---
+
+COdo started as a fork of [opencode](https://github.com/sst/opencode) and grew into
+its own product. This page covers the capabilities that make COdo different.
+
+## The Compose agent
+
+Where a classic coding agent answers prompts alone, COdo ships with **Compose** — an
+orchestrator that routes your idea to a team of specialist subagents:
+
+| Specialist | Role |
+|---|---|
+| Researchers | Understand domains, compare frameworks, map codebases |
+| Planners | Turn specs into phased, checkable plans before any code is written |
+| Executors | Implement code in parallel waves with atomic commits |
+| Verifiers | Prove the built feature actually works against acceptance criteria |
+| Reviewers | Severity-classified source review after every substantive change |
+
+The orchestration layer keeps durable state between steps, so long projects survive
+context resets — you can pause mid-phase and resume with full context restored.
+
+## Built-in web scraping
+
+COdo includes a complete scraping discipline (`scrape:*` skills) that climbs an
+escalation ladder instead of jumping straight to hostile tactics:
+
+1. **Static fetch** — plain HTTP with browser-realistic headers
+2. **Browser render** — headless Playwright with session warming and human pacing
+3. **API discovery** — mine JS bundles for internal JSON/GraphQL endpoints
+4. **Authenticated sessions** — consent-gated storageState reuse
+
+Every run is wrapped in politeness budgets (delay tiers, concurrency caps, backoff),
+JSONL checkpoints for crash-safe resume, and QA gates before results are delivered
+as Excel workbooks.
+
+## Business suite
+
+Day-one deliverables without leaving the terminal:
+
+- **Deep research** — multi-source cited reports via parallel sub-agents
+- **Spreadsheets** — financial models, data cleanup, formula-correct workbooks (.xlsx)
+- **Documents** — Word reports, PowerPoint decks, PDF composition and OCR
+- **Academic writing** — paper polishing, LaTeX builds, citation auditing against real APIs
+- **Sales prep** — account research, CRM context, competitive briefs
+
+## Security testing built in
+
+A full security persona suite ships inside the agent — not as a separate product:
+
+- **Code audit** against OWASP Top 10 and CWE Top 25
+- **Threat modeling** (STRIDE/PASTA) before code exists
+- **Scope-gated penetration testing** — dynamic testing only runs against explicitly
+  authorized targets declared in `.codo/security-scope.json`; anything else is refused
+  at the tool-permission layer
+- **Supply chain** — SBOM generation, SLSA provenance, Sigstore signing checks,
+  dependency and secrets scanning
+
+## Durable sessions (V2 core)
+
+Under the hood COdo rebuilt session handling: prompts are admitted as durable rows
+before model execution, so a crash never loses admitted work; local sessions run
+process-local with explicit resume semantics; and interruption targets ownership
+chains precisely instead of killing whatever happens to be running.
+
+## Everything opencode has, kept current
+
+COdo tracks upstream opencode closely — the TUI, providers, MCP support, shareable
+sessions, themes, and SDK all stay compatible while the layers above are COdo-only.

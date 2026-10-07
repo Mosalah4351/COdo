@@ -43,16 +43,16 @@ COdo 支持 **JSON** 和 **JSONC**（带注释的 JSON）格式。
 配置源按以下顺序加载（后面的源覆盖前面的源）：
 
 1. **远程配置**（来自 `.well-known/COdo`）- 组织默认值
-2. **全局配置**（`~/.config/opencode/opencode.json`）- 用户偏好
-3. **自定义配置**（`OPENCODE_CONFIG` 环境变量）- 自定义覆盖
+2. **全局配置**（`~/.config/COdo/COdo.json`）- 用户偏好
+3. **自定义配置**（`CODO_CONFIG` 环境变量）- 自定义覆盖
 4. **项目配置**（项目中的 `COdo.json`）- 项目特定设置
-5. **`.opencode` 目录** - 代理、命令、插件
-6. **内联配置**（`OPENCODE_CONFIG_CONTENT` 环境变量）- 运行时覆盖
+5. **`.COdo` 目录** - 代理、命令、插件
+6. **内联配置**（`CODO_CONFIG_CONTENT` 环境变量）- 运行时覆盖
 
 这意味着项目配置可以覆盖全局默认值，全局配置可以覆盖远程组织默认值。
 
 :::note
-`.opencode` 和 `~/.config/opencode` 目录的子目录使用**复数名称**：`agents/`、`commands/`、`modes/`、`plugins/`、`skills/`、`tools/` 和 `themes/`。为了向后兼容，也支持单数名称（例如 `agent/`）。
+`.COdo` 和 `~/.config/COdo` 目录的子目录使用**复数名称**：`agents/`、`commands/`、`modes/`、`plugins/`、`skills/`、`tools/` 和 `themes/`。为了向后兼容，也支持单数名称（例如 `agent/`）。
 :::
 
 ---
@@ -95,7 +95,7 @@ COdo 支持 **JSON** 和 **JSONC**（带注释的 JSON）格式。
 
 ### 全局
 
-将全局 COdo 配置放在 `~/.config/opencode/opencode.json` 中。使用全局配置来设置用户级别的偏好，例如主题、提供商或快捷键。
+将全局 COdo 配置放在 `~/.config/COdo/COdo.json` 中。使用全局配置来设置用户级别的偏好，例如主题、提供商或快捷键。
 
 全局配置覆盖远程组织默认值。
 
@@ -117,10 +117,10 @@ COdo 支持 **JSON** 和 **JSONC**（带注释的 JSON）格式。
 
 ### 自定义路径
 
-使用 `OPENCODE_CONFIG` 环境变量指定自定义配置文件路径。
+使用 `CODO_CONFIG` 环境变量指定自定义配置文件路径。
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -130,14 +130,14 @@ COdo run "Hello world"
 
 ### 自定义目录
 
-使用 `OPENCODE_CONFIG_DIR` 环境变量指定自定义配置目录。该目录会像标准 `.opencode` 目录一样被搜索代理、命令、模式和插件，并且应遵循相同的结构。
+使用 `CODO_CONFIG_DIR` 环境变量指定自定义配置目录。该目录会像标准 `.COdo` 目录一样被搜索代理、命令、模式和插件，并且应遵循相同的结构。
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-自定义目录在全局配置和 `.opencode` 目录之后加载，因此**可以覆盖**它们的设置。
+自定义目录在全局配置和 `.COdo` 目录之后加载，因此**可以覆盖**它们的设置。
 
 ---
 
@@ -333,7 +333,7 @@ Bearer Token（`AWS_BEARER_TOKEN_BEDROCK` 或 `/connect`）优先于基于配置
 }
 ```
 
-您还可以使用 `~/.config/opencode/agents/` 或 `.opencode/agents/` 中的 Markdown 文件定义代理。[在此了解更多](/docs/agents)。
+您还可以使用 `~/.config/COdo/agents/` 或 `.COdo/agents/` 中的 Markdown 文件定义代理。[在此了解更多](/docs/agents)。
 
 ---
 
@@ -397,7 +397,7 @@ Bearer Token（`AWS_BEARER_TOKEN_BEDROCK` 或 `/connect`）优先于基于配置
 }
 ```
 
-您还可以使用 `~/.config/opencode/commands/` 或 `.opencode/commands/` 中的 Markdown 文件定义命令。[在此了解更多](/docs/commands)。
+您还可以使用 `~/.config/COdo/commands/` 或 `.COdo/commands/` 中的 Markdown 文件定义命令。[在此了解更多](/docs/commands)。
 
 ---
 
@@ -535,12 +535,12 @@ COdo 启动时会自动下载新版本。您可以使用 `autoupdate` 选项禁�
 
 [插件](/docs/plugins)通过自定义工具、钩子和集成来扩展 COdo。
 
-将插件文件放置在 `.opencode/plugins/` 或 `~/.config/opencode/plugins/` 中。您还可以通过 `plugin` 选项从 npm 加载插件。
+将插件文件放置在 `.COdo/plugins/` 或 `~/.config/COdo/plugins/` 中。您还可以通过 `plugin` 选项从 npm 加载插件。
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -637,7 +637,7 @@ COdo 启动时会自动下载新版本。您可以使用 `autoupdate` 选项禁�
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

@@ -8,7 +8,7 @@ description: "Validate authentication and session management on a running target
 
 ## HARD GATE
 
-Same scope gate as `sec-test:pentest` and `sec-test:api-security-test`. Read + parse + validate before any traffic.
+Invoke `sec-test:scope-gate` — the canonical procedure. Do not restate the checks here.
 
 ## Workflow
 
@@ -25,7 +25,7 @@ Same scope gate as `sec-test:pentest` and `sec-test:api-security-test`. Read + p
 
 Path: `.planning/security/findings/YYYY-MM-DD-auth-test.md` (persona: sec-pentest, category: `A07-authentication-failures` or `WSTG-ATHN-##`).
 
-Return `## PENTEST COMPLETE` with a session-management finding count.
+Return `## SEC-RESULT skill=sec-test:auth-test status=complete findings=<n> critical=<n> high=<n> doc=<path>` plus a session-management finding count.
 
 ## Rules
 

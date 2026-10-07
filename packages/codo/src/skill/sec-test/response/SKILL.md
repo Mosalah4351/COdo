@@ -23,7 +23,7 @@ This is for *right now*, not after-action. The user is looking at a live alert o
 4. **Light the logger.** Every action the user takes goes into `.planning/security/incidents/<YYYY-MM-DD>-<slug>.log` — append-only. This becomes the post-incident timeline.
 5. **No-public-comms default.** Do not push to status pages, social, or email without explicit leadership sign-off. If the user asks, defer: "that's an exec call, here's the disclosure section of the runbook when they're ready".
 
-Return `## RESPONSE ENGAGED` plus the runbook section currently being executed.
+Return `## SEC-RESULT skill=sec-test:response status=partial reason=incident-active doc=<incident-log>` plus the runbook section currently being executed.
 
 ## Rules
 

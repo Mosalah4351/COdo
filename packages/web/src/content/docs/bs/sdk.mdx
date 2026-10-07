@@ -18,7 +18,7 @@ Koristite ga za izradu integracija i programsko upravljanje COdo-om.
 Instalirajte SDK sa npm-a:
 
 ```bash
-npm install @COdo-ai/sdk
+npm install @codo-ai/sdk
 ```
 
 ---
@@ -28,7 +28,7 @@ npm install @COdo-ai/sdk
 Kreirajte instancu COdo:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const { client } = await createOpencode()
 ```
@@ -52,7 +52,7 @@ Ovo pokrece i server i klijent
 Mozete proslijediti konfiguracijski objekat za prilagodavanje ponasanja. Instanca i dalje ucitava `COdo.json`, ali konfiguraciju mozete nadjacati ili dodati inline:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const COdo = await createOpencode({
   hostname: "127.0.0.1",
@@ -72,7 +72,7 @@ COdo.server.close()
 Ako vec imate pokrenutu COdo instancu, mozete napraviti klijentsku instancu i povezati se na nju:
 
 ```javascript
-import { createOpencodeClient } from "@COdo-ai/sdk"
+import { createOpencodeClient } from "@codo-ai/sdk"
 
 const client = createOpencodeClient({
   baseUrl: "http://localhost:4096",
@@ -96,7 +96,7 @@ const client = createOpencodeClient({
 SDK ukljucuje TypeScript definicije za sve API tipove. Uvezite ih direktno:
 
 ```typescript
-import type { Session, Message, Part } from "@COdo-ai/sdk"
+import type { Session, Message, Part } from "@codo-ai/sdk"
 ```
 
 Svi tipovi su generisani iz OpenAPI specifikacije servera i dostupni u <a href={typesUrl}>types datoteci</a>.

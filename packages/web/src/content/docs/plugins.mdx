@@ -19,8 +19,8 @@ There are two ways to load plugins.
 
 Place JavaScript or TypeScript files in the plugin directory.
 
-- `.opencode/plugins/` - Project-level plugins
-- `~/.config/opencode/plugins/` - Global plugins
+- `.COdo/plugins/` - Project-level plugins
+- `~/.config/COdo/plugins/` - Global plugins
 
 Files in these directories are automatically loaded at startup.
 
@@ -33,7 +33,7 @@ Specify npm packages in your config file.
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "COdo-wakatime", "@my-org/custom-plugin"]
 }
 ```
 
@@ -45,7 +45,7 @@ Browse available plugins in the [ecosystem](/docs/ecosystem#plugins).
 
 ### How plugins are installed
 
-**npm plugins** are installed automatically using Bun at startup. Packages and their dependencies are cached in `~/.cache/opencode/node_modules/`.
+**npm plugins** are installed automatically using Bun at startup. Packages and their dependencies are cached in `~/.cache/COdo/node_modules/`.
 
 **Local plugins** are loaded directly from the plugin directory. To use external packages, you must create a `package.json` within your config directory (see [Dependencies](#dependencies)), or publish the plugin to npm and [add it to your config](/docs/config#plugins).
 
@@ -55,10 +55,10 @@ Browse available plugins in the [ecosystem](/docs/ecosystem#plugins).
 
 Plugins are loaded from all sources and all hooks run in sequence. The load order is:
 
-1. Global config (`~/.config/opencode/opencode.json`)
+1. Global config (`~/.config/COdo/COdo.json`)
 2. Project config (`COdo.json`)
-3. Global plugin directory (`~/.config/opencode/plugins/`)
-4. Project plugin directory (`.opencode/plugins/`)
+3. Global plugin directory (`~/.config/COdo/plugins/`)
+4. Project plugin directory (`.COdo/plugins/`)
 
 Duplicate npm packages with the same name and version are loaded once. However, a local plugin and an npm plugin with similar names are both loaded separately.
 
@@ -75,7 +75,7 @@ functions. Each function receives a context object and returns a hooks object.
 
 Local plugins and custom tools can use external npm packages. Add a `package.json` to your config directory with the dependencies you need.
 
-```json title=".opencode/package.json"
+```json title=".COdo/package.json"
 {
   "dependencies": {
     "shescape": "^2.1.0"
@@ -85,7 +85,7 @@ Local plugins and custom tools can use external npm packages. Add a `package.jso
 
 COdo runs `bun install` at startup to install these. Your plugins and tools can then import them.
 
-```ts title=".opencode/plugins/my-plugin.ts"
+```ts title=".COdo/plugins/my-plugin.ts"
 import { escape } from "shescape"
 
 export const MyPlugin = async (ctx) => {
@@ -103,7 +103,7 @@ export const MyPlugin = async (ctx) => {
 
 ### Basic structure
 
-```js title=".opencode/plugins/example.js"
+```js title=".COdo/plugins/example.js"
 export const MyPlugin = async ({ project, client, $, directory, worktree }) => {
   console.log("Plugin initialized!")
 
@@ -128,7 +128,7 @@ The plugin function receives:
 For TypeScript plugins, you can import types from the plugin package:
 
 ```ts title="my-plugin.ts" {1}
-import type { Plugin } from "@COdo-ai/plugin"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree }) => {
   return {
@@ -219,7 +219,7 @@ Here are some examples of plugins you can use to extend COdo.
 
 Send notifications when certain events occur:
 
-```js title=".opencode/plugins/notification.js"
+```js title=".COdo/plugins/notification.js"
 export const NotificationPlugin = async ({ project, client, $, directory, worktree }) => {
   return {
     event: async ({ event }) => {
@@ -244,7 +244,7 @@ If you’re using the COdo desktop app, it can send system notifications automat
 
 Prevent COdo from reading `.env` files:
 
-```javascript title=".opencode/plugins/env-protection.js"
+```javascript title=".COdo/plugins/env-protection.js"
 export const EnvProtection = async ({ project, client, $, directory, worktree }) => {
   return {
     "tool.execute.before": async (input, output) => {
@@ -262,7 +262,7 @@ export const EnvProtection = async ({ project, client, $, directory, worktree })
 
 Inject environment variables into all shell execution (AI tools and user terminals):
 
-```javascript title=".opencode/plugins/inject-env.js"
+```javascript title=".COdo/plugins/inject-env.js"
 export const InjectEnvPlugin = async () => {
   return {
     "shell.env": async (input, output) => {
@@ -279,8 +279,8 @@ export const InjectEnvPlugin = async () => {
 
 Plugins can also add custom tools to COdo:
 
-```ts title=".opencode/plugins/custom-tools.ts"
-import { type Plugin, tool } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/custom-tools.ts"
+import { type Plugin, tool } from "@codo-ai/plugin"
 
 export const CustomToolsPlugin: Plugin = async (ctx) => {
   return {
@@ -318,7 +318,7 @@ If a plugin tool uses the same name as a built-in tool, the plugin tool takes pr
 
 Use `client.app.log()` instead of `console.log` for structured logging:
 
-```ts title=".opencode/plugins/my-plugin.ts"
+```ts title=".COdo/plugins/my-plugin.ts"
 export const MyPlugin = async ({ client }) => {
   await client.app.log({
     body: {
@@ -339,8 +339,8 @@ Levels: `debug`, `info`, `warn`, `error`. See [SDK documentation](https://codo-a
 
 Customize the context included when a session is compacted:
 
-```ts title=".opencode/plugins/compaction.ts"
-import type { Plugin } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/compaction.ts"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const CompactionPlugin: Plugin = async (ctx) => {
   return {
@@ -363,8 +363,8 @@ The `experimental.session.compacting` hook fires before the LLM generates a cont
 
 You can also replace the compaction prompt entirely by setting `output.prompt`:
 
-```ts title=".opencode/plugins/custom-compaction.ts"
-import type { Plugin } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/custom-compaction.ts"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const CustomCompactionPlugin: Plugin = async (ctx) => {
   return {

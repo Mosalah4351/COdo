@@ -62,7 +62,7 @@ This is an SST v3 monorepo with TypeScript. The project uses bun workspaces for 
 
 ### عام
 
-يمكنك أيضًا وضع قواعد عامة في ملف `~/.config/opencode/AGENTS.md`. تُطبَّق هذه القواعد على جميع جلسات opencode.
+يمكنك أيضًا وضع قواعد عامة في ملف `~/.config/COdo/AGENTS.md`. تُطبَّق هذه القواعد على جميع جلسات COdo.
 
 وبما أن هذا الملف لا يتم عمل commit له إلى Git ولا تتم مشاركته مع فريقك، نوصي باستخدامه لتحديد أي قواعد شخصية يجب أن يلتزم بها نموذج اللغة.
 
@@ -71,15 +71,15 @@ This is an SST v3 monorepo with TypeScript. The project uses bun workspaces for 
 للمستخدمين الذين ينتقلون من Claude Code، يدعم COdo اصطلاحات ملفات Claude Code كبدائل احتياطية:
 
 - **قواعد المشروع**: `CLAUDE.md` في دليل مشروعك (يُستخدم إذا لم يوجد `AGENTS.md`)
-- **قواعد عامة**: `~/.claude/CLAUDE.md` (يُستخدم إذا لم يوجد `~/.config/opencode/AGENTS.md`)
+- **قواعد عامة**: `~/.claude/CLAUDE.md` (يُستخدم إذا لم يوجد `~/.config/COdo/AGENTS.md`)
 - **المهارات**: `~/.claude/skills/` — راجع [مهارات الوكيل](/docs/skills/) للتفاصيل
 
 لإيقاف التوافق مع Claude Code، عيّن أحد متغيرات البيئة التالية:
 
 ```bash
-export OPENCODE_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
-export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
-export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
+export CODO_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
+export CODO_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
+export CODO_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 ```
 
 ---
@@ -89,16 +89,16 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 عند بدء COdo، يبحث عن ملفات القواعد بهذا الترتيب:
 
 1. **ملفات محلية** عبر التنقّل صعودًا من الدليل الحالي (`AGENTS.md`, `CLAUDE.md`)
-2. **ملف عام** في `~/.config/opencode/AGENTS.md`
+2. **ملف عام** في `~/.config/COdo/AGENTS.md`
 3. **ملف Claude Code** في `~/.claude/CLAUDE.md` (ما لم يتم تعطيله)
 
-يتم اعتماد أول ملف مطابق ضمن كل فئة. على سبيل المثال، إذا كان لديك كل من `AGENTS.md` و`CLAUDE.md` فسيتم استخدام `AGENTS.md` فقط. وبالمثل، تكون الأولوية لملف `~/.config/opencode/AGENTS.md` على `~/.claude/CLAUDE.md`.
+يتم اعتماد أول ملف مطابق ضمن كل فئة. على سبيل المثال، إذا كان لديك كل من `AGENTS.md` و`CLAUDE.md` فسيتم استخدام `AGENTS.md` فقط. وبالمثل، تكون الأولوية لملف `~/.config/COdo/AGENTS.md` على `~/.claude/CLAUDE.md`.
 
 ---
 
 ## تعليمات مخصصة
 
-يمكنك تحديد ملفات تعليمات مخصصة في `opencode.json` أو في الملف العام `~/.config/opencode/opencode.json`. يتيح ذلك لك ولفريقك إعادة استخدام القواعد الموجودة بدلًا من تكرارها داخل AGENTS.md.
+يمكنك تحديد ملفات تعليمات مخصصة في `COdo.json` أو في الملف العام `~/.config/COdo/COdo.json`. يتيح ذلك لك ولفريقك إعادة استخدام القواعد الموجودة بدلًا من تكرارها داخل AGENTS.md.
 
 مثال:
 

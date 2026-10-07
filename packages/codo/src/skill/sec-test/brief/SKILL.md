@@ -20,9 +20,7 @@ Entry point when the user says something like "audit this", "is this safe", "che
    - "audit COdo / our skills / plugins" → `sec-secops` (agent-surface-audit)
    - "where do we stand / posture / what are the risks" → `sec-secops` (posture report)
 2. **One clarifying question if genuinely ambiguous** (e.g. "this repo" — which directory? Or "do we have authorization for active scanning?"). Don't ask just to pad; ask only when dispatch would be wrong without the answer.
-3. **If pentest is the answer, verify scope FIRST** via `read .codo/security-scope.json`:
-   - Missing → tell the user to create it; show them the template shape.
-   - Present → check targets/expiry/allow_active_scan. Any failure → stop, `## PENTEST BLOCKED`.
+3. **If pentest is the answer, do not pre-flight the gate yourself.** `sec_probe` enforces it in code on every request, and `sec-test:scope-gate` is the canonical description — re-implementing the checks here guarantees the two drift apart. Dispatch `sec-pentest` and relay whatever `status=blocked reason=<...>` comes back verbatim. The one useful pre-check is whether `.codo/security-scope.json` exists at all, purely so you can point the user at `sec-test:scope` instead of burning a dispatch on a file that isn't there.
 4. **Draft the dispatch prompt** with the standard skeleton: `Task / Target / Standards / Context / Deliverable`. The more concrete the target (exact file path, exact URL), the better the downstream audit.
 5. **Dispatch** via the `task` tool. For read-only personas a parallel batch is fine (architect + appsec + devsecops on the same feature can run concurrently). Pentest is always solo.
 

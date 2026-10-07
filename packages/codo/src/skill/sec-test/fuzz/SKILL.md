@@ -27,7 +27,7 @@ Fuzzing catches input-handling bugs that humans miss — panics on malformed JSO
 
 ## Workflow (live-target fuzzing)
 
-**Requires scope file validated via the same gate as sec-test:pentest.** Read + parse + validate before any traffic.
+**Requires the canonical gate — invoke `sec-test:scope-gate` before any traffic.** Do not restate the checks here.
 
 - Bounded: only endpoint parameters listed in the scope's `targets[].notes` if present.
 - Use a rate limit. Default: ≤10 req/s, ≤100 requests total.
@@ -39,7 +39,7 @@ Paths:
 - Local-code findings → `.planning/security/findings/YYYY-MM-DD-fuzz-<module>.md` (persona: sec-appsec).
 - Live-target findings → `.planning/security/findings/YYYY-MM-DD-fuzz-live-<target>.md` (persona: sec-pentest).
 
-Return `## CODE AUDIT COMPLETE` for local, `## PENTEST COMPLETE` for live.
+Return `## SEC-RESULT skill=sec-test:fuzz status=complete findings=<n> critical=<n> high=<n> doc=<path>` for both local and live modes.
 
 ## Rules
 

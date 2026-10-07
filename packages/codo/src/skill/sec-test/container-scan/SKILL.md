@@ -24,7 +24,7 @@ Detect vulnerabilities inside container images — both the base image (Debian/A
    - **EPSS/CVSS when the tool reports it.** Use those to rank; the report below orders by exploitability, not just severity.
 4. **Zero false positives policy for app packages.** A "critical" log4shell hit on a JAR inside a frontend image is a false positive if the app is JavaScript — call it out but don't bump the base image reacting to it.
 5. **Write findings** to `.planning/security/findings/YYYY-MM-DD-container-scan.md` (persona: sec-devsecops, category: `CVE-XXXX-YYYY` or `A06-vulnerable-components`).
-6. Return `## CONTAINER SCAN COMPLETE` with the per-image severity histogram.
+6. Return `## SEC-RESULT skill=sec-test:container-scan status=complete findings=<n> critical=<n> high=<n> doc=<path>` plus the per-image severity histogram.
 
 ## Rules
 

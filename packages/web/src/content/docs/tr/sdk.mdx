@@ -18,7 +18,7 @@ COdo'u programatik olarak kontrol etmek ve entegrasyonlar oluşturmak için kull
 SDK'yı npm'den yükleyin:
 
 ```bash
-npm install @COdo-ai/sdk
+npm install @codo-ai/sdk
 ```
 
 ---
@@ -28,7 +28,7 @@ npm install @COdo-ai/sdk
 Bir COdo örneği oluşturun:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const { client } = await createOpencode()
 ```
@@ -52,7 +52,7 @@ Bu, hem bir sunucu hem de bir istemci başlatır
 Davranışı özelleştirmek için bir yapılandırma nesnesi iletebilirsiniz. Örnek yine de `COdo.json` dosyanızı alır, ancak yapılandırmayı satır içi olarak geçersiz kılabilir veya ekleyebilirsiniz:
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const COdo = await createOpencode({
   hostname: "127.0.0.1",
@@ -72,7 +72,7 @@ COdo.server.close()
 Halihazırda çalışan bir COdo örneğiniz varsa, ona bağlanmak için bir istemci örneği oluşturabilirsiniz:
 
 ```javascript
-import { createOpencodeClient } from "@COdo-ai/sdk"
+import { createOpencodeClient } from "@codo-ai/sdk"
 
 const client = createOpencodeClient({
   baseUrl: "http://localhost:4096",
@@ -96,7 +96,7 @@ const client = createOpencodeClient({
 SDK, tüm API türleri için TypeScript tanımlarını içerir. Bunları doğrudan içe aktarın:
 
 ```typescript
-import type { Session, Message, Part } from "@COdo-ai/sdk"
+import type { Session, Message, Part } from "@codo-ai/sdk"
 ```
 
 Tüm tipler, sunucunun OpenAPI spesifikasyonundan oluşturulur ve <a href={typesUrl}>tipler dosyasında</a> mevcuttur.

@@ -22,7 +22,7 @@ Inspect CI/CD definitions (GitHub Actions, GitLab CI, CircleCI, Azure DevOps, Ma
 4. **Sigstore / supply-chain identity.** Is the built artifact signed with ephemeral keys (keyless via OIDC from CI)? Are SBOMs generated and attached (`syft`, CycloneDX)? Is the provenance recorded with the release?
 5. **Common misconfig checks:** unpinned action SHAs (`uses: actions/checkout@v3` instead of `@<sha>`), `pull_request_target` with write tokens, self-hosted runners without isolation, secrets in env dumps, missing OIDC (long-lived AWS keys in CI), over-permissive GITHUB_TOKEN defaults.
 6. **Write the report** to `.planning/security/findings/YYYY-MM-DD-pipeline-harden.md` using the finding schema (persona: sec-devsecops, category references like `NIST-SSDF-PW.4` or `SLSA-L2`).
-7. Return `## PIPELINE HARDEN COMPLETE` and the level roadmap.
+7. Return `## SEC-RESULT skill=sec-test:pipeline-harden status=complete findings=<n> critical=<n> high=<n> doc=<path>` plus the level roadmap.
 
 ## Rules
 

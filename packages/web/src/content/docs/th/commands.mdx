@@ -17,9 +17,9 @@ description: คำสั่งที่กำหนดเองสำหรั�
 
 สร้างไฟล์ Markdown ในไดเร็กทอรี `commands/` เพื่อกำหนดคำสั่งของคุณ
 
-สร้าง `.opencode/commands/test.md`:
+สร้าง `.COdo/commands/test.md`:
 
-```md title=".opencode/commands/test.md"
+```md title=".COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -79,10 +79,10 @@ Frontmatter กำหนดคุณสมบัติของคำสั่�
 
 หากต้องการกำหนดคำสั่งด้วยไฟล์ Markdown ให้วางไฟล์ไว้ใน:
 
-- ระดับผู้ใช้ (Global): `~/.config/opencode/commands/`
-- ระดับโปรเจ็กต์: `.opencode/commands/`
+- ระดับผู้ใช้ (Global): `~/.config/COdo/commands/`
+- ระดับโปรเจ็กต์: `.COdo/commands/`
 
-```markdown title="~/.config/opencode/commands/test.md"
+```markdown title="~/.config/COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -111,7 +111,7 @@ Focus on the failing tests and suggest fixes.
 
 คุณสามารถส่งผ่านอาร์กิวเมนต์ไปยังคำสั่งของคุณได้โดยใช้ `$ARGUMENTS`
 
-```md title=".opencode/commands/component.md"
+```md title=".COdo/commands/component.md"
 ---
 description: Create a new component
 ---
@@ -137,7 +137,7 @@ Include proper typing and basic structure.
 
 ตัวอย่าง:
 
-```md title=".opencode/commands/create-file.md"
+```md title=".COdo/commands/create-file.md"
 ---
 description: Create a new file with content
 ---
@@ -166,7 +166,7 @@ with the following content: $3
 
 ตัวอย่างเช่น การรันชุดทดสอบและรวมผลลัพธ์:
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".COdo/commands/analyze-coverage.md"
 ---
 description: Analyze test coverage
 ---
@@ -179,7 +179,7 @@ Based on these results, suggest improvements to increase coverage.
 
 หรือตรวจสอบการเปลี่ยนแปลงล่าสุดใน git:
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".COdo/commands/review-changes.md"
 ---
 description: Review recent changes
 ---
@@ -198,7 +198,7 @@ Review these changes and suggest any improvements.
 
 คุณสามารถรวมเนื้อหาไฟล์ในคำสั่งของคุณโดยใช้ `@` นำหน้าชื่อไฟล์
 
-```md title=".opencode/commands/review-component.md"
+```md title=".COdo/commands/review-component.md"
 ---
 description: Review component
 ---

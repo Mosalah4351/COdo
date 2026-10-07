@@ -223,7 +223,9 @@ for (const item of targets) {
         os: [item.os],
         cpu: [item.arch],
         ...(item.abi ? { libc: [item.abi] } : {}),
-        bin: { codo: `./bin/codo-${Script.version}` },
+        // No bin field: platform packages are binary carriers resolved by
+        // codo-ai's postinstall. A bin entry whose target misses the Windows
+        // ".exe" suffix makes npm's bin-linker silently skip shim creation.
       },
       null,
       2,

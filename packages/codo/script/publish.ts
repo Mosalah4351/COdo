@@ -20,7 +20,7 @@ async function publish(dir: string, name: string, version: string) {
     return
   }
   await $`bun pm pack`.cwd(dir)
-  await $`npm publish *.tgz --access public --tag ${Script.channel}`.cwd(dir)
+  await $`npm publish *.tgz --access public --provenance --tag ${Script.channel}`.cwd(dir)
 }
 
 const binaries: Record<string, string> = {}
@@ -34,8 +34,10 @@ const version = Object.values(binaries)[0]
 await $`mkdir -p ./dist/${pkg.name}`
 await $`mkdir -p ./dist/${pkg.name}/bin`
 await $`cp ./script/postinstall.mjs ./dist/${pkg.name}/postinstall.mjs`
+const npmReadmePath = new URL("./npm-readme.md", import.meta.url)
+await Bun.file(`./dist/${pkg.name}/README.md`).write(await Bun.file(fileURLToPath(npmReadmePath)).text())
 await Bun.file(`./dist/${pkg.name}/LICENSE`).write(await Bun.file("../../LICENSE").text())
-await Bun.file(`./dist/${pkg.name}/bin/${pkg.name}.exe`).write(
+await Bun.file(`./dist/${pkg.name}/bin/${pkg.name}`).write(
   [
     `echo "Error: ${pkg.name}-ai's postinstall script was not run." >&2`,
     'echo "" >&2',
@@ -55,8 +57,35 @@ await Bun.file(`./dist/${pkg.name}/package.json`).write(
   JSON.stringify(
     {
       name: pkg.name + "-ai",
+      description:
+        "The security-native AI coding agent. Six Sec-Test security personas, compliance-first /scraper, a business documents & research suite, and multi-agent Compose orchestration — spec-driven workflow engines in one terminal-first CLI.",
+      keywords: [
+        "ai",
+        "coding-agent",
+        "cli",
+        "terminal",
+        "tui",
+        "llm",
+        "security",
+        "sast",
+        "appsec",
+        "devsecops",
+        "threat-modeling",
+        "pentest",
+        "spec-driven",
+        "multi-agent",
+        "opencode",
+      ],
+      homepage: "https://codo-ai.vercel.app/",
+      repository: {
+        type: "git",
+        url: "git+https://github.com/Mosalah4351/COdo.git",
+      },
+      bugs: {
+        url: "https://github.com/Mosalah4351/COdo/issues",
+      },
       bin: {
-        [pkg.name]: `./bin/${pkg.name}.exe`,
+        [pkg.name]: `./bin/${pkg.name}`,
       },
       scripts: {
         postinstall: "node ./postinstall.mjs",

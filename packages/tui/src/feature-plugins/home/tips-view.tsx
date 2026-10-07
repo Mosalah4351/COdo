@@ -2,6 +2,7 @@ import type { TuiPluginApi } from "@codo-ai/plugin/tui"
 import { createMemo, For, type Accessor } from "solid-js"
 import { DEFAULT_THEMES, useTheme } from "../../context/theme"
 import { useCommandShortcut } from "../../keymap"
+import { RtlText } from "../../component/rtl-text"
 
 const themeCount = Object.keys(DEFAULT_THEMES).length
 
@@ -149,14 +150,14 @@ export function Tips(props: { api: TuiPluginApi; connected?: boolean }) {
 
   return (
     <box flexDirection="row" maxWidth="100%">
-      <text flexShrink={0} style={{ fg: theme.warning }}>
+      <RtlText flexShrink={0} style={{ fg: theme.warning }}>
         ● Tip{" "}
-      </text>
-      <text flexShrink={1} wrapMode="word">
+      </RtlText>
+      <RtlText flexShrink={1} wrapMode="word">
         <For each={parts()}>
           {(part) => <span style={{ fg: part.highlight ? theme.text : theme.textMuted }}>{part.text}</span>}
         </For>
-      </text>
+      </RtlText>
     </box>
   )
 }

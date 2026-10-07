@@ -84,8 +84,8 @@ COdo attach http://10.20.30.40:4096
 | <nobr><code>{"--continue"}</code></nobr> | `-c`  | Kontynuuj ostatnią sesję                                                                              |
 | <nobr><code>{"--session"}</code></nobr>  | `-s`  | Identyfikator sesji do kontynuowania                                                                  |
 | <nobr><code>{"--fork"}</code></nobr>     |       | Rozgałęź sesję podczas kontynuowania (użyj z `--continue` lub `--session`)                            |
-| <nobr><code>{"--password"}</code></nobr> | `-p`  | Hasło uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_PASSWORD`)                            |
-| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_USERNAME` lub `COdo`) |
+| <nobr><code>{"--password"}</code></nobr> | `-p`  | Hasło uwierzytelniania podstawowego (domyślnie `CODO_SERVER_PASSWORD`)                            |
+| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `CODO_SERVER_USERNAME` lub `COdo`) |
 
 ---
 
@@ -123,7 +123,7 @@ COdo auth [command]
 
 #### login
 
-COdo integruje się z wieloma dostawcami. Możesz użyć `opencode auth login`, aby skonfigurować klucz API dla dowolnego obsługiwanego dostawcy. Klucze są bezpiecznie przechowywane w `~/.local/share/opencode/auth.json`.
+COdo integruje się z wieloma dostawcami. Możesz użyć `COdo auth login`, aby skonfigurować klucz API dla dowolnego obsługiwanego dostawcy. Klucze są bezpiecznie przechowywane w `~/.local/share/COdo/auth.json`.
 
 ```bash
 COdo auth login
@@ -352,8 +352,8 @@ COdo run --attach http://localhost:4096 "Explain async/await in JavaScript"
 | <nobr><code>{"--format"}</code></nobr>   |       | Format wyjściowy: `default` (sformatowany) lub `json` (surowy JSON)                                   |
 | <nobr><code>{"--title"}</code></nobr>    |       | Tytuł sesji (jeśli nie podano, zostanie wygenerowany z promptu)                                       |
 | <nobr><code>{"--attach"}</code></nobr>   |       | Dołącz do działającego serwera COdo (np. http://localhost:4096)                                   |
-| <nobr><code>{"--password"}</code></nobr> | `-p`  | Hasło uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_PASSWORD`)                            |
-| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `OPENCODE_SERVER_USERNAME` lub `COdo`) |
+| <nobr><code>{"--password"}</code></nobr> | `-p`  | Hasło uwierzytelniania podstawowego (domyślnie `CODO_SERVER_PASSWORD`)                            |
+| <nobr><code>{"--username"}</code></nobr> | `-u`  | Nazwa użytkownika uwierzytelniania podstawowego (domyślnie `CODO_SERVER_USERNAME` lub `COdo`) |
 | <nobr><code>{"--dir"}</code></nobr>      |       | Katalog do uruchomienia lub ścieżka na zdalnym serwerze podczas dołączania                            |
 | <nobr><code>{"--variant"}</code></nobr>  |       | Wariant modelu (poziom wnioskowania specyficzny dla dostawcy)                                         |
 | <nobr><code>{"--thinking"}</code></nobr> |       | Pokaż bloki myślenia                                                                                  |
@@ -369,7 +369,7 @@ Uruchom serwer COdo (bez interfejsu) w celu uzyskania dostępu do API. Pełny op
 COdo serve
 ```
 
-Uruchamia to serwer HTTP, który zapewnia dostęp do API COdo bez interfejsu TUI. Ustaw `OPENCODE_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `COdo`).
+Uruchamia to serwer HTTP, który zapewnia dostęp do API COdo bez interfejsu TUI. Ustaw `CODO_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `COdo`).
 
 #### Flagi
 
@@ -465,7 +465,7 @@ Uruchom serwer COdo z interfejsem internetowym.
 COdo web
 ```
 
-Uruchamia to serwer HTTP i udostępnia COdo przez interfejs przeglądarkowy. Ustaw `OPENCODE_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `COdo`).
+Uruchamia to serwer HTTP i udostępnia COdo przez interfejs przeglądarkowy. Ustaw `CODO_SERVER_PASSWORD`, aby włączyć podstawowe uwierzytelnianie HTTP (domyślna nazwa użytkownika to `COdo`).
 
 #### Flagi
 
@@ -564,30 +564,30 @@ COdo można skonfigurować za pomocą zmiennych środowiskowych.
 
 | Zmienna                               | Typ     | Opis                                                       |
 | ------------------------------------- | ------- | ---------------------------------------------------------- |
-| `OPENCODE_AUTO_SHARE`                 | boolean | Automatycznie udostępniaj sesje                            |
-| `OPENCODE_GIT_BASH_PATH`              | string  | Ścieżka do pliku wykonywalnego Git Bash w systemie Windows |
-| `OPENCODE_CONFIG`                     | string  | Ścieżka do pliku konfiguracyjnego                          |
-| `OPENCODE_TUI_CONFIG`                 | string  | Ścieżka do pliku konfiguracyjnego TUI                      |
-| `OPENCODE_CONFIG_DIR`                 | string  | Ścieżka do katalogu konfiguracyjnego                       |
-| `OPENCODE_CONFIG_CONTENT`             | string  | Treść konfiguracji JSON (inline)                           |
-| `OPENCODE_DISABLE_AUTOUPDATE`         | boolean | Wyłącz automatyczne sprawdzanie aktualizacji               |
-| `OPENCODE_DISABLE_PRUNE`              | boolean | Wyłącz czyszczenie starych wyników (pruning)               |
-| `OPENCODE_DISABLE_TERMINAL_TITLE`     | boolean | Wyłącz automatyczne ustawianie tytułu terminala            |
-| `OPENCODE_PERMISSION`                 | string  | Konfiguracja uprawnień w JSON (inline)                     |
-| `OPENCODE_DISABLE_DEFAULT_PLUGINS`    | boolean | Wyłącz domyślne wtyczki                                    |
-| `OPENCODE_DISABLE_LSP_DOWNLOAD`       | boolean | Wyłącz automatyczne pobieranie serwerów LSP                |
-| `OPENCODE_ENABLE_EXPERIMENTAL_MODELS` | boolean | Włącz modele eksperymentalne                               |
-| `OPENCODE_DISABLE_AUTOCOMPACT`        | boolean | Wyłącz automatyczne kompaktowanie kontekstu                |
-| `OPENCODE_DISABLE_CLAUDE_CODE`        | boolean | Wyłącz integrację z `.claude` (prompt + skills)            |
-| `OPENCODE_DISABLE_CLAUDE_CODE_PROMPT` | boolean | Wyłącz czytanie `~/.claude/CLAUDE.md`                      |
-| `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS` | boolean | Wyłącz ładowanie `.claude/skills`                          |
-| `OPENCODE_DISABLE_MODELS_FETCH`       | boolean | Wyłącz pobieranie modeli ze źródeł zewnętrznych            |
-| `OPENCODE_FAKE_VCS`                   | string  | Fałszywy dostawca VCS do celów testowych                   |
-| `OPENCODE_CLIENT`                     | string  | Identyfikator klienta (domyślnie `cli`)                    |
-| `OPENCODE_ENABLE_EXA`                 | boolean | Włącz narzędzie wyszukiwania internetowego Exa             |
-| `OPENCODE_SERVER_PASSWORD`            | string  | Włącz uwierzytelnianie podstawowe dla `serve`/`web`        |
-| `OPENCODE_SERVER_USERNAME`            | string  | Nazwa użytkownika do autoryzacji (domyślnie `COdo`)    |
-| `OPENCODE_MODELS_URL`                 | string  | Niestandardowy adres URL do pobierania konfiguracji modeli |
+| `CODO_AUTO_SHARE`                 | boolean | Automatycznie udostępniaj sesje                            |
+| `CODO_GIT_BASH_PATH`              | string  | Ścieżka do pliku wykonywalnego Git Bash w systemie Windows |
+| `CODO_CONFIG`                     | string  | Ścieżka do pliku konfiguracyjnego                          |
+| `CODO_TUI_CONFIG`                 | string  | Ścieżka do pliku konfiguracyjnego TUI                      |
+| `CODO_CONFIG_DIR`                 | string  | Ścieżka do katalogu konfiguracyjnego                       |
+| `CODO_CONFIG_CONTENT`             | string  | Treść konfiguracji JSON (inline)                           |
+| `CODO_DISABLE_AUTOUPDATE`         | boolean | Wyłącz automatyczne sprawdzanie aktualizacji               |
+| `CODO_DISABLE_PRUNE`              | boolean | Wyłącz czyszczenie starych wyników (pruning)               |
+| `CODO_DISABLE_TERMINAL_TITLE`     | boolean | Wyłącz automatyczne ustawianie tytułu terminala            |
+| `CODO_PERMISSION`                 | string  | Konfiguracja uprawnień w JSON (inline)                     |
+| `CODO_DISABLE_DEFAULT_PLUGINS`    | boolean | Wyłącz domyślne wtyczki                                    |
+| `CODO_DISABLE_LSP_DOWNLOAD`       | boolean | Wyłącz automatyczne pobieranie serwerów LSP                |
+| `CODO_ENABLE_EXPERIMENTAL_MODELS` | boolean | Włącz modele eksperymentalne                               |
+| `CODO_DISABLE_AUTOCOMPACT`        | boolean | Wyłącz automatyczne kompaktowanie kontekstu                |
+| `CODO_DISABLE_CLAUDE_CODE`        | boolean | Wyłącz integrację z `.claude` (prompt + skills)            |
+| `CODO_DISABLE_CLAUDE_CODE_PROMPT` | boolean | Wyłącz czytanie `~/.claude/CLAUDE.md`                      |
+| `CODO_DISABLE_CLAUDE_CODE_SKILLS` | boolean | Wyłącz ładowanie `.claude/skills`                          |
+| `CODO_DISABLE_MODELS_FETCH`       | boolean | Wyłącz pobieranie modeli ze źródeł zewnętrznych            |
+| `CODO_FAKE_VCS`                   | string  | Fałszywy dostawca VCS do celów testowych                   |
+| `CODO_CLIENT`                     | string  | Identyfikator klienta (domyślnie `cli`)                    |
+| `CODO_ENABLE_EXA`                 | boolean | Włącz narzędzie wyszukiwania internetowego Exa             |
+| `CODO_SERVER_PASSWORD`            | string  | Włącz uwierzytelnianie podstawowe dla `serve`/`web`        |
+| `CODO_SERVER_USERNAME`            | string  | Nazwa użytkownika do autoryzacji (domyślnie `COdo`)    |
+| `CODO_MODELS_URL`                 | string  | Niestandardowy adres URL do pobierania konfiguracji modeli |
 
 ---
 
@@ -597,21 +597,21 @@ Te zmienne włączają funkcje eksperymentalne, które mogą ulec zmianie lub zo
 
 | Zmienna                                         | Typ     | Opis                                                |
 | ----------------------------------------------- | ------- | --------------------------------------------------- |
-| `OPENCODE_EXPERIMENTAL`                         | boolean | Włącz funkcje eksperymentalne objęte flagą zbiorczą |
-| `OPENCODE_EXPERIMENTAL_ICON_DISCOVERY`          | boolean | Włącz wykrywanie ikon                               |
-| `OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT`  | boolean | Wyłącz kopiowanie przy zaznaczaniu w TUI            |
-| `OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS` | number  | Domyślny limit czasu dla narzędzia bash w ms        |
-| `OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX`        | number  | Maksymalne tokeny wyjściowe dla LLM                 |
-| `OPENCODE_EXPERIMENTAL_FILEWATCHER`             | boolean | Włącz obserwatora plików dla całego katalogu        |
-| `OPENCODE_EXPERIMENTAL_OXFMT`                   | boolean | Włącz formater oxfmt                                |
-| `OPENCODE_EXPERIMENTAL_LSP_TOOL`                | boolean | Włącz eksperymentalne narzędzie LSP                 |
-| `OPENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER`     | boolean | Wyłącz obserwatora plików                           |
-| `OPENCODE_EXPERIMENTAL_EXA`                     | boolean | Włącz funkcje eksperymentalne Exa                   |
-| `OPENCODE_EXPERIMENTAL_LSP_TY`                  | boolean | Włącz TY LSP dla plików python                      |
-| `OPENCODE_EXPERIMENTAL_PLAN_MODE`               | boolean | Włącz tryb planowania                               |
-| `OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS`    | boolean | Włącz zadania subagentów w tle                      |
-| `OPENCODE_EXPERIMENTAL_EVENT_SYSTEM`            | boolean | Włącz eksperymentalny system zdarzeń                |
-| `OPENCODE_EXPERIMENTAL_NATIVE_LLM`              | boolean | Włącz natywną ścieżkę żądań LLM                     |
-| `OPENCODE_EXPERIMENTAL_PARALLEL`                | boolean | Włącz równoległe wykonywanie wyszukiwania web       |
-| `OPENCODE_EXPERIMENTAL_SCOUT`                   | boolean | Włącz subagenta Scout                               |
-| `OPENCODE_EXPERIMENTAL_WORKSPACES`              | boolean | Włącz obsługę obszarów roboczych                    |
+| `CODO_EXPERIMENTAL`                         | boolean | Włącz funkcje eksperymentalne objęte flagą zbiorczą |
+| `CODO_EXPERIMENTAL_ICON_DISCOVERY`          | boolean | Włącz wykrywanie ikon                               |
+| `CODO_EXPERIMENTAL_DISABLE_COPY_ON_SELECT`  | boolean | Wyłącz kopiowanie przy zaznaczaniu w TUI            |
+| `CODO_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS` | number  | Domyślny limit czasu dla narzędzia bash w ms        |
+| `CODO_EXPERIMENTAL_OUTPUT_TOKEN_MAX`        | number  | Maksymalne tokeny wyjściowe dla LLM                 |
+| `CODO_EXPERIMENTAL_FILEWATCHER`             | boolean | Włącz obserwatora plików dla całego katalogu        |
+| `CODO_EXPERIMENTAL_OXFMT`                   | boolean | Włącz formater oxfmt                                |
+| `CODO_EXPERIMENTAL_LSP_TOOL`                | boolean | Włącz eksperymentalne narzędzie LSP                 |
+| `CODO_EXPERIMENTAL_DISABLE_FILEWATCHER`     | boolean | Wyłącz obserwatora plików                           |
+| `CODO_EXPERIMENTAL_EXA`                     | boolean | Włącz funkcje eksperymentalne Exa                   |
+| `CODO_EXPERIMENTAL_LSP_TY`                  | boolean | Włącz TY LSP dla plików python                      |
+| `CODO_EXPERIMENTAL_PLAN_MODE`               | boolean | Włącz tryb planowania                               |
+| `CODO_EXPERIMENTAL_BACKGROUND_SUBAGENTS`    | boolean | Włącz zadania subagentów w tle                      |
+| `CODO_EXPERIMENTAL_EVENT_SYSTEM`            | boolean | Włącz eksperymentalny system zdarzeń                |
+| `CODO_EXPERIMENTAL_NATIVE_LLM`              | boolean | Włącz natywną ścieżkę żądań LLM                     |
+| `CODO_EXPERIMENTAL_PARALLEL`                | boolean | Włącz równoległe wykonywanie wyszukiwania web       |
+| `CODO_EXPERIMENTAL_SCOUT`                   | boolean | Włącz subagenta Scout                               |
+| `CODO_EXPERIMENTAL_WORKSPACES`              | boolean | Włącz obsługę obszarów roboczych                    |

@@ -33,7 +33,7 @@ OWASP A09 says: insufficient logging & monitoring. This skill checks what the ap
 
 Path: `.planning/security/findings/YYYY-MM-DD-logging-audit.md` (persona: sec-secops, category: `A09-logging-monitoring-failures`).
 
-Return `## POSTURE REPORT COMPLETE` with a "logging coverage by event type" table.
+Return `## SEC-RESULT skill=sec-test:logging-audit status=complete findings=<n> critical=<n> high=<n> doc=<path>` plus a "logging coverage by event type" table.
 
 ## Rules
 

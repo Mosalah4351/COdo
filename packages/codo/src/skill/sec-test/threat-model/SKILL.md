@@ -29,7 +29,7 @@ Produce a threat model for a planned feature or major change before code exists.
    - Threats enumerated (table: ID, boundary, STRIDE category, description, ASVS mapping, mitigations proposed, risk pre/post)
    - Open questions and assumptions
    - Appendix: data-flow diagram (ASCII is fine — ASCII beats no diagram)
-7. Return the `## THREAT MODEL COMPLETE` marker.
+7. Return `## SEC-RESULT skill=sec-test:threat-model status=complete findings=<n> critical=<n> high=<n> doc=<threat-model-path>`.
 
 ## Rules
 

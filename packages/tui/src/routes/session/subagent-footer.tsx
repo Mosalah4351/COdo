@@ -3,6 +3,7 @@ import { useRouteData } from "../../context/route"
 import { useSync } from "../../context/sync"
 import { useLocal } from "../../context/local"
 import { useTheme } from "../../context/theme"
+import { RtlText } from "../../component/rtl-text"
 import { SplitBorder } from "../../ui/border"
 import type { AssistantMessage } from "@codo-ai/sdk/v2"
 import { Locale } from "../../util/locale"
@@ -19,7 +20,7 @@ export function SubagentFooter() {
   const subagentInfo = createMemo(() => {
     const s = session()
     if (!s) return { label: "Subagent", index: 0, total: 0, agent: undefined as string | undefined }
-    const agentMatch = s.title.match(/@(\w+) subagent/)
+    const agentMatch = s.title.match(/@([\w-]+) subagent/)
     const label = agentMatch ? Locale.titlecase(agentMatch[1]) : "Subagent"
     const agent = agentMatch?.[1].toLowerCase()
 
@@ -92,19 +93,19 @@ export function SubagentFooter() {
       >
         <box flexDirection="row" justifyContent="space-between" gap={1}>
           <box flexDirection="row" gap={1}>
-            <text fg={accent() ?? theme.text}>
+            <RtlText fg={accent() ?? theme.text}>
               <b>{subagentInfo().label}</b>
-            </text>
+            </RtlText>
             <Show when={subagentInfo().total > 0}>
-              <text style={{ fg: theme.textMuted }}>
+              <RtlText style={{ fg: theme.textMuted }}>
                 ({subagentInfo().index} of {subagentInfo().total})
-              </text>
+              </RtlText>
             </Show>
             <Show when={usage()}>
               {(item) => (
-                <text fg={theme.textMuted} wrapMode="none">
+                <RtlText fg={theme.textMuted} wrapMode="none">
                   {[item().context, item().throughput, item().cost].filter(Boolean).join(" · ")}
-                </text>
+                </RtlText>
               )}
             </Show>
           </box>
@@ -115,9 +116,9 @@ export function SubagentFooter() {
               onMouseUp={() => keymap.dispatchCommand("session.parent")}
               backgroundColor={hover() === "parent" ? theme.backgroundElement : theme.backgroundPanel}
             >
-              <text fg={theme.text}>
+              <RtlText fg={theme.text}>
                 Parent <span style={{ fg: theme.textMuted }}>{parentShortcut()}</span>
-              </text>
+              </RtlText>
             </box>
             <box
               onMouseOver={() => setHover("prev")}
@@ -125,9 +126,9 @@ export function SubagentFooter() {
               onMouseUp={() => keymap.dispatchCommand("session.child.previous")}
               backgroundColor={hover() === "prev" ? theme.backgroundElement : theme.backgroundPanel}
             >
-              <text fg={theme.text}>
+              <RtlText fg={theme.text}>
                 Prev <span style={{ fg: theme.textMuted }}>{previousShortcut()}</span>
-              </text>
+              </RtlText>
             </box>
             <box
               onMouseOver={() => setHover("next")}
@@ -135,9 +136,9 @@ export function SubagentFooter() {
               onMouseUp={() => keymap.dispatchCommand("session.child.next")}
               backgroundColor={hover() === "next" ? theme.backgroundElement : theme.backgroundPanel}
             >
-              <text fg={theme.text}>
+              <RtlText fg={theme.text}>
                 Next <span style={{ fg: theme.textMuted }}>{nextShortcut()}</span>
-              </text>
+              </RtlText>
             </box>
           </box>
         </box>

@@ -18,7 +18,7 @@ COdo は [AI SDK](https://ai-sdk.dev/) および [Models.dev](https://models.dev
 ### 認証情報
 
 `/connect` コマンドを使用してプロバイダーの API キーを追加すると、それらは保存されます
-`~/.local/share/opencode/auth.json`で。
+`~/.local/share/COdo/auth.json`で。
 
 ---
 
@@ -883,7 +883,7 @@ GitLab ツール (マージリクエスト、問題、パイプライン、CI/CD
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1064,7 +1064,7 @@ COdo を通じて自動的に構成されていない Helicone の機能また�
 
 これは [Helicone のモデルディレクトリ](https://helicone.ai/models) です。追加するモデルの ID を取得するためにこれが必要になります。
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1092,7 +1092,7 @@ COdo を通じて自動的に構成されていない Helicone の機能また�
 
 Helicone は、キャッシュ、ユーザー追跡、セッション管理などの機能のカスタムヘッダーをサポートしています。 `options.headers` を使用してプロバイダー設定に追加します。
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1123,7 +1123,7 @@ npm install -g COdo-helicone-session
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

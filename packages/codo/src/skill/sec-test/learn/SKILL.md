@@ -28,7 +28,7 @@ The close-the-loop step. After a scan, an incident, or a report that produced re
    - If it's "CI signed the artifact but the key was cached", `sec-test:supply-chain-attest` adds a check.
 5. **No size inflation.** Each lesson ≤ 6 lines. The goal is pattern recognition, not documentation.
 
-Return `## POSTURE REPORT COMPLETE` (same marker as the other secops skills — orchestrator covers all three).
+Return `## SEC-RESULT skill=sec-test:learn status=complete doc=.planning/security/posture.md`.
 
 ## Rules
 

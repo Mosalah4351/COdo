@@ -11,7 +11,7 @@ description: 常见问题及其解决方法。
 
 日志文件写入位置：
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: 按 `WIN+R` 并粘贴 `%USERPROFILE%\.local\share\COdo\log`
 
 日志文件以时间戳命名（例如 `2025-01-09T123456.log`），并保留最近的 10 个日志文件。
@@ -24,7 +24,7 @@ description: 常见问题及其解决方法。
 
 COdo 将会话数据和其他应用数据存储在磁盘上：
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: 按 `WIN+R` 并粘贴 `%USERPROFILE%\.local\share\COdo`
 
 该目录包含：
@@ -57,8 +57,8 @@ COdo Desktop 会在后台运行一个本地 COdo 服务器（即 `COdo-cli` 附�
 
 打开你的全局配置文件，查找 `plugin` 键。
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc`（或 `~/.config/opencode/opencode.json`）
-- **macOS/Linux**（旧版安装）: `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc`（或 `~/.config/COdo/COdo.json`）
+- **macOS/Linux**（旧版安装）: `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: 按 `WIN+R` 并粘贴 `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 如果你配置了插件，请通过移除该键或将其设置为空数组来临时禁用它们：
@@ -75,10 +75,10 @@ COdo Desktop 会在后台运行一个本地 COdo 服务器（即 `COdo-cli` 附�
 COdo 还可以从磁盘加载本地插件。临时将这些插件移走（或重命名文件夹），然后重新启动桌面应用：
 
 - **全局插件**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: 按 `WIN+R` 并粘贴 `%USERPROFILE%\.config\COdo\plugins`
 - **项目插件**（仅当你使用了项目级配置时）
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 如果应用恢复正常，请逐个重新启用插件，找出导致问题的那个。
 
@@ -115,9 +115,9 @@ COdo Desktop 可以启动自己的本地服务器（默认行为），也可以�
 
 #### 检查环境变量
 
-如果你在环境中设置了 `OPENCODE_PORT`，桌面应用将尝试使用该端口作为本地服务器端口。
+如果你在环境中设置了 `CODO_PORT`，桌面应用将尝试使用该端口作为本地服务器端口。
 
-- 取消设置 `OPENCODE_PORT`（或选择一个空闲端口）并重新启动。
+- 取消设置 `CODO_PORT`（或选择一个空闲端口）并重新启动。
 
 ---
 
@@ -177,7 +177,7 @@ COdo Desktop 仅在以下情况下显示系统通知：
 
    报告 Bug 或请求功能的最佳方式是通过我们的 GitHub 仓库：
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    在创建新 Issue 之前，请先搜索已有的 Issue，看看你的问题是否已被报告。
 
@@ -224,7 +224,7 @@ COdo Desktop 仅在以下情况下显示系统通知：
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 要查看你有权访问哪些模型，请运行 `COdo models`
 

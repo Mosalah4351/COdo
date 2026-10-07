@@ -188,10 +188,10 @@ _Режим_: `primary`
 
 Вы также можете определить агентов, используя файлы Markdown. Поместите их в:
 
-- Глобальный: `~/.config/opencode/agents/`
-- Для каждого проекта: `.opencode/agents/`
+- Глобальный: `~/.config/COdo/agents/`
+- Для каждого проекта: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Provide constructive feedback without making direct changes.
 }
 ```
 
-Идентификатор модели в вашей конфигурации opencode использует формат `provider/model-id`. Например, если вы используете [COdo Zen](/docs/zen), вы должны использовать `opencode/gpt-5.1-codex` для кодекса GPT 5.1.
+Идентификатор модели в вашей конфигурации COdo использует формат `provider/model-id`. Например, если вы используете [COdo Zen](/docs/zen), вы должны использовать `COdo/gpt-5.1-codex` для кодекса GPT 5.1.
 
 ---
 
@@ -454,7 +454,7 @@ Provide constructive feedback without making direct changes.
 
 Вы также можете установить разрешения в агентах Markdown.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -704,14 +704,14 @@ COdo agent create
 Вот несколько примеров агентов, которые могут оказаться вам полезными.
 
 :::tip
-У вас есть агент, которым вы хотели бы поделиться? [Отправьте PR](https://github.com/anomalyco/COdo).
+У вас есть агент, которым вы хотели бы поделиться? [Отправьте PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Агент документации
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -733,7 +733,7 @@ Focus on:
 
 ### Аудитор безопасности
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

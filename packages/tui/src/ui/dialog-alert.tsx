@@ -1,5 +1,6 @@
 import { TextAttributes } from "@opentui/core"
 import { useTheme } from "../context/theme"
+import { RtlText } from "../component/rtl-text"
 import { useDialog, type DialogContext } from "./dialog"
 import { useBindings } from "../keymap"
 
@@ -29,15 +30,15 @@ export function DialogAlert(props: DialogAlertProps) {
   return (
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           {props.title}
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
       <box paddingBottom={1}>
-        <text fg={theme.textMuted}>{props.message}</text>
+        <RtlText fg={theme.textMuted}>{props.message}</RtlText>
       </box>
       <box flexDirection="row" justifyContent="flex-end" paddingBottom={1}>
         <box
@@ -49,7 +50,7 @@ export function DialogAlert(props: DialogAlertProps) {
             dialog.clear()
           }}
         >
-          <text fg={theme.selectedListItemText}>ok</text>
+          <RtlText fg={theme.selectedListItemText}>ok</RtlText>
         </box>
       </box>
     </box>

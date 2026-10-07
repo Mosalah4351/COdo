@@ -1,9 +1,10 @@
 import { Effect } from "effect"
 import { effectCmd } from "../effect-cmd"
 import { AgentSideConnection, ndJsonStream } from "@agentclientprotocol/sdk"
+import { Flag } from "@codo-ai/core/flag/flag"
 import { ServerAuth } from "@/server/auth"
 import { createCOdoClient } from "@codo-ai/sdk/v2"
-import { withNetworkOptions, resolveNetworkOptions } from "../network"
+import { withNetworkOptions, resolveNetworkOptions, requiresPassword } from "../network"
 import { ACPProfile } from "@/acp/profile"
 
 export const AcpCommand = effectCmd({
@@ -22,6 +23,11 @@ export const AcpCommand = effectCmd({
     ACPProfile.mark("cli.acp.handler")
     process.env.CODO_CLIENT = "acp"
     const opts = yield* resolveNetworkOptions(args)
+    if (requiresPassword(opts.hostname) && !Flag.CODO_SERVER_PASSWORD) {
+      console.error(`Refusing to bind ${opts.hostname} without CODO_SERVER_PASSWORD set — the server would be open to your network.`)
+      process.exitCode = 1
+      return
+    }
     const server = yield* Effect.promise(() => ACPProfile.measure("cli.acp.server.listen", () => Server.listen(opts)))
 
     const sdk = createCOdoClient({

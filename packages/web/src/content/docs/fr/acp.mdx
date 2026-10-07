@@ -110,7 +110,7 @@ Si vous devez transmettre des variables d'environnement :
       command = "COdo",
       args = { "acp" },
       env = {
-        OPENCODE_API_KEY = os.getenv("OPENCODE_API_KEY")
+        CODO_API_KEY = os.getenv("CODO_API_KEY")
       }
     }
   }
@@ -138,7 +138,7 @@ require("codecompanion").setup({
 
 Cette configuration configure CodeCompanion pour utiliser COdo comme agent ACP pour le chat.
 
-Si vous devez transmettre des variables d'environnement (comme `OPENCODE_API_KEY`), reportez-vous à [Configuring Adapters: Environment Variables](https://codecompanion.olimorris.dev/getting-started#setting-an-api-key) dans la documentation CodeCompanion.nvim pour plus de détails.
+Si vous devez transmettre des variables d'environnement (comme `CODO_API_KEY`), reportez-vous à [Configuring Adapters: Environment Variables](https://codecompanion.olimorris.dev/getting-started#setting-an-api-key) dans la documentation CodeCompanion.nvim pour plus de détails.
 
 ## Prise en charge
 

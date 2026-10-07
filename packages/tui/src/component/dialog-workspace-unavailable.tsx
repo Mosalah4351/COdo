@@ -4,6 +4,7 @@ import { For } from "solid-js"
 import { useTheme } from "../context/theme"
 import { useDialog } from "../ui/dialog"
 import { useBindings } from "../keymap"
+import { RtlText } from "./rtl-text"
 
 export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | void | Promise<boolean | void> }) {
   const dialog = useDialog()
@@ -34,19 +35,19 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
   return (
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           Workspace Unavailable
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
-      <text fg={theme.textMuted} wrapMode="word">
+      <RtlText fg={theme.textMuted} wrapMode="word">
         This session is attached to a workspace that is no longer available.
-      </text>
-      <text fg={theme.textMuted} wrapMode="word">
+      </RtlText>
+      <RtlText fg={theme.textMuted} wrapMode="word">
         Would you like to restore this session into a new workspace?
-      </text>
+      </RtlText>
       <box flexDirection="row" justifyContent="flex-end" paddingBottom={1} gap={1}>
         <For each={options}>
           {(item) => (
@@ -59,7 +60,7 @@ export function DialogWorkspaceUnavailable(props: { onRestore?: () => boolean | 
                 void confirm()
               }}
             >
-              <text fg={item === store.active ? theme.selectedListItemText : theme.textMuted}>{item}</text>
+              <RtlText fg={item === store.active ? theme.selectedListItemText : theme.textMuted}>{item}</RtlText>
             </box>
           )}
         </For>

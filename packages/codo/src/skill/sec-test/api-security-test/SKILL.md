@@ -8,7 +8,7 @@ description: "OWASP API Security Top 10 checks against a running endpoint — RE
 
 ## HARD GATE
 
-Invoke `sec-test:scope-gate` — the canonical procedure — before any request. Do not restate the gate logic here. If the gate fails, return `## PENTEST BLOCKED` with the failure reason verbatim.
+Invoke `sec-test:scope-gate` — the canonical procedure — before any request. Do not restate the gate logic here. If the gate fails, return `## SEC-RESULT skill=sec-test:api-security-test status=blocked reason=<gate-reason>` and relay the failure reason verbatim.
 
 ## Workflow
 
@@ -29,7 +29,7 @@ Map every endpoint to the OWASP API Security Top 10:2023:
 
 For each confirmed issue, write a finding with the exact request + response. Path: `.planning/security/findings/YYYY-MM-DD-api-security.md` (persona: sec-pentest).
 
-Return `## PENTEST COMPLETE` with a per-API# finding count.
+Return `## SEC-RESULT skill=sec-test:api-security-test status=complete findings=<n> critical=<n> high=<n> doc=<path>` plus a per-API# finding count.
 
 ## Rules
 

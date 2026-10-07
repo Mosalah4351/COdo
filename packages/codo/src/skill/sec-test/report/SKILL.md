@@ -17,7 +17,7 @@ Roll up findings into a single posture document. Two storage layers cooperate:
 
 1. **Pull markdown findings.** Glob `.planning/security/findings/**/*.md` and parse each finding block (YAML frontmatter). Skip files that aren't finding-shaped (notably templates).
 2. **Persist to the table when the runtime supports it** (the orchestrator's session has DB access). For each parsed finding:
-   - Compute a fingerprint: `sha1(persona | category | location | normalize(evidence))` — normalize means trim whitespace + lowercase + strip volatile tokens (timestamps, paths to build output).
+   - Record it with the `sec_finding` tool and let the store assign the `id` and `fingerprint`. **Never compute a fingerprint yourself** — fingerprints are assigned by the `sec_finding` runtime (SHA-256 based, keyed on persona | category | location | normalized evidence) and are what the store uses to de-duplicate across runs.
    - Up-sert keyed on `(project_id, fingerprint)`. If a row already exists with status `fixed` and the incoming finding matches, *leave it fixed* — the scanner didn't rerun, so don't reopen. If the incoming finding matches a `fixed` row **and** the caller confirms a rescan happened, transition back to `open` and set `time_status_changed`.
    - Set `session_id` from the current session. `project_id` from the current project context.
 3. **Aggregate** (markdown-parsed rows ∪ matching table rows, deduped by fingerprint). Group by:
@@ -33,7 +33,7 @@ Roll up findings into a single posture document. Two storage layers cooperate:
    - Delta vs previous report (opened, closed, net change)
    - Recommended next three actions, ordered by (severity × exploitability)
 6. Append a one-line entry to `.planning/security/posture.md` recording this report (date, open counts by severity, link to the new report file).
-7. Return `## POSTURE REPORT COMPLETE` (same marker as sec-secops — the persona can produce either; orchestrator covers both).
+7. Return `## SEC-RESULT skill=sec-test:report status=complete findings=<n> critical=<n> high=<n> doc=<report-path>`.
 
 ## Status lifecycle
 

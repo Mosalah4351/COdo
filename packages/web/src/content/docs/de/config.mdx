@@ -43,16 +43,16 @@ Wenn Ihre globale Konfiguration beispielsweise `theme: "COdo"` und `autoupdate: 
 Konfigurationsquellen werden in dieser Reihenfolge geladen (spätere Quellen überschreiben frühere):
 
 1. **Remote-Konfiguration** (von `.well-known/COdo`) – Organisationsstandards
-2. **Globale Konfiguration** (`~/.config/opencode/opencode.json`) – Benutzereinstellungen
-3. **Benutzerdefinierte Konfiguration** (`OPENCODE_CONFIG` env var) – benutzerdefinierte Überschreibungen
+2. **Globale Konfiguration** (`~/.config/COdo/COdo.json`) – Benutzereinstellungen
+3. **Benutzerdefinierte Konfiguration** (`CODO_CONFIG` env var) – benutzerdefinierte Überschreibungen
 4. **Projektkonfiguration** (`COdo.json` im Projekt) – projektspezifische Einstellungen
-5. **`.opencode` Verzeichnisse** – Agenten, Befehle, Plugins
-6. **Inline-Konfiguration** (`OPENCODE_CONFIG_CONTENT` env var) – Laufzeitüberschreibungen
+5. **`.COdo` Verzeichnisse** – Agenten, Befehle, Plugins
+6. **Inline-Konfiguration** (`CODO_CONFIG_CONTENT` env var) – Laufzeitüberschreibungen
 
 Dies bedeutet, dass Projektkonfigurationen globale Standardeinstellungen überschreiben können und globale Konfigurationen Remote-Organisationsstandards überschreiben können.
 
 :::note
-Die Verzeichnisse `.opencode` und `~/.config/opencode` verwenden **Pluralnamen** für Unterverzeichnisse: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` und `themes/`. Aus Gründen der Abwärtskompatibilität werden auch einzelne Namen (z. B. `agent/`) unterstützt.
+Die Verzeichnisse `.COdo` und `~/.config/COdo` verwenden **Pluralnamen** für Unterverzeichnisse: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` und `themes/`. Aus Gründen der Abwärtskompatibilität werden auch einzelne Namen (z. B. `agent/`) unterstützt.
 :::
 
 ---
@@ -95,7 +95,7 @@ Sie können bestimmte Server in Ihrer lokalen Konfiguration aktivieren:
 
 ### Global
 
-Platzieren Sie Ihre globale COdo-Konfiguration in `~/.config/opencode/opencode.json`. Verwenden Sie die globale Konfiguration für benutzerweite Einstellungen wie Themen, Anbieter oder Tastenkombinationen.
+Platzieren Sie Ihre globale COdo-Konfiguration in `~/.config/COdo/COdo.json`. Verwenden Sie die globale Konfiguration für benutzerweite Einstellungen wie Themen, Anbieter oder Tastenkombinationen.
 
 Die globale Konfiguration überschreibt die Standardeinstellungen der Remote-Organisation.
 
@@ -117,10 +117,10 @@ Dies kann auch sicher in Git eingecheckt werden und dasselbe Schema wie das glob
 
 ### Benutzerdefinierter Pfad
 
-Geben Sie mithilfe der Umgebungsvariablen `OPENCODE_CONFIG` einen benutzerdefinierten Konfigurationsdateipfad an.
+Geben Sie mithilfe der Umgebungsvariablen `CODO_CONFIG` einen benutzerdefinierten Konfigurationsdateipfad an.
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -130,17 +130,17 @@ Die benutzerdefinierte Konfiguration wird in der Rangfolge zwischen globalen und
 
 ### Benutzerdefiniertes Verzeichnis
 
-Geben Sie mit `OPENCODE_CONFIG_DIR` ein benutzerdefiniertes Konfigurationsverzeichnis an.
+Geben Sie mit `CODO_CONFIG_DIR` ein benutzerdefiniertes Konfigurationsverzeichnis an.
 Umgebungsvariable. Dieses Verzeichnis wird nach Agenten, Befehlen,
-Modi und Plugins genau wie das Standardverzeichnis `.opencode` und sollten
+Modi und Plugins genau wie das Standardverzeichnis `.COdo` und sollten
 folgen der gleichen Struktur.
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-Das benutzerdefinierte Verzeichnis wird nach den Verzeichnissen global config und `.opencode` geladen, sodass es deren Einstellungen **überschreiben** kann.
+Das benutzerdefinierte Verzeichnis wird nach den Verzeichnissen global config und `.COdo` geladen, sodass es deren Einstellungen **überschreiben** kann.
 
 ---
 
@@ -336,7 +336,7 @@ Sie können das Thema, das Sie in Ihrer COdo-Konfiguration verwenden möchten, �
 }
 ```
 
-Sie können Agenten auch mithilfe von Markdown-Dateien in `~/.config/opencode/agents/` oder `.opencode/agents/` definieren. [Mehr erfahren](/docs/agents).
+Sie können Agenten auch mithilfe von Markdown-Dateien in `~/.config/COdo/agents/` oder `.COdo/agents/` definieren. [Mehr erfahren](/docs/agents).
 
 ---
 
@@ -400,7 +400,7 @@ Sie können benutzerdefinierte Befehle für sich wiederholende Aufgaben über di
 }
 ```
 
-Sie können Befehle auch mithilfe von Markdown-Dateien in `~/.config/opencode/commands/` oder `.opencode/commands/` definieren. [Mehr erfahren](/docs/commands).
+Sie können Befehle auch mithilfe von Markdown-Dateien in `~/.config/COdo/commands/` oder `.COdo/commands/` definieren. [Mehr erfahren](/docs/commands).
 
 ---
 
@@ -536,12 +536,12 @@ Sie können den MCP-Server, den Sie verwenden möchten, über die Option `mcp` k
 
 [Plugins](/docs/plugins) erweitert COdo mit benutzerdefinierten Tools, Hooks und Integrationen.
 
-Platzieren Sie Ihre Plugin-Dateien in `.opencode/plugins/` oder `~/.config/opencode/plugins/`. Sie können Plugins auch über die Option `plugin` von npm laden.
+Platzieren Sie Ihre Plugin-Dateien in `.COdo/plugins/` oder `~/.config/COdo/plugins/`. Sie können Plugins auch über die Option `plugin` von npm laden.
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -638,7 +638,7 @@ Verwenden Sie `{env:VARIABLE_NAME}`, um Umgebungsvariablen zu ersetzen:
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

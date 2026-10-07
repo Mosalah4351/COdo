@@ -18,7 +18,7 @@ COdo ใช้ [AI SDK](https://ai-sdk.dev/) และ [Models.dev](https://mode
 ### ข้อมูลรับรอง
 
 เมื่อคุณเพิ่มคีย์ API ของผู้ให้บริการด้วยคำสั่ง `/connect` คีย์เหล่านั้นจะถูกเก็บไว้
-ใน `~/.local/share/opencode/auth.json`.
+ใน `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -842,7 +842,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1022,7 +1022,7 @@ subscription](https://github.com/features/copilot/plans) เพื่อใช�
 
 นี่คือ [Helicone's Model Directory](https://helicone.ai/models) คุณจะต้องใช้สิ่งนี้เพื่อรับ ID ของโมเดลที่คุณต้องการเพิ่ม
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1050,7 +1050,7 @@ subscription](https://github.com/features/copilot/plans) เพื่อใช�
 
 Helicone รองรับส่วนหัวแบบกำหนดเองสำหรับฟีเจอร์ต่างๆ เช่น การแคช การติดตามผู้ใช้ และการจัดการเซสชัน เพิ่มลงในการกำหนดค่าผู้ให้บริการของคุณโดยใช้ `options.headers`:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1081,7 +1081,7 @@ npm install -g COdo-helicone-session
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

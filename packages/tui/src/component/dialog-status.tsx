@@ -4,6 +4,7 @@ import { useTheme } from "../context/theme"
 import { useDialog } from "../ui/dialog"
 import { useSync } from "../context/sync"
 import { For, Match, Switch, Show, createMemo } from "solid-js"
+import { RtlText } from "./rtl-text"
 
 export type DialogStatusProps = {}
 
@@ -43,20 +44,20 @@ export function DialogStatus() {
   return (
     <box paddingLeft={2} paddingRight={2} gap={1} paddingBottom={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text fg={theme.text} attributes={TextAttributes.BOLD}>
+        <RtlText fg={theme.text} attributes={TextAttributes.BOLD}>
           Status
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
-      <Show when={Object.keys(sync.data.mcp).length > 0} fallback={<text fg={theme.text}>No MCP Servers</text>}>
+      <Show when={Object.keys(sync.data.mcp).length > 0} fallback={<RtlText fg={theme.text}>No MCP Servers</RtlText>}>
         <box>
-          <text fg={theme.text}>{Object.keys(sync.data.mcp).length} MCP Servers</text>
+          <RtlText fg={theme.text}>{Object.keys(sync.data.mcp).length} MCP Servers</RtlText>
           <For each={Object.entries(sync.data.mcp)}>
             {([key, item]) => (
               <box flexDirection="row" gap={1}>
-                <text
+                <RtlText
                   flexShrink={0}
                   style={{
                     fg: (
@@ -71,8 +72,8 @@ export function DialogStatus() {
                   }}
                 >
                   •
-                </text>
-                <text fg={theme.text} wrapMode="word">
+                </RtlText>
+                <RtlText fg={theme.text} wrapMode="word">
                   <b>{key}</b>{" "}
                   <span style={{ fg: theme.textMuted }}>
                     <Switch fallback={item.status}>
@@ -87,7 +88,7 @@ export function DialogStatus() {
                       </Match>
                     </Switch>
                   </span>
-                </text>
+                </RtlText>
               </box>
             )}
           </For>
@@ -95,11 +96,11 @@ export function DialogStatus() {
       </Show>
       {sync.data.lsp.length > 0 && (
         <box>
-          <text fg={theme.text}>{sync.data.lsp.length} LSP Servers</text>
+          <RtlText fg={theme.text}>{sync.data.lsp.length} LSP Servers</RtlText>
           <For each={sync.data.lsp}>
             {(item) => (
               <box flexDirection="row" gap={1}>
-                <text
+                <RtlText
                   flexShrink={0}
                   style={{
                     fg: {
@@ -109,55 +110,55 @@ export function DialogStatus() {
                   }}
                 >
                   •
-                </text>
-                <text fg={theme.text} wrapMode="word">
+                </RtlText>
+                <RtlText fg={theme.text} wrapMode="word">
                   <b>{item.id}</b> <span style={{ fg: theme.textMuted }}>{item.root}</span>
-                </text>
+                </RtlText>
               </box>
             )}
           </For>
         </box>
       )}
-      <Show when={enabledFormatters().length > 0} fallback={<text fg={theme.text}>No Formatters</text>}>
+      <Show when={enabledFormatters().length > 0} fallback={<RtlText fg={theme.text}>No Formatters</RtlText>}>
         <box>
-          <text fg={theme.text}>{enabledFormatters().length} Formatters</text>
+          <RtlText fg={theme.text}>{enabledFormatters().length} Formatters</RtlText>
           <For each={enabledFormatters()}>
             {(item) => (
               <box flexDirection="row" gap={1}>
-                <text
+                <RtlText
                   flexShrink={0}
                   style={{
                     fg: theme.success,
                   }}
                 >
                   •
-                </text>
-                <text wrapMode="word" fg={theme.text}>
+                </RtlText>
+                <RtlText wrapMode="word" fg={theme.text}>
                   <b>{item.name}</b>
-                </text>
+                </RtlText>
               </box>
             )}
           </For>
         </box>
       </Show>
-      <Show when={plugins().length > 0} fallback={<text fg={theme.text}>No Plugins</text>}>
+      <Show when={plugins().length > 0} fallback={<RtlText fg={theme.text}>No Plugins</RtlText>}>
         <box>
-          <text fg={theme.text}>{plugins().length} Plugins</text>
+          <RtlText fg={theme.text}>{plugins().length} Plugins</RtlText>
           <For each={plugins()}>
             {(item) => (
               <box flexDirection="row" gap={1}>
-                <text
+                <RtlText
                   flexShrink={0}
                   style={{
                     fg: theme.success,
                   }}
                 >
                   •
-                </text>
-                <text wrapMode="word" fg={theme.text}>
+                </RtlText>
+                <RtlText wrapMode="word" fg={theme.text}>
                   <b>{item.name}</b>
                   {item.version && <span style={{ fg: theme.textMuted }}> @{item.version}</span>}
-                </text>
+                </RtlText>
               </box>
             )}
           </For>

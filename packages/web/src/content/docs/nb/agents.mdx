@@ -188,10 +188,10 @@ Konfigurer agenter i konfigurasjonsfilen `COdo.json`:
 
 Du kan også definere agenter ved å bruke markdown-filer. Plasser dem i:
 
-- Globalt: `~/.config/opencode/agents/`
-- Per prosjekt: `.opencode/agents/`
+- Globalt: `~/.config/COdo/agents/`
+- Per prosjekt: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Hvis du ikke spesifiserer en modell, bruker primæragenter [modell globalt konfi
 }
 ```
 
-Modellen ID i COdo-konfigurasjonen din bruker formatet `provider/model-id`. For eksempel, hvis du bruker [COdo Zen](/docs/zen), vil du bruke `opencode/gpt-5.1-codex` for GPT 5.1 Codex.
+Modellen ID i COdo-konfigurasjonen din bruker formatet `provider/model-id`. For eksempel, hvis du bruker [COdo Zen](/docs/zen), vil du bruke `COdo/gpt-5.1-codex` for GPT 5.1 Codex.
 
 ---
 
@@ -454,7 +454,7 @@ Du kan overstyre disse tillatelsene per agent.
 
 Du kan også angi tillatelser i Markdown-agenter.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -704,14 +704,14 @@ Her er noen vanlige bruksområder for forskjellige agenter.
 Her er noen eksempler på agenter du kan finne nyttige.
 
 :::tip
-Har du en agent du vil dele? [Send inn en PR](https://github.com/anomalyco/COdo).
+Har du en agent du vil dele? [Send inn en PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Dokumentasjonsagent
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -733,7 +733,7 @@ Focus on:
 
 ### Sikkerhetsrevisor
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

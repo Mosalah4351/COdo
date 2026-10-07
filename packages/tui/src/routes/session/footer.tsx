@@ -1,10 +1,17 @@
 import { createMemo, Match, onCleanup, onMount, Show, Switch } from "solid-js"
 import { useTheme } from "../../context/theme"
+import { RtlText } from "../../component/rtl-text"
 import { useSync } from "../../context/sync"
 import { useDirectory } from "../../context/directory"
 import { useConnected } from "../../component/use-connected"
 import { createStore } from "solid-js/store"
 import { useRoute } from "../../context/route"
+import {
+  neverAskMode,
+  skipPermissions,
+  toggleNeverAsk,
+  toggleSkipPermissions,
+} from "../../util/permission-modes"
 
 export function Footer() {
   const { theme } = useTheme()
@@ -51,26 +58,26 @@ export function Footer() {
 
   return (
     <box flexDirection="row" justifyContent="space-between" gap={1} flexShrink={0}>
-      <text fg={theme.textMuted}>{directory()}</text>
+      <RtlText fg={theme.textMuted}>{directory()}</RtlText>
       <box gap={2} flexDirection="row" flexShrink={0}>
         <Switch>
           <Match when={store.welcome}>
-            <text fg={theme.text}>
+            <RtlText fg={theme.text}>
               Get started <span style={{ fg: theme.textMuted }}>/connect</span>
-            </text>
+            </RtlText>
           </Match>
           <Match when={connected()}>
             <Show when={permissions().length > 0}>
-              <text fg={theme.warning}>
+              <RtlText fg={theme.warning}>
                 <span style={{ fg: theme.warning }}>△</span> {permissions().length} Permission
                 {permissions().length > 1 ? "s" : ""}
-              </text>
+              </RtlText>
             </Show>
-            <text fg={theme.text}>
+            <RtlText fg={theme.text}>
               <span style={{ fg: lsp().length > 0 ? theme.success : theme.textMuted }}>•</span> {lsp().length} LSP
-            </text>
+            </RtlText>
             <Show when={mcp()}>
-              <text fg={theme.text}>
+              <RtlText fg={theme.text}>
                 <Switch>
                   <Match when={mcpError()}>
                     <span style={{ fg: theme.error }}>⊙ </span>
@@ -80,9 +87,21 @@ export function Footer() {
                   </Match>
                 </Switch>
                 {mcp()} MCP
-              </text>
+              </RtlText>
             </Show>
-            <text fg={theme.textMuted}>/status</text>
+            <RtlText
+              fg={skipPermissions() ? theme.success : theme.textMuted}
+              onMouseUp={() => toggleSkipPermissions()}
+            >
+              {skipPermissions() ? "Skip-permissions: on" : "Skip-permissions: off"}
+            </RtlText>
+            <RtlText
+              fg={neverAskMode() ? theme.success : theme.textMuted}
+              onMouseUp={() => toggleNeverAsk()}
+            >
+              {neverAskMode() ? "Never-ask: on" : "Never-ask: off"}
+            </RtlText>
+            <RtlText fg={theme.textMuted}>/status</RtlText>
           </Match>
         </Switch>
       </box>

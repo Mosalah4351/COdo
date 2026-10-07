@@ -18,7 +18,7 @@ COdo 使用 [AI SDK](https://ai-sdk.dev/) 和 [Models.dev](https://models.dev)�
 ### 憑證
 
 使用 `/connect` 指令新增提供商的 API 金鑰後，憑證會儲存在
-`~/.local/share/opencode/auth.json` 中。
+`~/.local/share/COdo/auth.json` 中。
 
 ---
 
@@ -830,7 +830,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1006,7 +1006,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 
 [Helicone 模型目錄](https://helicone.ai/models)中可以找到您需要新增的模型 ID。
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1034,7 +1034,7 @@ export GITLAB_OAUTH_CLIENT_ID=your_application_id_here
 
 Helicone 支援用於快取、使用者追蹤和工作階段管理等功能的自訂請求標頭。使用 `options.headers` 將它們新增到提供商設定中：
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1065,7 +1065,7 @@ npm install -g COdo-helicone-session
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

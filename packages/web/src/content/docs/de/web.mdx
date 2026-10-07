@@ -18,7 +18,7 @@ COdo web
 Dadurch wird ein lokaler Server auf `127.0.0.1` mit einem zufällig verfügbaren Port gestartet und COdo automatisch in Ihrem Standardbrowser geöffnet.
 
 :::caution
-Wenn `OPENCODE_SERVER_PASSWORD` nicht gesetzt ist, ist der Server ungesichert. Dies ist für den lokalen Gebrauch in Ordnung, sollte aber für den Netzwerkzugriff eingestellt werden.
+Wenn `CODO_SERVER_PASSWORD` nicht gesetzt ist, ist der Server ungesichert. Dies ist für den lokalen Gebrauch in Ordnung, sollte aber für den Netzwerkzugriff eingestellt werden.
 :::
 
 :::tip[Windows-Nutzer]
@@ -80,13 +80,13 @@ COdo web --cors https://example.com
 
 ### Authentifizierung
 
-Um den Zugriff zu schützen, legen Sie mithilfe der Umgebungsvariablen `OPENCODE_SERVER_PASSWORD` ein Passwort fest:
+Um den Zugriff zu schützen, legen Sie mithilfe der Umgebungsvariablen `CODO_SERVER_PASSWORD` ein Passwort fest:
 
 ```bash
-OPENCODE_SERVER_PASSWORD=secret COdo web
+CODO_SERVER_PASSWORD=secret COdo web
 ```
 
-Der Benutzername ist standardmäßig `COdo`, kann aber mit `OPENCODE_SERVER_USERNAME` geändert werden.
+Der Benutzername ist standardmäßig `COdo`, kann aber mit `CODO_SERVER_USERNAME` geändert werden.
 
 ---
 

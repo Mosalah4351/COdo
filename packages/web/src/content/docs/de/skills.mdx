@@ -13,8 +13,8 @@ Sie werden bei Bedarf ueber das native `skill`-Tool geladen, wenn ein Agent sie 
 Erstelle pro Skill-Namen einen Ordner und lege dort eine `SKILL.md` ab.
 COdo sucht in folgenden Pfaden:
 
-- Project config: `.opencode/skills/<name>/SKILL.md`
-- Global config: `~/.config/opencode/skills/<name>/SKILL.md`
+- Project config: `.COdo/skills/<name>/SKILL.md`
+- Global config: `~/.config/COdo/skills/<name>/SKILL.md`
 - Project Claude-compatible: `.claude/skills/<name>/SKILL.md`
 - Global Claude-compatible: `~/.claude/skills/<name>/SKILL.md`
 - Project agent-compatible: `.agents/skills/<name>/SKILL.md`
@@ -25,9 +25,9 @@ COdo sucht in folgenden Pfaden:
 ## Discovery verstehen
 
 Bei projektlokalen Pfaden laeuft COdo vom aktuellen Verzeichnis nach oben bis zum Git-Worktree.
-Dabei werden passende `skills/*/SKILL.md` in `.opencode/` sowie passende Dateien unter `.claude/skills/*/SKILL.md` und `.agents/skills/*/SKILL.md` geladen.
+Dabei werden passende `skills/*/SKILL.md` in `.COdo/` sowie passende Dateien unter `.claude/skills/*/SKILL.md` und `.agents/skills/*/SKILL.md` geladen.
 
-Globale Definitionen kommen zusaetzlich aus `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` und `~/.agents/skills/*/SKILL.md`.
+Globale Definitionen kommen zusaetzlich aus `~/.config/COdo/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` und `~/.agents/skills/*/SKILL.md`.
 
 ---
 
@@ -73,7 +73,7 @@ Formuliere sie so konkret, dass Agenten den Skill eindeutig auswaehlen koennen.
 
 ## Beispiel verwenden
 
-Erstelle `.opencode/skills/git-release/SKILL.md` zum Beispiel so:
+Erstelle `.COdo/skills/git-release/SKILL.md` zum Beispiel so:
 
 ```markdown
 ---

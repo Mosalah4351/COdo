@@ -44,16 +44,16 @@ Por exemplo, se sua configuração global define `autoupdate: true` e sua config
 As fontes de configuração são carregadas nesta ordem (fontes posteriores substituem as anteriores):
 
 1. **Configuração remota** (de `.well-known/COdo`) - padrões organizacionais
-2. **Configuração global** (`~/.config/opencode/opencode.json`) - preferências do usuário
-3. **Configuração personalizada** (`OPENCODE_CONFIG` var de ambiente) - substituições personalizadas
+2. **Configuração global** (`~/.config/COdo/COdo.json`) - preferências do usuário
+3. **Configuração personalizada** (`CODO_CONFIG` var de ambiente) - substituições personalizadas
 4. **Configuração do projeto** (`COdo.json` no projeto) - configurações específicas do projeto
-5. **Diretórios `.opencode`** - agentes, comandos, plugins
-6. **Configuração inline** (`OPENCODE_CONFIG_CONTENT` var de ambiente) - substituições em tempo de execução
+5. **Diretórios `.COdo`** - agentes, comandos, plugins
+6. **Configuração inline** (`CODO_CONFIG_CONTENT` var de ambiente) - substituições em tempo de execução
 
 Isso significa que as configurações do projeto podem substituir os padrões globais, e as configurações globais podem substituir os padrões organizacionais remotos.
 
 :::note
-Os diretórios `.opencode` e `~/.config/opencode` usam **nomes no plural** para subdiretórios: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, e `themes/`. Nomes no singular (por exemplo, `agent/`) também são suportados para compatibilidade retroativa.
+Os diretórios `.COdo` e `~/.config/COdo` usam **nomes no plural** para subdiretórios: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, e `themes/`. Nomes no singular (por exemplo, `agent/`) também são suportados para compatibilidade retroativa.
 :::
 
 ---
@@ -96,9 +96,9 @@ Você pode habilitar servidores específicos em sua configuração local:
 
 ### Global
 
-Coloque sua configuração global do opencode em `~/.config/opencode/opencode.json`. Use a configuração global para preferências de todo o usuário, como provedores, modelos e permissões.
+Coloque sua configuração global do COdo em `~/.config/COdo/COdo.json`. Use a configuração global para preferências de todo o usuário, como provedores, modelos e permissões.
 
-Para configurações específicas do TUI, use `~/.config/opencode/tui.json`.
+Para configurações específicas do TUI, use `~/.config/COdo/tui.json`.
 
 A configuração global substitui os padrões organizacionais remotos.
 
@@ -122,10 +122,10 @@ Isso também é seguro para ser verificado no Git e usa o mesmo esquema que o gl
 
 ### Caminho personalizado
 
-Especifique um caminho de arquivo de configuração personalizado usando a variável de ambiente `OPENCODE_CONFIG`.
+Especifique um caminho de arquivo de configuração personalizado usando a variável de ambiente `CODO_CONFIG`.
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -135,14 +135,14 @@ A configuração personalizada é carregada entre as configurações globais e d
 
 ### Diretório personalizado
 
-Especifique um diretório de configuração personalizado usando a variável de ambiente `OPENCODE_CONFIG_DIR`. Este diretório será pesquisado por agentes, comandos, modos e plugins, assim como o diretório padrão `.opencode`, e deve seguir a mesma estrutura.
+Especifique um diretório de configuração personalizado usando a variável de ambiente `CODO_CONFIG_DIR`. Este diretório será pesquisado por agentes, comandos, modos e plugins, assim como o diretório padrão `.COdo`, e deve seguir a mesma estrutura.
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-O diretório personalizado é carregado após a configuração global e os diretórios `.opencode`, então ele **pode substituir** suas configurações.
+O diretório personalizado é carregado após a configuração global e os diretórios `.COdo`, então ele **pode substituir** suas configurações.
 
 ---
 
@@ -171,7 +171,7 @@ Use um arquivo `tui.json` (ou `tui.jsonc`) dedicado para configurações especí
 }
 ```
 
-Use `OPENCODE_TUI_CONFIG` para apontar para um arquivo de configuração TUI personalizado.
+Use `CODO_TUI_CONFIG` para apontar para um arquivo de configuração TUI personalizado.
 
 Chaves legadas `theme`, `keybinds` e `tui` em `COdo.json` estão obsoletas e são migradas automaticamente quando possível.
 
@@ -336,7 +336,7 @@ Você pode configurar agentes especializados para tarefas específicas através 
 }
 ```
 
-Você também pode definir agentes usando arquivos markdown em `~/.config/opencode/agents/` ou `.opencode/agents/`. [Saiba mais aqui](/docs/agents).
+Você também pode definir agentes usando arquivos markdown em `~/.config/COdo/agents/` ou `.COdo/agents/`. [Saiba mais aqui](/docs/agents).
 
 ---
 
@@ -400,7 +400,7 @@ Você pode configurar comandos personalizados para tarefas repetitivas através 
 }
 ```
 
-Você também pode definir comandos usando arquivos markdown em `~/.config/opencode/commands/` ou `.opencode/commands/`. [Saiba mais aqui](/docs/commands).
+Você também pode definir comandos usando arquivos markdown em `~/.config/COdo/commands/` ou `.COdo/commands/`. [Saiba mais aqui](/docs/commands).
 
 ---
 
@@ -538,12 +538,12 @@ Você pode configurar servidores MCP que deseja usar através da opção `mcp`.
 
 [Plugins](/docs/plugins) estendem o COdo com ferramentas, hooks e integrações personalizadas.
 
-Coloque arquivos de plugin em `.opencode/plugins/` ou `~/.config/opencode/plugins/`. Você também pode carregar plugins do npm através da opção `plugin`.
+Coloque arquivos de plugin em `.COdo/plugins/` ou `~/.config/COdo/plugins/`. Você também pode carregar plugins do npm através da opção `plugin`.
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -640,7 +640,7 @@ Use `{env:VARIABLE_NAME}` para substituir variáveis de ambiente:
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

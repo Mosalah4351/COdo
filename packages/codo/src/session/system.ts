@@ -9,6 +9,7 @@ import PROMPT_BEAST from "./prompt/beast.txt"
 import PROMPT_GEMINI from "./prompt/gemini.txt"
 import PROMPT_GPT from "./prompt/gpt.txt"
 import PROMPT_KIMI from "./prompt/kimi.txt"
+import PROMPT_META from "./prompt/meta.txt"
 
 import PROMPT_CODEX from "./prompt/codex.txt"
 import PROMPT_TRINITY from "./prompt/trinity.txt"
@@ -22,9 +23,14 @@ import { LocationServiceMap } from "@codo-ai/core/location-layer"
 import { PluginBoot } from "@codo-ai/core/plugin/boot"
 import { Reference } from "@codo-ai/core/reference"
 import { composeSkills, isComposeSkill } from "@/skill/compose-skills"
+import { scrapeSkills, isScrapeSkill } from "@/skill/scrape-skills"
 import { Goal } from "./goal"
 
 export function provider(model: Provider.Model) {
+  if (model.api.id.includes("muse")) {
+    const name = model.api.id.includes("muse-glimmer") ? "Muse Glimmer" : "Muse Spark"
+    return [PROMPT_META.replaceAll("{{MODEL_NAME}}", name)]
+  }
   if (model.api.id.includes("gpt-4") || model.api.id.includes("o1") || model.api.id.includes("o3"))
     return [PROMPT_BEAST]
   if (model.api.id.includes("gpt")) {
@@ -116,14 +122,38 @@ export const layer = Layer.effect(
             ].join("\n")
           : undefined
 
-        // Filter out compose skills from available_skills for non-compose agents
-        const filteredList = isCompose ? list : list.filter((s) => !isComposeSkill(s.name))
+        // For scrape agents (orchestrator + topic workers), add scrape_skills
+        const isScrape = agent.name === "scrape" || agent.name === "scrape-topic"
+        const scrapeSkillsBlock = isScrape
+          ? [
+              "<scrape_skills>",
+              ...scrapeSkills
+                .toSorted((a, b) => a.name.localeCompare(b.name))
+                .flatMap((cs) => [
+                  "  <skill>",
+                  `    <name>${cs.name}</name>`,
+                  `    <description>${cs.description}</description>`,
+                  "  </skill>",
+                ]),
+              "</scrape_skills>",
+            ].join("\n")
+          : undefined
+
+        // Filter out compose and scrape skills from available_skills for
+        // agents that do not own them — the suites are internal procedure
+        // manuals; their owners get dedicated blocks above.
+        const filteredList = isCompose
+          ? list
+          : isScrape
+            ? list.filter((s) => !isComposeSkill(s.name))
+            : list.filter((s) => !isComposeSkill(s.name) && !isScrapeSkill(s.name))
 
         return [
           "Skills provide specialized instructions and workflows for specific tasks.",
           "Use the skill tool to load a skill when a task matches its description.",
           Skill.fmt(filteredList, { verbose: true }),
           composeSkillsBlock,
+          scrapeSkillsBlock,
         ]
           .filter((part): part is string => part !== undefined)
           .join("\n")

@@ -1,5 +1,6 @@
 import { TextareaRenderable, TextAttributes } from "@opentui/core"
 import { useTheme } from "../context/theme"
+import { RtlText } from "../component/rtl-text"
 import { useDialog, type DialogContext } from "./dialog"
 import { createStore } from "solid-js/store"
 import { onMount, Show } from "solid-js"
@@ -84,16 +85,16 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
   return (
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           Export Options
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
       <box gap={1}>
         <box>
-          <text fg={theme.text}>Filename:</text>
+          <RtlText fg={theme.text}>Filename:</RtlText>
         </box>
         <textarea
           onSubmit={() => {
@@ -126,10 +127,10 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
           backgroundColor={store.active === "thinking" ? theme.backgroundElement : undefined}
           onMouseUp={() => setStore("active", "thinking")}
         >
-          <text fg={store.active === "thinking" ? theme.primary : theme.textMuted}>
+          <RtlText fg={store.active === "thinking" ? theme.primary : theme.textMuted}>
             {store.thinking ? "[x]" : "[ ]"}
-          </text>
-          <text fg={store.active === "thinking" ? theme.primary : theme.text}>Include thinking</text>
+          </RtlText>
+          <RtlText fg={store.active === "thinking" ? theme.primary : theme.text}>Include thinking</RtlText>
         </box>
         <box
           flexDirection="row"
@@ -138,10 +139,10 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
           backgroundColor={store.active === "toolDetails" ? theme.backgroundElement : undefined}
           onMouseUp={() => setStore("active", "toolDetails")}
         >
-          <text fg={store.active === "toolDetails" ? theme.primary : theme.textMuted}>
+          <RtlText fg={store.active === "toolDetails" ? theme.primary : theme.textMuted}>
             {store.toolDetails ? "[x]" : "[ ]"}
-          </text>
-          <text fg={store.active === "toolDetails" ? theme.primary : theme.text}>Include tool details</text>
+          </RtlText>
+          <RtlText fg={store.active === "toolDetails" ? theme.primary : theme.text}>Include tool details</RtlText>
         </box>
         <box
           flexDirection="row"
@@ -150,10 +151,10 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
           backgroundColor={store.active === "assistantMetadata" ? theme.backgroundElement : undefined}
           onMouseUp={() => setStore("active", "assistantMetadata")}
         >
-          <text fg={store.active === "assistantMetadata" ? theme.primary : theme.textMuted}>
+          <RtlText fg={store.active === "assistantMetadata" ? theme.primary : theme.textMuted}>
             {store.assistantMetadata ? "[x]" : "[ ]"}
-          </text>
-          <text fg={store.active === "assistantMetadata" ? theme.primary : theme.text}>Include assistant metadata</text>
+          </RtlText>
+          <RtlText fg={store.active === "assistantMetadata" ? theme.primary : theme.text}>Include assistant metadata</RtlText>
         </box>
         <box
           flexDirection="row"
@@ -162,23 +163,23 @@ export function DialogExportOptions(props: DialogExportOptionsProps) {
           backgroundColor={store.active === "openWithoutSaving" ? theme.backgroundElement : undefined}
           onMouseUp={() => setStore("active", "openWithoutSaving")}
         >
-          <text fg={store.active === "openWithoutSaving" ? theme.primary : theme.textMuted}>
+          <RtlText fg={store.active === "openWithoutSaving" ? theme.primary : theme.textMuted}>
             {store.openWithoutSaving ? "[x]" : "[ ]"}
-          </text>
-          <text fg={store.active === "openWithoutSaving" ? theme.primary : theme.text}>Open without saving</text>
+          </RtlText>
+          <RtlText fg={store.active === "openWithoutSaving" ? theme.primary : theme.text}>Open without saving</RtlText>
         </box>
       </box>
       <Show when={store.active !== "filename"}>
-        <text fg={theme.textMuted} paddingBottom={1}>
+        <RtlText fg={theme.textMuted} paddingBottom={1}>
           Press <span style={{ fg: theme.text }}>space</span> to toggle, <span style={{ fg: theme.text }}>return</span>{" "}
           to confirm
-        </text>
+        </RtlText>
       </Show>
       <Show when={store.active === "filename"}>
-        <text fg={theme.textMuted} paddingBottom={1}>
+        <RtlText fg={theme.textMuted} paddingBottom={1}>
           Press <span style={{ fg: theme.text }}>return</span> to confirm, <span style={{ fg: theme.text }}>tab</span>{" "}
           for options
-        </text>
+        </RtlText>
       </Show>
     </box>
   )

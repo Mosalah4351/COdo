@@ -17,9 +17,9 @@ Comandos personalizados são adicionais aos comandos integrados como `/init`, `/
 
 Crie arquivos markdown no diretório `commands/` para definir comandos personalizados.
 
-Crie `.opencode/commands/test.md`:
+Crie `.COdo/commands/test.md`:
 
-```md title=".opencode/commands/test.md"
+```md title=".COdo/commands/test.md"
 ---
 description: Execute testes com cobertura
 agent: build
@@ -79,10 +79,10 @@ Agora você pode executar este comando no TUI:
 
 Você também pode definir comandos usando arquivos markdown. Coloque-os em:
 
-- Global: `~/.config/opencode/commands/`
-- Por projeto: `.opencode/commands/`
+- Global: `~/.config/COdo/commands/`
+- Por projeto: `.COdo/commands/`
 
-```markdown title="~/.config/opencode/commands/test.md"
+```markdown title="~/.config/COdo/commands/test.md"
 ---
 description: Execute testes com cobertura
 agent: build
@@ -111,7 +111,7 @@ Os prompts para os comandos personalizados suportam vários espaços reservados 
 
 Passe argumentos para os comandos usando o espaço reservado `$ARGUMENTS`.
 
-```md title=".opencode/commands/component.md"
+```md title=".COdo/commands/component.md"
 ---
 description: Crie um novo componente
 ---
@@ -137,7 +137,7 @@ Você também pode acessar argumentos individuais usando parâmetros posicionais
 
 Por exemplo:
 
-```md title=".opencode/commands/create-file.md"
+```md title=".COdo/commands/create-file.md"
 ---
 description: Crie um novo arquivo com conteúdo
 ---
@@ -166,7 +166,7 @@ Use _!`command`_ para injetar a saída do [comando bash](/docs/tui#bash-commands
 
 Por exemplo, para criar um comando personalizado que analisa a cobertura de testes:
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".COdo/commands/analyze-coverage.md"
 ---
 description: Analise cobertura de testes
 ---
@@ -179,7 +179,7 @@ Com base nesses resultados, sugira melhorias para aumentar a cobertura.
 
 Ou para revisar alterações recentes:
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".COdo/commands/review-changes.md"
 ---
 description: Revise alterações recentes
 ---
@@ -198,7 +198,7 @@ Os comandos são executados no diretório raiz do seu projeto e sua saída se to
 
 Inclua arquivos no seu comando usando `@` seguido pelo nome do arquivo.
 
-```md title=".opencode/commands/review-component.md"
+```md title=".COdo/commands/review-component.md"
 ---
 description: Revise componente
 ---

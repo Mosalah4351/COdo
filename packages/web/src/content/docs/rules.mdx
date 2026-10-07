@@ -70,7 +70,7 @@ Place an `AGENTS.md` in your project root for project-specific rules. These only
 
 ### Global
 
-You can also have global rules in a `~/.config/opencode/AGENTS.md` file. This gets applied across all opencode sessions.
+You can also have global rules in a `~/.config/COdo/AGENTS.md` file. This gets applied across all COdo sessions.
 
 Since this isn't committed to Git or shared with your team, we recommend using this to specify any personal rules that the LLM should follow.
 
@@ -79,15 +79,15 @@ Since this isn't committed to Git or shared with your team, we recommend using t
 For users migrating from Claude Code, COdo supports Claude Code's file conventions as fallbacks:
 
 - **Project rules**: `CLAUDE.md` in your project directory (used if no `AGENTS.md` exists)
-- **Global rules**: `~/.claude/CLAUDE.md` (used if no `~/.config/opencode/AGENTS.md` exists)
+- **Global rules**: `~/.claude/CLAUDE.md` (used if no `~/.config/COdo/AGENTS.md` exists)
 - **Skills**: `~/.claude/skills/` — see [Agent Skills](/docs/skills/) for details
 
 To disable Claude Code compatibility, set one of these environment variables:
 
 ```bash
-export OPENCODE_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
-export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
-export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
+export CODO_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
+export CODO_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
+export CODO_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 ```
 
 ---
@@ -97,16 +97,16 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 When COdo starts, it looks for rule files in this order:
 
 1. **Local files** by traversing up from the current directory (`AGENTS.md`, `CLAUDE.md`)
-2. **Global file** at `~/.config/opencode/AGENTS.md`
+2. **Global file** at `~/.config/COdo/AGENTS.md`
 3. **Claude Code file** at `~/.claude/CLAUDE.md` (unless disabled)
 
-The first matching file wins in each category. For example, if you have both `AGENTS.md` and `CLAUDE.md`, only `AGENTS.md` is used. Similarly, `~/.config/opencode/AGENTS.md` takes precedence over `~/.claude/CLAUDE.md`.
+The first matching file wins in each category. For example, if you have both `AGENTS.md` and `CLAUDE.md`, only `AGENTS.md` is used. Similarly, `~/.config/COdo/AGENTS.md` takes precedence over `~/.claude/CLAUDE.md`.
 
 ---
 
 ## Custom Instructions
 
-You can specify custom instruction files in your `opencode.json` or the global `~/.config/opencode/opencode.json`. This allows you and your team to reuse existing rules rather than having to duplicate them to AGENTS.md.
+You can specify custom instruction files in your `COdo.json` or the global `~/.config/COdo/COdo.json`. This allows you and your team to reuse existing rules rather than having to duplicate them to AGENTS.md.
 
 Example:
 

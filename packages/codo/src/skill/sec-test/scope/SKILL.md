@@ -14,7 +14,7 @@ description: "Create or refresh .codo/security-scope.json — the file that auth
 
 1. **Determine authorization context.** Ask the user to confirm (this file is the contract):
    - Which targets are in scope (exact URLs, hosts, or IP ranges — no wildcards)
-   - Whether active scanning is permitted (ZAP baseline yes/no — full active scan is separately gated by permission)
+   - Whether active scanning is permitted. This is **not** a question about which scanner to run — `sec-pentest` has a blanket `bash` deny and reaches the network only through `sec_probe`. `allow_active_scan: false` means `sec_probe` permits `GET`/`HEAD` with no body; `true` additionally permits `POST`/`PUT`/`PATCH`/`OPTIONS` for confirming a specific hypothesis. `DELETE` is refused in every mode. Ask which of those two the user authorizes.
    - Expiry — default to 7 days from now for a first engagement, max 90
 2. **Draft the file:**
 
@@ -43,7 +43,7 @@ description: "Create or refresh .codo/security-scope.json — the file that auth
    - `allow_active_scan: true` requires an explicit user decision — never default it on.
 4. **Write to `.codo/security-scope.json`**. Make sure the directory exists (create `.codo/` if needed).
 5. **Update `.gitignore` if applicable** — this file can reveal information about internal targets; some teams prefer it untracked.
-6. Return the marker `## SCOPE AUTHORED` plus the expiry timestamp so the orchestrator knows the window.
+6. Return `## SEC-RESULT skill=sec-test:scope status=complete doc=.codo/security-scope.json` plus the expiry timestamp so the orchestrator knows the window.
 
 ## Rules
 

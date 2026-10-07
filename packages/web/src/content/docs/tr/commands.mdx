@@ -17,9 +17,9 @@ description: Tekrarlanan görevler için özel komutlar oluşturulur.
 
 Özel komutları tanımlamak için `commands/` dizininde işaretleme dosyaları oluşturun.
 
-`.opencode/commands/test.md` oluştur:
+`.COdo/commands/test.md` oluştur:
 
-```md title=".opencode/commands/test.md"
+```md title=".COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -79,10 +79,10 @@ Artık bu komutu TUI'da çalıştırabilirsiniz:
 
 Markdown dosyalarını kullanarak komutları da tanımlayabilirsiniz. Bunları şuraya yerleştirin:
 
-- Küresel: `~/.config/opencode/commands/`
-- Proje başına: `.opencode/commands/`
+- Küresel: `~/.config/COdo/commands/`
+- Proje başına: `.COdo/commands/`
 
-```markdown title="~/.config/opencode/commands/test.md"
+```markdown title="~/.config/COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -112,7 +112,7 @@ sen koşuyorsun:
 
 `$ARGUMENTS` yer tutucusunu kullanarak komutlara argümanları iletin.
 
-```md title=".opencode/commands/component.md"
+```md title=".COdo/commands/component.md"
 ---
 description: Create a new component
 ---
@@ -138,7 +138,7 @@ Konumsal parametreleri kullanarak bağımsız değişkenlere de erişebilirsiniz
 
 Örneğin:
 
-```md title=".opencode/commands/create-file.md"
+```md title=".COdo/commands/create-file.md"
 ---
 description: Create a new file with content
 ---
@@ -167,7 +167,7 @@ Bu şunun yerini alır:
 
 Örneğin, test kapsamını analiz eden özel bir komut oluşturmak için:
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".COdo/commands/analyze-coverage.md"
 ---
 description: Analyze test coverage
 ---
@@ -180,7 +180,7 @@ Based on these results, suggest improvements to increase coverage.
 
 Or to review recent changes:
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".COdo/commands/review-changes.md"
 ---
 description: Review recent changes
 ---
@@ -199,7 +199,7 @@ Komutlar projenizin kök dizininde çalışır ve çıktıları istemin bir par�
 
 Komutunuza `@` ve ardından dosya adını kullanarak dosyaları ekleyin.
 
-```md title=".opencode/commands/review-component.md"
+```md title=".COdo/commands/review-component.md"
 ---
 description: Review component
 ---

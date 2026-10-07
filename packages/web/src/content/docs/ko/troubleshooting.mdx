@@ -3,7 +3,7 @@ title: 문제 해결
 description: 일반적인 문제와 해결 방법.
 ---
 
-opencode와 문제를 디버그하려면 로그와 로컬 데이터를 확인하여 디스크에 저장합니다.
+COdo와 문제를 디버그하려면 로그와 로컬 데이터를 확인하여 디스크에 저장합니다.
 
 ---
 
@@ -11,7 +11,7 @@ opencode와 문제를 디버그하려면 로그와 로컬 데이터를 확인하
 
 로그 파일은 다음과 같습니다:
 
--**macOS/리눅스**: `~/.local/share/opencode/log/`
+-**macOS/리눅스**: `~/.local/share/COdo/log/`
 
 - **Windows**: 압박 `WIN+R`와 풀 `%USERPROFILE%\.local\share\COdo\log`
 
@@ -25,7 +25,7 @@ opencode와 문제를 디버그하려면 로그와 로컬 데이터를 확인하
 
 COdo 저장 세션 데이터 및 디스크에 다른 응용 데이터:
 
--**macOS/리눅스**: `~/.local/share/opencode/`
+-**macOS/리눅스**: `~/.local/share/COdo/`
 
 - **Windows**: 압박 `WIN+R`와 풀 `%USERPROFILE%\.local\share\COdo`
 
@@ -59,7 +59,7 @@ COdo 데스크톱은 배경에서 로컬 COdo 서버 (`COdo-cli` sidecar)를 실
 
 글로벌 설정 파일을 열고 `plugin` 키를 찾습니다.
 
--**macOS/리눅스**: `~/.config/opencode/opencode.jsonc` (또는 `~/.config/opencode/opencode.json`) -**macOS/Linux** (외부 설치): `~/.local/share/opencode/opencode.jsonc`
+-**macOS/리눅스**: `~/.config/COdo/COdo.jsonc` (또는 `~/.config/COdo/COdo.json`) -**macOS/Linux** (외부 설치): `~/.local/share/COdo/COdo.jsonc`
 
 - **Windows**: 압박 `WIN+R`와 풀 `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
@@ -74,12 +74,12 @@ COdo 데스크톱은 배경에서 로컬 COdo 서버 (`COdo-cli` sidecar)를 실
 
 ### 플러그인 디렉터리 확인
 
-opencode는 디스크에서 로컬 플러그인을로드 할 수 있습니다. Temporarily 이동 이러한 방법 (또는 폴더 이름을 변경) 및 데스크톱 응용 프로그램을 다시 시작:
+COdo는 디스크에서 로컬 플러그인을로드 할 수 있습니다. Temporarily 이동 이러한 방법 (또는 폴더 이름을 변경) 및 데스크톱 응용 프로그램을 다시 시작:
 
-- **글로벌 플러그인** -**macOS/리눅스**: `~/.config/opencode/plugins/`
+- **글로벌 플러그인** -**macOS/리눅스**: `~/.config/COdo/plugins/`
 - **Windows**: 압박 `WIN+R`와 풀 `%USERPROFILE%\.config\COdo\plugins`
 - **프로젝트 플러그인** (프로젝트 설정만 사용)
-- `<your-project>/.opencode/plugins/`
+- `<your-project>/.COdo/plugins/`
 
 앱이 다시 일하는 경우, 재 활성화 플러그인은 한 번에 문제가 발생할 수 있습니다.
 
@@ -87,7 +87,7 @@ opencode는 디스크에서 로컬 플러그인을로드 할 수 있습니다. T
 
 #### 캐시 삭제
 
-플러그인을 비활성화하는 경우 도움이되지 않습니다 (또는 플러그인 설치가 붙어있다), 캐시를 삭제 그래서 opencode는 그것을 재구성 할 수 있습니다.
+플러그인을 비활성화하는 경우 도움이되지 않습니다 (또는 플러그인 설치가 붙어있다), 캐시를 삭제 그래서 COdo는 그것을 재구성 할 수 있습니다.
 
 1. Quit COdo 데스크톱 완전히.
 2. 캐시 디렉토리 삭제:
@@ -117,9 +117,9 @@ Home 화면에서 Server Picker를 열려면 서버 이름(상태 점)을 클릭
 
 ### 환경 변수 확인
 
-`OPENCODE_PORT`가 있는 경우, 데스크탑 앱은 로컬 서버의 포트를 사용하려고 합니다.
+`CODO_PORT`가 있는 경우, 데스크탑 앱은 로컬 서버의 포트를 사용하려고 합니다.
 
-- `OPENCODE_PORT` (또는 무료 포트를 선택) 및 재시작.
+- `CODO_PORT` (또는 무료 포트를 선택) 및 재시작.
 
 ---
 
@@ -140,7 +140,7 @@ Windows에서 COdo 데스크톱은 Microsoft Edge ** WebView2 실행 시간 **�
 
 ## Windows: 일반 성능 문제
 
-느린 성능, 파일 액세스 문제 또는 Windows의 terminal 문제를 경험하는 경우 [WSL (Windows Subsystem for Linux)](/docs/windows-wsl)를 사용하여 시도하십시오. WSL은 opencode의 기능으로 더 원활하게 작동하는 Linux 환경을 제공합니다.
+느린 성능, 파일 액세스 문제 또는 Windows의 terminal 문제를 경험하는 경우 [WSL (Windows Subsystem for Linux)](/docs/windows-wsl)를 사용하여 시도하십시오. WSL은 COdo의 기능으로 더 원활하게 작동하는 Linux 환경을 제공합니다.
 
 ---
 
@@ -148,7 +148,7 @@ Windows에서 COdo 데스크톱은 Microsoft Edge ** WebView2 실행 시간 **�
 
 COdo 데스크톱은 시스템 알림을 보여줍니다 :
 
-- OS 설정에서 opencode에 대한 알림이 활성화되고,
+- OS 설정에서 COdo에 대한 알림이 활성화되고,
 - 앱 창이 집중되지 않습니다.
 
 ---
@@ -174,13 +174,13 @@ COdo 데스크톱은 시스템 알림을 보여줍니다 :
 
 ## 도움 받기
 
-opencode와 문제가 발생하면:
+COdo와 문제가 발생하면:
 
 1. ** GitHub의 문제 해결 **
 
 버그 또는 요청 기능을보고하는 가장 좋은 방법은 GitHub 저장소를 통해 다음과 같습니다.
 
-[**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+[**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
 새로운 문제를 만들기 전에, 당신의 문제가 이미보고 된 경우 기존 문제를 검색.
 
@@ -198,7 +198,7 @@ opencode와 문제가 발생하면:
 
 ---
 
-## opencode가 시작되지 않습니다.
+## COdo가 시작되지 않습니다.
 
 1. 오류 메시지에 대한 로그 확인
 2. terminal에 있는 산출을 보기 위하여 `--print-logs`로 달리기를 시도하십시오
@@ -228,7 +228,7 @@ opencode와 문제가 발생하면:
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 당신이 액세스 할 수있는 모델을 파악하려면, `COdo models`를 실행
 
@@ -269,7 +269,7 @@ Windows에서, `WIN+R`를 누르고 삭제하십시오: `%USERPROFILE%\.cache\CO
 
 2. 최신 공급자 포장을 재설치하는 Restart COdo
 
-이것은 종종 모델 매개 변수와 API 변경과 호환성 문제를 해결하는 공급자 패키지의 가장 최근 버전을 다운로드하기 위해 opencode를 강제합니다.
+이것은 종종 모델 매개 변수와 API 변경과 호환성 문제를 해결하는 공급자 패키지의 가장 최근 버전을 다운로드하기 위해 COdo를 강제합니다.
 
 ---
 
@@ -300,4 +300,4 @@ Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 export DISPLAY=:99.0
 ```
 
-opencode는 당신이 Wayland를 사용하고 `wl-clipboard`를 선호하는 경우에 검출할 것입니다, 그렇지 않으면의 순서에 있는 클립보드 공구를 찾아낼 것입니다: `xclip`와 `xsel`.
+COdo는 당신이 Wayland를 사용하고 `wl-clipboard`를 선호하는 경우에 검출할 것입니다, 그렇지 않으면의 순서에 있는 클립보드 공구를 찾아낼 것입니다: `xclip`와 `xsel`.

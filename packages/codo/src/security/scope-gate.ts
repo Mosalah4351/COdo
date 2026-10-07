@@ -5,7 +5,11 @@ const ScopeFile = Schema.Struct({
   version: Schema.optional(Schema.Number),
   created: Schema.optional(Schema.String),
   expires: Schema.String,
-  targets: Schema.NonEmptyArray(
+  // Deliberately a plain Array, not NonEmptyArray. A NonEmptyArray makes an
+  // empty `targets` fail schema validation, which surfaces as `unparseable`
+  // and hides the actual problem from the operator. The explicit `no-targets`
+  // check below gives the precise reason instead.
+  targets: Schema.Array(
     Schema.Struct({
       type: Schema.Literals(["web", "api", "host"]),
       value: Schema.String,
@@ -37,21 +41,28 @@ export type GateResult =
  * strictly, then allow an in-origin path-prefix match.
  *
  * Returns true when:
- *   - target and scoped origin match exactly, or
- *   - target's origin matches scoped origin AND target's path is a strict
- *     prefix-match of scoped path (path-only narrowing).
+ *   - target and scoped are the same origin (case-insensitively), or
+ *   - target extends scoped with `/`, `?`, or `#` as the boundary character
+ *     AND the URL origins match exactly (scheme + host + port).
+ *
+ * Comparison is case-insensitive throughout: hostnames are case-insensitive
+ * per RFC 4343, so `HTTPS://STAGING.EXAMPLE.COM` must satisfy a scope entry of
+ * `https://staging.example.com`. The exact-match shortcut runs on the
+ * lowercased forms for the same reason.
  */
 function targetMatches(scoped: string, target: string): boolean {
-  if (target === scoped) return true
-  // Hostnames are case-insensitive per RFC 4343; without lowercasing,
-  // STAGING.EXAMPLE.COM silently fails prefix matching against the
-  // scoped staging.example.com entry. Lowercasing both sides also
-  // blocks homoglyph-style "STAGING-EXAMPLE.COM" tricks at this level.
   const scopedLower = scoped.toLowerCase()
   const targetLower = target.toLowerCase()
+  if (targetLower === scopedLower) return true
   // If target extends scoped, it must extend it with "/" or query/fragment —
-  // never arbitrary characters. This blocks the host-suffix bypass.
-  if (!targetLower.startsWith(scopedLower + "/") && !targetLower.startsWith(scopedLower + "?") && !targetLower.startsWith(scopedLower + "#")) {
+  // never arbitrary characters. This blocks the host-suffix bypass
+  // (`staging.example.com.attacker.net`) and the userinfo trick
+  // (`staging.example.com@evil.com`) before any URL parsing happens.
+  if (
+    !targetLower.startsWith(scopedLower + "/") &&
+    !targetLower.startsWith(scopedLower + "?") &&
+    !targetLower.startsWith(scopedLower + "#")
+  ) {
     return false
   }
   // Both parse as URLs — confirm origin equality.

@@ -44,18 +44,18 @@ For example, if your global config sets `autoupdate: true` and your project conf
 Config sources are loaded in this order (later sources override earlier ones):
 
 1. **Remote config** (from `.well-known/COdo`) - organizational defaults
-2. **Global config** (`~/.config/opencode/opencode.json`) - user preferences
-3. **Custom config** (`OPENCODE_CONFIG` env var) - custom overrides
+2. **Global config** (`~/.config/COdo/COdo.json`) - user preferences
+3. **Custom config** (`CODO_CONFIG` env var) - custom overrides
 4. **Project config** (`COdo.json` in project) - project-specific settings
-5. **`.opencode` directories** - agents, commands, plugins
-6. **Inline config** (`OPENCODE_CONFIG_CONTENT` env var) - runtime overrides
-7. **Managed config files** (`/Library/Application Support/opencode/` on macOS) - admin-controlled
+5. **`.COdo` directories** - agents, commands, plugins
+6. **Inline config** (`CODO_CONFIG_CONTENT` env var) - runtime overrides
+7. **Managed config files** (`/Library/Application Support/COdo/` on macOS) - admin-controlled
 8. **macOS managed preferences** (`.mobileconfig` via MDM) - highest priority, not user-overridable
 
 This means project configs can override global defaults, and global configs can override remote organizational defaults. Managed settings override everything.
 
 :::note
-The `.opencode` and `~/.config/opencode` directories use **plural names** for subdirectories: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, and `themes/`. Singular names (e.g., `agent/`) are also supported for backwards compatibility.
+The `.COdo` and `~/.config/COdo` directories use **plural names** for subdirectories: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, and `themes/`. Singular names (e.g., `agent/`) are also supported for backwards compatibility.
 :::
 
 ---
@@ -98,9 +98,9 @@ You can enable specific servers in your local config:
 
 ### Global
 
-Place your global COdo config in `~/.config/opencode/opencode.json`. Use global config for user-wide server/runtime preferences like providers, models, and permissions.
+Place your global COdo config in `~/.config/COdo/COdo.json`. Use global config for user-wide server/runtime preferences like providers, models, and permissions.
 
-For TUI-specific settings, use `~/.config/opencode/tui.json`.
+For TUI-specific settings, use `~/.config/COdo/tui.json`.
 
 Global config overrides remote organizational defaults.
 
@@ -124,10 +124,10 @@ This is also safe to be checked into Git and uses the same schema as the global 
 
 ### Custom path
 
-Specify a custom config file path using the `OPENCODE_CONFIG` environment variable.
+Specify a custom config file path using the `CODO_CONFIG` environment variable.
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -137,17 +137,17 @@ Custom config is loaded between global and project configs in the precedence ord
 
 ### Custom directory
 
-Specify a custom config directory using the `OPENCODE_CONFIG_DIR`
+Specify a custom config directory using the `CODO_CONFIG_DIR`
 environment variable. This directory will be searched for agents, commands,
-modes, and plugins just like the standard `.opencode` directory, and should
+modes, and plugins just like the standard `.COdo` directory, and should
 follow the same structure.
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-The custom directory is loaded after the global config and `.opencode` directories, so it **can override** their settings.
+The custom directory is loaded after the global config and `.COdo` directories, so it **can override** their settings.
 
 ---
 
@@ -161,26 +161,26 @@ Drop an `COdo.json` or `COdo.jsonc` file in the system managed config directory:
 
 | Platform | Path                                     |
 | -------- | ---------------------------------------- |
-| macOS    | `/Library/Application Support/opencode/` |
-| Linux    | `/etc/opencode/`                         |
+| macOS    | `/Library/Application Support/COdo/` |
+| Linux    | `/etc/COdo/`                         |
 | Windows  | `%ProgramData%\COdo`                 |
 
 These directories require admin/root access to write, so users cannot modify them.
 
 #### macOS managed preferences
 
-On macOS, COdo reads managed preferences from the `ai.opencode.managed` preference domain. Deploy a `.mobileconfig` via MDM (Jamf, Kandji, FleetDM) and the settings are enforced automatically.
+On macOS, COdo reads managed preferences from the `ai.COdo.managed` preference domain. Deploy a `.mobileconfig` via MDM (Jamf, Kandji, FleetDM) and the settings are enforced automatically.
 
 COdo checks these paths:
 
-1. `/Library/Managed Preferences/<user>/ai.opencode.managed.plist`
-2. `/Library/Managed Preferences/ai.opencode.managed.plist`
+1. `/Library/Managed Preferences/<user>/ai.COdo.managed.plist`
+2. `/Library/Managed Preferences/ai.COdo.managed.plist`
 
 The plist keys map directly to `COdo.json` fields. MDM metadata keys (`PayloadUUID`, `PayloadType`, etc.) are stripped automatically.
 
 **Creating a `.mobileconfig`**
 
-Use the `ai.opencode.managed` PayloadType. The COdo config keys go directly in the payload dict:
+Use the `ai.COdo.managed` PayloadType. The COdo config keys go directly in the payload dict:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -192,9 +192,9 @@ Use the `ai.opencode.managed` PayloadType. The COdo config keys go directly in t
   <array>
     <dict>
       <key>PayloadType</key>
-      <string>ai.opencode.managed</string>
+      <string>ai.COdo.managed</string>
       <key>PayloadIdentifier</key>
-      <string>com.example.opencode.config</string>
+      <string>com.example.COdo.config</string>
       <key>PayloadUUID</key>
       <string>GENERATE-YOUR-OWN-UUID</string>
       <key>PayloadVersion</key>
@@ -223,7 +223,7 @@ Use the `ai.opencode.managed` PayloadType. The COdo config keys go directly in t
   <key>PayloadType</key>
   <string>Configuration</string>
   <key>PayloadIdentifier</key>
-  <string>com.example.opencode</string>
+  <string>com.example.COdo</string>
   <key>PayloadUUID</key>
   <string>GENERATE-YOUR-OWN-UUID</string>
   <key>PayloadVersion</key>
@@ -273,6 +273,10 @@ Use a dedicated `tui.json` (or `tui.jsonc`) file for TUI-specific settings.
     "enabled": true
   },
   "diff_style": "auto",
+  "cursor": {
+    "style": "block",
+    "blinking": true
+  },
   "mouse": true,
   "attention": {
     "enabled": true,
@@ -283,7 +287,9 @@ Use a dedicated `tui.json` (or `tui.jsonc`) file for TUI-specific settings.
 }
 ```
 
-Use `OPENCODE_TUI_CONFIG` to point to a custom TUI config file.
+Use `CODO_TUI_CONFIG` to point to a custom TUI config file.
+
+When `cursor.style` is `"default"`, the terminal default cursor is restored, so `cursor.blinking` has no effect.
 
 Set `attention.enabled` to turn on TUI desktop notifications and sounds. See [TUI attention](/docs/tui#attention).
 
@@ -517,7 +523,7 @@ You can configure specialized agents for specific tasks through the `agent` opti
 }
 ```
 
-You can also define agents using markdown files in `~/.config/opencode/agents/` or `.opencode/agents/`. [Learn more here](/docs/agents).
+You can also define agents using markdown files in `~/.config/COdo/agents/` or `.COdo/agents/`. [Learn more here](/docs/agents).
 
 ---
 
@@ -535,6 +541,21 @@ You can set the default agent using the `default_agent` option. This determines 
 The default agent must be a primary agent (not a subagent). This can be a built-in agent like `"build"` or `"plan"`, or a [custom agent](/docs/agents) you've defined. If the specified agent doesn't exist or is a subagent, COdo will fall back to `"build"` with a warning.
 
 This setting applies across all interfaces: TUI, CLI (`COdo run`), desktop app, and GitHub Action.
+
+---
+
+### Subagent depth
+
+You can control how deeply subagents can invoke other subagents using the `subagent_depth` option.
+
+```json title="COdo.json"
+{
+  "$schema": "https://codo-ai.vercel.app/config.json",
+  "subagent_depth": 2
+}
+```
+
+The default is `1`, which allows primary agents to launch subagents but prevents those subagents from launching additional subagents. Set it to `2` to allow one additional level of nested subagents, or `0` to prevent all subagent launches.
 
 ---
 
@@ -581,7 +602,7 @@ You can configure custom commands for repetitive tasks through the `command` opt
 }
 ```
 
-You can also define commands using markdown files in `~/.config/opencode/commands/` or `.opencode/commands/`. [Learn more here](/docs/commands).
+You can also define commands using markdown files in `~/.config/COdo/commands/` or `.COdo/commands/`. [Learn more here](/docs/commands).
 
 ---
 
@@ -777,12 +798,12 @@ You can configure MCP servers you want to use through the `mcp` option.
 
 [Plugins](/docs/plugins) extend COdo with custom tools, hooks, and integrations.
 
-Place plugin files in `.opencode/plugins/` or `~/.config/opencode/plugins/`. You can also load plugins from npm through the `plugin` option.
+Place plugin files in `.COdo/plugins/` or `~/.config/COdo/plugins/`. You can also load plugins from npm through the `plugin` option.
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -880,7 +901,7 @@ Use `{env:VARIABLE_NAME}` to substitute environment variables:
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

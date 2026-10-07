@@ -18,7 +18,7 @@ import { entryColor, entryLook, entrySyntax } from "./scrollback.shared"
 import { turnSummaryCommit } from "./turn-summary"
 import { entryWriter, sameEntryGroup, separatorRows, spacerWriter, turnSummaryWriter } from "./scrollback.writer"
 import { type RunTheme } from "./theme"
-import type { RunDiffStyle, RunEntryBody, StreamCommit } from "./types"
+import type { RunDiffStyle, RunEntryBody, ScrollbackOptions, StreamCommit } from "./types"
 
 type ActiveBody = Exclude<RunEntryBody, { type: "none" | "structured" }>
 
@@ -86,6 +86,7 @@ export class RunScrollbackStream {
   private tail: StreamCommit | undefined
   private rendered: StreamCommit | undefined
   private active: ActiveEntry | undefined
+  private rtl: ScrollbackOptions["rtl"]
   private diffStyle: RunDiffStyle | undefined
   private sessionID?: () => string | undefined
   private treeSitterClient: TreeSitterClient | undefined
@@ -97,12 +98,14 @@ export class RunScrollbackStream {
     private theme: RunTheme,
     options: {
       wrote?: boolean
+      rtl?: ScrollbackOptions["rtl"]
       diffStyle?: RunDiffStyle
       sessionID?: () => string | undefined
       treeSitterClient?: TreeSitterClient
       onThemeRelease?: (theme: RunTheme) => void
     } = {},
   ) {
+    this.rtl = options.rtl
     this.diffStyle = options.diffStyle
     this.sessionID = options.sessionID
     this.treeSitterClient = options.treeSitterClient ?? getTreeSitterClient()
@@ -353,7 +356,7 @@ export class RunScrollbackStream {
 
     if (commit.summary) {
       this.writeSpacer(1)
-      this.renderer.writeToScrollback(turnSummaryWriter({ ...commit.summary, theme: this.theme }))
+      this.renderer.writeToScrollback(turnSummaryWriter({ ...commit.summary, theme: this.theme, rtl: this.rtl }))
       this.markRendered(commit)
       this.tail = commit
       return
@@ -396,6 +399,7 @@ export class RunScrollbackStream {
         theme: this.theme,
         opts: {
           diffStyle: this.diffStyle,
+          rtl: this.rtl,
         },
       }),
     )

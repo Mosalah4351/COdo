@@ -11,7 +11,7 @@ Da biste otklonili probleme s COdo, počnite provjeravanjem dnevnika i lokalnih 
 
 Log fajlovi se pišu na:
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: Pritisnite `WIN+R` i zalijepite `%USERPROFILE%\.local\share\COdo\log`
 
 Datoteke evidencije se imenuju vremenskim oznakama (npr. `2025-01-09T123456.log`) i čuvaju se najnovijih 10 datoteka dnevnika.
@@ -24,7 +24,7 @@ Možete postaviti nivo dnevnika pomoću opcije komandne linije `--log-level` da 
 
 COdo pohranjuje podatke o sesiji i druge podatke aplikacije na disku na:
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: Pritisnite `WIN+R` i zalijepite `%USERPROFILE%\.local\share\COdo`
 
 Ovaj direktorij sadrži:
@@ -57,8 +57,8 @@ Ako se desktop aplikacija ruši pri pokretanju, visi ili se čudno ponaša, poč
 
 Otvorite svoju globalnu konfiguracijsku datoteku i potražite ključ `plugin`.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (ili `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (starije instalacije): `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc` (ili `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (starije instalacije): `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: Pritisnite `WIN+R` i zalijepite `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 Ako imate konfigurirane dodatke, privremeno ih onemogućite uklanjanjem ključa ili postavljanjem na prazan niz:
@@ -75,10 +75,10 @@ Ako imate konfigurirane dodatke, privremeno ih onemogućite uklanjanjem ključa 
 COdo također može učitati lokalne dodatke s diska. Privremeno ih maknite s puta (ili preimenujte folder) i ponovo pokrenite desktop aplikaciju:
 
 - **Globalni dodaci**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: Pritisnite `WIN+R` i zalijepite `%USERPROFILE%\.config\COdo\plugins`
 - **Projektni dodaci** (samo ako koristite konfiguraciju po projektu)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 Ako aplikacija ponovo počne raditi, ponovo omogućite dodatke jedan po jedan kako biste otkrili koji od njih uzrokuje problem.
 
@@ -115,9 +115,9 @@ Ako vaš `COdo.json(c)` sadrži odjeljak `server`, privremeno ga uklonite i pono
 
 #### Provjerite varijable okruženja
 
-Ako ste postavili `OPENCODE_PORT` u svom okruženju, desktop aplikacija će pokušati da koristi taj port za lokalni server.
+Ako ste postavili `CODO_PORT` u svom okruženju, desktop aplikacija će pokušati da koristi taj port za lokalni server.
 
-- Poništite `OPENCODE_PORT` (ili odaberite slobodan port) i ponovo pokrenite.
+- Poništite `CODO_PORT` (ili odaberite slobodan port) i ponovo pokrenite.
 
 ---
 
@@ -177,7 +177,7 @@ Ako imate problema s COdo:
 
    Najbolji način da prijavite greške ili zatražite funkcije je putem našeg GitHub spremišta:
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    Prije kreiranja novog problema, pretražite postojeće probleme da vidite je li vaš problem već prijavljen.
 
@@ -225,7 +225,7 @@ primjeri:
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 Da saznate kojim modelima imate pristup, pokrenite `COdo models`
 

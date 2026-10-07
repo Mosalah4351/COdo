@@ -18,7 +18,7 @@ Pour ajouter un fournisseur, vous devez :
 ### Informations d'identification
 
 Lorsque vous ajoutez les clés API d'un fournisseur avec la commande `/connect`, elles sont stockées
-en `~/.local/share/opencode/auth.json`.
+en `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -849,7 +849,7 @@ Pour accéder aux outils GitLab (demandes de fusion, tickets, pipelines, CI/CD, 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1029,7 +1029,7 @@ Si vous voyez une fonctionnalité ou un modèle d'Helicone qui n'est pas configu
 
 Voici le [Répertoire des modèles d'Helicone](https://helicone.ai/models), vous en aurez besoin pour récupérer les identifiants des modèles que vous souhaitez ajouter.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1057,7 +1057,7 @@ Voici le [Répertoire des modèles d'Helicone](https://helicone.ai/models), vous
 
 Helicone prend en charge les en-têtes personnalisés pour des fonctionnalités telles que la mise en cache, le suivi des utilisateurs et la gestion des sessions. Ajoutez-les à la configuration de votre fournisseur en utilisant `options.headers` :
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1088,7 +1088,7 @@ Ajoutez-le à votre configuration.
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

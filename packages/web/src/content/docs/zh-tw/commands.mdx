@@ -17,9 +17,9 @@ description: 為重複任務建立自訂指令。
 
 在 `commands/` 目錄中建立 markdown 檔案來定義自訂指令。
 
-建立 `.opencode/commands/test.md`：
+建立 `.COdo/commands/test.md`：
 
-```md title=".opencode/commands/test.md"
+```md title=".COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -79,10 +79,10 @@ frontmatter 定義指令屬性，內容則成為範本。
 
 您還可以使用 markdown 檔案定義指令。將它們放在：
 
-- 全域：`~/.config/opencode/commands/`
-- 專案層級：`.opencode/commands/`
+- 全域：`~/.config/COdo/commands/`
+- 專案層級：`.COdo/commands/`
 
-```markdown title="~/.config/opencode/commands/test.md"
+```markdown title="~/.config/COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -111,7 +111,7 @@ markdown 檔案名稱即為指令名稱。例如，`test.md` 允許您執行：
 
 使用 `$ARGUMENTS` 佔位符向指令傳遞參數。
 
-```md title=".opencode/commands/component.md"
+```md title=".COdo/commands/component.md"
 ---
 description: Create a new component
 ---
@@ -137,7 +137,7 @@ Include proper typing and basic structure.
 
 例如：
 
-```md title=".opencode/commands/create-file.md"
+```md title=".COdo/commands/create-file.md"
 ---
 description: Create a new file with content
 ---
@@ -166,7 +166,7 @@ with the following content: $3
 
 例如，建立一個分析測試覆蓋率的自訂指令：
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".COdo/commands/analyze-coverage.md"
 ---
 description: Analyze test coverage
 ---
@@ -179,7 +179,7 @@ Based on these results, suggest improvements to increase coverage.
 
 或者查看最近的變更：
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".COdo/commands/review-changes.md"
 ---
 description: Review recent changes
 ---
@@ -198,7 +198,7 @@ Review these changes and suggest any improvements.
 
 使用 `@` 後跟檔案名稱在指令中參照檔案。
 
-```md title=".opencode/commands/review-component.md"
+```md title=".COdo/commands/review-component.md"
 ---
 description: Review component
 ---

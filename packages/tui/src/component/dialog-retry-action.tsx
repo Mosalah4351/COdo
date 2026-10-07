@@ -5,6 +5,7 @@ import { selectedForeground, useTheme } from "../context/theme"
 import { useDialog, type DialogContext } from "../ui/dialog"
 import { Link } from "../ui/link"
 import { BgPulse } from "./bg-pulse"
+import { RtlText } from "./rtl-text"
 import { useBindings } from "../keymap"
 
 const GO_URL = "https://COdo.ai/go"
@@ -85,17 +86,17 @@ export function DialogRetryAction(props: DialogRetryActionProps) {
       ) : null}
       <box zIndex={1} paddingLeft={PAD_X} paddingRight={PAD_X} paddingBottom={1} gap={1}>
         <box flexDirection="row" justifyContent="space-between">
-          <text attributes={TextAttributes.BOLD} fg={theme.text} bg={textBg()}>
+          <RtlText attributes={TextAttributes.BOLD} fg={theme.text} bg={textBg()}>
             {props.title}
-          </text>
-          <text fg={theme.textMuted} bg={textBg()} onMouseUp={() => dialog.clear()}>
+          </RtlText>
+          <RtlText fg={theme.textMuted} bg={textBg()} onMouseUp={() => dialog.clear()}>
             esc
-          </text>
+          </RtlText>
         </box>
         <box gap={0}>
-          <text fg={theme.textMuted} bg={textBg()}>
+          <RtlText fg={theme.textMuted} bg={textBg()}>
             {props.message}
-          </text>
+          </RtlText>
         </box>
         {props.link ? (
           showGoTreatment() ? (
@@ -118,13 +119,13 @@ export function DialogRetryAction(props: DialogRetryActionProps) {
             onMouseOver={() => setSelected("dismiss")}
             onMouseUp={() => dismiss(props, dialog)}
           >
-            <text
+            <RtlText
               fg={selected() === "dismiss" ? fg : theme.textMuted}
               bg={selected() === "dismiss" ? undefined : textBg()}
               attributes={selected() === "dismiss" ? TextAttributes.BOLD : undefined}
             >
               don't show again
-            </text>
+            </RtlText>
           </box>
           <box
             paddingLeft={2}
@@ -133,13 +134,13 @@ export function DialogRetryAction(props: DialogRetryActionProps) {
             onMouseOver={() => setSelected("action")}
             onMouseUp={() => runAction(props, dialog)}
           >
-            <text
+            <RtlText
               fg={selected() === "action" ? fg : theme.text}
               bg={selected() === "action" ? undefined : textBg()}
               attributes={selected() === "action" ? TextAttributes.BOLD : undefined}
             >
               {props.label}
-            </text>
+            </RtlText>
           </box>
         </box>
       </box>

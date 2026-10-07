@@ -11,7 +11,7 @@ description: ปัญหาทั่วไปและวิธีแก้ป�
 
 ไฟล์บันทึกถูกเขียนไปที่:
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: กด `WIN+R` แล้ววาง `%USERPROFILE%\.local\share\COdo\log`
 
 ไฟล์บันทึกจะถูกตั้งชื่อด้วยการประทับเวลา (เช่น `2025-01-09T123456.log`) และไฟล์บันทึกล่าสุด 10 ไฟล์จะถูกเก็บไว้
@@ -24,7 +24,7 @@ description: ปัญหาทั่วไปและวิธีแก้ป�
 
 COdo เก็บข้อมูลเซสชันและข้อมูลแอปพลิเคชันอื่น ๆ ไว้บนดิสก์ที่:
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: กด `WIN+R` แล้ววาง `%USERPROFILE%\.local\share\COdo`
 
 ไดเรกทอรีนี้ประกอบด้วย:
@@ -57,8 +57,8 @@ COdo Desktop รันเซิร์ฟเวอร์ COdo ในเครื�
 
 เปิดไฟล์กำหนดค่าส่วนกลางของคุณแล้วมองหาคีย์ `plugin`
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (หรือ `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (การติดตั้งเก่ากว่า): `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc` (หรือ `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (การติดตั้งเก่ากว่า): `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: กด `WIN+R` แล้ววาง `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 หากคุณได้กำหนดค่าปลั๊กอินไว้ ให้ปิดการใช้งานชั่วคราวโดยลบคีย์ออกหรือตั้งค่าเป็นอาร์เรย์ว่าง:
@@ -75,10 +75,10 @@ COdo Desktop รันเซิร์ฟเวอร์ COdo ในเครื�
 COdo ยังสามารถโหลดปลั๊กอินในเครื่องจากดิสก์ได้ ย้ายสิ่งเหล่านี้ออกไปชั่วคราว (หรือเปลี่ยนชื่อโฟลเดอร์) และรีสตาร์ทแอปเดสก์ท็อป:
 
 - **ปลั๊กอินสากล**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: กด `WIN+R` แล้ววาง `%USERPROFILE%\.config\COdo\plugins`
 - **ปลั๊กอินโครงการ** (เฉพาะในกรณีที่คุณใช้การกำหนดค่าต่อโครงการ)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 หากแอปเริ่มทำงานอีกครั้ง ให้เปิดใช้งานปลั๊กอินอีกครั้งทีละรายการเพื่อดูว่าปลั๊กอินใดเป็นสาเหตุของปัญหา
 
@@ -115,9 +115,9 @@ COdo Desktop สามารถเริ่มต้นเซิร์ฟเว�
 
 #### ตรวจสอบตัวแปรสภาพแวดล้อม
 
-หากคุณตั้งค่า `OPENCODE_PORT` ในสภาพแวดล้อมของคุณ แอปเดสก์ท็อปจะพยายามใช้พอร์ตนั้นสำหรับเซิร์ฟเวอร์ภายในเครื่อง
+หากคุณตั้งค่า `CODO_PORT` ในสภาพแวดล้อมของคุณ แอปเดสก์ท็อปจะพยายามใช้พอร์ตนั้นสำหรับเซิร์ฟเวอร์ภายในเครื่อง
 
-- ยกเลิกการตั้งค่า `OPENCODE_PORT` (หรือเลือกพอร์ตว่าง) แล้วรีสตาร์ท
+- ยกเลิกการตั้งค่า `CODO_PORT` (หรือเลือกพอร์ตว่าง) แล้วรีสตาร์ท
 
 ---
 
@@ -177,7 +177,7 @@ COdo Desktop จะแสดงการแจ้งเตือนของร�
 
    วิธีที่ดีที่สุดในการรายงานจุดบกพร่องหรือขอคุณสมบัติคือผ่านพื้นที่เก็บข้อมูล GitHub ของเรา:
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    ก่อนที่จะสร้างปัญหาใหม่ ให้ค้นหาปัญหาที่มีอยู่เพื่อดูว่าปัญหาของคุณได้รับการรายงานแล้วหรือไม่
 
@@ -225,7 +225,7 @@ COdo Desktop จะแสดงการแจ้งเตือนของร�
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 หากต้องการทราบว่าคุณมีสิทธิ์เข้าถึงรุ่นใด ให้เรียกใช้ `COdo models`
 

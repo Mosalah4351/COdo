@@ -188,10 +188,10 @@ _الوضع_: `primary`
 
 يمكنك أيضا تعريف الوكلاء باستخدام ملفات Markdown. ضعها في:
 
-- عام: `~/.config/opencode/agents/`
-- لكل مشروع: `.opencode/agents/`
+- عام: `~/.config/COdo/agents/`
+- لكل مشروع: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Provide constructive feedback without making direct changes.
 }
 ```
 
-يستخدم معرّف النموذج في إعدادات COdo الصيغة `provider/model-id`. على سبيل المثال، إذا كنت تستخدم [COdo Zen](/docs/zen)، فستستخدم `opencode/gpt-5.1-codex` لـ GPT 5.1 Codex.
+يستخدم معرّف النموذج في إعدادات COdo الصيغة `provider/model-id`. على سبيل المثال، إذا كنت تستخدم [COdo Zen](/docs/zen)، فستستخدم `COdo/gpt-5.1-codex` لـ GPT 5.1 Codex.
 
 ---
 
@@ -454,7 +454,7 @@ Provide constructive feedback without making direct changes.
 
 يمكنك أيضا ضبط الأذونات في وكلاء Markdown.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -704,14 +704,14 @@ COdo agent create
 فيما يلي بعض أمثلة الوكلاء التي قد تجدها مفيدة.
 
 :::tip
-هل لديك وكيل تود مشاركته؟ [قدّم PR](https://github.com/anomalyco/COdo).
+هل لديك وكيل تود مشاركته؟ [قدّم PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### وكيل التوثيق
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -733,7 +733,7 @@ Focus on:
 
 ### مدقق أمني
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

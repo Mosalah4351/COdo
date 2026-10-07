@@ -5,6 +5,7 @@ import { getScrollAcceleration } from "../util/scroll"
 import { useClipboard } from "../context/clipboard"
 import { InstallationVersion } from "@codo-ai/core/installation/version"
 import { useExit } from "../context/exit"
+import { RtlText } from "./rtl-text"
 
 export function ErrorComponent(props: { error: Error; reset: () => void; mode?: "dark" | "light" }) {
   const term = useTerminalDimensions()
@@ -51,29 +52,29 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
   return (
     <box flexDirection="column" gap={1} backgroundColor={colors.bg}>
       <box flexDirection="row" gap={1} alignItems="center">
-        <text attributes={TextAttributes.BOLD} fg={colors.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={colors.text}>
           Please report an issue.
-        </text>
+        </RtlText>
         <box onMouseUp={copyIssueURL} backgroundColor={colors.primary} padding={1}>
-          <text attributes={TextAttributes.BOLD} fg={colors.bg}>
+          <RtlText attributes={TextAttributes.BOLD} fg={colors.bg}>
             Copy issue URL (exception info pre-filled)
-          </text>
+          </RtlText>
         </box>
-        {copied() && <text fg={colors.muted}>Successfully copied</text>}
+        {copied() && <RtlText fg={colors.muted}>Successfully copied</RtlText>}
       </box>
       <box flexDirection="row" gap={2} alignItems="center">
-        <text fg={colors.text}>A fatal error occurred!</text>
+        <RtlText fg={colors.text}>A fatal error occurred!</RtlText>
         <box onMouseUp={props.reset} backgroundColor={colors.primary} padding={1}>
-          <text fg={colors.bg}>Reset TUI</text>
+          <RtlText fg={colors.bg}>Reset TUI</RtlText>
         </box>
         <box onMouseUp={() => void exit()} backgroundColor={colors.primary} padding={1}>
-          <text fg={colors.bg}>Exit</text>
+          <RtlText fg={colors.bg}>Exit</RtlText>
         </box>
       </box>
       <scrollbox height={Math.floor(term().height * 0.7)} scrollAcceleration={getScrollAcceleration()}>
-        <text fg={colors.muted}>{props.error.stack}</text>
+        <RtlText fg={colors.muted}>{props.error.stack}</RtlText>
       </scrollbox>
-      <text fg={colors.text}>{props.error.message}</text>
+      <RtlText fg={colors.text}>{props.error.message}</RtlText>
     </box>
   )
 }

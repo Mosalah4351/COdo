@@ -156,7 +156,7 @@ Cerca file usando pattern glob come `**/*.js` o `src/**/*.ts`. Restituisce i per
 Interagisci con i server LSP configurati per ottenere funzionalita' di code intelligence come definizioni, riferimenti, hover info e call hierarchy.
 
 :::note
-Questo strumento e' disponibile solo quando `OPENCODE_EXPERIMENTAL_LSP_TOOL=true` (oppure `OPENCODE_EXPERIMENTAL=true`).
+Questo strumento e' disponibile solo quando `CODO_EXPERIMENTAL_LSP_TOOL=true` (oppure `CODO_EXPERIMENTAL=true`).
 :::
 
 ```json title="COdo.json" {4}
@@ -253,12 +253,12 @@ Permette all'LLM di recuperare e leggere pagine web. Utile per consultare docume
 Cerca informazioni sul web.
 
 :::note
-Questo strumento e' disponibile solo quando usi il provider COdo o quando la variabile d'ambiente `OPENCODE_ENABLE_EXA` e' impostata a un valore truthy (ad esempio `true` o `1`).
+Questo strumento e' disponibile solo quando usi il provider COdo o quando la variabile d'ambiente `CODO_ENABLE_EXA` e' impostata a un valore truthy (ad esempio `true` o `1`).
 
 Per abilitarlo all'avvio di COdo:
 
 ```bash
-OPENCODE_ENABLE_EXA=1 COdo
+CODO_ENABLE_EXA=1 COdo
 ```
 
 :::

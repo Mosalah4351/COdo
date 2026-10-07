@@ -11,7 +11,7 @@ To debug issues with COdo, start by checking the logs and local data it stores o
 
 Log files are written to:
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: Press `WIN+R` and paste `%USERPROFILE%\.local\share\COdo\log`
 
 Log files are named with timestamps (e.g., `2025-01-09T123456.log`) and the most recent 10 log files are kept.
@@ -24,7 +24,7 @@ You can set the log level with the `--log-level` command-line option to get more
 
 COdo stores session data and other application data on disk at:
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: Press `WIN+R` and paste `%USERPROFILE%\.local\share\COdo`
 
 This directory contains:
@@ -71,8 +71,8 @@ If the desktop app is crashing on launch, hanging, or behaving strangely, start 
 
 Open your global config file and look for a `plugin` key.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (or `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (older installs): `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc` (or `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (older installs): `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: Press `WIN+R` and paste `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 If you have plugins configured, temporarily disable them by removing the key or setting it to an empty array:
@@ -89,10 +89,10 @@ If you have plugins configured, temporarily disable them by removing the key or 
 COdo can also load local plugins from disk. Temporarily move these out of the way (or rename the folder) and restart the desktop app:
 
 - **Global plugins**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: Press `WIN+R` and paste `%USERPROFILE%\.config\COdo\plugins`
 - **Project plugins** (only if you use per-project config)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 If the app starts working again, re-enable plugins one at a time to find which one is causing the issue.
 
@@ -129,9 +129,9 @@ If your `COdo.json(c)` contains a `server` section, temporarily remove it and re
 
 #### Check environment variables
 
-If you have `OPENCODE_PORT` set in your environment, the desktop app will try to use that port for the local server.
+If you have `CODO_PORT` set in your environment, the desktop app will try to use that port for the local server.
 
-- Unset `OPENCODE_PORT` (or pick a free port) and restart.
+- Unset `CODO_PORT` (or pick a free port) and restart.
 
 ---
 
@@ -191,7 +191,7 @@ If you're experiencing issues with COdo:
 
    The best way to report bugs or request features is through our GitHub repository:
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    Before creating a new issue, search existing issues to see if your problem has already been reported.
 
@@ -239,7 +239,7 @@ Examples:
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 To figure out what models you have access to, run `COdo models`
 

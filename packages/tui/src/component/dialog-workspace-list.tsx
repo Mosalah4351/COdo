@@ -10,6 +10,7 @@ import { createStore } from "solid-js/store"
 import { errorMessage } from "../util/error"
 import { useSDK } from "../context/sdk"
 import { useToast } from "../ui/toast"
+import { RtlText } from "./rtl-text"
 
 type WorkspaceOption = { workspace: Workspace }
 
@@ -46,7 +47,7 @@ export function DialogWorkspaceList() {
           value: { workspace },
           footer: workspace.type,
           details: expanded[workspace.id] && workspace.directory ? [workspace.directory] : undefined,
-          gutter: () => <text fg={status === "connected" ? theme.success : theme.error}>●</text>,
+          gutter: () => <RtlText fg={status === "connected" ? theme.success : theme.error}>●</RtlText>,
         }
       }),
   )

@@ -21,6 +21,7 @@ import type { PromptInfo } from "../../prompt/history"
 import { useFrecency } from "../../prompt/frecency"
 import { useBindings, useCommandSlashes, useCOdoModeStack } from "../../keymap"
 import { displayCharAt, mentionTriggerIndex } from "../../prompt/display"
+import { RtlText } from "../rtl-text"
 
 function removeLineRange(input: string) {
   const hashIndex = input.lastIndexOf("#")
@@ -745,7 +746,7 @@ export function Autocomplete(props: {
           each={options()}
           fallback={
             <box paddingLeft={1} paddingRight={1}>
-              <text fg={theme.textMuted}>No matching items</text>
+              <RtlText fg={theme.textMuted}>No matching items</RtlText>
             </box>
           }
         >
@@ -768,13 +769,13 @@ export function Autocomplete(props: {
               }}
               onMouseUp={() => select()}
             >
-              <text fg={index === store.selected ? selectedForeground(theme) : theme.text} flexShrink={0}>
+              <RtlText fg={index === store.selected ? selectedForeground(theme) : theme.text} flexShrink={0}>
                 {option().display}
-              </text>
+              </RtlText>
               <Show when={option().description}>
-                <text fg={index === store.selected ? selectedForeground(theme) : theme.textMuted} wrapMode="none">
+                <RtlText fg={index === store.selected ? selectedForeground(theme) : theme.textMuted} wrapMode="none">
                   {option().description}
-                </text>
+                </RtlText>
               </Show>
             </box>
           )}

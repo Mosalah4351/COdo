@@ -32,7 +32,8 @@ jobs:
       - uses: ./.github/actions/setup-bun
 
       - name: Install opencode
-        run: curl -fsSL https://opencode.ai/install | bash
+        # Pinned version - bump deliberately; unpinned curl|bash would turn any opencode.ai/CDN/DNS compromise into runner RCE with secrets.
+        run: bun i -g opencode-ai@1.18.23
 
       - name: Get PR details
         id: pr-details

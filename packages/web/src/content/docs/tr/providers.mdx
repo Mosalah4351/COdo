@@ -18,7 +18,7 @@ Bir sağlayıcı eklemek için şunları yapmanız gerekir:
 ### Kimlik Bilgileri
 
 Bir sağlayıcının API anahtarlarını `/connect` komutuyla eklediğinizde, bunlar saklanır
-`~/.local/share/opencode/auth.json` içinde.
+`~/.local/share/COdo/auth.json` içinde.
 
 ---
 
@@ -843,7 +843,7 @@ GitLab araçlarına (birleştirme istekleri, sorunlar, işlem hatları, CI/CD vb
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1022,7 +1022,7 @@ Helicone'un COdo aracılığıyla otomatik olarak yapılandırılmayan bir özel
 
 İşte [Helicone's Model Directory](https://helicone.ai/models), eklemek istediğiniz modellerin kimliklerini almak için buna ihtiyacınız olacak.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1050,7 +1050,7 @@ Helicone'un COdo aracılığıyla otomatik olarak yapılandırılmayan bir özel
 
 Helicone, önbelleğe alma, kullanıcı izleme ve oturum yönetimi gibi özellikler için özel başlıkları destekler. `options.headers` kullanarak bunları sağlayıcınızın yapılandırmasına ekleyin:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1081,7 +1081,7 @@ Yapılandırmanıza ekleyin.
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

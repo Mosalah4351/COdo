@@ -7,6 +7,8 @@ import { useTheme, selectedForeground } from "../../context/theme"
 import type { PermissionRequest } from "@codo-ai/sdk/v2"
 import { useSDK } from "../../context/sdk"
 import { SplitBorder } from "../../ui/border"
+import { RtlText } from "../../component/rtl-text"
+import { RtlDiff } from "../../component/rtl-content"
 import { useSync } from "../../context/sync"
 import { useProject } from "../../context/project"
 import { filetype } from "../../util/filetype"
@@ -16,6 +18,7 @@ import { getScrollAcceleration } from "../../util/scroll"
 import { useTuiConfig } from "../../config"
 import { CODO_BASE_MODE, useBindings, useCommandShortcut } from "../../keymap"
 import { usePathFormatter } from "../../context/path-format"
+import { hasReplied, markReplied, skipPermissions } from "../../util/permission-modes"
 
 type PermissionStage = "permission" | "always" | "reject"
 
@@ -57,7 +60,7 @@ function EditBody(props: { request: PermissionRequest }) {
             },
           }}
         >
-          <diff
+          <RtlDiff
             diff={diff()}
             view={view()}
             filetype={ft()}
@@ -80,7 +83,7 @@ function EditBody(props: { request: PermissionRequest }) {
       </Show>
       <Show when={!diff()}>
         <box paddingLeft={1}>
-          <text fg={theme.textMuted}>No diff provided</text>
+          <RtlText fg={theme.textMuted}>No diff provided</RtlText>
         </box>
       </Show>
     </box>
@@ -93,15 +96,15 @@ function TextBody(props: { title: string; description?: string; icon?: string })
     <>
       <box flexDirection="row" gap={1} paddingLeft={1}>
         <Show when={props.icon}>
-          <text fg={theme.textMuted} flexShrink={0}>
+          <RtlText fg={theme.textMuted} flexShrink={0}>
             {props.icon}
-          </text>
+          </RtlText>
         </Show>
-        <text fg={theme.textMuted}>{props.title}</text>
+        <RtlText fg={theme.textMuted}>{props.title}</RtlText>
       </box>
       <Show when={props.description}>
         <box paddingLeft={1}>
-          <text fg={theme.text}>{props.description}</text>
+          <RtlText fg={theme.text}>{props.description}</RtlText>
         </box>
       </Show>
     </>
@@ -116,6 +119,17 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
     stage: "permission" as PermissionStage,
   })
   const pathFormatter = usePathFormatter()
+
+  // Skip-permissions mode: approve immediately, no dialog.
+  if (skipPermissions() && !hasReplied(props.request.id)) {
+    markReplied(props.request.id)
+    void sdk.client.permission.reply({
+      reply: "once",
+      requestID: props.request.id,
+      directory: props.directory,
+      workspace: project.workspace.current(),
+    })
+  }
 
   const session = createMemo(() => sync.data.session.find((s) => s.id === props.request.sessionID))
 
@@ -145,14 +159,14 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               </Match>
               <Match when={true}>
                 <box paddingLeft={1} gap={1}>
-                  <text fg={theme.textMuted}>This will allow the following patterns until COdo is restarted</text>
+                  <RtlText fg={theme.textMuted}>This will allow the following patterns until COdo is restarted</RtlText>
                   <box>
                     <For each={props.request.always}>
                       {(pattern) => (
-                        <text fg={theme.text}>
+                        <RtlText fg={theme.text}>
                           {"- "}
                           {pattern}
-                        </text>
+                        </RtlText>
                       )}
                     </For>
                   </box>
@@ -215,7 +229,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={filePath}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Path: " + pathFormatter.format(filePath)}</text>
+                      <RtlText fg={theme.textMuted}>{"Path: " + pathFormatter.format(filePath)}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -230,7 +244,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={pattern}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Pattern: " + pattern}</text>
+                      <RtlText fg={theme.textMuted}>{"Pattern: " + pattern}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -245,7 +259,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={pattern}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Pattern: " + pattern}</text>
+                      <RtlText fg={theme.textMuted}>{"Pattern: " + pattern}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -261,7 +275,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={dir}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Path: " + pathFormatter.format(dir)}</text>
+                      <RtlText fg={theme.textMuted}>{"Path: " + pathFormatter.format(dir)}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -278,7 +292,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={command}>
                     <box paddingLeft={1}>
-                      <text fg={theme.text}>{"$ " + command}</text>
+                      <RtlText fg={theme.text}>{"$ " + command}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -294,7 +308,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={desc}>
                     <box paddingLeft={1}>
-                      <text fg={theme.text}>{"◉ " + desc}</text>
+                      <RtlText fg={theme.text}>{"◉ " + desc}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -309,7 +323,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={url}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"URL: " + url}</text>
+                      <RtlText fg={theme.textMuted}>{"URL: " + url}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -324,7 +338,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={query}>
                     <box paddingLeft={1}>
-                      <text fg={theme.textMuted}>{"Query: " + query}</text>
+                      <RtlText fg={theme.textMuted}>{"Query: " + query}</RtlText>
                     </box>
                   </Show>
                 ),
@@ -349,9 +363,9 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 body: (
                   <Show when={patterns.length > 0}>
                     <box paddingLeft={1} gap={1}>
-                      <text fg={theme.textMuted}>Patterns</text>
+                      <RtlText fg={theme.textMuted}>Patterns</RtlText>
                       <box>
-                        <For each={patterns}>{(p) => <text fg={theme.text}>{"- " + p}</text>}</For>
+                        <For each={patterns}>{(p) => <RtlText fg={theme.text}>{"- " + p}</RtlText>}</For>
                       </box>
                     </box>
                   </Show>
@@ -365,7 +379,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
                 title: "Continue after repeated failures",
                 body: (
                   <box paddingLeft={1}>
-                    <text fg={theme.textMuted}>This keeps the session running despite repeated failures.</text>
+                    <RtlText fg={theme.textMuted}>This keeps the session running despite repeated failures.</RtlText>
                   </box>
                 ),
               }
@@ -376,7 +390,7 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               title: `Call tool ${permission}`,
               body: (
                 <box paddingLeft={1}>
-                  <text fg={theme.textMuted}>{"Tool: " + permission}</text>
+                  <RtlText fg={theme.textMuted}>{"Tool: " + permission}</RtlText>
                 </box>
               ),
             }
@@ -387,14 +401,14 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
           const header = () => (
             <box flexDirection="column" gap={0}>
               <box flexDirection="row" gap={1} flexShrink={0}>
-                <text fg={theme.warning}>{"△"}</text>
-                <text fg={theme.text}>Permission required</text>
+                <RtlText fg={theme.warning}>{"△"}</RtlText>
+                <RtlText fg={theme.text}>Permission required</RtlText>
               </box>
               <box flexDirection="row" gap={1} paddingLeft={2} flexShrink={0}>
-                <text fg={theme.textMuted} flexShrink={0}>
+                <RtlText fg={theme.textMuted} flexShrink={0}>
                   {current.icon}
-                </text>
-                <text fg={theme.text}>{current.title}</text>
+                </RtlText>
+                <RtlText fg={theme.text}>{current.title}</RtlText>
               </box>
             </box>
           )
@@ -481,11 +495,11 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
     >
       <box gap={1} paddingLeft={1} paddingRight={3} paddingTop={1} paddingBottom={1}>
         <box flexDirection="row" gap={1} paddingLeft={1}>
-          <text fg={theme.error}>{"△"}</text>
-          <text fg={theme.text}>Reject permission</text>
+          <RtlText fg={theme.error}>{"△"}</RtlText>
+          <RtlText fg={theme.text}>Reject permission</RtlText>
         </box>
         <box paddingLeft={1}>
-          <text fg={theme.textMuted}>Tell COdo what to do differently</text>
+          <RtlText fg={theme.textMuted}>Tell COdo what to do differently</RtlText>
         </box>
       </box>
       <box
@@ -511,12 +525,12 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
           cursorColor={theme.primary}
         />
         <box flexDirection="row" gap={2} flexShrink={0}>
-          <text fg={theme.text}>
+          <RtlText fg={theme.text}>
             enter <span style={{ fg: theme.textMuted }}>confirm</span>
-          </text>
-          <text fg={theme.text}>
+          </RtlText>
+          <RtlText fg={theme.text}>
             esc <span style={{ fg: theme.textMuted }}>cancel</span>
-          </text>
+          </RtlText>
         </box>
       </box>
     </box>
@@ -652,8 +666,8 @@ function Prompt<const T extends Record<string, string>>(props: {
           when={props.header}
           fallback={
             <box flexDirection="row" gap={1} paddingLeft={1} flexShrink={0}>
-              <text fg={theme.warning}>{"△"}</text>
-              <text fg={theme.text}>{props.title}</text>
+              <RtlText fg={theme.warning}>{"△"}</RtlText>
+              <RtlText fg={theme.text}>{props.title}</RtlText>
             </box>
           }
         >
@@ -688,25 +702,25 @@ function Prompt<const T extends Record<string, string>>(props: {
                   props.onSelect(option)
                 }}
               >
-                <text fg={option === store.selected ? selectedForeground(theme, theme.warning) : theme.textMuted}>
+                <RtlText fg={option === store.selected ? selectedForeground(theme, theme.warning) : theme.textMuted}>
                   {props.options[option]}
-                </text>
+                </RtlText>
               </box>
             )}
           </For>
         </box>
         <box flexDirection="row" gap={2} flexShrink={0}>
           <Show when={props.fullscreen}>
-            <text fg={theme.text}>
+            <RtlText fg={theme.text}>
               {fullscreenHint()} <span style={{ fg: theme.textMuted }}>{hint()}</span>
-            </text>
+            </RtlText>
           </Show>
-          <text fg={theme.text}>
+          <RtlText fg={theme.text}>
             {"⇆"} <span style={{ fg: theme.textMuted }}>select</span>
-          </text>
-          <text fg={theme.text}>
+          </RtlText>
+          <RtlText fg={theme.text}>
             enter <span style={{ fg: theme.textMuted }}>confirm</span>
-          </text>
+          </RtlText>
         </box>
       </box>
     </box>

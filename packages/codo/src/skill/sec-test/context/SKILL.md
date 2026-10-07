@@ -30,7 +30,7 @@ Recurring patterns: <e.g. "third A03 finding this sprint — input validation st
 
 4. **Cache in session state** so the next persona call doesn't reread everything. The orchestrator passes this block in the `Context:` field of every dispatch.
 
-Return `## CONTEXT COMPLETE` with the rendered block.
+Return `## SEC-RESULT skill=sec-test:context status=complete` with the rendered block.
 
 ## Rules
 

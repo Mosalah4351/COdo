@@ -13,6 +13,7 @@
 // All state logic lives in question.shared.ts as a pure state machine.
 // This component just renders it and dispatches keyboard events.
 /** @jsxImportSource @opentui/solid */
+import { RtlText } from "@codo-ai/tui/component/rtl-text"
 import type { TextareaRenderable } from "@opentui/core"
 import { useKeyboard, useTerminalDimensions } from "@opentui/solid"
 import { For, Show, createEffect, createMemo, createSignal } from "solid-js"
@@ -294,9 +295,9 @@ export function RunQuestionBody(props: {
                       if (!disabled()) setTab(index())
                     }}
                   >
-                    <text fg={active() ? props.theme.surface : answered() ? props.theme.text : props.theme.muted}>
+                    <RtlText fg={active() ? props.theme.surface : answered() ? props.theme.text : props.theme.muted}>
                       {item.header}
-                    </text>
+                    </RtlText>
                   </box>
                 )
               }}
@@ -309,7 +310,7 @@ export function RunQuestionBody(props: {
                 if (!disabled()) setTab(props.request.questions.length)
               }}
             >
-              <text fg={confirm() ? props.theme.surface : props.theme.muted}>Confirm</text>
+              <RtlText fg={confirm() ? props.theme.surface : props.theme.muted}>Confirm</RtlText>
             </box>
           </box>
         </Show>
@@ -330,7 +331,7 @@ export function RunQuestionBody(props: {
               >
                 <box width="100%" flexDirection="column" gap={1}>
                   <box paddingLeft={1}>
-                    <text fg={props.theme.text}>Review</text>
+                    <RtlText fg={props.theme.text}>Review</RtlText>
                   </box>
                   <For each={props.request.questions}>
                     {(item, index) => {
@@ -338,12 +339,12 @@ export function RunQuestionBody(props: {
                       const answered = () => Boolean(value())
                       return (
                         <box paddingLeft={1}>
-                          <text wrapMode="word">
+                          <RtlText wrapMode="word">
                             <span style={{ fg: props.theme.muted }}>{item.header}:</span>{" "}
                             <span style={{ fg: answered() ? props.theme.text : props.theme.error }}>
                               {answered() ? value() : "(not answered)"}
                             </span>
-                          </text>
+                          </RtlText>
                         </box>
                       )
                     }}
@@ -355,10 +356,10 @@ export function RunQuestionBody(props: {
         >
           <box width="100%" flexGrow={1} flexShrink={1} paddingLeft={1} gap={1}>
             <box>
-              <text fg={props.theme.text} wrapMode="word">
+              <RtlText fg={props.theme.text} wrapMode="word">
                 {info()?.question}
                 {info()?.multiple ? " (select all that apply)" : ""}
-              </text>
+              </RtlText>
             </box>
 
             <box flexGrow={1} flexShrink={1}>
@@ -399,23 +400,23 @@ export function RunQuestionBody(props: {
                         >
                           <box flexDirection="row">
                             <box backgroundColor={active() ? props.theme.line : undefined} paddingRight={1}>
-                              <text fg={active() ? props.theme.highlight : props.theme.muted}>{`${index() + 1}.`}</text>
+                              <RtlText fg={active() ? props.theme.highlight : props.theme.muted}>{`${index() + 1}.`}</RtlText>
                             </box>
                             <box backgroundColor={active() ? props.theme.line : undefined}>
-                              <text
+                              <RtlText
                                 fg={active() ? props.theme.highlight : hit() ? props.theme.success : props.theme.text}
                               >
                                 {info()?.multiple ? `[${hit() ? "✓" : " "}] ${item.label}` : item.label}
-                              </text>
+                              </RtlText>
                             </box>
                             <Show when={!info()?.multiple}>
-                              <text fg={props.theme.success}>{hit() ? " ✓" : ""}</text>
+                              <RtlText fg={props.theme.success}>{hit() ? " ✓" : ""}</RtlText>
                             </Show>
                           </box>
                           <box paddingLeft={3}>
-                            <text fg={props.theme.muted} wrapMode="word">
+                            <RtlText fg={props.theme.muted} wrapMode="word">
                               {item.description}
-                            </text>
+                            </RtlText>
                           </box>
                         </box>
                       )
@@ -444,21 +445,21 @@ export function RunQuestionBody(props: {
                     >
                       <box flexDirection="row">
                         <box backgroundColor={other() ? props.theme.line : undefined} paddingRight={1}>
-                          <text
+                          <RtlText
                             fg={other() ? props.theme.highlight : props.theme.muted}
-                          >{`${(info()?.options.length ?? 0) + 1}.`}</text>
+                          >{`${(info()?.options.length ?? 0) + 1}.`}</RtlText>
                         </box>
                         <box backgroundColor={other() ? props.theme.line : undefined}>
-                          <text
+                          <RtlText
                             fg={other() ? props.theme.highlight : picked() ? props.theme.success : props.theme.text}
                           >
                             {info()?.multiple
                               ? `[${picked() ? "✓" : " "}] Type your own answer`
                               : "Type your own answer"}
-                          </text>
+                          </RtlText>
                         </box>
                         <Show when={!info()?.multiple}>
-                          <text fg={props.theme.success}>{picked() ? " ✓" : ""}</text>
+                          <RtlText fg={props.theme.success}>{picked() ? " ✓" : ""}</RtlText>
                         </Show>
                       </box>
                       <Show
@@ -466,9 +467,9 @@ export function RunQuestionBody(props: {
                         fallback={
                           <Show when={input()}>
                             <box paddingLeft={3}>
-                              <text fg={props.theme.muted} wrapMode="word">
+                              <RtlText fg={props.theme.muted} wrapMode="word">
                                 {input()}
-                              </text>
+                              </RtlText>
                             </box>
                           </Show>
                         }
@@ -524,9 +525,9 @@ export function RunQuestionBody(props: {
         <Show
           when={!disabled()}
           fallback={
-            <text fg={props.theme.muted} wrapMode="word">
+            <RtlText fg={props.theme.muted} wrapMode="word">
               Waiting for question event...
-            </text>
+            </RtlText>
           }
         >
           <box
@@ -539,31 +540,31 @@ export function RunQuestionBody(props: {
               when={!state().editing}
               fallback={
                 <>
-                  <text fg={props.theme.text}>
+                  <RtlText fg={props.theme.text}>
                     enter <span style={{ fg: props.theme.muted }}>save</span>
-                  </text>
-                  <text fg={props.theme.text}>
+                  </RtlText>
+                  <RtlText fg={props.theme.text}>
                     esc <span style={{ fg: props.theme.muted }}>cancel</span>
-                  </text>
+                  </RtlText>
                 </>
               }
             >
               <Show when={!single()}>
-                <text fg={props.theme.text}>
+                <RtlText fg={props.theme.text}>
                   {"⇆"} <span style={{ fg: props.theme.muted }}>tab</span>
-                </text>
+                </RtlText>
               </Show>
               <Show when={!confirm()}>
-                <text fg={props.theme.text}>
+                <RtlText fg={props.theme.text}>
                   {"↑↓"} <span style={{ fg: props.theme.muted }}>select</span>
-                </text>
+                </RtlText>
               </Show>
-              <text fg={props.theme.text}>
+              <RtlText fg={props.theme.text}>
                 enter <span style={{ fg: props.theme.muted }}>{verb()}</span>
-              </text>
-              <text fg={props.theme.text}>
+              </RtlText>
+              <RtlText fg={props.theme.text}>
                 esc <span style={{ fg: props.theme.muted }}>dismiss</span>
-              </text>
+              </RtlText>
             </Show>
           </box>
         </Show>

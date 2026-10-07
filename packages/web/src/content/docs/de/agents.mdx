@@ -175,10 +175,10 @@ Konfigurieren Sie Agenten in Ihrer `COdo.json`-Konfigurationsdatei:
 
 Sie können Agenten auch mithilfe von Markdown-Dateien definieren. Platzieren Sie sie in:
 
-- Global: `~/.config/opencode/agents/`
-- Pro Projekt: `.opencode/agents/`
+- Global: `~/.config/COdo/agents/`
+- Pro Projekt: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -353,7 +353,7 @@ Wenn Sie kein Modell angeben, verwenden Sie den primären Agenten [model globall
 }
 ```
 
-Die Modell-ID in Ihrer COdo-Konfiguration verwendet das Format `provider/model-id`. Wenn Sie beispielsweise [COdo Zen](/docs/zen) verwenden, würden Sie `opencode/gpt-5.1-codex` für GPT 5.1 Codex verwenden.
+Die Modell-ID in Ihrer COdo-Konfiguration verwendet das Format `provider/model-id`. Wenn Sie beispielsweise [COdo Zen](/docs/zen) verwenden, würden Sie `COdo/gpt-5.1-codex` für GPT 5.1 Codex verwenden.
 
 ---
 
@@ -441,7 +441,7 @@ Sie können diese Berechtigungen pro Agent überschreiben.
 
 Sie können Berechtigungen auch in Markdown-Agenten festlegen.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -691,14 +691,14 @@ Hier sind einige häufige Anwendungsfälle für verschiedene Agenten.
 Hier sind einige Beispielagenten, die für Sie nützlich sein könnten.
 
 :::tip
-Haben Sie einen Agenten, den Sie gerne teilen möchten? [Reichen Sie einen PR ein](https://github.com/anomalyco/COdo).
+Haben Sie einen Agenten, den Sie gerne teilen möchten? [Reichen Sie einen PR ein](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Dokumentationsagent
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -720,7 +720,7 @@ Focus on:
 
 ### Sicherheitsprüfer
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

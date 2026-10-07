@@ -13,8 +13,8 @@ Le skill vengono caricate on-demand tramite lo strumento nativo `skill`: gli age
 Crea una cartella per ogni nome di skill e metti un `SKILL.md` al suo interno.
 COdo cerca in queste posizioni:
 
-- Config di progetto: `.opencode/skills/<name>/SKILL.md`
-- Config globale: `~/.config/opencode/skills/<name>/SKILL.md`
+- Config di progetto: `.COdo/skills/<name>/SKILL.md`
+- Config globale: `~/.config/COdo/skills/<name>/SKILL.md`
 - Progetto compatibile con Claude: `.claude/skills/<name>/SKILL.md`
 - Globale compatibile con Claude: `~/.claude/skills/<name>/SKILL.md`
 - Progetto compatibile con agent: `.agents/skills/<name>/SKILL.md`
@@ -25,9 +25,9 @@ COdo cerca in queste posizioni:
 ## Discovery
 
 Per i percorsi locali al progetto, COdo risale dalla directory di lavoro corrente finche' non raggiunge il worktree git.
-Carica qualsiasi `skills/*/SKILL.md` corrispondente in `.opencode/` e qualsiasi `.claude/skills/*/SKILL.md` o `.agents/skills/*/SKILL.md` corrispondente lungo il percorso.
+Carica qualsiasi `skills/*/SKILL.md` corrispondente in `.COdo/` e qualsiasi `.claude/skills/*/SKILL.md` o `.agents/skills/*/SKILL.md` corrispondente lungo il percorso.
 
-Le definizioni globali vengono caricate anche da `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` e `~/.agents/skills/*/SKILL.md`.
+Le definizioni globali vengono caricate anche da `~/.config/COdo/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` e `~/.agents/skills/*/SKILL.md`.
 
 ---
 
@@ -73,7 +73,7 @@ Tieni la descrizione abbastanza specifica da permettere all'agente di scegliere 
 
 ## Esempio
 
-Crea `.opencode/skills/git-release/SKILL.md` cosi':
+Crea `.COdo/skills/git-release/SKILL.md` cosi':
 
 ```markdown
 ---

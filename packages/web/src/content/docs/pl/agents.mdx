@@ -188,10 +188,10 @@ Skonfiguruj agenta w pliku `COdo.json`:
 
 Możesz także definiować agentów za pomocą plików markdown. Przechowuj je w:
 
-- Globalnie: `~/.config/opencode/agents/`
-- W projekcie: `.opencode/agents/`
+- Globalnie: `~/.config/COdo/agents/`
+- W projekcie: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Jeśli model nie zostanie określony, agenci główni używają [modelu skonfigu
 }
 ```
 
-Identyfikator modelu jest taki sam, jak w konfiguracji COdo w `provider/model-id`. Na przykład, [COdo Zen](/docs/zen), użyj `opencode/gpt-5.1-codex` dla GPT 5.1 Codex.
+Identyfikator modelu jest taki sam, jak w konfiguracji COdo w `provider/model-id`. Na przykład, [COdo Zen](/docs/zen), użyj `COdo/gpt-5.1-codex` dla GPT 5.1 Codex.
 
 ---
 
@@ -454,7 +454,7 @@ Możesz nadpisać to dla każdego agenta.
 
 Można to również ustawić w agentach Markdown.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -704,14 +704,14 @@ Oto kilka typowych zastosowań różnych agentów:
 Oto kilka przykładowych agentów, którzy mogą być przydatni.
 
 :::tip
-Masz agenta, którym warto się podzielić? [Prześlij PR](https://github.com/anomalyco/COdo).
+Masz agenta, którym warto się podzielić? [Prześlij PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Agent Documentation
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -733,7 +733,7 @@ Focus on:
 
 ### Security Auditor
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

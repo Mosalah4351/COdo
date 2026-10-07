@@ -43,16 +43,16 @@ config 파일은 서로 대체되는 방식이 아니라 병합됩니다. 아래
 config source는 다음 순서로 로드됩니다(나중 source가 앞선 source를 override).
 
 1. **Remote config**(`.well-known/COdo`) - 조직 기본값
-2. **Global config**(`~/.config/opencode/opencode.json`) - 사용자 기본 설정
-3. **Custom config**(`OPENCODE_CONFIG` env var) - custom override
+2. **Global config**(`~/.config/COdo/COdo.json`) - 사용자 기본 설정
+3. **Custom config**(`CODO_CONFIG` env var) - custom override
 4. **Project config**(프로젝트의 `COdo.json`) - 프로젝트별 설정
-5. **`.opencode` directories** - agents, commands, plugins
-6. **Inline config**(`OPENCODE_CONFIG_CONTENT` env var) - 런타임 override
+5. **`.COdo` directories** - agents, commands, plugins
+6. **Inline config**(`CODO_CONFIG_CONTENT` env var) - 런타임 override
 
 즉, 프로젝트 config는 전역 기본값을 override할 수 있고, 전역 config는 조직의 Remote 기본값을 override할 수 있습니다.
 
 :::note
-`.opencode` 및 `~/.config/opencode` 디렉토리는 하위 디렉토리에 **복수형 이름**을 사용합니다: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, `themes/`. 단수형 이름(예: `agent/`)도 하위 호환성을 위해 지원합니다.
+`.COdo` 및 `~/.config/COdo` 디렉토리는 하위 디렉토리에 **복수형 이름**을 사용합니다: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/`, `themes/`. 단수형 이름(예: `agent/`)도 하위 호환성을 위해 지원합니다.
 :::
 
 ---
@@ -95,9 +95,9 @@ Remote config는 가장 먼저 로드되어 기본 레이어 역할을 합니다
 
 ### Global
 
-전역 COdo config는 `~/.config/opencode/opencode.json`에 두세요. provider, model, permissions 같은 사용자 전체 기본 설정은 전역 config로 관리하세요.
+전역 COdo config는 `~/.config/COdo/COdo.json`에 두세요. provider, model, permissions 같은 사용자 전체 기본 설정은 전역 config로 관리하세요.
 
-TUI 관련 설정은 `~/.config/opencode/tui.json`을 사용하세요.
+TUI 관련 설정은 `~/.config/COdo/tui.json`을 사용하세요.
 
 전역 config는 조직의 Remote 기본값을 override합니다.
 
@@ -121,10 +121,10 @@ COdo 시작 시 현재 디렉토리에서 config 파일을 찾고, 없으면 가
 
 ### Custom path
 
-`OPENCODE_CONFIG` 환경 변수로 custom config 파일 경로를 지정하세요.
+`CODO_CONFIG` 환경 변수로 custom config 파일 경로를 지정하세요.
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -134,14 +134,14 @@ Custom config는 우선순위상 전역 config와 프로젝트 config 사이에�
 
 ### Custom directory
 
-`OPENCODE_CONFIG_DIR` 환경 변수로 custom config 디렉토리를 지정할 수 있습니다. 이 디렉토리는 표준 `.opencode` 디렉토리와 동일하게 agents, commands, modes, plugins를 검색하며, 동일한 구조를 따라야 합니다.
+`CODO_CONFIG_DIR` 환경 변수로 custom config 디렉토리를 지정할 수 있습니다. 이 디렉토리는 표준 `.COdo` 디렉토리와 동일하게 agents, commands, modes, plugins를 검색하며, 동일한 구조를 따라야 합니다.
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-custom 디렉토리는 전역 config와 `.opencode` 디렉토리 뒤에 로드되므로 해당 설정을 **override할 수 있습니다**.
+custom 디렉토리는 전역 config와 `.COdo` 디렉토리 뒤에 로드되므로 해당 설정을 **override할 수 있습니다**.
 
 ---
 
@@ -170,7 +170,7 @@ TUI 관련 설정에는 전용 `tui.json` (또는 `tui.jsonc`) 파일을 사용�
 }
 ```
 
-`OPENCODE_TUI_CONFIG`를 사용하여 사용자 지정 TUI 설정 파일을 가리킬 수 있습니다.
+`CODO_TUI_CONFIG`를 사용하여 사용자 지정 TUI 설정 파일을 가리킬 수 있습니다.
 
 `COdo.json`의 기존 `theme`, `keybinds`, `tui` 키는 더 이상 사용되지 않으며(deprecated) 가능한 경우 자동으로 마이그레이션됩니다.
 
@@ -335,7 +335,7 @@ Bearer token(`AWS_BEARER_TOKEN_BEDROCK` 또는 `/connect`)은 profile 기반 인
 }
 ```
 
-`~/.config/opencode/agents/` 또는 `.opencode/agents/`의 Markdown 파일로 agent를 정의할 수도 있습니다. [더 알아보기](/docs/agents).
+`~/.config/COdo/agents/` 또는 `.COdo/agents/`의 Markdown 파일로 agent를 정의할 수도 있습니다. [더 알아보기](/docs/agents).
 
 ---
 
@@ -399,7 +399,7 @@ Bearer token(`AWS_BEARER_TOKEN_BEDROCK` 또는 `/connect`)은 profile 기반 인
 }
 ```
 
-`~/.config/opencode/commands/` 또는 `.opencode/commands/`의 Markdown 파일로 command를 정의할 수도 있습니다. [더 알아보기](/docs/commands).
+`~/.config/COdo/commands/` 또는 `.COdo/commands/`의 Markdown 파일로 command를 정의할 수도 있습니다. [더 알아보기](/docs/commands).
 
 ---
 
@@ -537,12 +537,12 @@ COdo는 시작 시 새 업데이트를 자동으로 다운로드합니다. `auto
 
 [Plugins](/docs/plugins)는 custom tool, hook, integration으로 COdo를 확장합니다.
 
-plugin 파일은 `.opencode/plugins/` 또는 `~/.config/opencode/plugins/`에 두세요. `plugin` 옵션으로 npm plugin을 로드할 수도 있습니다.
+plugin 파일은 `.COdo/plugins/` 또는 `~/.config/COdo/plugins/`에 두세요. `plugin` 옵션으로 npm plugin을 로드할 수도 있습니다.
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -639,7 +639,7 @@ config 파일에서 환경 변수와 파일 내용을 참조할 수 있도록 �
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

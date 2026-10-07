@@ -189,10 +189,10 @@ Configure agents in your `COdo.json` config file:
 
 You can also define agents using markdown files. Place them in:
 
-- Global: `~/.config/opencode/agents/`
-- Per-project: `.opencode/agents/`
+- Global: `~/.config/COdo/agents/`
+- Per-project: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ If you don’t specify a model, primary agents use the [model globally configure
 }
 ```
 
-The model ID in your COdo config uses the format `provider/model-id`. For example, if you're using [COdo Zen](/docs/zen), you would use `opencode/gpt-5.1-codex` for GPT 5.1 Codex.
+The model ID in your COdo config uses the format `provider/model-id`. For example, if you're using [COdo Zen](/docs/zen), you would use `COdo/gpt-5.1-codex` for GPT 5.1 Codex.
 
 ---
 
@@ -482,7 +482,7 @@ You can override these permissions per agent.
 
 You can also set permissions in Markdown agents.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -732,14 +732,14 @@ Here are some common use cases for different agents.
 Here are some example agents you might find useful.
 
 :::tip
-Do you have an agent you'd like to share? [Submit a PR](https://github.com/anomalyco/COdo).
+Do you have an agent you'd like to share? [Submit a PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Documentation agent
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -761,7 +761,7 @@ Focus on:
 
 ### Security auditor
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

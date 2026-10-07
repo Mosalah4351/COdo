@@ -18,7 +18,7 @@ Za dodavanje provajdera potrebno je:
 ### Vjerodajnice
 
 Kada dodate API ključeve dobavljača sa naredbom `/connect`, oni se pohranjuju
-u `~/.local/share/opencode/auth.json`.
+u `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -846,7 +846,7 @@ Za pristup GitLab alatima (zahtjevi za spajanje, problemi, cjevovodi, CI/CD, itd
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1022,11 +1022,11 @@ Za više provajdera i napredne funkcije kao što su keširanje i ograničavanje 
 
 #### Opcione konfiguracije
 
-U slučaju da vidite funkciju ili model iz Helicone-a koji nije automatski konfiguriran putem opencodea, uvijek ga možete sami konfigurirati.
+U slučaju da vidite funkciju ili model iz Helicone-a koji nije automatski konfiguriran putem COdoa, uvijek ga možete sami konfigurirati.
 
 Evo [Heliconeov katalog modela](https://helicone.ai/models), ovo će vam trebati da preuzmete ID-ove modela koje želite dodati.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1054,7 +1054,7 @@ Evo [Heliconeov katalog modela](https://helicone.ai/models), ovo će vam trebati
 
 Helicone podržava prilagođena zaglavlja za funkcije kao što su keširanje, praćenje korisnika i upravljanje sesijom. Dodajte ih u konfiguraciju svog provajdera koristeći `options.headers`:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1085,7 +1085,7 @@ Dodajte ga u svoju konfiguraciju.
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

@@ -5,6 +5,7 @@ import { tint } from "../../context/theme"
 import { createEffect, createMemo, For, Match, Switch } from "solid-js"
 import { buildFileTree, flattenFileTree, type FileTreeItem, type FileTreeRow } from "./diff-viewer-file-tree-utils"
 import { Panel } from "./diff-viewer-ui"
+import { RtlText } from "../../component/rtl-text"
 
 const FILE_TREE_STATUS_WIDTH = 2
 
@@ -60,10 +61,10 @@ export function DiffViewerFileTree(props: DiffViewerFileTreeProps) {
       >
         <Switch>
           <Match when={props.loading || props.error}>
-            <text />
+            <RtlText />
           </Match>
           <Match when={props.files.length === 0}>
-            <text fg={props.theme.text}>No files</text>
+            <RtlText fg={props.theme.text}>No files</RtlText>
           </Match>
           <Match when={props.files.length > 0}>
             <For each={rows()}>
@@ -85,11 +86,11 @@ export function DiffViewerFileTree(props: DiffViewerFileTreeProps) {
                     backgroundColor={highlighted() ? props.theme.primary : undefined}
                     onMouseUp={() => props.onRowClick?.(row)}
                   >
-                    <text fg={highlighted() ? props.theme.background : fadedColor()} wrapMode="none" flexShrink={0}>
+                    <RtlText fg={highlighted() ? props.theme.background : fadedColor()} wrapMode="none" flexShrink={0}>
                       {prefix()}
-                    </text>
+                    </RtlText>
                     <box flexGrow={1} minWidth={0}>
-                      <text
+                      <RtlText
                         fg={
                           highlighted()
                             ? props.theme.background
@@ -102,15 +103,15 @@ export function DiffViewerFileTree(props: DiffViewerFileTreeProps) {
                         wrapMode="none"
                       >
                         {name()}
-                      </text>
+                      </RtlText>
                     </box>
-                    <text
+                    <RtlText
                       fg={highlighted() ? props.theme.background : props.theme.textMuted}
                       wrapMode="none"
                       flexShrink={0}
                     >
                       {status()}
-                    </text>
+                    </RtlText>
                   </box>
                 )
               }}

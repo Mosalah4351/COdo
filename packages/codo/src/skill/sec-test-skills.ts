@@ -1,19 +1,23 @@
 import agentSurfaceAuditContent from "./sec-test/agent-surface-audit/SKILL.md" with { type: "text" }
+import autoFixContent from "./sec-test/auto-fix/SKILL.md" with { type: "text" }
 import apiSecurityTestContent from "./sec-test/api-security-test/SKILL.md" with { type: "text" }
 import authTestContent from "./sec-test/auth-test/SKILL.md" with { type: "text" }
 import briefContent from "./sec-test/brief/SKILL.md" with { type: "text" }
 import codeAuditContent from "./sec-test/code-audit/SKILL.md" with { type: "text" }
 import containerScanContent from "./sec-test/container-scan/SKILL.md" with { type: "text" }
 import contextContent from "./sec-test/context/SKILL.md" with { type: "text" }
+import coverageAuditContent from "./sec-test/coverage-audit/SKILL.md" with { type: "text" }
 import dependencyAuditContent from "./sec-test/dependency-audit/SKILL.md" with { type: "text" }
 import exploitVerifyContent from "./sec-test/exploit-verify/SKILL.md" with { type: "text" }
 import fuzzContent from "./sec-test/fuzz/SKILL.md" with { type: "text" }
 import incidentRunbookContent from "./sec-test/incident-runbook/SKILL.md" with { type: "text" }
 import learnContent from "./sec-test/learn/SKILL.md" with { type: "text" }
 import loggingAuditContent from "./sec-test/logging-audit/SKILL.md" with { type: "text" }
+import mutationTestContent from "./sec-test/mutation-test/SKILL.md" with { type: "text" }
 import pentestContent from "./sec-test/pentest/SKILL.md" with { type: "text" }
 import pipelineHardenContent from "./sec-test/pipeline-harden/SKILL.md" with { type: "text" }
 import postureReportContent from "./sec-test/posture-report/SKILL.md" with { type: "text" }
+import regressionGuardContent from "./sec-test/regression-guard/SKILL.md" with { type: "text" }
 import reportContent from "./sec-test/report/SKILL.md" with { type: "text" }
 import responseContent from "./sec-test/response/SKILL.md" with { type: "text" }
 import sbomContent from "./sec-test/sbom/SKILL.md" with { type: "text" }
@@ -21,6 +25,8 @@ import scopeContent from "./sec-test/scope/SKILL.md" with { type: "text" }
 import scopeGateContent from "./sec-test/scope-gate/SKILL.md" with { type: "text" }
 import secretsScanContent from "./sec-test/secrets-scan/SKILL.md" with { type: "text" }
 import supplyChainAttestContent from "./sec-test/supply-chain-attest/SKILL.md" with { type: "text" }
+import testGenerateContent from "./sec-test/test-generate/SKILL.md" with { type: "text" }
+import testPlanContent from "./sec-test/test-plan/SKILL.md" with { type: "text" }
 import threatModelContent from "./sec-test/threat-model/SKILL.md" with { type: "text" }
 
 export interface SecTestSkill {
@@ -34,6 +40,11 @@ export const secTestSkills: SecTestSkill[] = [
     name: "sec-test:agent-surface-audit",
     description: "Audit COdo's own skills/plugins/MCP surface against OWASP LLM/MCP/Agentic Top 10",
     content: agentSurfaceAuditContent,
+  },
+  {
+    name: "sec-test:auto-fix",
+    description: "Full scan → triage → fix → verify → regression-guard → rescan pipeline for vibecoders",
+    content: autoFixContent,
   },
   {
     name: "sec-test:brief",
@@ -150,10 +161,43 @@ export const secTestSkills: SecTestSkill[] = [
     description: "STRIDE (or PASTA) threat model against a design before code exists",
     content: threatModelContent,
   },
+  // === QA tier (sec-qa persona) ===
+  {
+    name: "sec-test:test-plan",
+    description: "Risk-ranked test plan for an untested or under-tested surface",
+    content: testPlanContent,
+  },
+  {
+    name: "sec-test:test-generate",
+    description: "Write and run tests for a planned surface, matching project idiom exactly",
+    content: testGenerateContent,
+  },
+  {
+    name: "sec-test:coverage-audit",
+    description: "Measure coverage and separate executed lines from actually-verified behavior",
+    content: coverageAuditContent,
+  },
+  {
+    name: "sec-test:mutation-test",
+    description: "Measure whether tests would actually fail on a regression, via mutation testing",
+    content: mutationTestContent,
+  },
+  {
+    name: "sec-test:regression-guard",
+    description: "Turn a fixed bug or security finding into a permanent regression test",
+    content: regressionGuardContent,
+  },
 ]
 
 export const SEC_TEST_SKILL_NAMES = new Set(secTestSkills.map((s) => s.name))
 
+/**
+ * Registry-backed check. A bare `name.startsWith("sec-test:")` returned true
+ * for any string with the prefix — including skills that were never
+ * registered — so callers gating on it (permission grants, skill routing)
+ * could silently match a name that has no definition behind it. Membership
+ * in the actual set is the honest question.
+ */
 export function isSecTestSkill(name: string): boolean {
-  return name.startsWith("sec-test:")
+  return SEC_TEST_SKILL_NAMES.has(name)
 }

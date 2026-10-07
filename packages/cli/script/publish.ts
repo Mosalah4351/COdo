@@ -16,7 +16,7 @@ async function publish(dir: string, name: string, version: string) {
   if (process.platform !== "win32") await $`chmod -R 755 .`.cwd(dir)
   if (await published(name, version)) return console.log(`already published ${name}@${version}`)
   await $`bun pm pack`.cwd(dir)
-  await $`npm publish *.tgz --access public --tag ${Script.channel}`.cwd(dir)
+  await $`npm publish *.tgz --access public --provenance --tag ${Script.channel}`.cwd(dir)
 }
 
 // Read full app binaries from packages/codo/dist/ instead of packages/cli/dist/

@@ -10,6 +10,7 @@ import { useTheme } from "../context/theme"
 import { TextAttributes } from "@opentui/core"
 import type { ProviderAuthAuthorization, ProviderAuthMethod } from "@codo-ai/sdk/v2"
 import { DialogModel } from "./dialog-model"
+import { RtlText } from "./rtl-text"
 import { useToast } from "../ui/toast"
 import { isConsoleManagedProvider } from "../util/provider-origin"
 import { useConnected } from "./use-connected"
@@ -95,9 +96,9 @@ export function createDialogProviderOptions() {
     const value = await DialogPrompt.show(dialog, "Other", {
       placeholder: "Provider id",
       description: () => (
-        <text fg={theme.textMuted}>
+        <RtlText fg={theme.textMuted}>
           This only stores a credential. Configure the provider in COdo.json to use it.
-        </text>
+        </RtlText>
       ),
     })
     if (value === null) return
@@ -141,7 +142,7 @@ export function createDialogProviderOptions() {
           description: provider.description,
           footer: consoleManaged ? sync.data.console_state.activeOrgName : undefined,
           category: provider.category,
-          gutter: connected && onboarded() ? () => <text fg={theme.success}>✓</text> : undefined,
+          gutter: connected && onboarded() ? () => <RtlText fg={theme.success}>✓</RtlText> : undefined,
           async onSelect() {
             if (consoleManaged) return
 
@@ -286,21 +287,21 @@ function AutoMethod(props: AutoMethodProps) {
   return (
     <box paddingLeft={2} paddingRight={2} gap={1} paddingBottom={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           {props.title}
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
       <box gap={1}>
         <Link href={props.authorization.url} fg={theme.primary} />
-        <text fg={theme.textMuted}>{props.authorization.instructions}</text>
+        <RtlText fg={theme.textMuted}>{props.authorization.instructions}</RtlText>
       </box>
-      <text fg={theme.textMuted}>Waiting for authorization...</text>
-      <text fg={theme.text}>
+      <RtlText fg={theme.textMuted}>Waiting for authorization...</RtlText>
+      <RtlText fg={theme.text}>
         c <span style={{ fg: theme.textMuted }}>copy</span>
-      </text>
+      </RtlText>
     </box>
   )
 }
@@ -338,10 +339,10 @@ function CodeMethod(props: CodeMethodProps) {
       }}
       description={() => (
         <box gap={1}>
-          <text fg={theme.textMuted}>{props.authorization.instructions}</text>
+          <RtlText fg={theme.textMuted}>{props.authorization.instructions}</RtlText>
           <Link href={props.authorization.url} fg={theme.primary} />
           <Show when={error()}>
-            <text fg={theme.error}>Invalid code</text>
+            <RtlText fg={theme.error}>Invalid code</RtlText>
           </Show>
         </box>
       )}
@@ -370,24 +371,24 @@ function ApiMethod(props: ApiMethodProps) {
         {
           COdo: (
             <box gap={1}>
-              <text fg={theme.textMuted}>
+              <RtlText fg={theme.textMuted}>
                 COdo Zen gives you access to all the best coding models at the cheapest prices with a single API
                 key.
-              </text>
-              <text fg={theme.text}>
+              </RtlText>
+              <RtlText fg={theme.text}>
                 Go to <span style={{ fg: theme.primary }}>https://COdo.ai/zen</span> to get a key
-              </text>
+              </RtlText>
             </box>
           ),
           "COdo-go": (
             <box gap={1}>
-              <text fg={theme.textMuted}>
+              <RtlText fg={theme.textMuted}>
                 COdo Go is a $10 per month subscription that provides reliable access to popular open coding models
                 with generous usage limits.
-              </text>
-              <text fg={theme.text}>
+              </RtlText>
+              <RtlText fg={theme.text}>
                 Go to <span style={{ fg: theme.primary }}>https://COdo.ai/go</span> and enable COdo Go
-              </text>
+              </RtlText>
             </box>
           ),
         }[props.providerID] ?? undefined

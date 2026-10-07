@@ -4,6 +4,7 @@ import { useDialog } from "../ui/dialog"
 import { createStore } from "solid-js/store"
 import { For } from "solid-js"
 import { useBindings } from "../keymap"
+import { RtlText } from "./rtl-text"
 
 export function DialogSessionDeleteFailed(props: {
   session: string
@@ -53,19 +54,19 @@ export function DialogSessionDeleteFailed(props: {
   return (
     <box paddingLeft={2} paddingRight={2} gap={1}>
       <box flexDirection="row" justifyContent="space-between">
-        <text attributes={TextAttributes.BOLD} fg={theme.text}>
+        <RtlText attributes={TextAttributes.BOLD} fg={theme.text}>
           Failed to Delete Session
-        </text>
-        <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+        </RtlText>
+        <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
-        </text>
+        </RtlText>
       </box>
-      <text fg={theme.textMuted} wrapMode="word">
+      <RtlText fg={theme.textMuted} wrapMode="word">
         {`The session "${props.session}" could not be deleted because the workspace "${props.workspace}" is not available.`}
-      </text>
-      <text fg={theme.textMuted} wrapMode="word">
+      </RtlText>
+      <RtlText fg={theme.textMuted} wrapMode="word">
         Choose how you want to recover this broken workspace session.
-      </text>
+      </RtlText>
       <box flexDirection="column" paddingBottom={1} gap={1}>
         <For each={options}>
           {(item) => (
@@ -81,15 +82,15 @@ export function DialogSessionDeleteFailed(props: {
                 void confirm()
               }}
             >
-              <text
+              <RtlText
                 attributes={TextAttributes.BOLD}
                 fg={item.id === store.active ? theme.selectedListItemText : theme.text}
               >
                 {item.title}
-              </text>
-              <text fg={item.id === store.active ? theme.selectedListItemText : theme.textMuted} wrapMode="word">
+              </RtlText>
+              <RtlText fg={item.id === store.active ? theme.selectedListItemText : theme.textMuted} wrapMode="word">
                 {item.description}
-              </text>
+              </RtlText>
             </box>
           )}
         </For>

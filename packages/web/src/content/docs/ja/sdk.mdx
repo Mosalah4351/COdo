@@ -18,7 +18,7 @@ COdo JS/TS SDK は、サーバーと対話するための型安全なクライ�
 npm から SDK をインストールします。
 
 ```bash
-npm install @COdo-ai/sdk
+npm install @codo-ai/sdk
 ```
 
 ---
@@ -28,7 +28,7 @@ npm install @COdo-ai/sdk
 COdo のインスタンスを作成します。
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const { client } = await createOpencode()
 ```
@@ -52,7 +52,7 @@ const { client } = await createOpencode()
 設定オブジェクトを渡して動作をカスタマイズできます。インスタンスは引き続き `COdo.json` を取得しますが、設定をインラインでオーバーライドまたは追加することができます。
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const COdo = await createOpencode({
   hostname: "127.0.0.1",
@@ -72,7 +72,7 @@ COdo.server.close()
 すでに実行中の COdo のインスタンスがある場合は、それに接続するためのクライアントインスタンスを作成できます。
 
 ```javascript
-import { createOpencodeClient } from "@COdo-ai/sdk"
+import { createOpencodeClient } from "@codo-ai/sdk"
 
 const client = createOpencodeClient({
   baseUrl: "http://localhost:4096",
@@ -96,7 +96,7 @@ const client = createOpencodeClient({
 SDK には、すべての API タイプの TypeScript 定義が含まれています。それらを直接インポートします。
 
 ```typescript
-import type { Session, Message, Part } from "@COdo-ai/sdk"
+import type { Session, Message, Part } from "@codo-ai/sdk"
 ```
 
 すべてのタイプはサーバーの OpenAPI 仕様から生成され、<a href={typesUrl}>タイプファイル</a> で使用できます。

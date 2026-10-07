@@ -17,9 +17,9 @@ I comandi personalizzati si aggiungono a quelli integrati come `/init`, `/undo`,
 
 Crea file markdown nella directory `commands/` per definire comandi personalizzati.
 
-Crea `.opencode/commands/test.md`:
+Crea `.COdo/commands/test.md`:
 
-```md title=".opencode/commands/test.md"
+```md title=".COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -79,10 +79,10 @@ Ora puoi eseguire questo comando nella TUI:
 
 Puoi anche definire comandi usando file markdown. Mettili in:
 
-- Globale: `~/.config/opencode/commands/`
-- Per progetto: `.opencode/commands/`
+- Globale: `~/.config/COdo/commands/`
+- Per progetto: `.COdo/commands/`
 
-```markdown title="~/.config/opencode/commands/test.md"
+```markdown title="~/.config/COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -111,7 +111,7 @@ I prompt dei comandi personalizzati supportano diversi placeholder e sintassi sp
 
 Passa argomenti ai comandi usando il placeholder `$ARGUMENTS`.
 
-```md title=".opencode/commands/component.md"
+```md title=".COdo/commands/component.md"
 ---
 description: Create a new component
 ---
@@ -137,7 +137,7 @@ Puoi anche accedere ai singoli argomenti usando parametri posizionali:
 
 Per esempio:
 
-```md title=".opencode/commands/create-file.md"
+```md title=".COdo/commands/create-file.md"
 ---
 description: Create a new file with content
 ---
@@ -166,7 +166,7 @@ Usa _!`command`_ per inserire nel prompt l'output di un [comando bash](/docs/tui
 
 Per esempio, per creare un comando personalizzato che analizzi la copertura dei test:
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".COdo/commands/analyze-coverage.md"
 ---
 description: Analyze test coverage
 ---
@@ -179,7 +179,7 @@ Based on these results, suggest improvements to increase coverage.
 
 Oppure per rivedere modifiche recenti:
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".COdo/commands/review-changes.md"
 ---
 description: Review recent changes
 ---
@@ -198,7 +198,7 @@ I comandi vengono eseguiti nella root del progetto e il loro output diventa part
 
 Includi file nel comando usando `@` seguito dal nome del file.
 
-```md title=".opencode/commands/review-component.md"
+```md title=".COdo/commands/review-component.md"
 ---
 description: Review component
 ---

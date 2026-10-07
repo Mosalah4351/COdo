@@ -27,7 +27,28 @@ Systematic read-only audit of application source for the OWASP Top 10:2025 categ
    - **A10 Mishandling of Exceptional Conditions** *(new in 2025)* — swallow-then-continue exception handlers, uncaught promise rejections leaking stack frames, error-handling that exposes internals.
 4. **Secrets sanity check.** If `gitleaks`/`trufflehog` is available and the user asked, defer to `sec-test:secrets-scan`. Otherwise grep for the obvious patterns (AKIA[0-9A-Z]{16}, -----BEGIN.*PRIVATE KEY-----, `password\s*=\s*["']`).
 5. **Write the audit report** to `.planning/security/findings/YYYY-MM-DD-<slug>.md` using the finding schema below.
-6. Return the `## CODE AUDIT COMPLETE` marker plus a count of findings by severity.
+6. Return `## SEC-RESULT skill=sec-test:code-audit status=complete findings=<n> critical=<n> high=<n> doc=<path>`.
+
+## Framework hot-spots
+
+Highest-yield checks per common stack — hit these before the generic walk:
+
+- **Next.js/React**
+  - `dangerouslySetInnerHTML` with any non-static input
+  - SSRF via server actions / route handlers fetching user-supplied URLs
+  - Secrets prefixed `NEXT_PUBLIC_` that aren't meant for the browser
+  - Middleware auth bypass (matcher gaps, early `NextResponse.next()`)
+  - Open redirects in `redirect()` calls fed by query params
+- **Express/Nest**
+  - Missing rate limiting on auth and write endpoints
+  - `express-fileupload` risks (unsafe `mv` paths, no size/type limits)
+  - Unsanitized `req.query`/`req.body` reaching SQL or shell
+  - CORS wildcard (`*`) combined with `credentials: true`
+- **Supabase/Firebase**
+  - RLS disabled or policy-too-permissive tables (`USING (true)`)
+  - Service-role key bundled into client code
+  - Firestore rules `allow read, write: if true`
+  - Storage rules allowing public writes
 
 ## Finding schema (YAML frontmatter per finding)
 

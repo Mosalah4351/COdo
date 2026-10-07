@@ -3,7 +3,7 @@ title: Web
 description: 브라우저에서 COdo 사용하기.
 ---
 
-opencode는 브라우저에서 웹 응용 프로그램을 실행할 수 있으며 terminal을 필요로하지 않고 동일한 강력한 AI 코딩 경험을 제공합니다.
+COdo는 브라우저에서 웹 응용 프로그램을 실행할 수 있으며 terminal을 필요로하지 않고 동일한 강력한 AI 코딩 경험을 제공합니다.
 
 ![COdo Web - 새로운 세션](../../../assets/web/web-homepage-new-session.png)
 
@@ -15,10 +15,10 @@ opencode는 브라우저에서 웹 응용 프로그램을 실행할 수 있으�
 COdo web
 ```
 
-`127.0.0.1`의 로컬 서버를 랜덤 사용 가능한 포트로 시작하고 기본 브라우저에서 opencode를 자동으로 엽니다.
+`127.0.0.1`의 로컬 서버를 랜덤 사용 가능한 포트로 시작하고 기본 브라우저에서 COdo를 자동으로 엽니다.
 
 :::caution
-`OPENCODE_SERVER_PASSWORD`가 설정되지 않은 경우 서버가 중단되지 않습니다. 이것은 로컬 사용을위한 괜찮지만 네트워크 액세스를 설정해야합니다.
+`CODO_SERVER_PASSWORD`가 설정되지 않은 경우 서버가 중단되지 않습니다. 이것은 로컬 사용을위한 괜찮지만 네트워크 액세스를 설정해야합니다.
 :::
 
 :::tip[Windows 사용자]
@@ -33,7 +33,7 @@ COdo web
 
 ## 포트
 
-기본적으로 opencode는 사용할 수 있는 포트를 선택합니다. 포트를 지정할 수 있습니다:
+기본적으로 COdo는 사용할 수 있는 포트를 선택합니다. 포트를 지정할 수 있습니다:
 
 ```bash
 COdo web --port 4096
@@ -41,13 +41,13 @@ COdo web --port 4096
 
 ## 호스트 이름
 
-기본적으로 서버는 `127.0.0.1` (localhost only)에 바인딩합니다. 네트워크에서 opencode를 사용할 수 있도록:
+기본적으로 서버는 `127.0.0.1` (localhost only)에 바인딩합니다. 네트워크에서 COdo를 사용할 수 있도록:
 
 ```bash
 COdo web --hostname 0.0.0.0
 ```
 
-`0.0.0.0`를 사용할 때, opencode는 로컬 및 네트워크 주소를 모두 표시합니다.
+`0.0.0.0`를 사용할 때, COdo는 로컬 및 네트워크 주소를 모두 표시합니다.
 
 ```
   Local access:       http://localhost:4096
@@ -80,13 +80,13 @@ COdo web --cors https://example.com
 
 ### 인증
 
-액세스를 보호하려면 `OPENCODE_SERVER_PASSWORD` 환경 변수를 사용하여 암호를 설정하십시오.
+액세스를 보호하려면 `CODO_SERVER_PASSWORD` 환경 변수를 사용하여 암호를 설정하십시오.
 
 ```bash
-OPENCODE_SERVER_PASSWORD=secret COdo web
+CODO_SERVER_PASSWORD=secret COdo web
 ```
 
-`COdo`에 대한 사용자의 기본값은 `OPENCODE_SERVER_USERNAME`로 변경할 수 있습니다.
+`COdo`에 대한 사용자의 기본값은 `CODO_SERVER_USERNAME`로 변경할 수 있습니다.
 
 ---
 

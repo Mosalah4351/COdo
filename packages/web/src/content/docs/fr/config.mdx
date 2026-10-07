@@ -44,16 +44,16 @@ Par exemple, si votre configuration globale définit `autoupdate: true` et que l
 Les sources de configuration sont chargées dans cet ordre (les sources ultérieures remplacent les précédentes) :
 
 1. **Configuration distante** (à partir de `.well-known/COdo`) - paramètres par défaut de l'organisation
-2. **Configuration globale** (`~/.config/opencode/opencode.json`) - préférences utilisateur
-3. **Configuration personnalisée** (`OPENCODE_CONFIG` env var) - remplacements personnalisés
+2. **Configuration globale** (`~/.config/COdo/COdo.json`) - préférences utilisateur
+3. **Configuration personnalisée** (`CODO_CONFIG` env var) - remplacements personnalisés
 4. **Configuration du projet** (`COdo.json` dans le projet) - paramètres spécifiques au projet
-5. **Répertoires `.opencode`** - agents, commandes, plugins
-6. **Configuration en ligne** (`OPENCODE_CONFIG_CONTENT` env var) - remplacements d'exécution
+5. **Répertoires `.COdo`** - agents, commandes, plugins
+6. **Configuration en ligne** (`CODO_CONFIG_CONTENT` env var) - remplacements d'exécution
 
 Cela signifie que les configurations de projet peuvent remplacer les valeurs par défaut globales, et que les configurations globales peuvent remplacer les valeurs par défaut de l'organisation distante.
 
 :::note
-Les répertoires `.opencode` et `~/.config/opencode` utilisent des **noms au pluriel** pour les sous-répertoires : `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` et `themes/`. Les noms singuliers (par exemple, `agent/`) sont également pris en charge pour une compatibilité ascendante.
+Les répertoires `.COdo` et `~/.config/COdo` utilisent des **noms au pluriel** pour les sous-répertoires : `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` et `themes/`. Les noms singuliers (par exemple, `agent/`) sont également pris en charge pour une compatibilité ascendante.
 :::
 
 ---
@@ -96,9 +96,9 @@ Vous pouvez activer des serveurs spécifiques dans votre configuration locale :
 
 ### Globale
 
-Placez votre configuration globale COdo dans `~/.config/opencode/opencode.json`. Utilisez la configuration globale pour les préférences de l'utilisateur telles que les fournisseurs, les modèles et les autorisations.
+Placez votre configuration globale COdo dans `~/.config/COdo/COdo.json`. Utilisez la configuration globale pour les préférences de l'utilisateur telles que les fournisseurs, les modèles et les autorisations.
 
-Pour les paramètres spécifiques à TUI, utilisez `~/.config/opencode/tui.json`.
+Pour les paramètres spécifiques à TUI, utilisez `~/.config/COdo/tui.json`.
 
 La configuration globale remplace les paramètres par défaut de l'organisation distante.
 
@@ -122,10 +122,10 @@ Il peut également être archivé en toute sécurité dans Git et utilise le mê
 
 ### Chemin personnalisé
 
-Spécifiez un chemin de fichier de configuration personnalisé à l'aide de la variable d'environnement `OPENCODE_CONFIG`.
+Spécifiez un chemin de fichier de configuration personnalisé à l'aide de la variable d'environnement `CODO_CONFIG`.
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -135,14 +135,14 @@ La configuration personnalisée est chargée entre les configurations globales e
 
 ### Répertoire personnalisé
 
-Spécifiez un répertoire de configuration personnalisé à l'aide de `OPENCODE_CONFIG_DIR` variable d'environnement. Ce répertoire sera recherché pour les agents, les commandes, modes et plugins tout comme le répertoire standard `.opencode`, et devrait suivre la même structure.
+Spécifiez un répertoire de configuration personnalisé à l'aide de `CODO_CONFIG_DIR` variable d'environnement. Ce répertoire sera recherché pour les agents, les commandes, modes et plugins tout comme le répertoire standard `.COdo`, et devrait suivre la même structure.
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-Le répertoire personnalisé est chargé après les répertoires de configuration globale et `.opencode`, il **peut donc remplacer** leurs paramètres.
+Le répertoire personnalisé est chargé après les répertoires de configuration globale et `.COdo`, il **peut donc remplacer** leurs paramètres.
 
 ---
 
@@ -171,7 +171,7 @@ Utilisez un fichier dédié `tui.json` (ou `tui.jsonc`) pour les paramètres sp�
 }
 ```
 
-Utilisez `OPENCODE_TUI_CONFIG` pour pointer vers un fichier de configuration TUI personnalisé.
+Utilisez `CODO_TUI_CONFIG` pour pointer vers un fichier de configuration TUI personnalisé.
 
 Les anciennes clés `theme`, `keybinds` et `tui` dans `COdo.json` sont obsolètes et migrées automatiquement lorsque cela est possible.
 
@@ -336,7 +336,7 @@ Vous pouvez configurer des agents spécialisés pour des tâches spécifiques vi
 }
 ```
 
-Vous pouvez également définir des agents à l'aide de fichiers markdown dans `~/.config/opencode/agents/` ou `.opencode/agents/`. [En savoir plus ici](/docs/agents).
+Vous pouvez également définir des agents à l'aide de fichiers markdown dans `~/.config/COdo/agents/` ou `.COdo/agents/`. [En savoir plus ici](/docs/agents).
 
 ---
 
@@ -400,7 +400,7 @@ Vous pouvez configurer des commandes personnalisées pour les tâches répétiti
 }
 ```
 
-Vous pouvez également définir des commandes à l'aide de fichiers markdown dans `~/.config/opencode/commands/` ou `.opencode/commands/`. [En savoir plus ici](/docs/commands).
+Vous pouvez également définir des commandes à l'aide de fichiers markdown dans `~/.config/COdo/commands/` ou `.COdo/commands/`. [En savoir plus ici](/docs/commands).
 
 ---
 
@@ -538,12 +538,12 @@ Vous pouvez configurer les serveurs MCP que vous souhaitez utiliser via l'option
 
 [Plugins](/docs/plugins) étendent COdo avec des outils, des hooks et des intégrations personnalisés.
 
-Placez les fichiers du plugin dans `.opencode/plugins/` ou `~/.config/opencode/plugins/`. Vous pouvez également charger des plugins depuis npm via l'option `plugin`.
+Placez les fichiers du plugin dans `.COdo/plugins/` ou `~/.config/COdo/plugins/`. Vous pouvez également charger des plugins depuis npm via l'option `plugin`.
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -640,7 +640,7 @@ Utilisez `{env:VARIABLE_NAME}` pour remplacer les variables d'environnement :
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

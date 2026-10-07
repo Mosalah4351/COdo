@@ -18,7 +18,7 @@ Aby dodać dostawcę należy:
 ### Credentials
 
 Po dodaniu kluczy API dostawcy za pomocą polecenia `/connect` są one przechowywane
-w `~/.local/share/opencode/auth.json`.
+w `~/.local/share/COdo/auth.json`.
 
 ---
 
@@ -841,7 +841,7 @@ To access GitLab tools (merge requests, issues, pipelines, CI/CD, etc.):
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1020,7 +1020,7 @@ Jeśli zobaczysz funkcję lub model firmy Helicone, która nie jest konfigurowan
 
 Oto [Katalog modeli Helicone](https://helicone.ai/models), będziesz go potrzebować, aby pobrać identyfikatory modeli, które chcesz dodać.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1048,7 +1048,7 @@ Oto [Katalog modeli Helicone](https://helicone.ai/models), będziesz go potrzebo
 
 Helicone obsługuje niestandardowe nagłówki dla funkcji takich jak buforowanie, śledzenie użytkowników i zarządzanie sesjami. Dodaj je do konfiguracji dostawcy za pomocą `options.headers`:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1079,7 +1079,7 @@ Dodaj go do swojej konfiguracji.
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

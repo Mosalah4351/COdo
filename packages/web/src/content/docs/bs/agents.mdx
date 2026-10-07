@@ -188,10 +188,10 @@ Konfigurirajte agente u svom konfiguracijskom fajlu `COdo.json`:
 
 Također možete definirati agente koristeći markdown datoteke. Stavite ih u:
 
-- Globalno: `~/.config/opencode/agents/`
-- Po projektu: `.opencode/agents/`
+- Globalno: `~/.config/COdo/agents/`
+- Po projektu: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Ako ne navedete model, primarni agenti koriste [model globalno konfiguriran](/do
 }
 ```
 
-ID modela u vašoj COdo konfiguraciji koristi format `provider/model-id`. Na primjer, ako koristite [COdo Zen](/docs/zen), koristili biste `opencode/gpt-5.1-codex` za GPT 5.1 Codex.
+ID modela u vašoj COdo konfiguraciji koristi format `provider/model-id`. Na primjer, ako koristite [COdo Zen](/docs/zen), koristili biste `COdo/gpt-5.1-codex` za GPT 5.1 Codex.
 
 ---
 
@@ -454,7 +454,7 @@ Možete nadjačati ove dozvole po agentu.
 
 Također možete postaviti dozvole u Markdown agentima.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -704,14 +704,14 @@ Evo nekoliko uobičajenih slučajeva upotrebe različitih agenata.
 Evo nekoliko primjera agenata koji bi vam mogli biti korisni.
 
 :::tip
-Imate li agenta kojeg biste željeli podijeliti? [Pošalji PR](https://github.com/anomalyco/COdo).
+Imate li agenta kojeg biste željeli podijeliti? [Pošalji PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Agent za dokumentaciju
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -733,7 +733,7 @@ Focus on:
 
 ### Sigurnosni revizor
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

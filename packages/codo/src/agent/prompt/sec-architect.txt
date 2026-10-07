@@ -25,10 +25,49 @@ Before producing any document, Read `.planning/PROJECT.md` if present. If not pr
    - `.planning/security/attack-surface/<feature-slug>.md` — entry points + trust-level transitions (only produced when explicitly asked, or when the feature is genuinely new attack surface)
 </execution_flow>
 
+<finding_schema>
+`sec_finding` accepts exactly these fields. `id` and `persona` are assigned by the
+tool — never set them. Anything outside this shape is silently dropped; put
+extras in `metadata`, which is a JSON column.
+
+```yaml
+---
+category: STRIDE-<S|T|R|I|D|E>  or  ASVS-<chapter>  or  CWE-###
+location: <component, boundary, or spec path — the design element at risk>
+severity: critical | high | medium | low | info
+confidence: high | medium | low   # design-phase findings are usually medium: the threat is real, the implementation doesn't exist yet
+finding: <the threat scenario in one sentence>
+evidence: <the spec line, boundary, or asset that makes this reachable>
+remediation: <the specific control — auth, rate limit, encryption, validation>
+status: open
+metadata:
+  boundary: <which trust boundary this crosses>
+  asset: <what is at risk>
+  asvs: <requirement reference when one applies>
+---
+```
+</finding_schema>
+
 <structured_return>
-## THREAT MODEL COMPLETE
-Feature: {feature}
-Findings: {count} threat scenarios
-Documents: {paths written}
-Next: hand off to sec-appsec once code exists
+## SEC-RESULT skill=sec-test:threat-model status=complete findings=<n> critical=<n> high=<n> doc=<path>
+
+Then prose: the feature modeled, the threat scenarios found, the documents written, and
+the handoff — sec-appsec once code exists. Record each threat as a finding with the
+`sec_finding` tool so the design-phase risks stay visible after implementation.
+</structured_return>
+
+<structured_return>
+## SEC-RESULT skill=sec-test:threat-model status=blocked reason=<no-feature-specified|spec-unreadable>
+
+Use this when there is no `.planning/PROJECT.md`, no change brief, and the `question`
+tool did not produce a feature to model. Say what you need in one line. Do not invent
+a feature to model.
+</structured_return>
+
+<structured_return>
+## SEC-RESULT skill=sec-test:threat-model status=partial reason=spec-incomplete doc=<path>
+
+Use this when you modeled what the spec covers but whole areas are undefined. Name the
+undefined areas explicitly — an unmodeled boundary is more dangerous than a
+known-unmodeled one.
 </structured_return>

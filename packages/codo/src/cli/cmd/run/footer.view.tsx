@@ -8,6 +8,7 @@
 // All state comes from the parent RunFooter through SolidJS signals.
 // The view itself is stateless except for derived memos.
 /** @jsxImportSource @opentui/solid */
+import { RtlText } from "@codo-ai/tui/component/rtl-text"
 import { useTerminalDimensions } from "@opentui/solid"
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
 import "opentui-spinner/solid"
@@ -822,9 +823,9 @@ export function RunFooterView(props: RunFooterViewProps) {
                 backgroundColor={statuslineBackground()}
               >
                 <box paddingLeft={1} paddingRight={1} backgroundColor={theme().statusAccent} flexShrink={0}>
-                  <text wrapMode="none" truncate>
+                  <RtlText wrapMode="none" truncate>
                     <span style={{ fg: modeColor(), bold: true }}>{modeLabel()}</span>
-                  </text>
+                  </RtlText>
                 </box>
 
                 <box
@@ -837,34 +838,28 @@ export function RunFooterView(props: RunFooterViewProps) {
                   paddingRight={1}
                   backgroundColor="transparent"
                 >
-                  <Show when={busy() && !exiting()}>
-                    <box flexShrink={0}>
-                      <spinner color={spin().color} frames={spin().frames} interval={40} />
-                    </box>
-                  </Show>
-
-                  <text fg={statusColor()} wrapMode="none" truncate flexGrow={1} flexShrink={1}>
+                  <RtlText fg={statusColor()} wrapMode="none" truncate flexGrow={1} flexShrink={1}>
                     <Show when={busy() && !exiting()} fallback={statusText()}>
                       <Show when={interruptLabel()}>
                         {(label) => <span style={{ fg: armed() ? statusColor() : theme().muted }}>{label()} </span>}
                       </Show>
                       {statusText()}
                     </Show>
-                  </text>
+                  </RtlText>
                 </box>
 
                 <Show when={activityMeta().length > 0}>
                   <box paddingRight={1} backgroundColor="transparent" flexShrink={1}>
-                    <text fg={theme().muted} wrapMode="none" truncate>
+                    <RtlText fg={theme().muted} wrapMode="none" truncate>
                       {activityMeta()}
-                    </text>
+                    </RtlText>
                   </box>
                 </Show>
 
                 <Show when={responsive().statusline.showModel && modelStatus()}>
                   {(info) => (
                     <box paddingRight={1} backgroundColor="transparent" flexShrink={0}>
-                      <text fg={theme().text} wrapMode="none">
+                      <RtlText fg={theme().text} wrapMode="none">
                         {info().model}
                         <Show when={info().provider}>
                           {(provider) => <span style={{ fg: theme().muted }}> {provider()}</span>}
@@ -876,7 +871,7 @@ export function RunFooterView(props: RunFooterViewProps) {
                             </>
                           )}
                         </Show>
-                      </text>
+                      </RtlText>
                     </box>
                   )}
                 </Show>
@@ -884,13 +879,13 @@ export function RunFooterView(props: RunFooterViewProps) {
                 <For each={contextHints()}>
                   {(hint, index) => (
                     <box paddingRight={1} backgroundColor="transparent" flexShrink={0} maxWidth={24}>
-                      <text fg={theme().text} wrapMode="none" truncate>
+                      <RtlText fg={theme().text} wrapMode="none" truncate>
                         <Show when={index() > 0 || ((hasActivityMeta() || hasModelStatus()) && index() === 0)}>
                           {sectionSeparator()}
                         </Show>
                         <span style={{ fg: theme().text }}>{hint.key}</span>{" "}
                         <span style={{ fg: theme().muted }}>{hint.label}</span>
-                      </text>
+                      </RtlText>
                     </box>
                   )}
                 </For>
@@ -898,13 +893,13 @@ export function RunFooterView(props: RunFooterViewProps) {
                 <Show when={commandHint()}>
                   {(hint) => (
                     <box paddingRight={1} backgroundColor="transparent" flexShrink={0} maxWidth={18}>
-                      <text fg={theme().text} wrapMode="none" truncate>
+                      <RtlText fg={theme().text} wrapMode="none" truncate>
                         <Show when={hasActivityMeta() || hasModelStatus() || hasContextHints()}>
                           {sectionSeparator()}
                         </Show>
                         <span style={{ fg: theme().text }}>{hint().key}</span>{" "}
                         <span style={{ fg: theme().muted }}>{hint().label}</span>
-                      </text>
+                      </RtlText>
                     </box>
                   )}
                 </Show>

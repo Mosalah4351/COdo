@@ -19,8 +19,8 @@ description: 编写自己的插件来扩展 COdo。
 
 将 JavaScript 或 TypeScript 文件放置在插件目录中。
 
-- `.opencode/plugins/` - 项目级插件
-- `~/.config/opencode/plugins/` - 全局插件
+- `.COdo/plugins/` - 项目级插件
+- `~/.config/COdo/plugins/` - 全局插件
 
 这些目录中的文件会在启动时自动加载。
 
@@ -33,7 +33,7 @@ description: 编写自己的插件来扩展 COdo。
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "opencode-wakatime", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "COdo-wakatime", "@my-org/custom-plugin"]
 }
 ```
 
@@ -45,7 +45,7 @@ description: 编写自己的插件来扩展 COdo。
 
 ### 插件的安装方式
 
-**npm 插件**在启动时使用 Bun 自动安装。包及其依赖项会缓存在 `~/.cache/opencode/node_modules/` 中。
+**npm 插件**在启动时使用 Bun 自动安装。包及其依赖项会缓存在 `~/.cache/COdo/node_modules/` 中。
 
 **本地插件**直接从插件目录加载。如果需要使用外部包，你必须在配置目录中创建 `package.json`（参见[依赖项](#dependencies)），或者将插件发布到 npm 并[将其添加到配置中](/docs/config#plugins)。
 
@@ -55,10 +55,10 @@ description: 编写自己的插件来扩展 COdo。
 
 插件从所有来源加载，所有钩子按顺序执行。加载顺序为：
 
-1. 全局配置 (`~/.config/opencode/opencode.json`)
+1. 全局配置 (`~/.config/COdo/COdo.json`)
 2. 项目配置 (`COdo.json`)
-3. 全局插件目录 (`~/.config/opencode/plugins/`)
-4. 项目插件目录 (`.opencode/plugins/`)
+3. 全局插件目录 (`~/.config/COdo/plugins/`)
+4. 项目插件目录 (`.COdo/plugins/`)
 
 名称和版本相同的重复 npm 包只会加载一次。但本地插件和名称相似的 npm 插件会分别独立加载。
 
@@ -74,7 +74,7 @@ description: 编写自己的插件来扩展 COdo。
 
 本地插件和自定义工具可以使用外部 npm 包。在配置目录中添加一个 `package.json`，列出所需的依赖项。
 
-```json title=".opencode/package.json"
+```json title=".COdo/package.json"
 {
   "dependencies": {
     "shescape": "^2.1.0"
@@ -84,7 +84,7 @@ description: 编写自己的插件来扩展 COdo。
 
 COdo 会在启动时运行 `bun install` 来安装这些依赖项。之后你的插件和工具就可以导入它们了。
 
-```ts title=".opencode/plugins/my-plugin.ts"
+```ts title=".COdo/plugins/my-plugin.ts"
 import { escape } from "shescape"
 
 export const MyPlugin = async (ctx) => {
@@ -102,7 +102,7 @@ export const MyPlugin = async (ctx) => {
 
 ### 基本结构
 
-```js title=".opencode/plugins/example.js"
+```js title=".COdo/plugins/example.js"
 export const MyPlugin = async ({ project, client, $, directory, worktree }) => {
   console.log("Plugin initialized!")
 
@@ -127,7 +127,7 @@ export const MyPlugin = async ({ project, client, $, directory, worktree }) => {
 对于 TypeScript 插件，你可以从插件包中导入类型：
 
 ```ts title="my-plugin.ts" {1}
-import type { Plugin } from "@COdo-ai/plugin"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree }) => {
   return {
@@ -218,7 +218,7 @@ export const MyPlugin: Plugin = async ({ project, client, $, directory, worktree
 
 在特定事件发生时发送通知：
 
-```js title=".opencode/plugins/notification.js"
+```js title=".COdo/plugins/notification.js"
 export const NotificationPlugin = async ({ project, client, $, directory, worktree }) => {
   return {
     event: async ({ event }) => {
@@ -243,7 +243,7 @@ export const NotificationPlugin = async ({ project, client, $, directory, worktr
 
 阻止 COdo 读取 `.env` 文件：
 
-```javascript title=".opencode/plugins/env-protection.js"
+```javascript title=".COdo/plugins/env-protection.js"
 export const EnvProtection = async ({ project, client, $, directory, worktree }) => {
   return {
     "tool.execute.before": async (input, output) => {
@@ -261,7 +261,7 @@ export const EnvProtection = async ({ project, client, $, directory, worktree })
 
 将环境变量注入所有 Shell 执行（AI 工具和用户终端）：
 
-```javascript title=".opencode/plugins/inject-env.js"
+```javascript title=".COdo/plugins/inject-env.js"
 export const InjectEnvPlugin = async () => {
   return {
     "shell.env": async (input, output) => {
@@ -278,8 +278,8 @@ export const InjectEnvPlugin = async () => {
 
 插件还可以为 COdo 添加自定义工具：
 
-```ts title=".opencode/plugins/custom-tools.ts"
-import { type Plugin, tool } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/custom-tools.ts"
+import { type Plugin, tool } from "@codo-ai/plugin"
 
 export const CustomToolsPlugin: Plugin = async (ctx) => {
   return {
@@ -317,7 +317,7 @@ export const CustomToolsPlugin: Plugin = async (ctx) => {
 
 使用 `client.app.log()` 代替 `console.log` 进行结构化日志记录：
 
-```ts title=".opencode/plugins/my-plugin.ts"
+```ts title=".COdo/plugins/my-plugin.ts"
 export const MyPlugin = async ({ client }) => {
   await client.app.log({
     body: {
@@ -338,8 +338,8 @@ export const MyPlugin = async ({ client }) => {
 
 自定义会话压缩时包含的上下文：
 
-```ts title=".opencode/plugins/compaction.ts"
-import type { Plugin } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/compaction.ts"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const CompactionPlugin: Plugin = async (ctx) => {
   return {
@@ -362,8 +362,8 @@ Include any state that should persist across compaction:
 
 你还可以通过设置 `output.prompt` 来完全替换压缩提示词：
 
-```ts title=".opencode/plugins/custom-compaction.ts"
-import type { Plugin } from "@COdo-ai/plugin"
+```ts title=".COdo/plugins/custom-compaction.ts"
+import type { Plugin } from "@codo-ai/plugin"
 
 export const CustomCompactionPlugin: Plugin = async (ctx) => {
   return {

@@ -8,6 +8,7 @@ import {
 } from "@opentui/core"
 import type { Binding } from "@opentui/keymap"
 import { useTheme, selectedForeground } from "../context/theme"
+import { RtlText } from "../component/rtl-text"
 import { entries, filter, flatMap, groupBy, pipe } from "remeda"
 import { batch, createEffect, createMemo, createSignal, For, Show, type JSX, on } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -455,12 +456,12 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
   function FooterAction(action: { item: VisibleAction }) {
     if (!isActionItem(action.item))
       return (
-        <text>
+        <RtlText>
           <span style={{ fg: theme.text }}>
             <b>{action.item.title}</b>{" "}
           </span>
           <span style={{ fg: theme.textMuted }}>{action.item.label}</span>
-        </text>
+        </RtlText>
       )
     const item = action.item
     const active = createMemo(() => isActionFocused(item))
@@ -472,13 +473,13 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
         backgroundColor={active() ? theme.primary : RGBA.fromInts(0, 0, 0, 0)}
         onMouseUp={() => triggerAction(item)}
       >
-        <text
+        <RtlText
           fg={disabled() ? theme.textMuted : active() ? fg : theme.text}
           attributes={active() ? TextAttributes.BOLD : undefined}
         >
           {item.title}
-        </text>
-        <text fg={disabled() ? theme.textMuted : active() ? fg : theme.textMuted}> {item.label}</text>
+        </RtlText>
+        <RtlText fg={disabled() ? theme.textMuted : active() ? fg : theme.textMuted}> {item.label}</RtlText>
       </box>
     )
   }
@@ -488,13 +489,13 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
       <box paddingLeft={4} paddingRight={4}>
         <box flexDirection="row" justifyContent="space-between">
           {props.titleView ?? (
-            <text fg={theme.text} attributes={TextAttributes.BOLD}>
+            <RtlText fg={theme.text} attributes={TextAttributes.BOLD}>
               {props.title}
-            </text>
+            </RtlText>
           )}
-          <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
+          <RtlText fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
             esc
-          </text>
+          </RtlText>
         </box>
         <Show when={props.renderFilter !== false}>
           <box paddingTop={1}>
@@ -529,7 +530,7 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
           when={grouped().length > 0}
           fallback={
             <box paddingLeft={4} paddingRight={4} paddingTop={1}>
-              <text fg={theme.textMuted}>No results found</text>
+              <RtlText fg={theme.textMuted}>No results found</RtlText>
             </box>
           }
         >
@@ -549,9 +550,9 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
                       <Show
                         when={options[0]?.categoryView}
                         fallback={
-                          <text fg={theme.accent} attributes={TextAttributes.BOLD}>
+                          <RtlText fg={theme.accent} attributes={TextAttributes.BOLD}>
                             {category}
-                          </text>
+                          </RtlText>
                         }
                       >
                         {options[0]?.categoryView}
@@ -625,9 +626,9 @@ export function DialogSelect<T>(props: DialogSelectProps<T>) {
                           <For each={option.details}>
                             {(detail) => (
                               <box paddingLeft={3} paddingRight={3}>
-                                <text fg={theme.textMuted} wrapMode="none">
+                                <RtlText fg={theme.textMuted} wrapMode="none">
                                   {Locale.truncateMiddle(detail, Math.max(1, Math.min(76, dimensions().width - 12)))}
-                                </text>
+                                </RtlText>
                               </box>
                             )}
                           </For>
@@ -682,16 +683,16 @@ function Option(props: {
   return (
     <>
       <Show when={props.current && !props.gutter}>
-        <text flexShrink={0} fg={text()} marginRight={0}>
+        <RtlText flexShrink={0} fg={text()} marginRight={0}>
           ●
-        </text>
+        </RtlText>
       </Show>
       <Show when={props.gutter}>
         <box flexShrink={0} marginRight={0}>
           {props.gutter?.()}
         </box>
       </Show>
-      <text
+      <RtlText
         flexGrow={1}
         fg={text()}
         attributes={props.active && !props.muted ? TextAttributes.BOLD : undefined}
@@ -708,15 +709,15 @@ function Option(props: {
         <Show when={props.description}>
           <span style={{ fg: props.active && !props.muted ? fg : theme.textMuted }}> {props.description}</span>
         </Show>
-      </text>
+      </RtlText>
       <Show when={props.suffix}>
-        <text flexShrink={0} fg={text()} marginLeft={1}>
+        <RtlText flexShrink={0} fg={text()} marginLeft={1}>
           {props.suffix}
-        </text>
+        </RtlText>
       </Show>
       <Show when={props.footer}>
         <box flexShrink={0}>
-          <text fg={props.active && !props.muted ? fg : theme.textMuted}>{props.footer}</text>
+          <RtlText fg={props.active && !props.muted ? fg : theme.textMuted}>{props.footer}</RtlText>
         </box>
       </Show>
     </>

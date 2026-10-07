@@ -1,10 +1,12 @@
 # COdo
 
-> A security-native AI coding agent — personas, scoped pentesting, and auditable findings.
+> The security-native AI coding agent. Six specialized security personas, scope-gated
+> pentesting, a durable findings store, and an orchestrated multi-agent workflow — all in
+> one terminal-first CLI.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/dynamic/json?url=https://api.github.com/repos/Mosalah4351/COdo/releases/latest&query=tag_name&label=release)](https://github.com/Mosalah4351/COdo/releases)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)](#)
+[![npm](https://img.shields.io/npm/v/codo-ai)](https://www.npmjs.com/package/codo-ai)
 
 ```text
  ██████╗  ██████╗  ██████╗   ██████╗
@@ -15,185 +17,133 @@
  ╚═════╝  ╚═════╝  ╚═════╝   ╚═════╝
 ```
 
-**COdo** is an AI agent for developers who need the assistant to be security-aware by
-default. Not just "it writes code" — but also "it tells you when the code it's about to write
-introduces risk, it scopes pen-test activity to an explicit authorization file, and it
-remembers security findings across sessions."
+COdo is an AI coding agent for teams that treat security as part of the workflow, not a
+separate step. It writes code like any agent — and then it audits that code, threat-models
+the features you're about to build, scopes and executes authorized penetration tests, and
+remembers every finding across sessions. Stop losing vulnerabilities in markdown notes;
+every finding gets an ID, a severity, evidence, and a remediation path.
 
 ---
 
-## Why COdo (and not OpenCode)?
-
-OpenCode is a general-purpose AI coding assistant. It writes code.
-
-COdo is a persona-organized agent with first-class security workflows:
-
-- **Six security personas** covering the SDLC — architect, appsec, devsecops, pentest, secops
-- **A persistent findings store** — every vulnerability has an ID, severity, evidence, remediation,
-  and a status you can query (not a markdown note you lose)
-- **A scope gate** — pentest can't touch a target unless `.codo/security-scope.json` is signed,
-  unexpired, and names the target explicitly
-- **An orchestrator model** — `compose` routes work through 33 GSD subagents with structured
-  artifacts (plan → roadmap → execute → verify → review)
-
-If you're writing software where security review is part of the workflow — not a separate
-step you pay someone else for — COdo is the agent.
-
-For the full technical comparison with OpenCode and Claude Code, see
-**[`docs/not-a-fork/VISIBLE-DIFFERENCES.md`](docs/not-a-fork/VISIBLE-DIFFERENCES.md)**.
-
----
-
-## Quick start
-
-### Install
+## Installation
 
 ```bash
-curl -fsSL https://codo.run/install | bash
+npm install -g codo-ai
 ```
 
-Or with a specific version:
-
-```bash
-curl -fsSL https://codo.run/install | bash -s -- --version 1.0.0
-```
-
-### First run
+The npm package `codo-ai` installs a native binary for your platform (macOS, Linux, or
+Windows; Intel or Apple Silicon/ARM64; glibc or musl; baseline AVX2 fallbacks included) via
+a zero-dependency postinstall. No Node runtime required after install.
 
 ```bash
 codo
 ```
 
-You'll see the COdo banner, a session canvas, and a persona chip rail. Default agent is `compose`
-(for orchestrated multi-step work) with `@sec-test` available for security asks.
+You'll land in the COdo TUI. The default agent is `compose` for orchestrated multi-step
+work, and `@sec-test` handles everything security-related. Type `/help` to see the built-in
+commands.
 
-### Persona entry points
+---
 
-| Type | Purpose |
-|---|---|
-| `@compose` … | Orchestrated multi-phase work (plan → execute → verify) |
-| `@sec-test` … | Security question, audit, pentest, or compliance |
-| `@sec-appsec` … | Code-level audit (OWASP Top 10) |
-| `@sec-pentest` … | Authorized dynamic testing (scope-gated) |
-| `@sec-architect` … | Pre-implementation threat model |
-| `@sec-devsecops` … | CI/CD, SBOM, and supply-chain review |
+## ✦ sec-test: security at the heart of the agent
+
+`@sec-test` is not a script or a lint rule — it's the full security lifecycle, built from
+**six specialized personas** and a **29-skill library**. You invoke it the same way you ask
+any other question; COdo routes to the right specialist.
+
+### The six personas
+
+| Persona | Phase | What it does |
+|---|---|---|
+| **`sec-architect`** | Design | Threat-model features before code exists (STRIDE/PASTA, ASVS mapping) |
+| **`sec-appsec`** | Code | Static audit of any diff or PR — injection, secrets, authz, OWASP Top 10 |
+| **`sec-devsecops`** | Build/ship | Pipeline hardening (NIST SSDF), SBOMs, container scans, supply-chain attestation |
+| **`sec-pentest`** | Validate | Scope-gated dynamic testing against running targets |
+| **`sec-qa`** | Verify | Test generation, coverage audits, mutation testing, regression guards |
+| **`sec-secops`** | Operate | Audits COdo itself, tracks posture trend over time |
+
+### What makes it different
+
+- **A durable findings store.** Every vulnerability is written to a SQLite
+  `security_finding` table — ID, severity, CVSS, evidence, remediation, status. Query it,
+  report on it, watch it age. Re-running a scan de-duplicates instead of duplicating.
+- **A real scope gate.** `sec-pentest` cannot send a single packet to a target unless
+  `.codo/security-scope.json` exists, is signed, unexpired, and names that target. The
+  network path is code-enforced — `curl`, `nmap`, and friends are denied for personas.
+- **29 ready-to-run skills.** From `threat-model` and `code-audit` to `secrets-scan`,
+  `dependency-audit`, `fuzz`, `exploit-verify`, `mutation-test`, `incident-runbook`,
+  `regression-guard`, and `posture-report`.
+- **Human-readable + machine-readable.** Every skill writes markdown under
+  `.planning/security/` *and* records findings in the store; `codo sec report` exports
+  markdown, JSON, or SARIF for your CI.
+- **Regression guards for every fix.** When a finding is fixed, `sec-qa` can convert it
+  into a permanent test so the bug can't come back unnoticed.
 
 ### Example flows
 
-**Threat-model a new feature:**
-```
-@sec-test threat-model the new payment flow before we build it
-```
-→ produces `.planning/security/threat-models/payment-flow.md` with trust boundaries, STRIDE
-enumeration, and ASVS mapping.
+```text
+# Threat-model a feature before it's built
+@sec-test threat-model the new payment flow
 
-**Audit the current diff:**
-```
-@sec-test audit this branch's changes for security issues
-```
-→ runs `sec-appsec`, finds e.g. SQL injection in `src/api/users.ts:42`, writes a
-`.planning/security/findings/2026-08-10-audit.md` entry **and** a row in the
-`security_finding` SQLite table.
+# Audit the current branch's changes
+@sec-test audit this branch for security issues
 
-**Authorized pentest:**
-```
-@sec-test scope staging.example.com
-@sec-test pentest (scope file is written, persona asks for active-scan permission)
-```
+# Authorize and pentest a running target (scope file required)
+@sec-test scope https://staging.example.com
+@sec-test pentest
 
-**Posture summary at the end of the week:**
-```
+# Weekly posture digest
 @sec-test report
 ```
-→ reads findings table + markdown tree, produces `posture-YYYY-MM-DD.md` + updates
-`.planning/security/posture.md`.
 
 ---
 
-## Repository layout
+## compose: orchestrated multi-agent work
 
-```
-packages/
-  codo/         # CLI, agents, skills, session runtime, storage
-  core/         # Effect-based services, drizzle schema, migration runner
-  tui/          # Terminal UI (solid+opentui)
-  app/          # SolidJS web app (workbench view)
-  desktop/      # Electron shell
-  sdk/          # JS/TS SDK generated from the OpenAPI spec
-  plugin/       # Plugin API contract (third-party)
-docs/
-  sec-test/     # The full sec-test documentation set (idea, guide, impl)
-  not-a-fork/   # Why COdo is its own thing (visible differences)
-  archive/      # Historical docs (kept for reference)
-.planning/
-  codebase/     # Architecture summary read by compose
-  phases/       # Active phase state
+For everything that's not security — and the glue around it — COdo routes through the
+**`compose` agent**: an orchestrator that plans your request, dispatches specialized
+subagents (33 workflow agents), and produces structured artifacts as it goes:
+
+```text
+discuss → plan → execute → verify → review
 ```
 
----
-
-## Development
-
-```bash
-# Setup
-git clone https://github.com/Mosalah4351/COdo.git
-cd COdo
-bun install
-
-# Run the CLI directly
-bun run packages/codo
-
-# Typecheck (per package)
-cd packages/codo && bun typecheck
-cd ../core && bun typecheck
-
-# Tests (per package)
-cd packages/codo && bun test                                          # full suite
-bun test test/agent/sec-test-registry.test.ts                          # scoped
-bun test test/security/scope-gate.test.ts                              # gate logic
-
-# Build the native binary
-cd packages/codo && bun run build
-# Output lands in packages/codo/dist/codo-<platform>-<arch>/
-```
-
-The repo is a Bun workspace with Turbo for orchestration. Root `bun typecheck` runs every
-package.
+Ask for a feature and get a roadmap, a numbered plan, parallel waves of implementation,
+and verification against acceptance criteria — with commit hygiene built in. `compose`
+also runs the GSD workflow system for milestone-driven development (`.planning/` project
+state, phases, cross-agent audits).
 
 ---
 
-## Security posture
+## And more
 
-Sec-test is itself the test lab: every PR against the `sec-test` branch is audited by the
-`@sec-test` agent before merge. The `security_finding` table for this repo is queryable by
-anyone with a clone. See [`docs/sec-test/`](docs/sec-test/) for the documentation on how the
-system works.
-
-If you find a vulnerability in COdo, **please do not open a public issue.** Email
-`security@codo.run` with a proof-of-concept. We rotate disclosed findings into the posture
-report within 24h.
+- **Terminal-first TUI** — SolidJS + OpenTUI, with an embedded web workbench
+  (`codo web`) and an optional Electron desktop shell.
+- **Persistent sessions** — durable session inputs, crash-safe resume, and process-local
+  execution orchestration with EventV2 replay.
+- **Every major model provider** — OpenAI, Anthropic, Google, Bedrock, Azure, Groq,
+  Mistral, xAI, OpenRouter, and more via the AI SDK gateway, plus OAuth sign-in.
+- **Plugins** — a typed plugin API for extending the agent, tools, and skills.
+- **Generated SDK** — the HTTP API is spec-first, with a JS/TS SDK generated from the
+  OpenAPI schema.
 
 ---
+
+## Requirements
+
+- macOS 12+, Linux (glibc or musl), or Windows 10+ (x64 with AVX2, or baseline fallback)
+- ARM64 (Apple Silicon / AArch64 Linux / Windows on ARM) supported natively
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
-
-COdo was initially derived from OpenCode (MIT). The MIT license text for OpenCode's components
-is preserved at [`LICENSES/OPENCODE-LICENSE.txt`](LICENSES/OPENCODE-LICENSE.txt), and a longer
-attribution story lives in [`NOTICES.md`](NOTICES.md).
-
----
+MIT — see [`LICENSE`](LICENSE). COdo was initially derived from OpenCode (MIT); the
+OpenCode license text is preserved at [`LICENSES/OPENCODE-LICENSE.txt`](LICENSES/OPENCODE-LICENSE.txt).
 
 ## Community
 
-- **Issues** → https://github.com/Mosalah4351/COdo/issues
-- **Discussions** → https://github.com/Mosalah4351/COdo/discussions (use this for
-  "should we adopt this?" questions, not defect reports)
-- **Docs** → https://codo.run/docs (mostly the markdown under `docs/`)
+- **Issues** → <https://github.com/Mosalah4351/COdo/issues>
+- **Discussions** → <https://github.com/Mosalah4351/COdo/discussions>
+- **Docs** → <https://codo-ai.vercel.app/docs>
 
-Contribution guide is at [`CONTRIBUTING.md`](CONTRIBUTING.md). The short version: personas
-live in `packages/codo/src/agent/prompt/`, skills live in
-`packages/codo/src/skill/<name>/SKILL.md`, findings live in the `security_finding`
-drizzle table. Adding a new skill is ~30 lines of markdown; adding a new persona is a
-prompt + a permission block in `packages/codo/src/agent/agent.ts`.
+If you find a vulnerability in COdo, please do **not** open a public issue — email
+`security@codo.run` with a proof-of-concept.

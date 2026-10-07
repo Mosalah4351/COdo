@@ -11,7 +11,7 @@ Para depurar problemas con COdo, comience verificando los registros y los datos 
 
 Los archivos de registro se escriben en:
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: Presione `WIN+R` y pegue `%USERPROFILE%\.local\share\COdo\log`
 
 Los archivos de registro reciben nombres con marcas de tiempo (por ejemplo, `2025-01-09T123456.log`) y se conservan los 10 archivos de registro más recientes.
@@ -24,7 +24,7 @@ Puede configurar el nivel de registro con la opción de línea de comandos `--lo
 
 COdo almacena datos de sesión y otros datos de aplicaciones en el disco en:
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: Presione `WIN+R` y pegue `%USERPROFILE%\.local\share\COdo`
 
 Este directorio contiene:
@@ -57,8 +57,8 @@ Si la aplicación de escritorio falla al iniciarse, se bloquea o se comporta de 
 
 Abra su archivo de configuración global y busque una clave `plugin`.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (o `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (instalaciones anteriores): `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc` (o `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (instalaciones anteriores): `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: Presione `WIN+R` y pegue `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 Si tiene complementos configurados, desactívelos temporalmente eliminando la clave o configurándola en una matriz vacía:
@@ -75,10 +75,10 @@ Si tiene complementos configurados, desactívelos temporalmente eliminando la cl
 COdo también puede cargar complementos locales desde el disco. Quítelos temporalmente del camino (o cambie el nombre de la carpeta) y reinicie la aplicación de escritorio:
 
 - **Complementos globales**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: Presione `WIN+R` y pegue `%USERPROFILE%\.config\COdo\plugins`
 - **Complementos de proyecto** (solo si usas la configuración por proyecto)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 Si la aplicación comienza a funcionar nuevamente, vuelva a habilitar los complementos uno a la vez para encontrar cuál está causando el problema.
 
@@ -115,9 +115,9 @@ Si su `COdo.json(c)` contiene una sección `server`, elimínela temporalmente y 
 
 #### Verificar variables de entorno
 
-Si tiene `OPENCODE_PORT` configurado en su entorno, la aplicación de escritorio intentará usar ese puerto para el servidor local.
+Si tiene `CODO_PORT` configurado en su entorno, la aplicación de escritorio intentará usar ese puerto para el servidor local.
 
-- Desarme `OPENCODE_PORT` (o elija un puerto libre) y reinicie.
+- Desarme `CODO_PORT` (o elija un puerto libre) y reinicie.
 
 ---
 
@@ -177,7 +177,7 @@ Si tiene problemas con COdo:
 
    La mejor manera de informar errores o solicitar funciones es a través de nuestro repositorio GitHub:
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    Antes de crear un nuevo problema, busque los problemas existentes para ver si su problema ya ha sido informado.
 
@@ -225,7 +225,7 @@ Ejemplos:
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 Para saber a qué modelos tiene acceso, ejecute `COdo models`
 

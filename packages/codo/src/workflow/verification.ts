@@ -349,13 +349,21 @@ export function renderEvidenceJSON(evidence: VerificationResult): string {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /**
- * Validate a verification command (basic safety check).
+ * Validate a verification command.
+ *
+ * Verification lines come from repo-committed plan files, i.e. attacker-controlled
+ * content when a hostile repository is cloned. Only known build/test runners are
+ * accepted, with shell operators (redirection, pipes, chaining, cmd.exe variable
+ * expansion) rejected outright so a poisoned line cannot exfiltrate files or run
+ * arbitrary code.
  */
 function validateCommand(command: string): boolean {
   if (!command || command.length > 500) return false
+  const head = command.trim().split(/\s+/)[0]
+  if (!head || !KNOWN_COMMAND_PREFIXES.has(head)) return false
   if (/[`$()]/.test(command)) return false // No command substitution
-  if (/;\s*\w/.test(command)) return false // No chained commands
-  if (/\|\|/.test(command) || /&&/.test(command)) return false // No shell operators
+  if (/[<>|;&]/.test(command)) return false // No redirection, pipes, chains, backgrounding
+  if (/%[^%]*%/.test(command)) return false // No cmd.exe variable expansion
   return true
 }
 

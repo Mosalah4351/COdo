@@ -104,6 +104,7 @@ export type TurnSummary = {
 }
 
 export type ScrollbackOptions = {
+  rtl?: RunTuiConfig["rtl"]
   diffStyle?: RunDiffStyle
   suppressBackgrounds?: boolean
 }
@@ -286,7 +287,7 @@ export type QuestionReply = Parameters<COdoClient["question"]["reply"]>[0]
 
 export type QuestionReject = Parameters<COdoClient["question"]["reject"]>[0]
 
-export type RunTuiConfig = Pick<TuiConfig.Resolved, "keybinds" | "leader_timeout" | "diff_style">
+export type RunTuiConfig = Pick<TuiConfig.Resolved, "keybinds" | "leader_timeout" | "diff_style" | "rtl">
 
 // Lifecycle phase of a scrollback entry. "start" opens the entry, "progress"
 // appends content (coalesced in the footer queue), "final" closes it.

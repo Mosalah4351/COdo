@@ -43,16 +43,16 @@ COdo 支援 **JSON** 和 **JSONC**（帶註解的 JSON）格式。
 設定來源按以下順序載入（後面的來源覆寫前面的來源）：
 
 1. **遠端設定**（來自 `.well-known/COdo`）- 組織預設值
-2. **全域設定**（`~/.config/opencode/opencode.json`）- 使用者偏好
-3. **自訂設定**（`OPENCODE_CONFIG` 環境變數）- 自訂覆寫
+2. **全域設定**（`~/.config/COdo/COdo.json`）- 使用者偏好
+3. **自訂設定**（`CODO_CONFIG` 環境變數）- 自訂覆寫
 4. **專案設定**（專案中的 `COdo.json`）- 專案特定設定
-5. **`.opencode` 目錄** - 代理、指令、外掛程式
-6. **內嵌設定**（`OPENCODE_CONFIG_CONTENT` 環境變數）- 執行時覆寫
+5. **`.COdo` 目錄** - 代理、指令、外掛程式
+6. **內嵌設定**（`CODO_CONFIG_CONTENT` 環境變數）- 執行時覆寫
 
 這意味著專案設定可以覆寫全域預設值，全域設定可以覆寫遠端組織預設值。
 
 :::note
-`.opencode` 和 `~/.config/opencode` 目錄的子目錄使用**複數名稱**：`agents/`、`commands/`、`modes/`、`plugins/`、`skills/`、`tools/` 和 `themes/`。為了向後相容，也支援單數名稱（例如 `agent/`）。
+`.COdo` 和 `~/.config/COdo` 目錄的子目錄使用**複數名稱**：`agents/`、`commands/`、`modes/`、`plugins/`、`skills/`、`tools/` 和 `themes/`。為了向後相容，也支援單數名稱（例如 `agent/`）。
 :::
 
 ---
@@ -95,7 +95,7 @@ COdo 支援 **JSON** 和 **JSONC**（帶註解的 JSON）格式。
 
 ### 全域
 
-將全域 COdo 設定放在 `~/.config/opencode/opencode.json` 中。使用全域設定來設定使用者層級的偏好，例如主題、供應商或快捷鍵。
+將全域 COdo 設定放在 `~/.config/COdo/COdo.json` 中。使用全域設定來設定使用者層級的偏好，例如主題、供應商或快捷鍵。
 
 全域設定覆寫遠端組織預設值。
 
@@ -117,10 +117,10 @@ COdo 支援 **JSON** 和 **JSONC**（帶註解的 JSON）格式。
 
 ### 自訂路徑
 
-使用 `OPENCODE_CONFIG` 環境變數指定自訂設定檔路徑。
+使用 `CODO_CONFIG` 環境變數指定自訂設定檔路徑。
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -130,14 +130,14 @@ COdo run "Hello world"
 
 ### 自訂目錄
 
-使用 `OPENCODE_CONFIG_DIR` 環境變數指定自訂設定目錄。該目錄會像標準 `.opencode` 目錄一樣被搜尋代理、指令、模式和外掛程式，並且應遵循相同的結構。
+使用 `CODO_CONFIG_DIR` 環境變數指定自訂設定目錄。該目錄會像標準 `.COdo` 目錄一樣被搜尋代理、指令、模式和外掛程式，並且應遵循相同的結構。
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-自訂目錄在全域設定和 `.opencode` 目錄之後載入，因此**可以覆寫**它們的設定。
+自訂目錄在全域設定和 `.COdo` 目錄之後載入，因此**可以覆寫**它們的設定。
 
 ---
 
@@ -172,7 +172,7 @@ COdo run "Hello world"
 - `scroll_speed` - 自訂捲動速度倍率（預設值：`3`，最小值：`1`）。如果 `scroll_acceleration.enabled` 為 `true`，則忽略此選項。
 - `diff_style` - 控制差異呈現方式。`"auto"` 根據終端機寬度自適應，`"stacked"` 始終顯示單列。
 
-使用 `OPENCODE_TUI_CONFIG` 指向自訂 TUI 設定檔。
+使用 `CODO_TUI_CONFIG` 指向自訂 TUI 設定檔。
 
 `COdo.json` 中的舊版 `theme`、`keybinds` 和 `tui` 鍵已被棄用，並將在可能的情況下自動遷移。
 
@@ -337,7 +337,7 @@ Bearer Token（`AWS_BEARER_TOKEN_BEDROCK` 或 `/connect`）優先於基於設定
 }
 ```
 
-您還可以使用 `~/.config/opencode/agents/` 或 `.opencode/agents/` 中的 Markdown 檔案定義代理。[在此了解更多](/docs/agents)。
+您還可以使用 `~/.config/COdo/agents/` 或 `.COdo/agents/` 中的 Markdown 檔案定義代理。[在此了解更多](/docs/agents)。
 
 ---
 
@@ -401,7 +401,7 @@ Bearer Token（`AWS_BEARER_TOKEN_BEDROCK` 或 `/connect`）優先於基於設定
 }
 ```
 
-您還可以使用 `~/.config/opencode/commands/` 或 `.opencode/commands/` 中的 Markdown 檔案定義指令。[在此了解更多](/docs/commands)。
+您還可以使用 `~/.config/COdo/commands/` 或 `.COdo/commands/` 中的 Markdown 檔案定義指令。[在此了解更多](/docs/commands)。
 
 ---
 
@@ -539,12 +539,12 @@ COdo 啟動時會自動下載新版本。您可以使用 `autoupdate` 選項停�
 
 [外掛程式](/docs/plugins)透過自訂工具、掛鉤和整合來擴展 COdo。
 
-將外掛程式檔案放置在 `.opencode/plugins/` 或 `~/.config/opencode/plugins/` 中。您還可以透過 `plugin` 選項從 npm 載入外掛程式。
+將外掛程式檔案放置在 `.COdo/plugins/` 或 `~/.config/COdo/plugins/` 中。您還可以透過 `plugin` 選項從 npm 載入外掛程式。
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -641,7 +641,7 @@ COdo 啟動時會自動下載新版本。您可以使用 `autoupdate` 選項停�
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

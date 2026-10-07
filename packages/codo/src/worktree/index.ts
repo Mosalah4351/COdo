@@ -421,6 +421,15 @@ export const layer: Layer.Layer<
       const entry = yield* locateWorktree(entries, directory)
 
       if (!entry?.path) {
+        // The path is not a registered git worktree, so `directory` is raw client
+        // input. Containment against the project worktree keeps a crafted request
+        // from recursively force-deleting arbitrary directories on this machine.
+        const worktree = yield* canonical(ctx.worktree)
+        if (directory !== worktree && !directory.startsWith(`${worktree}${pathSvc.sep}`)) {
+          return yield* new RemoveFailedError({
+            message: `${input.directory} is not a worktree of this project`,
+          })
+        }
         const directoryExists = yield* fs.exists(directory).pipe(Effect.orDie)
         if (directoryExists) {
           yield* stopFsmonitor(directory)

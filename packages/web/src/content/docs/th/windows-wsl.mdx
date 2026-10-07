@@ -26,7 +26,7 @@ WSL ให้ประสิทธิภาพระบบไฟล์ที่�
    เมื่อตั้งค่า WSL เสร็จแล้ว ให้เปิด terminal WSL และติดตั้ง COdo ด้วย [วิธีติดตั้ง](/docs/) แบบใดแบบหนึ่ง
 
    ```bash
-   curl -fsSL https://codo-ai.vercel.app/install | bash
+   git clone https://github.com/Mosalah4351/COdo && cd COdo && bun install
    ```
 
 3. **ใช้งาน COdo จาก WSL**
@@ -59,10 +59,10 @@ WSL ให้ประสิทธิภาพระบบไฟล์ที่�
 :::
 
 :::caution
-เมื่อใช้ `--hostname 0.0.0.0` ให้ตั้งค่า `OPENCODE_SERVER_PASSWORD` เพื่อป้องกันเซิร์ฟเวอร์
+เมื่อใช้ `--hostname 0.0.0.0` ให้ตั้งค่า `CODO_SERVER_PASSWORD` เพื่อป้องกันเซิร์ฟเวอร์
 
 ```bash
-OPENCODE_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
+CODO_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
 ```
 
 :::
@@ -110,4 +110,4 @@ COdo
 
 - แม้โปรเจกต์จะอยู่บนไดรฟ์ Windows ก็ควรรัน COdo ใน WSL เพื่อการเข้าถึงไฟล์ที่ลื่นกว่า
 - ใช้ COdo ควบคู่กับ [WSL extension ของ VS Code](https://code.visualstudio.com/docs/remote/wsl) เพื่อเวิร์กโฟลว์ที่ต่อเนื่อง
-- การตั้งค่าและเซสชันของ COdo จะถูกเก็บในสภาพแวดล้อม WSL ที่ `~/.local/share/opencode/`
+- การตั้งค่าและเซสชันของ COdo จะถูกเก็บในสภาพแวดล้อม WSL ที่ `~/.local/share/COdo/`

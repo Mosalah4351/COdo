@@ -67,10 +67,28 @@ describe("scope-gate", () => {
       if (!result.ok) expect(result.reason).toBe("expired")
     }))
 
-  test("empty targets block", () =>
-    withScopeFile(JSON.stringify({ ...scopeJson(), targets: [] }), async (dir) => {
+  test("empty targets block with the no-targets reason", () =>
+    // NOTE: scopeJson() returns a *string*, so the previous
+    // `{ ...scopeJson(), targets: [] }` spread produced an object of indexed
+    // characters and was really exercising the schema-validation path. Pass
+    // the override through scopeJson() so this actually tests empty targets.
+    withScopeFile(scopeJson({ targets: [] }), async (dir) => {
       const result = await runGate({ projectDir: dir })
       expect(result.ok).toBe(false)
+      if (!result.ok) expect(result.reason).toBe("no-targets")
+    }))
+
+  test("malformed targets entry blocks as unparseable", () =>
+    withScopeFile(scopeJson({ targets: [{ type: "carrier-pigeon", value: 42 }] }), async (dir) => {
+      const result = await runGate({ projectDir: dir })
+      expect(result.ok).toBe(false)
+      if (!result.ok) expect(result.reason).toBe("unparseable")
+    }))
+
+  test("uppercase bare origin still matches a lowercase scope entry", () =>
+    withScopeFile(scopeJson(), async (dir) => {
+      const result = await runGate({ projectDir: dir, target: "HTTPS://STAGING.EXAMPLE.COM" })
+      expect(result.ok).toBe(true)
     }))
 
   test("valid file admits", () =>

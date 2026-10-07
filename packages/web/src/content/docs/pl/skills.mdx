@@ -13,8 +13,8 @@ Umiejętności są ładowane na żądanie za pośrednictwem natywnego narzędzia
 Utwórz jeden folder na nazwę umiejętności i umieść w nim `SKILL.md`.
 COdo przeszukuje te lokalizacje:
 
-- Project config: `.opencode/skills/<name>/SKILL.md`
-- Global config: `~/.config/opencode/skills/<name>/SKILL.md`
+- Project config: `.COdo/skills/<name>/SKILL.md`
+- Global config: `~/.config/COdo/skills/<name>/SKILL.md`
 - Project Claude-compatible: `.claude/skills/<name>/SKILL.md`
 - Global Claude-compatible: `~/.claude/skills/<name>/SKILL.md`
 - Project agent-compatible: `.agents/skills/<name>/SKILL.md`
@@ -25,9 +25,9 @@ COdo przeszukuje te lokalizacje:
 ## Zrozumienie wykrywania
 
 W przypadku ścieżek lokalnych projektu COdo przechodzi od bieżącego katalogu roboczego, aż dotrze do drzewa roboczego git.
-Ładuje po drodze dowolne pasujące `skills/*/SKILL.md` w `.opencode/` i dowolne pasujące `.claude/skills/*/SKILL.md` lub `.agents/skills/*/SKILL.md`.
+Ładuje po drodze dowolne pasujące `skills/*/SKILL.md` w `.COdo/` i dowolne pasujące `.claude/skills/*/SKILL.md` lub `.agents/skills/*/SKILL.md`.
 
-Ładowane są także definicje globalne z `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` i `~/.agents/skills/*/SKILL.md`.
+Ładowane są także definicje globalne z `~/.config/COdo/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` i `~/.agents/skills/*/SKILL.md`.
 
 ---
 
@@ -73,7 +73,7 @@ Zadbaj o to, aby agent mógł dokonać prawidłowego wyboru.
 
 ## Przykład użycia
 
-Utwórz `.opencode/skills/git-release/SKILL.md` w ten sposób:
+Utwórz `.COdo/skills/git-release/SKILL.md` w ten sposób:
 
 ```markdown
 ---

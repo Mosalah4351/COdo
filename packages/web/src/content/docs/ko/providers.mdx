@@ -18,7 +18,7 @@ COdo는 [AI SDK](https://ai-sdk.dev/) 및 [Models.dev](https://models.dev)를 �
 ### 자격 증명
 
 `/connect` 명령으로 공급자의 API 키를 추가하면 다음 위치에 저장됩니다:
-`~/.local/share/opencode/auth.json`
+`~/.local/share/COdo/auth.json`
 
 ---
 
@@ -327,7 +327,7 @@ Pro/Max 구독이 없는 경우 **Create an API Key**를 선택할 수 있습니
 
 ### Atomic Chat
 
-OpenAI 호환 API 서버 뒤에서 로컬 LLM을 실행하는 데스크톱 애플리케이션인 [Atomic Chat](https://atomic.chat)을 통해 로컬 모델을 사용하도록 opencode를 구성할 수 있습니다(기본 엔드포인트 `http://127.0.0.1:1337/v1`).
+OpenAI 호환 API 서버 뒤에서 로컬 LLM을 실행하는 데스크톱 애플리케이션인 [Atomic Chat](https://atomic.chat)을 통해 로컬 모델을 사용하도록 COdo를 구성할 수 있습니다(기본 엔드포인트 `http://127.0.0.1:1337/v1`).
 
 ```json title="COdo.json" "atomic-chat" {5, 6, 8, 10-14}
 {
@@ -843,7 +843,7 @@ GitLab 도구(병합 요청, 이슈, 파이프라인, CI/CD 등)에 액세스하
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-gitlab-plugin"]
+  "plugin": ["COdo-gitlab-plugin"]
 }
 ```
 
@@ -1020,7 +1020,7 @@ COdo를 통해 자동으로 구성되지 않는 Helicone의 기능이나 모델�
 
 [Helicone의 모델 디렉토리](https://helicone.ai/models)에서 추가하려는 모델의 ID를 확인하십시오.
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1048,7 +1048,7 @@ COdo를 통해 자동으로 구성되지 않는 Helicone의 기능이나 모델�
 
 Helicone는 캐싱, 사용자 추적 및 세션 관리와 같은 기능을 위한 사용자 정의 헤더를 지원합니다. `options.headers`를 사용하여 공급자 구성에 추가하십시오:
 
-```jsonc title="~/.config/opencode/opencode.jsonc"
+```jsonc title="~/.config/COdo/COdo.jsonc"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
   "provider": {
@@ -1079,7 +1079,7 @@ npm install -g COdo-helicone-session
 
 ```json title="COdo.json"
 {
-  "plugin": ["opencode-helicone-session"]
+  "plugin": ["COdo-helicone-session"]
 }
 ```
 

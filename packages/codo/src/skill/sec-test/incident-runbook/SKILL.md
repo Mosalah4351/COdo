@@ -29,7 +29,8 @@ A runbook is what on-call actually follows when the alert fires. Draft one per s
 ## Rules
 
 - Runbooks are living docs; the "after-action" section is the most valuable part.
-- No hypotheticals — if a step requires infrastructure the project doesn't have, that's a finding for `sec-test:devsecops`, not a runbook step.
+- No hypotheticals — if a step requires infrastructure the project doesn't have, that's a finding for `sec-test:pipeline-harden` (the `sec-devsecops` persona), not a runbook step.
+- Shell commands in a runbook are **instructions for a human operator**, not commands for you. `sec-secops` has no `bash` grant at all; write `aws iam update-access-key ...` as the step the on-call engineer runs, and never attempt it yourself.
 - Keep each scenario under 100 lines. Long runbooks are alarm-fatigue generators.
 
-Return `## POSTURE REPORT COMPLETE` with the list of scenarios drafted.
+Return `## SEC-RESULT skill=sec-test:incident-runbook status=complete doc=<path>` plus the list of scenarios drafted.

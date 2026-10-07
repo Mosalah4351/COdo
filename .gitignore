@@ -34,3 +34,6 @@ UPCOMING_CHANGELOG.md
 logs/
 *.bun-build
 tsconfig.tsbuildinfo
+
+# scrape run checkpoints/cache/auth (transient machine data)
+.codo/scrape/

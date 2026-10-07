@@ -61,7 +61,7 @@ COdo は、複数の場所からの `AGENTS.md` ファイルの読み取りも�
 
 ### グローバル
 
-`~/.config/opencode/AGENTS.md` ファイルにグローバルルールを含めることもできます。これは、すべての COdo セッションに適用されます。
+`~/.config/COdo/AGENTS.md` ファイルにグローバルルールを含めることもできます。これは、すべての COdo セッションに適用されます。
 
 これは Git にコミットされておらず、チームと共有されていないため、LLM が従うべき個人ルールを指定するためにこれを使用することをお勧めします。
 
@@ -70,15 +70,15 @@ COdo は、複数の場所からの `AGENTS.md` ファイルの読み取りも�
 Claude Code から移行するユーザーのために、COdo はフォールバックとして Claude Code のファイル規則をサポートしています。
 
 - **プロジェクトルール**: プロジェクトディレクトリ内の `CLAUDE.md` (`AGENTS.md` が存在しない場合に使用されます)
-- **グローバルルール**: `~/.claude/CLAUDE.md` (`~/.config/opencode/AGENTS.md` が存在しない場合に使用)
+- **グローバルルール**: `~/.claude/CLAUDE.md` (`~/.config/COdo/AGENTS.md` が存在しない場合に使用)
 - **スキル**: `~/.claude/skills/` — 詳細については、[エージェントスキル](/docs/skills/) を参照してください。
 
 Claude Code の互換性を無効にするには、次の環境変数のいずれかを設定します。
 
 ```bash
-export OPENCODE_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
-export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
-export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
+export CODO_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
+export CODO_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
+export CODO_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 ```
 
 ---
@@ -88,16 +88,16 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 COdo が開始されると、次の順序でルールファイルが検索されます。
 
 1. **ローカルファイル** (現在のディレクトリから上に移動) (`AGENTS.md`、`CLAUDE.md`)
-2. **グローバルファイル** (`~/.config/opencode/AGENTS.md`)
+2. **グローバルファイル** (`~/.config/COdo/AGENTS.md`)
 3. **Claude Code ファイル** (`~/.claude/CLAUDE.md` にあります) (無効になっていない限り)
 
-最初に一致したファイルが各カテゴリで優先されます。たとえば、`AGENTS.md` と `CLAUDE.md` の両方がある場合、`AGENTS.md` のみが使用されます。同様に、`~/.config/opencode/AGENTS.md` は `~/.claude/CLAUDE.md` よりも優先されます。
+最初に一致したファイルが各カテゴリで優先されます。たとえば、`AGENTS.md` と `CLAUDE.md` の両方がある場合、`AGENTS.md` のみが使用されます。同様に、`~/.config/COdo/AGENTS.md` は `~/.claude/CLAUDE.md` よりも優先されます。
 
 ---
 
 ## カスタム指示
 
-`opencode.json` またはグローバル `~/.config/opencode/opencode.json` でカスタム命令ファイルを指定できます。これにより、あなたとあなたのチームは、既存のルールを AGENTS.md に複製するのではなく、再利用することができます。
+`COdo.json` またはグローバル `~/.config/COdo/COdo.json` でカスタム命令ファイルを指定できます。これにより、あなたとあなたのチームは、既存のルールを AGENTS.md に複製するのではなく、再利用することができます。
 
 例：
 

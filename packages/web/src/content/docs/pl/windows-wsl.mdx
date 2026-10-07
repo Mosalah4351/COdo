@@ -26,7 +26,7 @@ WSL oferuje lepsza wydajnosc systemu plikow, pelna obsluge terminala i zgodnosc 
    Po skonfigurowaniu WSL otworz terminal WSL i zainstaluj COdo jedna z [metod instalacji](/docs/).
 
    ```bash
-   curl -fsSL https://codo-ai.vercel.app/install | bash
+   git clone https://github.com/Mosalah4351/COdo && cd COdo && bun install
    ```
 
 3. **Korzystaj z COdo przez WSL**
@@ -59,10 +59,10 @@ Jesli `localhost` nie dziala w Twojej konfiguracji, polacz sie przez adres IP WS
 :::
 
 :::caution
-Przy uzyciu `--hostname 0.0.0.0` ustaw `OPENCODE_SERVER_PASSWORD`, aby zabezpieczyc serwer.
+Przy uzyciu `--hostname 0.0.0.0` ustaw `CODO_SERVER_PASSWORD`, aby zabezpieczyc serwer.
 
 ```bash
-OPENCODE_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
+CODO_SERVER_PASSWORD=your-password COdo serve --hostname 0.0.0.0
 ```
 
 :::
@@ -110,4 +110,4 @@ Aby uzyskac najplynniejsza prace, rozwaz sklonowanie/skopiowanie repozytorium do
 
 - Uruchamiaj COdo w WSL dla projektow zapisanych na dyskach Windows - dostep do plikow jest bezproblemowy
 - Uzywaj [rozszerzenia WSL dla VS Code](https://code.visualstudio.com/docs/remote/wsl) razem z COdo, aby miec zintegrowany workflow
-- Konfiguracja opencode i sesje sa przechowywane w srodowisku WSL pod `~/.local/share/opencode/`
+- Konfiguracja COdo i sesje sa przechowywane w srodowisku WSL pod `~/.local/share/COdo/`

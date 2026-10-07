@@ -26,7 +26,7 @@ Two questions: (1) was this artifact built by the pipeline we think built it, an
    - If the project claims no SLSA but signs artifacts anyway, that's fine — log it.
    - If external dependencies are fetched unsigned and there's no checksum pinning, that IS a finding (supply chain hygiene, not cryptographic).
 6. **Write findings** to `.planning/security/findings/YYYY-MM-DD-supply-chain-attest.md` (persona: sec-devsecops, category: `A08-software-data-integrity-failures` or `SLSA-Lx`).
-7. Return `## PIPELINE HARDEN COMPLETE` (at this layer the supply-chain verdict rolls into the pipeline report).
+7. Return `## SEC-RESULT skill=sec-test:supply-chain-attest status=complete findings=<n> critical=<n> high=<n> doc=<path>`.
 
 ## Rules
 

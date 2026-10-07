@@ -189,10 +189,10 @@ Configure agentes en su archivo de configuración `COdo.json`:
 
 También puede definir agentes utilizando archivos de Markdown. Colócalos en:
 
-- Global: `~/.config/opencode/agents/`
-- Por proyecto: `.opencode/agents/`
+- Global: `~/.config/COdo/agents/`
+- Por proyecto: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -367,7 +367,7 @@ Si no especifica un modelo, los agentes primarios usarán el [modelo configurado
 }
 ```
 
-El ID del modelo en su configuración COdo usa el formato `provider/model-id`. Por ejemplo, si usa [COdo Zen](/docs/zen), usaría `opencode/gpt-5.1-codex` para GPT 5.1 Codex.
+El ID del modelo en su configuración COdo usa el formato `provider/model-id`. Por ejemplo, si usa [COdo Zen](/docs/zen), usaría `COdo/gpt-5.1-codex` para GPT 5.1 Codex.
 
 ---
 
@@ -455,7 +455,7 @@ Puede anular estos permisos por agente.
 
 También puede establecer permisos en los agentes de Markdown.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -705,14 +705,14 @@ A continuación se muestran algunos casos de uso comunes para diferentes agentes
 A continuación se muestran algunos agentes de ejemplo que pueden resultarle útiles.
 
 :::tip
-¿Tiene un agente que le gustaría compartir? [Enviar un PR](https://github.com/anomalyco/COdo).
+¿Tiene un agente que le gustaría compartir? [Enviar un PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Agente de documentación
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -734,7 +734,7 @@ Focus on:
 
 ### Auditor de seguridad
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

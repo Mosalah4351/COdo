@@ -18,6 +18,13 @@ codo --version    # Show version
 codo --help       # Show help
 ```
 
+## What's New in 2.23.5-sec-test
+
+- **Subagent accent colors** - Subagent session footer and scrollbar now use the persona's unique color for visual distinction
+- **GSD installation fix** - Fixed MODULE_NOT_FOUND error when running gsd-tools.cjs; scripts now install to the correct path
+- **Zen API fix** - Fixed COdo fork headers to correctly target opencode's Zen backend
+- **Spinner crash fix** - Replaced native spinner with text-based animation to prevent Cell to ArrayBufferView errors
+
 ## Platform Binaries
 
 This package depends on the following optional platform-specific packages:
@@ -34,6 +41,10 @@ This package depends on the following optional platform-specific packages:
 - `@codo-ai/codo-windows-arm64` - Windows ARM64
 - `@codo-ai/codo-windows-x64` - Windows x64
 - `@codo-ai/codo-windows-x64-baseline` - Windows x64 (baseline)
+
+## Security Testing
+
+This is a security-testing fork. For the standard release, see the main branch.
 
 ## License
 

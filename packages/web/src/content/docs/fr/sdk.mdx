@@ -18,7 +18,7 @@ Utilisez-le pour créer des intégrations et contrôler COdo par programme.
 Installez le SDK à partir de npm :
 
 ```bash
-npm install @COdo-ai/sdk
+npm install @codo-ai/sdk
 ```
 
 ---
@@ -28,7 +28,7 @@ npm install @COdo-ai/sdk
 Créez une instance de COdo :
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const { client } = await createOpencode()
 ```
@@ -52,7 +52,7 @@ Cela démarre à la fois un serveur et un client
 Vous pouvez transmettre un objet de configuration pour personnaliser le comportement. L'instance récupère toujours votre `COdo.json`, mais vous pouvez remplacer ou ajouter une configuration en ligne :
 
 ```javascript
-import { createOpencode } from "@COdo-ai/sdk"
+import { createOpencode } from "@codo-ai/sdk"
 
 const COdo = await createOpencode({
   hostname: "127.0.0.1",
@@ -72,7 +72,7 @@ COdo.server.close()
 Si vous disposez déjà d'une instance en cours d'exécution de COdo, vous pouvez créer une instance client pour vous y connecter :
 
 ```javascript
-import { createOpencodeClient } from "@COdo-ai/sdk"
+import { createOpencodeClient } from "@codo-ai/sdk"
 
 const client = createOpencodeClient({
   baseUrl: "http://localhost:4096",
@@ -96,7 +96,7 @@ const client = createOpencodeClient({
 Le SDK inclut des définitions TypeScript pour tous les types API. Importez-les directement :
 
 ```typescript
-import type { Session, Message, Part } from "@COdo-ai/sdk"
+import type { Session, Message, Part } from "@codo-ai/sdk"
 ```
 
 Tous les types sont générés à partir de la spécification OpenAPI du serveur et disponibles dans le <a href={typesUrl}>fichier de types</a>.

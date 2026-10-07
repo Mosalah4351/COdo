@@ -1,0 +1,33 @@
+Record security or quality findings in the project's durable findings store.
+
+Call this for EVERY finding you produce, in addition to writing the markdown
+report. The database is the canonical store; the markdown under
+`.planning/security/findings/` is a human-readable projection of it. Reports,
+posture trends, aging metrics, and SARIF export all read the database, so a
+finding that exists only in markdown is invisible to all of them.
+
+The runtime assigns `id` and `fingerprint`. Do not invent either one. The
+fingerprint is a hash of persona + category + location + normalized evidence,
+and it backs a unique index per project, so re-running a scanner up-serts onto
+the same row instead of creating duplicates. That is what makes "3 open
+criticals, down from 7" a real number rather than a guess.
+
+Status handling:
+- Omit `status` and the finding is recorded as `open`.
+- A finding already marked `fixed` is NOT reopened unless you pass
+  `rescan: true`, which asserts that a scanner actually re-ran and observed the
+  issue again. A code change alone never reopens or closes a finding.
+- A fingerprint listed in `.codo/security-baseline.json` is stored as
+  `accepted-risk` with the baseline's reason attached. It is still recorded —
+  suppression must not make the store lie about what the scanner saw.
+
+Field guidance:
+- `location`: `path/to/file.ts:42` for code, or the URL/host for runtime findings.
+- `evidence`: the quoted snippet, or the request/response pair. Required, and it
+  feeds the fingerprint, so keep it specific to the actual occurrence.
+- `confidence`: `high` only when verified with a reproduction. Never inflate.
+- `severity`: what ships broken if this stays open — not how hard it is to fix.
+- `category`: the framework tag (`A05-injection`, `CWE-798`, `WSTG-ATHN-01`,
+  `NIST-SSDF-PW.4`, `ASI01`, `QA-NO-COVERAGE`, ...).
+- `metadata`: scanner name/version, rule id, advisory links. Use
+  `metadata.reason` when marking something `accepted-risk` or `false-positive`.

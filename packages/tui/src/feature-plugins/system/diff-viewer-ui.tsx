@@ -1,6 +1,7 @@
 import type { BorderSides, ColorInput } from "@opentui/core"
 import type { JSX } from "@opentui/solid"
 import { useTheme } from "../../context/theme"
+import { RtlText } from "../../component/rtl-text"
 import { createContext, Show, splitProps, useContext } from "solid-js"
 
 export type Axis = "x" | "y"
@@ -69,9 +70,9 @@ export function Separator(props: { axis?: Axis; color?: ColorInput; start?: Sepa
         fallback={<box width={1} flexShrink={0} border={["left"]} borderColor={color()} />}
       >
         <box width={1} flexShrink={0} flexDirection="column">
-          <Show when={props.start}>{(edge) => <text fg={color()}>{verticalEdge(edge(), "start")}</text>}</Show>
+          <Show when={props.start}>{(edge) => <RtlText fg={color()}>{verticalEdge(edge(), "start")}</RtlText>}</Show>
           <box flexGrow={1} border={["left"]} borderColor={color()} />
-          <Show when={props.end}>{(edge) => <text fg={color()}>{verticalEdge(edge(), "end")}</text>}</Show>
+          <Show when={props.end}>{(edge) => <RtlText fg={color()}>{verticalEdge(edge(), "end")}</RtlText>}</Show>
         </box>
       </Show>
     )
@@ -82,9 +83,9 @@ export function Separator(props: { axis?: Axis; color?: ColorInput; start?: Sepa
       fallback={<box height={1} flexShrink={0} border={["top"]} borderColor={color()} />}
     >
       <box height={1} flexShrink={0} flexDirection="row">
-        <Show when={props.start}>{(edge) => <text fg={color()}>{horizontalEdge(edge(), "start")}</text>}</Show>
+        <Show when={props.start}>{(edge) => <RtlText fg={color()}>{horizontalEdge(edge(), "start")}</RtlText>}</Show>
         <box flexGrow={1} border={["top"]} borderColor={color()} />
-        <Show when={props.end}>{(edge) => <text fg={color()}>{horizontalEdge(edge(), "end")}</text>}</Show>
+        <Show when={props.end}>{(edge) => <RtlText fg={color()}>{horizontalEdge(edge(), "end")}</RtlText>}</Show>
       </box>
     </Show>
   )

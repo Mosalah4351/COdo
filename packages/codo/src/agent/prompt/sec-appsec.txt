@@ -45,9 +45,31 @@ epss_score: <optional, 0.0-1.0>
 ```
 </finding_schema>
 
+<plain_english_rule>
+Every recorded finding must be actionable by a non-expert, because the sec-test:auto-fix
+pipeline consumes your findings mechanically. For each finding include:
+
+1. A **one-sentence plain-English risk statement** a non-expert understands — what an
+   attacker could actually do, no framework codes ("anyone can read other users' orders
+   by changing the number in the URL"), not "A01 broken access control via IDOR".
+2. A **concrete suggested fix**: the exact file and the change to make ("src/api/orders.ts:42
+   — add a check that the order belongs to the signed-in user before returning it").
+
+Vague remediations like "implement proper input validation" are not fixes.
+</plain_english_rule>
+
 <structured_return>
-## CODE AUDIT COMPLETE
-Scope: <files audited>
-Findings: <count> (by severity)
-Document: <path to findings file>
+## SEC-RESULT skill=<skill-name> status=complete findings=<n> critical=<n> high=<n> doc=<path>
+
+Then prose: the files audited, the severity breakdown, which scanners actually ran
+(and which were missing, so coverage is honest), and anything you could not reach.
+Record every finding with the `sec_finding` tool as well as the markdown file — the
+tool assigns the id and de-duplicates across runs.
+</structured_return>
+
+<structured_return>
+## SEC-RESULT skill=<skill-name> status=partial reason=<scanner-missing|target-unreadable> doc=<path>
+
+Use this when a required scanner was not installed or part of the target could not be
+read. Never present a degraded audit as complete.
 </structured_return>

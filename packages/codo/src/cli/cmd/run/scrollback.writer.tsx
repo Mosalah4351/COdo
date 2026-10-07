@@ -1,3 +1,5 @@
+import { RtlPolicyProvider, RtlText } from "@codo-ai/tui/component/rtl-text"
+import { RtlCode, RtlDiff, RtlMarkdown } from "@codo-ai/tui/component/rtl-content"
 import { createScrollbackWriter } from "@opentui/solid"
 import { TextRenderable, type ColorInput, type ScrollbackRenderContext, type ScrollbackWriter } from "@opentui/core"
 import { Match, Switch, createMemo } from "solid-js"
@@ -149,12 +151,12 @@ export function RunEntryContent(props: {
   return (
     <Switch fallback={null}>
       <Match when={text()}>
-        <text width="100%" wrapMode="word" fg={style().fg} attributes={style().attrs}>
+        <RtlText width="100%" wrapMode="word" fg={style().fg} attributes={style().attrs}>
           {text()!.content}
-        </text>
+        </RtlText>
       </Match>
       <Match when={code()}>
-        <code
+        <RtlCode
           width="100%"
           wrapMode="word"
           filetype={code()!.filetype}
@@ -167,12 +169,12 @@ export function RunEntryContent(props: {
       </Match>
       <Match when={code_snapshot()}>
         <box width="100%" flexDirection="column" gap={1}>
-          <text width="100%" wrapMode="word" fg={theme().block.muted}>
+          <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
             {code_snapshot()!.title}
-          </text>
+          </RtlText>
           <box width="100%" paddingLeft={1}>
             <line_number width="100%" fg={theme().block.muted} minWidth={3} paddingRight={1}>
-              <code
+              <RtlCode
                 width="100%"
                 wrapMode="char"
                 filetype={toolFiletype(code_snapshot()!.file)}
@@ -189,12 +191,12 @@ export function RunEntryContent(props: {
         <box width="100%" flexDirection="column" gap={1}>
           {diff_snapshot()!.items.map((item) => (
             <box width="100%" flexDirection="column" gap={1}>
-              <text width="100%" wrapMode="word" fg={theme().block.muted}>
+              <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
                 {item.title}
-              </text>
+              </RtlText>
               {item.diff.trim() ? (
                 <box width="100%" paddingLeft={1}>
-                  <diff
+                  <RtlDiff
                     diff={item.diff}
                     view="unified"
                     filetype={toolFiletype(item.file)}
@@ -215,9 +217,9 @@ export function RunEntryContent(props: {
                   />
                 </box>
               ) : (
-                <text width="100%" wrapMode="word" fg={theme().block.diffRemoved}>
+                <RtlText width="100%" wrapMode="word" fg={theme().block.diffRemoved}>
                   -{item.deletions ?? 0} line{item.deletions === 1 ? "" : "s"}
-                </text>
+                </RtlText>
               )}
             </box>
           ))}
@@ -225,68 +227,68 @@ export function RunEntryContent(props: {
       </Match>
       <Match when={task_snapshot()}>
         <box width="100%" flexDirection="column" gap={1}>
-          <text width="100%" wrapMode="word" fg={theme().block.muted}>
+          <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
             {task_snapshot()!.title}
-          </text>
+          </RtlText>
           <box width="100%" flexDirection="column" gap={0} paddingLeft={1}>
             {task_snapshot()!.rows.map((row) => (
-              <text width="100%" wrapMode="word" fg={theme().block.text}>
+              <RtlText width="100%" wrapMode="word" fg={theme().block.text}>
                 {row}
-              </text>
+              </RtlText>
             ))}
             {task_snapshot()!.tail ? (
-              <text width="100%" wrapMode="word" fg={theme().block.muted}>
+              <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
                 {task_snapshot()!.tail}
-              </text>
+              </RtlText>
             ) : null}
           </box>
         </box>
       </Match>
       <Match when={todo_snapshot()}>
         <box width="100%" flexDirection="column" gap={1}>
-          <text width="100%" wrapMode="word" fg={theme().block.muted}>
+          <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
             # Todos
-          </text>
+          </RtlText>
           <box width="100%" flexDirection="column" gap={0}>
             {todo_snapshot()!.items.map((item) => (
-              <text width="100%" wrapMode="word" fg={todoColor(theme(), item.status)}>
+              <RtlText width="100%" wrapMode="word" fg={todoColor(theme(), item.status)}>
                 {todoText(item)}
-              </text>
+              </RtlText>
             ))}
             {todo_snapshot()!.tail ? (
-              <text width="100%" wrapMode="word" fg={theme().block.muted}>
+              <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
                 {todo_snapshot()!.tail}
-              </text>
+              </RtlText>
             ) : null}
           </box>
         </box>
       </Match>
       <Match when={question_snapshot()}>
         <box width="100%" flexDirection="column" gap={1}>
-          <text width="100%" wrapMode="word" fg={theme().block.muted}>
+          <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
             # Questions
-          </text>
+          </RtlText>
           <box width="100%" flexDirection="column" gap={1}>
             {question_snapshot()!.items.map((item) => (
               <box width="100%" flexDirection="column" gap={0}>
-                <text width="100%" wrapMode="word" fg={theme().block.muted}>
+                <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
                   {item.question}
-                </text>
-                <text width="100%" wrapMode="word" fg={theme().block.text}>
+                </RtlText>
+                <RtlText width="100%" wrapMode="word" fg={theme().block.text}>
                   {item.answer}
-                </text>
+                </RtlText>
               </box>
             ))}
             {question_snapshot()!.tail ? (
-              <text width="100%" wrapMode="word" fg={theme().block.muted}>
+              <RtlText width="100%" wrapMode="word" fg={theme().block.muted}>
                 {question_snapshot()!.tail}
-              </text>
+              </RtlText>
             ) : null}
           </box>
         </box>
       </Match>
       <Match when={markdown()}>
-        <markdown
+        <RtlMarkdown
           width="100%"
           syntaxStyle={syntax()}
           streaming={streaming()}
@@ -307,13 +309,15 @@ export function entryWriter(input: {
 }): ScrollbackWriter {
   return createScrollbackWriter(
     (ctx) => (
-      <RunEntryContent
-        commit={input.commit}
-        body={input.body}
-        theme={input.theme}
-        opts={{ ...input.opts, suppressBackgrounds: true }}
-        width={ctx.width}
-      />
+      <RtlPolicyProvider forceShaping={input.opts?.rtl?.forceShaping}>
+        <RunEntryContent
+          commit={input.commit}
+          body={input.body}
+          theme={input.theme}
+          opts={{ ...input.opts, suppressBackgrounds: true }}
+          width={ctx.width}
+        />
+      </RtlPolicyProvider>
     ),
     entryFlags(input.commit),
   )
@@ -333,19 +337,27 @@ export function spacerWriter(): ScrollbackWriter {
   })
 }
 
-export function turnSummaryWriter(input: { agent: string; model: string; duration: string; theme: RunTheme }) {
+export function turnSummaryWriter(input: {
+  agent: string
+  model: string
+  duration: string
+  theme: RunTheme
+  rtl?: ScrollbackOptions["rtl"]
+}) {
   return createScrollbackWriter(
     () => (
+      <RtlPolicyProvider forceShaping={input.rtl?.forceShaping}>
       <box width="100%" height={1}>
-        <text wrapMode="none" truncate>
+        <RtlText wrapMode="none" truncate>
           <span style={{ fg: input.theme.block.highlight }}>▣ </span>
           <span style={{ fg: input.theme.block.text }}>{input.agent}</span>
           <span style={{ fg: input.theme.block.muted }}>
             {" "}
             · {input.model} · {input.duration}
           </span>
-        </text>
+        </RtlText>
       </box>
+      </RtlPolicyProvider>
     ),
     { startOnNewLine: true, trailingNewline: false },
   )

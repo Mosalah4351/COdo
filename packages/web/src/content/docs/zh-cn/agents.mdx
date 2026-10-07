@@ -188,10 +188,10 @@ _模式_：`primary`
 
 您还可以使用 Markdown 文件定义代理。将它们放在：
 
-- 全局：`~/.config/opencode/agents/`
-- 项目级：`.opencode/agents/`
+- 全局：`~/.config/COdo/agents/`
+- 项目级：`.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Markdown 文件名即为代理名称。例如，`review.md` 会创建一个名�
 }
 ```
 
-COdo 配置中的模型 ID 使用 `provider/model-id` 格式。例如，如果您使用 [COdo Zen](/docs/zen)，则可以使用 `opencode/gpt-5.1-codex` 来表示 GPT 5.1 Codex。
+COdo 配置中的模型 ID 使用 `provider/model-id` 格式。例如，如果您使用 [COdo Zen](/docs/zen)，则可以使用 `COdo/gpt-5.1-codex` 来表示 GPT 5.1 Codex。
 
 ---
 
@@ -454,7 +454,7 @@ COdo 配置中的模型 ID 使用 `provider/model-id` 格式。例如，如果�
 
 您还可以在 Markdown 代理中设置权限。
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -704,14 +704,14 @@ COdo agent create
 以下是一些您可能会觉得有用的示例代理。
 
 :::tip
-您有想要分享的代理吗？[提交 PR](https://github.com/anomalyco/COdo)。
+您有想要分享的代理吗？[提交 PR](https://github.com/Mosalah4351/COdo)。
 :::
 
 ---
 
 ### 文档代理
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -733,7 +733,7 @@ Focus on:
 
 ### 安全审计代理
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

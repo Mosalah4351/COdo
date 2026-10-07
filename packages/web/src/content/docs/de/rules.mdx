@@ -67,7 +67,7 @@ Diese gelten nur in diesem Verzeichnis und seinen Unterordnern.
 
 ### Global
 
-Du kannst auch globale Regeln in `~/.config/opencode/AGENTS.md` speichern.
+Du kannst auch globale Regeln in `~/.config/COdo/AGENTS.md` speichern.
 Diese gelten in allen COdo-Sitzungen.
 
 Da diese Datei nicht in Git landet und nicht mit dem Team geteilt wird, eignet sie sich fuer persoenliche Regeln.
@@ -77,15 +77,15 @@ Da diese Datei nicht in Git landet und nicht mit dem Team geteilt wird, eignet s
 Wenn du von Claude Code kommst, unterstuetzt COdo dessen Dateikonventionen als Fallback:
 
 - **Projektregeln**: `CLAUDE.md` im Projekt (wenn keine `AGENTS.md` existiert)
-- **Globale Regeln**: `~/.claude/CLAUDE.md` (wenn keine `~/.config/opencode/AGENTS.md` existiert)
+- **Globale Regeln**: `~/.claude/CLAUDE.md` (wenn keine `~/.config/COdo/AGENTS.md` existiert)
 - **Skills**: `~/.claude/skills/` - siehe [Agent Skills](/docs/skills/) fuer Details
 
 Um die Claude-Code-Kompatibilitaet zu deaktivieren, setze eine dieser Umgebungsvariablen:
 
 ```bash
-export OPENCODE_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
-export OPENCODE_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
-export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
+export CODO_DISABLE_CLAUDE_CODE=1        # Disable all .claude support
+export CODO_DISABLE_CLAUDE_CODE_PROMPT=1 # Disable only ~/.claude/CLAUDE.md
+export CODO_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 ```
 
 ---
@@ -95,7 +95,7 @@ export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1 # Disable only .claude/skills
 Beim Start sucht COdo in dieser Reihenfolge nach Regeldateien:
 
 1. **Lokale Dateien** beim Hochlaufen ab dem aktuellen Verzeichnis (`AGENTS.md`, `CLAUDE.md`)
-2. **Globale Datei** unter `~/.config/opencode/AGENTS.md`
+2. **Globale Datei** unter `~/.config/COdo/AGENTS.md`
 3. **Claude-Code-Datei** unter `~/.claude/CLAUDE.md` (falls nicht deaktiviert)
 
 Pro Kategorie gewinnt die zuerst passende Datei.
@@ -105,7 +105,7 @@ Wenn sowohl `AGENTS.md` als auch `CLAUDE.md` existieren, wird nur `AGENTS.md` ve
 
 ## Eigene Anweisungen
 
-Du kannst zusaetzliche Anweisungsdateien in deiner `opencode.json` oder in `~/.config/opencode/opencode.json` angeben.
+Du kannst zusaetzliche Anweisungsdateien in deiner `COdo.json` oder in `~/.config/COdo/COdo.json` angeben.
 So kann dein Team bestehende Regeln wiederverwenden, statt Inhalte in `AGENTS.md` zu duplizieren.
 
 Beispiel:

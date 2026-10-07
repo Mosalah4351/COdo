@@ -188,10 +188,10 @@ _モード_: `primary`
 
 Markdown ファイルを使用してエージェントを定義することもできます。それらを次の場所に置きます。
 
-- グローバル: `~/.config/opencode/agents/`
-- プロジェクトごと: `.opencode/agents/`
+- グローバル: `~/.config/COdo/agents/`
+- プロジェクトごと: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Markdown ファイル名がエージェント名になります。たとえば�
 }
 ```
 
-COdo 設定内のモデル ID は、`provider/model-id` という形式を使用します。たとえば、[COdo Zen](/docs/zen) を使用している場合、GPT 5.1 Codex には `opencode/gpt-5.1-codex` を使用します。
+COdo 設定内のモデル ID は、`provider/model-id` という形式を使用します。たとえば、[COdo Zen](/docs/zen) を使用している場合、GPT 5.1 Codex には `COdo/gpt-5.1-codex` を使用します。
 
 ---
 
@@ -453,7 +453,7 @@ MCP サーバーからすべてのツールを無効にするには、次のよ�
 
 Markdown エージェントで権限を設定することもできます。
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -701,14 +701,14 @@ COdo agent create
 以下に、役立つと思われるエージェントの例をいくつか示します。
 
 :::tip
-共有したいエージェントはいますか? [PR](https://github.com/anomalyco/COdo) を送信します。
+共有したいエージェントはいますか? [PR](https://github.com/Mosalah4351/COdo) を送信します。
 :::
 
 ---
 
 ### ドキュメント作成エージェント
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -730,7 +730,7 @@ Focus on:
 
 ### セキュリティ監査エージェント
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

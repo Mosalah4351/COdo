@@ -20,12 +20,21 @@ jobs:
         uses: ./.github/actions/setup-bun
 
       - name: Install opencode
-        run: curl -fsSL https://opencode.ai/install | bash
+        # Pinned version - bump deliberately; unpinned curl|bash would turn any opencode.ai/CDN/DNS compromise into runner RCE with secrets.
+        run: bun i -g opencode-ai@1.18.23
 
       - name: Triage issue
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Issue text is attacker-controlled; without explicit denies the agent
+          # could be steered into tool calls while holding API credentials.
+          OPENCODE_PERMISSION: |
+            {
+              "bash": "deny",
+              "edit": "deny",
+              "webfetch": "deny"
+            }
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}

@@ -11,7 +11,7 @@ Para depurar problemas com o COdo, comece verificando os logs e os dados locais 
 
 Os arquivos de log são gravados em:
 
-- **macOS/Linux**: `~/.local/share/opencode/log/`
+- **macOS/Linux**: `~/.local/share/COdo/log/`
 - **Windows**: Pressione `WIN+R` e cole `%USERPROFILE%\.local\share\COdo\log`
 
 Os arquivos de log são nomeados com timestamps (por exemplo, `2025-01-09T123456.log`) e os 10 arquivos de log mais recentes são mantidos.
@@ -24,7 +24,7 @@ Você pode definir o nível de log com a opção de linha de comando `--log-leve
 
 O COdo armazena dados de sessão e outros dados do aplicativo no disco em:
 
-- **macOS/Linux**: `~/.local/share/opencode/`
+- **macOS/Linux**: `~/.local/share/COdo/`
 - **Windows**: Pressione `WIN+R` e cole `%USERPROFILE%\.local\share\COdo`
 
 Este diretório contém:
@@ -57,8 +57,8 @@ Se o aplicativo de desktop estiver travando ao iniciar, pendurado ou se comporta
 
 Abra seu arquivo de configuração global e procure uma chave `plugin`.
 
-- **macOS/Linux**: `~/.config/opencode/opencode.jsonc` (ou `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (instalações mais antigas): `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux**: `~/.config/COdo/COdo.jsonc` (ou `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (instalações mais antigas): `~/.local/share/COdo/COdo.jsonc`
 - **Windows**: Pressione `WIN+R` e cole `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 Se você tiver plugins configurados, desative-os temporariamente removendo a chave ou definindo-a como um array vazio:
@@ -75,10 +75,10 @@ Se você tiver plugins configurados, desative-os temporariamente removendo a cha
 O COdo também pode carregar plugins locais do disco. Mova-os temporariamente para fora do caminho (ou renomeie a pasta) e reinicie o aplicativo de desktop:
 
 - **Plugins globais**
-  - **macOS/Linux**: `~/.config/opencode/plugins/`
+  - **macOS/Linux**: `~/.config/COdo/plugins/`
   - **Windows**: Pressione `WIN+R` e cole `%USERPROFILE%\.config\COdo\plugins`
 - **Plugins de projeto** (apenas se você usar configuração por projeto)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 Se o aplicativo voltar a funcionar, reative os plugins um por um para descobrir qual está causando o problema.
 
@@ -115,9 +115,9 @@ Se seu `COdo.json(c)` contiver uma seção `server`, remova-a temporariamente e 
 
 #### Verificando as variáveis de ambiente
 
-Se você tiver `OPENCODE_PORT` definido em seu ambiente, o aplicativo de desktop tentará usar essa porta para o servidor local.
+Se você tiver `CODO_PORT` definido em seu ambiente, o aplicativo de desktop tentará usar essa porta para o servidor local.
 
-- Desfaça `OPENCODE_PORT` (ou escolha uma porta livre) e reinicie.
+- Desfaça `CODO_PORT` (ou escolha uma porta livre) e reinicie.
 
 ---
 
@@ -177,7 +177,7 @@ Se você estiver enfrentando problemas com o COdo:
 
    A melhor maneira de relatar bugs ou solicitar recursos é através do nosso repositório no GitHub:
 
-   [**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+   [**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
    Antes de criar um novo problema, pesquise problemas existentes para ver se seu problema já foi relatado.
 
@@ -224,7 +224,7 @@ Exemplos:
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 Para descobrir quais modelos você tem acesso, execute `COdo models`
 

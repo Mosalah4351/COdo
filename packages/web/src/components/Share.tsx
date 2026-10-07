@@ -5,9 +5,9 @@ import { IconArrowDown } from "./icons"
 import { IconCOdo } from "./icons/custom"
 import { ShareI18nProvider, formatCurrency, formatNumber, normalizeLocale } from "./share/common"
 import styles from "./share.module.css"
-import type { MessageV2 } from "COdo/session/message-v2"
-import type { Message } from "COdo/session/message"
-import type { Session } from "COdo/session/index"
+import type { MessageV2 } from "codo/session/message-v2"
+import type { Message } from "codo/session/message"
+import type { Info as SessionInfo } from "codo/session/session"
 import { Part, ProviderIcon } from "./share/part"
 
 type MessageWithParts = MessageV2.Info & { parts: MessageV2.Part[] }
@@ -41,7 +41,7 @@ function getStatusText(status: [Status, string?], messages: Record<string, strin
 export default function Share(props: {
   id: string
   api: string
-  info: Session.Info
+  info: SessionInfo
   messages: { locale: string } & Record<string, string>
 }) {
   let lastScrollY = 0
@@ -58,7 +58,7 @@ export default function Share(props: {
   const [isNearBottom, setIsNearBottom] = createSignal(false)
 
   const [store, setStore] = createStore<{
-    info?: Session.Info
+    info?: SessionInfo
     messages: Record<string, MessageWithParts>
   }>({
     info: {
@@ -75,7 +75,9 @@ export default function Share(props: {
     },
     messages: {},
   })
-  const messages = createMemo(() => Object.values(store.messages).toSorted((a, b) => a.id?.localeCompare(b.id)))
+  const messages = createMemo(() =>
+    Object.values(store.messages).toSorted((a, b) => a.time.created - b.time.created || a.id.localeCompare(b.id)),
+  )
   const [connectionStatus, setConnectionStatus] = createSignal<[Status, string?]>(["disconnected"])
 
   onMount(() => {
@@ -303,8 +305,8 @@ export default function Share(props: {
             <h1 data-component="header-title">{store.info?.title}</h1>
             <div data-component="header-details">
               <ul data-component="header-stats">
-                <li title={props.messages.CODO_version} data-slot="item">
-                  <div data-slot="icon" title={props.messages.CODO_name}>
+                <li title={props.messages.COdo_version} data-slot="item">
+                  <div data-slot="icon" title={props.messages.COdo_name}>
                     <IconCOdo width={16} height={16} />
                   </div>
                   <Show when={store.info?.version} fallback="v0.0.1">

@@ -39,8 +39,16 @@ epss_score: <optional>
 </finding_schema>
 
 <structured_return>
-## PIPELINE HARDEN COMPLETE
-Scope: <what was audited>
-Findings: <count>
-Documents: <paths written>
+## SEC-RESULT skill=<skill-name> status=complete findings=<n> critical=<n> high=<n> doc=<path>
+
+Then prose: what was audited, the severity breakdown, which scanners ran and which were
+absent, and the SLSA level roadmap where relevant. Record every finding with the
+`sec_finding` tool in addition to the markdown document.
+</structured_return>
+
+<structured_return>
+## SEC-RESULT skill=<skill-name> status=partial reason=<scanner-missing|no-artifact> doc=<path>
+
+Use this when `syft`/`grype`/`trivy`/`cosign` was unavailable or there was no built
+artifact to inspect. A pipeline audit that could not verify provenance is not complete.
 </structured_return>

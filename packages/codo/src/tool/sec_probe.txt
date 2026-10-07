@@ -1,0 +1,35 @@
+Issue a single, scope-gated HTTP request against an authorized penetration-testing target.
+
+This is the ONLY network path available to the sec-pentest persona. Raw `curl`,
+`nmap`, `nuclei`, and ZAP are denied at the permission layer precisely because
+nothing in a shell command line can be checked against the authorization file.
+Every call here validates the target against `.codo/security-scope.json` BEFORE
+any packet is sent.
+
+When the gate refuses, the tool returns a `## SEC-RESULT ... status=blocked`
+result with the machine-readable reason. That is a normal outcome, not an error:
+relay the reason verbatim and stop. Do not attempt to reach the target another
+way, and do not proceed because the user said it was fine.
+
+Modes:
+- `allow_active_scan: false` in the scope file — only `GET` and `HEAD`, no
+  request body. Use this for passive recon: response headers, error pages,
+  `robots.txt`, `sitemap.xml`, framework fingerprinting.
+- `allow_active_scan: true` — `POST`, `PUT`, `PATCH`, and `OPTIONS` also become
+  available for confirming a specific hypothesis from code review.
+
+`DELETE` is always refused. So are request budgets: a single dispatch is capped,
+so plan the minimal set of requests that confirms or refutes the finding rather
+than sweeping.
+
+Evidence handling is automatic. `authorization`, `cookie`, and `set-cookie` are
+redacted from the recorded response, and bodies are truncated. The returned
+`repro` field is a replayable curl command suitable for pasting directly into a
+finding's `repro`/`evidence` field.
+
+Parameters:
+- `url` (required): absolute http(s) URL. Must be inside the scope file's targets.
+- `method`: defaults to `GET`.
+- `headers`: extra request headers as a flat object.
+- `body`: request body string. Requires an active-scan scope.
+- `note`: one line on what this request is meant to prove. Recorded with the result.

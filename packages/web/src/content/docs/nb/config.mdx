@@ -44,16 +44,16 @@ For eksempel, hvis din globale konfigurasjon setter `theme: "COdo"` og `autoupda
 Konfigurasjonskilder lastes inn i denne rekkefølgen (senere kilder overstyrer tidligere):
 
 1. **Ekstern konfigurasjon** (fra `.well-known/COdo`) - organisasjonsstandarder
-2. **Global konfigurasjon** (`~/.config/opencode/opencode.json`) - brukerinnstillinger
-3. **Egendefinert konfigurasjon** (`OPENCODE_CONFIG` env var) - egendefinerte overstyringer
+2. **Global konfigurasjon** (`~/.config/COdo/COdo.json`) - brukerinnstillinger
+3. **Egendefinert konfigurasjon** (`CODO_CONFIG` env var) - egendefinerte overstyringer
 4. **Prosjektkonfigurasjon** (`COdo.json` i prosjekt) - prosjektspesifikke innstillinger
-5. **`.opencode` kataloger** - agenter, kommandoer, plugins
-6. **Inline config** (`OPENCODE_CONFIG_CONTENT` env var) - kjøretidsoverstyringer
+5. **`.COdo` kataloger** - agenter, kommandoer, plugins
+6. **Inline config** (`CODO_CONFIG_CONTENT` env var) - kjøretidsoverstyringer
 
 Dette betyr at prosjektkonfigurasjoner kan overstyre globale standardinnstillinger, og globale konfigurasjoner kan overstyre eksterne organisasjonsstandarder.
 
 :::note
-`.opencode` og `~/.config/opencode` katalogene bruker **flertallsnavn** på underkataloger: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` og `themes/`. Enkeltnavn (f.eks. `agent/`) støttes også for bakoverkompatibilitet.
+`.COdo` og `~/.config/COdo` katalogene bruker **flertallsnavn** på underkataloger: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` og `themes/`. Enkeltnavn (f.eks. `agent/`) støttes også for bakoverkompatibilitet.
 :::
 
 ---
@@ -96,7 +96,7 @@ Du kan aktivere spesifikke servere i din lokale konfigurasjon:
 
 ### Global konfigurasjon
 
-Plasser din globale COdo-konfigurasjon i `~/.config/opencode/opencode.json`. Bruk global konfigurasjon for brukerspesifikke preferanser som temaer, leverandører eller nøkkelbindinger.
+Plasser din globale COdo-konfigurasjon i `~/.config/COdo/COdo.json`. Bruk global konfigurasjon for brukerspesifikke preferanser som temaer, leverandører eller nøkkelbindinger.
 
 Global konfigurasjon overstyrer eksterne organisasjonsstandarder.
 
@@ -118,10 +118,10 @@ Det er også trygt å sjekke inn dette i Git og bruker samme skjema som det glob
 
 ### Egendefinert bane
 
-Spesifiser en tilpasset konfigurasjonsfilbane ved å bruke miljøvariabelen `OPENCODE_CONFIG`.
+Spesifiser en tilpasset konfigurasjonsfilbane ved å bruke miljøvariabelen `CODO_CONFIG`.
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -131,17 +131,17 @@ Egendefinert konfigurasjon lastes inn mellom globale og prosjektkonfigurasjoner 
 
 ### Egendefinert katalog
 
-Spesifiser en tilpasset konfigurasjonskatalog ved å bruke `OPENCODE_CONFIG_DIR`
+Spesifiser en tilpasset konfigurasjonskatalog ved å bruke `CODO_CONFIG_DIR`
 miljøvariabel. Denne katalogen vil bli søkt etter agenter, kommandoer,
-moduser og plugins akkurat som standard `.opencode` katalog, og bør
+moduser og plugins akkurat som standard `.COdo` katalog, og bør
 følge samme struktur.
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-Den egendefinerte katalogen lastes inn etter den globale konfigurasjonen og `.opencode`-katalogene, slik at den **kan overstyre** innstillingene deres.
+Den egendefinerte katalogen lastes inn etter den globale konfigurasjonen og `.COdo`-katalogene, slik at den **kan overstyre** innstillingene deres.
 
 ---
 
@@ -337,7 +337,7 @@ Du kan konfigurere spesialiserte agenter for spesifikke oppgaver gjennom alterna
 }
 ```
 
-Du kan også definere agenter ved å bruke markdown-filer i `~/.config/opencode/agents/` eller `.opencode/agents/`. [Les mer her](/docs/agents).
+Du kan også definere agenter ved å bruke markdown-filer i `~/.config/COdo/agents/` eller `.COdo/agents/`. [Les mer her](/docs/agents).
 
 ---
 
@@ -401,7 +401,7 @@ Du kan konfigurere egendefinerte kommandoer for repeterende oppgaver gjennom alt
 }
 ```
 
-Du kan også definere kommandoer ved å bruke markdown-filer i `~/.config/opencode/commands/` eller `.opencode/commands/`. [Les mer her](/docs/commands).
+Du kan også definere kommandoer ved å bruke markdown-filer i `~/.config/COdo/commands/` eller `.COdo/commands/`. [Les mer her](/docs/commands).
 
 ---
 
@@ -539,12 +539,12 @@ Du kan konfigurere MCP-servere du vil bruke gjennom alternativet `mcp`.
 
 [Plugins](/docs/plugins) utvider COdo med tilpassede verktøy, kroker og integrasjoner.
 
-Plasser plugin-filer i `.opencode/plugins/` eller `~/.config/opencode/plugins/`. Du kan også laste inn plugins fra npm gjennom alternativet `plugin`.
+Plasser plugin-filer i `.COdo/plugins/` eller `~/.config/COdo/plugins/`. Du kan også laste inn plugins fra npm gjennom alternativet `plugin`.
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -642,7 +642,7 @@ Bruk `{env:VARIABLE_NAME}` for å erstatte miljøvariabler:
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

@@ -188,10 +188,10 @@ Agent'ları `COdo.json` yapılandırma dosyanızda yapılandırın:
 
 Ayrıca agent'ları Markdown dosyalarını kullanarak da tanımlayabilirsiniz. Bunları şuraya yerleştirin:
 
-- Global: `~/.config/opencode/agents/`
-- Proje başına: `.opencode/agents/`
+- Global: `~/.config/COdo/agents/`
+- Proje başına: `.COdo/agents/`
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Reviews code for quality and best practices
 mode: subagent
@@ -366,7 +366,7 @@ Bir model belirtmezseniz, birincil agent'lar [küresel olarak yapılandırılmı
 }
 ```
 
-opencode yapılandırmanızdaki model kimliği `provider/model-id` biçimini kullanır. Örneğin, [COdo Zen](/docs/zen) kullanıyorsanız, GPT 5.1 Codex için `opencode/gpt-5.1-codex` kullanırsınız.
+COdo yapılandırmanızdaki model kimliği `provider/model-id` biçimini kullanır. Örneğin, [COdo Zen](/docs/zen) kullanıyorsanız, GPT 5.1 Codex için `COdo/gpt-5.1-codex` kullanırsınız.
 
 ---
 
@@ -454,7 +454,7 @@ Bu izinleri agent başına geçersiz kılabilirsiniz.
 
 İzinleri Markdown agent'larında da ayarlayabilirsiniz.
 
-```markdown title="~/.config/opencode/agents/review.md"
+```markdown title="~/.config/COdo/agents/review.md"
 ---
 description: Code review without edits
 mode: subagent
@@ -704,14 +704,14 @@ Farklı agent'lara yönelik bazı yaygın kullanım senaryoları aşağıda veri
 Yararlı bulabileceğiniz bazı örnek agent'ları burada bulabilirsiniz.
 
 :::tip
-Paylaşmak istediğiniz bir agent'ınız var mı? [Submit a PR](https://github.com/anomalyco/COdo).
+Paylaşmak istediğiniz bir agent'ınız var mı? [Submit a PR](https://github.com/Mosalah4351/COdo).
 :::
 
 ---
 
 ### Dokümantasyon agent'ı
 
-```markdown title="~/.config/opencode/agents/docs-writer.md"
+```markdown title="~/.config/COdo/agents/docs-writer.md"
 ---
 description: Writes and maintains project documentation
 mode: subagent
@@ -733,7 +733,7 @@ Focus on:
 
 ### Güvenlik denetçisi
 
-```markdown title="~/.config/opencode/agents/security-auditor.md"
+```markdown title="~/.config/COdo/agents/security-auditor.md"
 ---
 description: Performs security audits and identifies vulnerabilities
 mode: subagent

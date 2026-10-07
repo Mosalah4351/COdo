@@ -50,7 +50,8 @@ jobs:
 
       - name: Install OpenCode
         if: steps.changes.outputs.has_changes == 'true'
-        run: curl -fsSL https://opencode.ai/install | bash
+        # Pinned version - bump deliberately; unpinned curl|bash would turn any opencode.ai/CDN/DNS compromise into runner RCE with secrets.
+        run: bun i -g opencode-ai@1.18.23
 
       - name: Sync locale docs with OpenCode
         if: steps.changes.outputs.has_changes == 'true'

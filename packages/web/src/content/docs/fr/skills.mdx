@@ -13,8 +13,8 @@ Les compétences sont chargées à la demande via l'outil natif `skill` : les a
 Créez un dossier par nom de compétence et insérez-y un `SKILL.md`.
 COdo recherche ces emplacements :
 
-- Configuration du projet : `.opencode/skills/<name>/SKILL.md`
-- Configuration globale : `~/.config/opencode/skills/<name>/SKILL.md`
+- Configuration du projet : `.COdo/skills/<name>/SKILL.md`
+- Configuration globale : `~/.config/COdo/skills/<name>/SKILL.md`
 - Compatible Projet Claude : `.claude/skills/<name>/SKILL.md`
 - Compatible Global Claude : `~/.claude/skills/<name>/SKILL.md`
 - Compatible avec l'agent de projet : `.agents/skills/<name>/SKILL.md`
@@ -25,9 +25,9 @@ COdo recherche ces emplacements :
 ## Comprendre la découverte
 
 Pour les chemins locaux du projet, COdo remonte de votre répertoire de travail actuel jusqu'à ce qu'il atteigne l'arbre de travail git.
-Il charge tout `skills/*/SKILL.md` correspondant dans `.opencode/` et tout `.claude/skills/*/SKILL.md` ou `.agents/skills/*/SKILL.md` correspondant en cours de route.
+Il charge tout `skills/*/SKILL.md` correspondant dans `.COdo/` et tout `.claude/skills/*/SKILL.md` ou `.agents/skills/*/SKILL.md` correspondant en cours de route.
 
-Les définitions globales sont également chargées à partir de `~/.config/opencode/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` et `~/.agents/skills/*/SKILL.md`.
+Les définitions globales sont également chargées à partir de `~/.config/COdo/skills/*/SKILL.md`, `~/.claude/skills/*/SKILL.md` et `~/.agents/skills/*/SKILL.md`.
 
 ---
 
@@ -73,7 +73,7 @@ Gardez-le suffisamment précis pour que l'agent puisse choisir correctement.
 
 ## Utiliser un exemple
 
-Créez `.opencode/skills/git-release/SKILL.md` comme ceci :
+Créez `.COdo/skills/git-release/SKILL.md` comme ceci :
 
 ```markdown
 ---

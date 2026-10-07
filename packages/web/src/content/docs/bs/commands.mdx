@@ -16,9 +16,9 @@ Prilagođene komande su dodatak ugrađenim komandama kao što su `/init`, `/undo
 ## Kreiranje datoteka naredbi
 
 Kreirajte markdown fajlove u direktorijumu `commands/` da definišete prilagođene komande.
-Kreiraj `.opencode/commands/test.md`:
+Kreiraj `.COdo/commands/test.md`:
 
-```md title=".opencode/commands/test.md"
+```md title=".COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -77,10 +77,10 @@ Sada možete pokrenuti ovu naredbu u TUI:
 
 Također možete definirati komande koristeći markdown datoteke. Stavite ih u:
 
-- Globalno: `~/.config/opencode/commands/`
-- Po projektu: `.opencode/commands/`
+- Globalno: `~/.config/COdo/commands/`
+- Po projektu: `.COdo/commands/`
 
-```markdown title="~/.config/opencode/commands/test.md"
+```markdown title="~/.config/COdo/commands/test.md"
 ---
 description: Run tests with coverage
 agent: build
@@ -109,7 +109,7 @@ Promptovi za prilagođene komande podržavaju nekoliko posebnih čuvara mjesta i
 
 Proslijedite argumente naredbama koristeći čuvar mjesta `$ARGUMENTS`.
 
-```md title=".opencode/commands/component.md"
+```md title=".COdo/commands/component.md"
 ---
 description: Create a new component
 ---
@@ -134,7 +134,7 @@ Također možete pristupiti pojedinačnim argumentima koristeći pozicione param
 
 Na primjer:
 
-```md title=".opencode/commands/create-file.md"
+```md title=".COdo/commands/create-file.md"
 ---
 description: Create a new file with content
 ---
@@ -162,7 +162,7 @@ Ovo zamjenjuje:
 Koristite _!`command`_ da ubacite izlaz [bash command](/docs/tui#bash-commands) u svoj prompt.
 Na primjer, da kreirate prilagođenu naredbu koja analizira pokrivenost testom:
 
-```md title=".opencode/commands/analyze-coverage.md"
+```md title=".COdo/commands/analyze-coverage.md"
 ---
 description: Analyze test coverage
 ---
@@ -175,7 +175,7 @@ Based on these results, suggest improvements to increase coverage.
 
 Ili da vidite nedavne promjene:
 
-```md title=".opencode/commands/review-changes.md"
+```md title=".COdo/commands/review-changes.md"
 ---
 description: Review recent changes
 ---
@@ -194,7 +194,7 @@ Naredbe se pokreću u korijenskom direktoriju vašeg projekta i njihov izlaz pos
 
 Uključite datoteke u svoju naredbu koristeći `@` nakon čega slijedi naziv datoteke.
 
-```md title=".opencode/commands/review-component.md"
+```md title=".COdo/commands/review-component.md"
 ---
 description: Review component
 ---

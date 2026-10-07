@@ -11,7 +11,7 @@ Pour déboguer les problèmes avec COdo, commencez par vérifier les journaux et
 
 Les fichiers journaux sont écrits dans :
 
-- **macOS/Linux** : `~/.local/share/opencode/log/`
+- **macOS/Linux** : `~/.local/share/COdo/log/`
 - **Windows** : appuyez sur `WIN+R` et collez `%USERPROFILE%\.local\share\COdo\log`
 
 Les fichiers journaux sont nommés avec des horodatages (par exemple, `2025-01-09T123456.log`) et les 10 fichiers journaux les plus récents sont conservés.
@@ -24,7 +24,7 @@ Vous pouvez définir le niveau de journalisation avec l'option de ligne de comma
 
 COdo stocke les données de session et autres données d'application sur le disque à l'emplacement :
 
-- **macOS/Linux** : `~/.local/share/opencode/`
+- **macOS/Linux** : `~/.local/share/COdo/`
 - **Windows** : appuyez sur `WIN+R` et collez `%USERPROFILE%\.local\share\COdo`
 
 Ce répertoire contient :
@@ -57,8 +57,8 @@ Si l'application de bureau plante au lancement, se bloque ou se comporte étrang
 
 Ouvrez votre fichier de configuration global et recherchez une clé `plugin`.
 
-- **macOS/Linux** : `~/.config/opencode/opencode.jsonc` (ou `~/.config/opencode/opencode.json`)
-- **macOS/Linux** (anciennes installations) : `~/.local/share/opencode/opencode.jsonc`
+- **macOS/Linux** : `~/.config/COdo/COdo.jsonc` (ou `~/.config/COdo/COdo.json`)
+- **macOS/Linux** (anciennes installations) : `~/.local/share/COdo/COdo.jsonc`
 - **Windows** : appuyez sur `WIN+R` et collez `%USERPROFILE%\.config\COdo\COdo.jsonc`
 
 Si vous avez configuré des plugins, désactivez-les temporairement en supprimant la clé ou en la définissant sur un tableau vide :
@@ -75,10 +75,10 @@ Si vous avez configuré des plugins, désactivez-les temporairement en suppriman
 COdo peut également charger des plugins locaux à partir du disque. Écartez-les temporairement (ou renommez le dossier) et redémarrez l'application de bureau :
 
 - **Plugins mondiaux**
-  - **macOS/Linux** : `~/.config/opencode/plugins/`
+  - **macOS/Linux** : `~/.config/COdo/plugins/`
   - **Windows** : appuyez sur `WIN+R` et collez `%USERPROFILE%\.config\COdo\plugins`
 - **Plugins de projet** (uniquement si vous utilisez une configuration par projet)
-  - `<your-project>/.opencode/plugins/`
+  - `<your-project>/.COdo/plugins/`
 
 Si l'application recommence à fonctionner, réactivez les plugins un par un pour trouver celui à l'origine du problème.
 
@@ -115,9 +115,9 @@ Si votre `COdo.json(c)` contient une section `server`, supprimez-la temporaireme
 
 #### Vérifier les variables d'environnement
 
-Si `OPENCODE_PORT` est défini dans votre environnement, l'application de bureau tentera d'utiliser ce port pour le serveur local.
+Si `CODO_PORT` est défini dans votre environnement, l'application de bureau tentera d'utiliser ce port pour le serveur local.
 
-- Désactivez `OPENCODE_PORT` (ou choisissez un port libre) et redémarrez.
+- Désactivez `CODO_PORT` (ou choisissez un port libre) et redémarrez.
 
 ---
 
@@ -177,7 +177,7 @@ Si vous rencontrez des problèmes avec COdo :
 
 La meilleure façon de signaler des bogues ou de demander des fonctionnalités consiste à utiliser notre référentiel GitHub :
 
-[**github.com/anomalyco/opencode/issues**](https://github.com/anomalyco/opencode/issues)
+[**github.com/Mosalah4351/COdo/issues**](https://github.com/Mosalah4351/COdo/issues)
 
 Avant de créer un nouveau problème, recherchez les problèmes existants pour voir si votre problème a déjà été signalé.
 
@@ -225,7 +225,7 @@ Exemples :
 
 - `openai/gpt-4.1`
 - `openrouter/google/gemini-2.5-flash`
-- `opencode/kimi-k2`
+- `COdo/kimi-k2`
 
 Pour déterminer à quels modèles vous avez accès, exécutez `COdo models`
 

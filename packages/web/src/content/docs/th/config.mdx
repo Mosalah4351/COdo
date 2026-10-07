@@ -44,16 +44,16 @@ COdo รองรับทั้งรูปแบบ **JSON** และ **JSONC
 แหล่งที่มาของการกำหนดค่าถูกโหลดตามลำดับนี้ (แหล่งที่มาภายหลังจะแทนที่แหล่งที่มาก่อนหน้า):
 
 1. **การกำหนดค่าระยะไกล** (จาก `.well-known/COdo`) - ค่าเริ่มต้นขององค์กร
-2. **การกำหนดค่าสากล** (`~/.config/opencode/opencode.json`) - การตั้งค่าของผู้ใช้
-3. **การกำหนดค่าแบบกำหนดเอง** (`OPENCODE_CONFIG` env var) - การแทนที่แบบกำหนดเอง
+2. **การกำหนดค่าสากล** (`~/.config/COdo/COdo.json`) - การตั้งค่าของผู้ใช้
+3. **การกำหนดค่าแบบกำหนดเอง** (`CODO_CONFIG` env var) - การแทนที่แบบกำหนดเอง
 4. **การกำหนดค่าโครงการ** (`COdo.json` ในโครงการ) - การตั้งค่าเฉพาะโครงการ
-5. **`.opencode` ไดเรกทอรี** - ตัวแทน คำสั่ง ปลั๊กอิน
-6. **การกำหนดค่าแบบอินไลน์** (`OPENCODE_CONFIG_CONTENT` env var) - การแทนที่รันไทม์
+5. **`.COdo` ไดเรกทอรี** - ตัวแทน คำสั่ง ปลั๊กอิน
+6. **การกำหนดค่าแบบอินไลน์** (`CODO_CONFIG_CONTENT` env var) - การแทนที่รันไทม์
 
 ซึ่งหมายความว่าการกำหนดค่าโปรเจ็กต์สามารถแทนที่ค่าเริ่มต้นส่วนกลางได้ และการกำหนดค่าส่วนกลางสามารถแทนที่ค่าเริ่มต้นขององค์กรระยะไกลได้
 
 :::note
-ไดเรกทอรี `.opencode` และ `~/.config/opencode` ใช้ **ชื่อพหูพจน์** สำหรับไดเรกทอรีย่อย: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` และ `themes/` ชื่อเอกพจน์ (เช่น `agent/`) ยังรองรับความเข้ากันได้แบบย้อนหลังด้วย
+ไดเรกทอรี `.COdo` และ `~/.config/COdo` ใช้ **ชื่อพหูพจน์** สำหรับไดเรกทอรีย่อย: `agents/`, `commands/`, `modes/`, `plugins/`, `skills/`, `tools/` และ `themes/` ชื่อเอกพจน์ (เช่น `agent/`) ยังรองรับความเข้ากันได้แบบย้อนหลังด้วย
 :::
 
 ---
@@ -96,9 +96,9 @@ COdo รองรับทั้งรูปแบบ **JSON** และ **JSONC
 
 ### ทั่วโลก
 
-วางการกำหนดค่า COdo ส่วนกลางของคุณใน `~/.config/opencode/opencode.json` ใช้การกำหนดค่าส่วนกลางสำหรับการตั้งค่าทั้งผู้ใช้ เช่น ผู้ให้บริการ รุ่น และสิทธิ์
+วางการกำหนดค่า COdo ส่วนกลางของคุณใน `~/.config/COdo/COdo.json` ใช้การกำหนดค่าส่วนกลางสำหรับการตั้งค่าทั้งผู้ใช้ เช่น ผู้ให้บริการ รุ่น และสิทธิ์
 
-สำหรับการตั้งค่าเฉพาะ TUI ให้ใช้ `~/.config/opencode/tui.json`
+สำหรับการตั้งค่าเฉพาะ TUI ให้ใช้ `~/.config/COdo/tui.json`
 
 การกำหนดค่าส่วนกลางจะแทนที่ค่าเริ่มต้นขององค์กรระยะไกล
 
@@ -122,10 +122,10 @@ COdo รองรับทั้งรูปแบบ **JSON** และ **JSONC
 
 ### เส้นทางที่กำหนดเอง
 
-ระบุเส้นทางไฟล์กำหนดค่าที่กำหนดเองโดยใช้ตัวแปรสภาพแวดล้อม `OPENCODE_CONFIG`
+ระบุเส้นทางไฟล์กำหนดค่าที่กำหนดเองโดยใช้ตัวแปรสภาพแวดล้อม `CODO_CONFIG`
 
 ```bash
-export OPENCODE_CONFIG=/path/to/my/custom-config.json
+export CODO_CONFIG=/path/to/my/custom-config.json
 COdo run "Hello world"
 ```
 
@@ -135,17 +135,17 @@ COdo run "Hello world"
 
 ### ไดเรกทอรีที่กำหนดเอง
 
-ระบุไดเร็กทอรีการกำหนดค่าที่กำหนดเองโดยใช้ `OPENCODE_CONFIG_DIR`
+ระบุไดเร็กทอรีการกำหนดค่าที่กำหนดเองโดยใช้ `CODO_CONFIG_DIR`
 ตัวแปรสภาพแวดล้อม ไดเร็กทอรีนี้จะถูกค้นหาตัวแทน, คำสั่ง,
-โหมดและปลั๊กอินเหมือนกับไดเร็กทอรี `.opencode` มาตรฐานและควร
+โหมดและปลั๊กอินเหมือนกับไดเร็กทอรี `.COdo` มาตรฐานและควร
 เป็นไปตามโครงสร้างเดียวกัน
 
 ```bash
-export OPENCODE_CONFIG_DIR=/path/to/my/config-directory
+export CODO_CONFIG_DIR=/path/to/my/config-directory
 COdo run "Hello world"
 ```
 
-ไดเร็กทอรีที่กำหนดเองถูกโหลดหลังจากไดเร็กทอรี config ส่วนกลางและ `.opencode` ดังนั้นจึง **สามารถแทนที่** การตั้งค่าได้
+ไดเร็กทอรีที่กำหนดเองถูกโหลดหลังจากไดเร็กทอรี config ส่วนกลางและ `.COdo` ดังนั้นจึง **สามารถแทนที่** การตั้งค่าได้
 
 ---
 
@@ -174,7 +174,7 @@ COdo run "Hello world"
 }
 ```
 
-ใช้ `OPENCODE_TUI_CONFIG` เพื่อชี้ไปยังไฟล์กำหนดค่า TUI ที่กำหนดเอง
+ใช้ `CODO_TUI_CONFIG` เพื่อชี้ไปยังไฟล์กำหนดค่า TUI ที่กำหนดเอง
 
 คีย์ `theme`, `keybinds` และ `tui` แบบเดิมใน `COdo.json` เลิกใช้แล้วและจะถูกย้ายโดยอัตโนมัติเมื่อเป็นไปได้
 
@@ -339,7 +339,7 @@ Bearer Token (`AWS_BEARER_TOKEN_BEDROCK` หรือ `/connect`) มีคว�
 }
 ```
 
-คุณยังสามารถกำหนดตัวแทนโดยใช้ไฟล์ Markdown ใน `~/.config/opencode/agents/` หรือ `.opencode/agents/` [เรียนรู้เพิ่มเติมที่นี่](/docs/agents)
+คุณยังสามารถกำหนดตัวแทนโดยใช้ไฟล์ Markdown ใน `~/.config/COdo/agents/` หรือ `.COdo/agents/` [เรียนรู้เพิ่มเติมที่นี่](/docs/agents)
 
 ---
 
@@ -403,7 +403,7 @@ Bearer Token (`AWS_BEARER_TOKEN_BEDROCK` หรือ `/connect`) มีคว�
 }
 ```
 
-คุณยังสามารถกำหนดคำสั่งโดยใช้ไฟล์ Markdown ใน `~/.config/opencode/commands/` หรือ `.opencode/commands/` [เรียนรู้เพิ่มเติมที่นี่](/docs/commands)
+คุณยังสามารถกำหนดคำสั่งโดยใช้ไฟล์ Markdown ใน `~/.config/COdo/commands/` หรือ `.COdo/commands/` [เรียนรู้เพิ่มเติมที่นี่](/docs/commands)
 
 ---
 
@@ -541,12 +541,12 @@ COdo จะดาวน์โหลดการอัปเดตใหม่โ
 
 [ปลั๊กอิน](/docs/plugins) ขยาย COdo ด้วยเครื่องมือที่กำหนดเอง hooks และการผสานรวม
 
-วางไฟล์ปลั๊กอินใน `.opencode/plugins/` หรือ `~/.config/opencode/plugins/` คุณยังสามารถโหลดปลั๊กอินจาก npm ผ่านตัวเลือก `plugin`
+วางไฟล์ปลั๊กอินใน `.COdo/plugins/` หรือ `~/.config/COdo/plugins/` คุณยังสามารถโหลดปลั๊กอินจาก npm ผ่านตัวเลือก `plugin`
 
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": ["COdo-helicone-session", "@my-org/custom-plugin"]
 }
 ```
 
@@ -644,7 +644,7 @@ COdo จะดาวน์โหลดการอัปเดตใหม่โ
 ```json title="COdo.json"
 {
   "$schema": "https://codo-ai.vercel.app/config.json",
-  "model": "{env:OPENCODE_MODEL}",
+  "model": "{env:CODO_MODEL}",
   "provider": {
     "anthropic": {
       "models": {},

@@ -156,7 +156,7 @@ Search for files using glob patterns like `**/*.js` or `src/**/*.ts`. Returns ma
 Interact with your configured LSP servers to get code intelligence features like definitions, references, hover info, and call hierarchy.
 
 :::note
-This tool is only available when `OPENCODE_EXPERIMENTAL_LSP_TOOL=true` (or `OPENCODE_EXPERIMENTAL=true`).
+This tool is only available when `CODO_EXPERIMENTAL_LSP_TOOL=true` (or `CODO_EXPERIMENTAL=true`).
 :::
 
 ```json title="COdo.json" {4}
@@ -257,12 +257,12 @@ Allows the LLM to fetch and read web pages. Useful for looking up documentation 
 Search the web for information.
 
 :::note
-This tool is only available when using the COdo provider or when the `OPENCODE_ENABLE_EXA` environment variable is set to any truthy value (e.g., `true` or `1`).
+This tool is only available when using the COdo or COdo Go provider, or when the `CODO_ENABLE_EXA` environment variable is set to any truthy value (e.g., `true` or `1`).
 
 To enable when launching COdo:
 
 ```bash
-OPENCODE_ENABLE_EXA=1 COdo
+CODO_ENABLE_EXA=1 COdo
 ```
 
 :::
