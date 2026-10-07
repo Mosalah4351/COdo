@@ -186,4 +186,4 @@ Built on [OpenCode](https://github.com/anomalyco/opencode).
 - **Docs** — <https://codo-ai.vercel.app/docs>
 
 If you find a vulnerability in COdo, please do **not** open a public issue — email
-`security@codo.run` with a proof-of-concept.
+`mosalah4351@gmail.com` with a proof-of-concept.
