@@ -141,7 +141,7 @@ OpenCode license text is preserved at [`LICENSES/OPENCODE-LICENSE.txt`](LICENSES
 
 ## Contributors
 
-- **Muse Spark** — AI contributor (session title generation, Muse prompt restore, release tooling). Commits carry a `Co-Authored-By: Muse Spark` trailer.
+- **COdo agent** — AI contributor (session title generation, Muse prompt restore, release tooling). Commits carry a `Co-Authored-By: COdo agent` trailer.
 
 ## Community
 
