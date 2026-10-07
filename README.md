@@ -139,6 +139,10 @@ state, phases, cross-agent audits).
 MIT — see [`LICENSE`](LICENSE). COdo was initially derived from OpenCode (MIT); the
 OpenCode license text is preserved at [`LICENSES/OPENCODE-LICENSE.txt`](LICENSES/OPENCODE-LICENSE.txt).
 
+## Contributors
+
+- **Muse Spark** — AI contributor (session title generation, Muse prompt restore, release tooling). Commits carry a `Co-Authored-By: Muse Spark` trailer.
+
 ## Community
 
 - **Issues** → <https://github.com/Mosalah4351/COdo/issues>

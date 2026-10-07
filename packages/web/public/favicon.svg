@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#000000"/>
-  <rect x="3.5" y="3.5" width="25" height="25" fill="none" stroke="#A020F0" stroke-width="3"/>
-  <text x="16" y="22" text-anchor="middle" font-family="monospace" font-weight="800" font-size="15" fill="#00FF66">&gt;_</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#050805"/>
+  <rect x="2" y="2" width="60" height="60" fill="none" stroke="#a020f0" stroke-width="4"/>
+  <polyline points="14,20 28,32 14,44" fill="none" stroke="#00ff66" stroke-width="7" stroke-linecap="square"/>
+  <line x1="32" y1="46" x2="52" y2="46" stroke="#ff2a4b" stroke-width="7" stroke-linecap="square"/>
 </svg>
