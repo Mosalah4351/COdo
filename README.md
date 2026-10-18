@@ -21,7 +21,7 @@ ship — then writes the docs, the deck, even the research paper after.
 
 </div>
 
----
+- --
 
 ## Install in 10 seconds
 
@@ -34,7 +34,7 @@ codo
 Works on **macOS, Linux, Windows**. Any API key — Anthropic, OpenAI, Google,
 NVIDIA free tier, or your Copilot / ChatGPT subscription. Free to try.
 
----
+- --
 
 ## The pitch
 
@@ -51,19 +51,18 @@ loop** that runs from your terminal:
 
 One terminal. No browser tabs. No extra apps. No "oops I shipped a vulnerability."
 
----
+- --
 
-## The brag sheet
+## What you get
+- **Security before code exists.** Threat modeling in the planning phase. Real-time SAST on every diff. Scope-gated live probing. Every finding comes with an ID, severity, evidence, and a working fix.
+- **Parallel everything.** Complex features become DAGs. Specialist agents execute in waves while you watch.
+- **Goals, not tasks.** Declare the outcome (`>80% coverage, zero HIGH CVEs`). An independent judge model verifies it. The builder never grades its own homework.
+- **75+ providers, free to start.** Plug in any provider API key — or your **[OpenCode Zen](https://opencode.ai/zen)** API key to enjoy the free tier (Zen models are tested and benchmarked for coding agents, and Zen works with any agent). Your existing Copilot or ChatGPT subscription works too.
+- **40+ built-in skills.** 24 security skills (`threat-model`, `code-audit`, `secrets-scan`, `fuzz`, `mutation-test`, `sbom`…) + 17 business skills: `deep-research`, `super-research`, `arxiv`, `frontend-design`, `design-blueprint`, `product-design`, `data-analytics`, `xlsx` / `docx` / `pptx` / `pdf`, `html-to-video-pipeline`, `sales`, and more. Type `/skills` to see them all.
+- **Crash-proof sessions.** Your plan and progress live in durable state files. Context resets happen; you don't lose work.
+- **Everywhere you work.** Native themeable TUI (35+ themes) · Desktop app · VS Code extension · LSP auto-loading · parallel sessions · shareable session links.
 
--- **Security before code exists.** Threat modeling in the planning phase. Real-time SAST on every diff. Scope-gated live probing. Every finding comes with an ID, severity, evidence, and a working fix.
--- **Parallel everything.** Complex features become DAGs. Specialist agents execute in waves while you watch.
--- **Goals, not tasks.** Declare the outcome (`>80% coverage, zero HIGH CVEs`). An independent judge model verifies it. The builder never grades its own homework.
--- **75+ LLM providers** through [Models.dev](https://models.dev), including local models. Use your existing Copilot or ChatGPT subscription. Or try [COdo Zen](https://codo-ai.vercel.app/docs/zen) — models tested and verified to work well.
--- **40+ built-in skills.** 24 security skills (`threat-model`, `code-audit`, `secrets-scan`, `fuzz`, `mutation-test`, `sbom`…) + 17 business skills: `deep-research`, `super-research`, `arxiv`, `frontend-design`, `design-blueprint`, `product-design`, `data-analytics`, `xlsx` / `docx` / `pptx` / `pdf`, `html-to-video-pipeline`, `sales`, and more. Type `/skills` to see them all.
--- **Crash-proof sessions.** Your plan and progress live in durable state files. Context resets happen; you don't lose work.
--- **Everywhere you work.** Native themeable TUI (35+ themes) · Desktop app · VS Code extension · LSP auto-loading · parallel sessions · shareable session links.
-
----
+- --
 
 ## Best practices
 
@@ -74,12 +73,12 @@ One terminal. No browser tabs. No extra apps. No "oops I shipped a vulnerability
 5. **Declare outcomes with `/goal`.** You say what "done" means. The judge decides when it's done.
 6. **One concern, one session.** Run parallel agents; don't make one agent do everything.
 
----
+- --
 
 ## Under the hood
 
 - **Install:** `npm install -g codo-ai` (or one-time: `npx codo-ai`). Requires Node 18+ or Bun.
-- **Models:** any provider key, or log in with GitHub / OpenAI for your existing subscription (`/connect`).
+- **Models:** any provider API key — or your [OpenCode Zen](https://opencode.ai/zen) API key to enjoy the free tier (Zen works with any agent). Log in with GitHub / OpenAI for your existing subscription (`/connect`).
 - **Docs:** everything — personas, skills, workflows, permission modes — lives at [codo-ai.vercel.app](https://codo-ai.vercel.app/).
 - **Built in the open:** COdo is an independent project — core engine and TUI portions derived from [OpenCode](https://github.com/anomalyco/opencode) (MIT). See [NOTICES.md](NOTICES.md) for attribution details.
 
@@ -87,7 +86,7 @@ One terminal. No browser tabs. No extra apps. No "oops I shipped a vulnerability
 
 Found a security issue? Please don't open a public issue — email `mosalah4351@gmail.com` with a proof-of-concept.
 
----
+- --
 
 <div align="center">
 
