@@ -6,8 +6,8 @@
 
 **One agent. The entire job.**
 
-Plans your project. Builds your code. Finds your security flaws **before** you
-ship them. Then writes the docs, the deck, and the research paper too.
+Covers the full SDLC from your terminal — spec, plan, build, test, secure,
+ship — then writes the docs, the deck, even the research paper after.
 
 **Plan it. Build it. Secure it. Ship it.**
 
@@ -43,7 +43,7 @@ loop** that runs from your terminal:
 
 | You want to… | COdo does it |
 |---|---|
-| **Plan** | Workflow engines that lay out your whole project — GSD, spec-first, or pure vibes (`/workflow`), with state that survives context resets |
+| **Plan** | Workflow engines that lay out your whole project — GSD, spec-first, or vibemode (`/workflow`), with state that survives context resets |
 | **Build** | `/compose` splits big tasks into a team of specialist agents and runs them **in parallel** — planner, builder, security engineer, test engineer, all at once |
 | **Secure** | Sec-Test: 6 security personas that threat-model your design *before code exists*, audit every diff, and hand you working fixes with proof — not 400 lint warnings |
 | **Ship** | `/goal` gates the stop conditions (no self-approval), and the built-in skills write your Word docs, Excel models, slide decks, PDFs, research papers, even MP4 videos |
@@ -55,17 +55,17 @@ One terminal. No browser tabs. No extra apps. No "oops I shipped a vulnerability
 
 ## The brag sheet
 
--**Security before code exists.** Threat modeling in the planning phase. Real-time SAST on every diff. Scope-gated live probing. Every finding comes with an ID, severity, evidence, and a working fix.
--**Parallel everything.** Complex features become DAGs. Specialist agents execute in waves while you watch.
--**Goals, not tasks.** Declare the outcome (`>80% coverage, zero HIGH CVEs`). An independent judge model verifies it. The builder never grades its own homework.
--**75+ LLM providers** through [Models.dev](https://models.dev), including local models. Use your existing Copilot or ChatGPT subscription. Or try [COdo Zen](https://codo-ai.vercel.app/docs/zen) — models tested and verified to work well.
--**40+ built-in skills.** 24 security skills (`threat-model`, `code-audit`, `secrets-scan`, `fuzz`, `mutation-test`, `sbom`…) + 17 business skills: `deep-research`, `super-research`, `arxiv`, `frontend-design`, `design-blueprint`, `product-design`, `data-analytics`, `xlsx` / `docx` / `pptx` / `pdf`, `html-to-video-pipeline`, `sales`, and more. Type `/skills` to see them all.
--**Crash-proof sessions.** Your plan and progress live in durable state files. Context resets happen; you don't lose work.
--**Everywhere you work.** Native themeable TUI (35+ themes) · Desktop app · VS Code extension · LSP auto-loading · parallel sessions · shareable session links.
+-- **Security before code exists.** Threat modeling in the planning phase. Real-time SAST on every diff. Scope-gated live probing. Every finding comes with an ID, severity, evidence, and a working fix.
+-- **Parallel everything.** Complex features become DAGs. Specialist agents execute in waves while you watch.
+-- **Goals, not tasks.** Declare the outcome (`>80% coverage, zero HIGH CVEs`). An independent judge model verifies it. The builder never grades its own homework.
+-- **75+ LLM providers** through [Models.dev](https://models.dev), including local models. Use your existing Copilot or ChatGPT subscription. Or try [COdo Zen](https://codo-ai.vercel.app/docs/zen) — models tested and verified to work well.
+-- **40+ built-in skills.** 24 security skills (`threat-model`, `code-audit`, `secrets-scan`, `fuzz`, `mutation-test`, `sbom`…) + 17 business skills: `deep-research`, `super-research`, `arxiv`, `frontend-design`, `design-blueprint`, `product-design`, `data-analytics`, `xlsx` / `docx` / `pptx` / `pdf`, `html-to-video-pipeline`, `sales`, and more. Type `/skills` to see them all.
+-- **Crash-proof sessions.** Your plan and progress live in durable state files. Context resets happen; you don't lose work.
+-- **Everywhere you work.** Native themeable TUI (35+ themes) · Desktop app · VS Code extension · LSP auto-loading · parallel sessions · shareable session links.
 
 ---
 
-## Best practices (the good vibes version)
+## Best practices
 
 1. **Match the workflow to the scale.** Quick fix → `vibemode`. Something real → `gsd` plans it into phases.
 2. **Plan before build.** The plan anchors everything — agent gets confused, state stays true.
@@ -91,7 +91,7 @@ Found a security issue? Please don't open a public issue — email `mosalah4351@
 
 <div align="center">
 
-**Stop vibing blind.** **Vibe with proof.**
+**Build fast. Ship safe. Prove it.**
 
 `npm install -g codo-ai`
 
