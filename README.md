@@ -55,13 +55,13 @@ One terminal. No browser tabs. No extra apps. No "oops I shipped a vulnerability
 
 ## The brag sheet
 
-- 🛡️ **Security before code exists.** Threat modeling in the planning phase. Real-time SAST on every diff. Scope-gated live probing. Every finding comes with an ID, severity, evidence, and a working fix.
-- ⚡ **Parallel everything.** Complex features become DAGs. Specialist agents execute in waves while you watch.
-- 🎯 **Goals, not tasks.** Declare the outcome (`>80% coverage, zero HIGH CVEs`). An independent judge model verifies it. The builder never grades its own homework.
-- 🧠 **75+ LLM providers** through [Models.dev](https://models.dev), including local models. Use your existing Copilot or ChatGPT subscription. Or try [COdo Zen](https://codo-ai.vercel.app/docs/zen) — models tested and verified to work well.
-- 🧰 **40+ built-in skills.** 24 security skills (`threat-model`, `code-audit`, `secrets-scan`, `fuzz`, `mutation-test`, `sbom`…) + 17 business skills: `deep-research`, `super-research`, `arxiv`, `frontend-design`, `design-blueprint`, `product-design`, `data-analytics`, `xlsx` / `docx` / `pptx` / `pdf`, `html-to-video-pipeline`, `sales`, and more. Type `/skills` to see them all.
-- 🔁 **Crash-proof sessions.** Your plan and progress live in durable state files. Context resets happen; you don't lose work.
-- 🖥️ **Everywhere you work.** Native themeable TUI (35+ themes) · Desktop app · VS Code extension · LSP auto-loading · parallel sessions · shareable session links.
+-**Security before code exists.** Threat modeling in the planning phase. Real-time SAST on every diff. Scope-gated live probing. Every finding comes with an ID, severity, evidence, and a working fix.
+-**Parallel everything.** Complex features become DAGs. Specialist agents execute in waves while you watch.
+-**Goals, not tasks.** Declare the outcome (`>80% coverage, zero HIGH CVEs`). An independent judge model verifies it. The builder never grades its own homework.
+-**75+ LLM providers** through [Models.dev](https://models.dev), including local models. Use your existing Copilot or ChatGPT subscription. Or try [COdo Zen](https://codo-ai.vercel.app/docs/zen) — models tested and verified to work well.
+-**40+ built-in skills.** 24 security skills (`threat-model`, `code-audit`, `secrets-scan`, `fuzz`, `mutation-test`, `sbom`…) + 17 business skills: `deep-research`, `super-research`, `arxiv`, `frontend-design`, `design-blueprint`, `product-design`, `data-analytics`, `xlsx` / `docx` / `pptx` / `pdf`, `html-to-video-pipeline`, `sales`, and more. Type `/skills` to see them all.
+-**Crash-proof sessions.** Your plan and progress live in durable state files. Context resets happen; you don't lose work.
+-**Everywhere you work.** Native themeable TUI (35+ themes) · Desktop app · VS Code extension · LSP auto-loading · parallel sessions · shareable session links.
 
 ---
 
@@ -91,7 +91,7 @@ Found a security issue? Please don't open a public issue — email `mosalah4351@
 
 <div align="center">
 
-**Stop vibing blind.** ⚡ **Vibe with proof.**
+**Stop vibing blind.** **Vibe with proof.**
 
 `npm install -g codo-ai`
 
