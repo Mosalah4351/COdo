@@ -31,7 +31,7 @@ Committed on branch `not-a-fork` (cut from `sec-test`'s HEAD 352c030).
 
 ### 3. Internal ledger (this folder)
 
-- `NOT-FORK-CODO/README.md` — what's landed, what's pending, and what the branch represents.
+- `docs/not-a-fork/LANDING-RECORD.md` — what's landed, what's pending, and what the branch represents.
 
 ## What intentionally did not change
 

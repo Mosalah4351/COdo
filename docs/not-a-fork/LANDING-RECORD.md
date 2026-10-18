@@ -1,6 +1,8 @@
-# NOT-FORK-CODO
+# The not-a-fork ledger
 
-This folder is the working record for the "COdo is not a fork of OpenCode" goal.
+Working record for the "COdo is not a fork of OpenCode" goal. Superseded paths:
+this used to live at `NOT-FORK-CODO/` in the repo root; it now lives under `docs/not-a-fork/`
+and is still treated as an input to release notes.
 
 ## Status
 

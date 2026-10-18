@@ -32,6 +32,7 @@ codo-dev
 .agents
 UPCOMING_CHANGELOG.md
 logs/
+*.log
 *.bun-build
 tsconfig.tsbuildinfo
 

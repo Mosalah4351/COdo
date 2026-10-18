@@ -24,10 +24,13 @@ Spec it. Code it. Ship it. **Secure it.**
 
 ## What is COdo?
 
-COdo is a **terminal-native, spec-driven AI coding agent** — a fork of
-[OpenCode](https://github.com/anomalyco/opencode) with structured workflow
+COdo is a **terminal-native, spec-driven AI coding agent** — an independent
+project that builds on portions of [OpenCode](https://github.com/anomalyco/opencode)
+(core engine + TUI, MIT-attributed) and adds structured workflow
 orchestration, an autonomous multi-agent compose engine, and the all-new
-**Sec-Test** security engine.
+**Sec-Test** security engine. See [NOTICES.md](NOTICES.md) and
+[docs/not-a-fork/](docs/not-a-fork/VISIBLE-DIFFERENCES.md) for exactly what
+COdo adds and what it inherits.
 
 No browser tab. No separate app. No context-switching. Just you, your terminal,
 and an AI that knows what phase of the project you're in.
@@ -173,7 +176,9 @@ PRs welcome on [GitHub](https://github.com/Mosalah4351/COdo). Default branch:
 
 MIT © [Mohamed Salah](https://www.linkedin.com/in/mohamed-salah-59bb41300/)
 
-Built on [OpenCode](https://github.com/anomalyco/opencode).
+COdo is an independent project. Its core engine and TUI portions are derived
+from [OpenCode](https://github.com/anomalyco/opencode) (MIT). Upstream copyright
+notice retained in [NOTICES.md](NOTICES.md).
 
 ## Contributors
 
