@@ -4,9 +4,9 @@
 
 # \>_ COdo
 
-**The security-native AI coding agent.**
+**The all-loop terminal AI coding agent.**
 
-Spec it. Code it. Ship it. **Secure it.**
+**Plan it.** **Build it.** **Secure it.** **Ship it.**
 
 [Website](https://codo-ai.vercel.app/) · [Documentation](https://codo-ai.vercel.app/docs) · [GitHub](https://github.com/Mosalah4351/COdo) · [Report Issue](https://github.com/Mosalah4351/COdo/issues)
 
@@ -26,9 +26,12 @@ Spec it. Code it. Ship it. **Secure it.**
 
 COdo is a **terminal-native, spec-driven AI coding agent** — an independent
 project that builds on portions of [OpenCode](https://github.com/anomalyco/opencode)
-(core engine + TUI, MIT-attributed) and adds structured workflow
-orchestration, an autonomous multi-agent compose engine, and the all-new
-**Sec-Test** security engine. See [NOTICES.md](NOTICES.md) and
+(core engine + TUI, MIT-attributed) and closes the full working loop:
+
+**plan** the project with a workflow engine → **build** it with a multi-agent
+compose engine → **secure** it with the Sec-Test engine → **ship** it with a
+business suite (docs, decks, PDFs, research, video) and a compliance-first
+scraper. See [NOTICES.md](NOTICES.md) and
 [docs/not-a-fork/](docs/not-a-fork/VISIBLE-DIFFERENCES.md) for exactly what
 COdo adds and what it inherits.
 
@@ -42,30 +45,57 @@ $ codo
 ```
 
 Most AI coding tools give you a place to type questions. COdo gives you a
-**system** — different modes for different kinds of work, a goal anchor so
-nothing goes off-script, and a skills layer that keeps the agent focused on
-what actually matters right now.
+**loop** — pick a workflow, compose the build, gate the outcome, verify the
+security posture, and ship the artifacts. Code is only half the job; COdo
+handles the other half in the same terminal.
 
 ## Why COdo?
 
-Your linter found 400 warnings and fixed zero of them. Your CI scanner told you
-about the vulnerability three weeks after you shipped it. COdo sits where you
-work, finds the flaw *before* the code exists, and hands you the fix — with
-proof.
+One-shot chat assistants answer one question and stop. COdo covers all four
+jobs, in one place:
 
-| | Static linters | CI scanners | **COdo Sec-Test** |
-|---|---|---|---|
-| Finds design flaws pre-code | ✗ | ✗ | ✓ STRIDE threat modeling |
-| Noise level | False-positive flood | Late-stage flood | Evidence-first findings w/ PoC |
-| Runs where you work | ✗ | CI only | ✓ Your terminal |
-| Fixes vulnerabilities | Warnings only | Warnings only | ✓ Remediation diffs + mutation-backed tests |
+| | Chat assistants | **COdo** |
+|---|---|---|
+| **Plan** | no persistent plan | workflow engines with milestone state that survive context resets |
+| **Build** | one agent, one context | multi-agent compose — parallel waves, specialist agents |
+| **Secure** | after the fact, if at all | Sec-Test — evidence-first findings before the code exists |
+| **Ship** | nothing to help | business suite + compliance-first scraper — research to rendered PDF, no exit |
 
 ## Highlights
 
-### Sec-Test — Autonomous Security Orchestrator
+### 1 · Plan — Workflow Engines
 
-Six specialist personas guarding the full lifecycle. One dispatcher routes your
-request; each persona does exactly one job and does it ruthlessly:
+Switch methodology per project scale, not per religion:
+
+- `/workflow gsd` — autonomous milestone planning, persistent `.planning/` state, survives context resets
+- `/workflow gstack` — Garry Tan's 23-role virtual engineering team
+- `/workflow speckit` — spec-first pipeline (SDD)
+- `/workflow vibemode` — pure flow, zero overhead
+
+### 2 · Build — Multi-Agent Compose
+
+Complex tasks decompose into DAGs routed to specialist agents executing in
+parallel waves:
+
+```
+/compose "Build auth service with JWT, rate limiting & Sec-Test"
+  [A] Planner          → spec + task breakdown     ┐ parallel
+  [B] Builder          → implementation            ├ wave
+  [C] AppSec Engineer  → real-time SAST audit      │
+  [D] Quality Engineer → mutation tests            ┘
+```
+
+**Goal Judge** closes the loop — declare outcomes, not tasks; an independent
+judge model verifies stop-conditions, so the builder never self-approves:
+
+```
+/goal "All tests pass with >80% coverage and zero HIGH/CVEs"
+```
+
+### 3 · Secure — Sec-Test Orchestrator
+
+Six specialist personas guarding the full lifecycle. One dispatcher routes
+your request; each persona does exactly one job and does it ruthlessly:
 
 | Persona | Role |
 |---|---|
@@ -86,38 +116,7 @@ $ /sec-test "Audit git diff for SQL injection and hardcoded secrets"
 Every finding gets an ID, a severity, evidence, and a remediation path — stored
 durably, never lost in markdown notes.
 
-### Workflow Engines
-
-Switch methodology per project scale, not per religion:
-
-- `/workflow gsd` — autonomous milestone planning, persistent `.planning/` state, survives context resets
-- `/workflow gstack` — Garry Tan's 23-role virtual engineering team
-- `/workflow speckit` — GitHub SDD spec-first pipeline
-- `/workflow vibemode` — pure flow, zero overhead
-
-### Multi-Agent Compose
-
-Complex tasks decompose into DAGs routed to specialist agents executing in
-parallel waves:
-
-```
-/compose "Build auth service with JWT, rate limiting & Sec-Test"
-  [A] Security Architect → threat model        ┐ parallel
-  [B] Builder            → implementation       ├ wave
-  [C] AppSec Engineer    → real-time SAST audit │
-  [D] Quality Engineer   → mutation tests       ┘
-```
-
-### Goal Judge
-
-Declare outcomes, not tasks. An independent judge model verifies
-stop-conditions — the builder never self-approves.
-
-```
-/goal "All tests pass with >80% coverage and zero HIGH/CVEs"
-```
-
-### Business Suite
+### 4 · Ship — Business Suite & Scraper
 
 Yes, your coding agent does expense reports too. Production-grade office
 tooling as skills: `xlsx-official`, `docx-official`, `pptx-official`,
@@ -125,11 +124,45 @@ tooling as skills: `xlsx-official`, `docx-official`, `pptx-official`,
 `html-to-video-pipeline`, `sales`. Research it, spreadsheet it, deck it, ship
 the PDF — without leaving the terminal.
 
-### Compliance-First Scraper
+And when the job needs real data: `/scraper <url> <what to extract>` —
+robots.txt honored, ToS checked, crawl-delays enforced, escalation ladder from
+static fetch to authenticated sessions. It asks permission before it knocks;
+most scrapers just knock.
 
-`/scraper <url> <what to extract>` — robots.txt honored, ToS checked,
-crawl-delays enforced, escalation ladder from static fetch to authenticated
-sessions. It asks permission before it knocks; most scrapers just knock.
+## Skills — the agent's toolbox
+
+Skills are what keep COdo focused: heavy, well-defined jobs become one command
+each. A few of the built-ins:
+
+| Category | Skills |
+|---|---|
+| **Research** | `deep-research` · `super-research` · `arxiv` · `learn-everything` |
+| **Documents** | `docx-official` · `xlsx-official` · `pptx-official` · `pdf-official` |
+| **Design & frontend** | `frontend-design` · `design-blueprint` · `product-design` |
+| **Data, papers & code** | `data-analytics` · `research-paper-writing` · `modern-python-toolchain` · `skill-creator` |
+| **Media & sales** | `html-to-video-pipeline` · `sales` |
+
+Run `/skills` to see what's loaded; install more or write your own with
+`skill-creator`.
+
+## Best practices — getting good runs out of COdo
+
+1. **Match the workflow to the scale.** Quick fix → `vibemode`. Milestone-sized
+   project → `gsd` (plans phases, keeps durable state across context resets).
+   Spec-first team → `speckit`.
+2. **Plan before build.** Run the plan phase first — the plan is what anchors
+   the agent when context resets, and compose DAGs are built from it.
+3. **Declare outcomes with `/goal`.** The independent judge verifies
+   stop-conditions; the builder never self-approves.
+4. **Make Sec-Test a gate, not an afterthought.** Audit the diff before every
+   commit; findings persist with IDs — treat them as tasks, not warnings.
+5. **Compose for parallel work.** Big features decompose into DAGs; run the
+   security architect in wave 1, not wave 3.
+6. **One concern, one session.** The multi-session model lets parallel agents
+   work on the same project — keep them scoped.
+7. **Pick the model per job.** Routine edits on cheap models, planning and
+   security review on frontier — `/connect` logs in with existing
+   subscriptions.
 
 ## Use any model
 
